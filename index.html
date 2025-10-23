@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seed & Spoon NJ - Nourishing Our Community</title>
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-soft-cream text-deep-blue">
+
+    <!-- Header -->
+    <header class="bg-soft-cream shadow-md p-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Seed & Spoon NJ</h1>
+        <button id="mobile-menu-button" class="md:hidden p-2 bg-primary-orange text-white rounded">Menu</button>
+        <nav id="mobile-menu" class="hidden md:flex space-x-4">
+            <a href="#about">About</a>
+            <a href="#donate">Donate</a>
+            <a href="#volunteer">Volunteer</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <main class="section-padding text-center">
+        <h2 class="text-4xl font-extrabold mb-4">Nourishing New Jersey, One Meal at a Time</h2>
+        <p class="text-lg mb-6">Harvesting potential, serving dignity. Seed & Spoon NJ connects surplus produce with families in need.</p>
+        <a href="#donate" class="px-6 py-3 bg-primary-orange text-white font-bold rounded">Donate Today</a>
+        <a href="#volunteer" class="px-6 py-3 bg-accent-green text-white font-bold rounded ml-2">Volunteer</a>
+    </main>
+
+    <!-- About Section -->
+    <section id="about" class="section-padding">
+        <h3 class="text-2xl font-bold mb-2">Our Mission</h3>
+        <p>Seed & Spoon NJ fights food insecurity and food waste in New Jersey by preparing and distributing meals with care and dignity.</p>
+    </section>
+
+    <!-- Volunteer Form -->
+    <section id="volunteer" class="section-padding">
+        <h3 class="text-2xl font-bold mb-4">Join Our Team</h3>
+        <form class="space-y-4">
+            <input type="text" placeholder="Full Name" class="w-full p-3 border rounded" required>
+            <input type="email" placeholder="Email" class="w-full p-3 border rounded" required>
+            <textarea placeholder="Availability / Message" class="w-full p-3 border rounded" rows="4"></textarea>
+            <button type="submit" class="px-6 py-3 bg-secondary-blue text-white font-bold rounded">Submit</button>
+        </form>
+        <div id="form-message" class="hidden mt-4 p-3 bg-accent-green/20 text-accent-green rounded">Thank you! We'll be in touch.</div>
+    </section>
+
+    <!-- Link JS -->
+    <script src="js/main.js"></script>
+</body>
+</html>
