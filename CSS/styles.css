@@ -1,0 +1,32 @@
+/* Tailwind base is loaded via CDN in HTML, so here we can add custom styles */
+
+/* Brand colors */
+:root {
+    --color-primary-orange: #EA802F;
+    --color-secondary-blue: #0B88C2;
+    --color-accent-green: #77A462;
+    --color-soft-cream: #F9EED4;
+    --color-deep-blue: #02538A;
+    --color-light-blue: #5CC8EE;
+}
+
+.bg-soft-cream { background-color: var(--color-soft-cream); }
+.text-deep-blue { color: var(--color-deep-blue); }
+.bg-deep-blue { background-color: var(--color-deep-blue); }
+.bg-primary-orange { background-color: var(--color-primary-orange); }
+.text-primary-orange { color: var(--color-primary-orange); }
+.bg-accent-green { background-color: var(--color-accent-green); }
+.bg-secondary-blue { background-color: var(--color-secondary-blue); }
+.text-light-blue { color: var(--color-light-blue); }
+.border-deep-blue { border-color: var(--color-deep-blue); }
+
+/* General styles */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--color-soft-cream);
+}
+
+.section-padding {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+}
