@@ -4,8 +4,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "export": "next export",
-    "build:pages": "next build && next export"
+    "build:pages": "next build"
   },
   "dependencies": {
     "next": "latest",
