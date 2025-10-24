@@ -1,0 +1,47 @@
+/* 🌾 Global Styles for Seed & Spoon */
+
+/* Reset + Base setup */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: system-ui, "BBH Sans Hegarty", sans-serif;
+  background-color: #F9EED4; /* soft cream tone */
+  color: #02538A; /* deep blue text */
+  line-height: 1.5;
+}
+
+/* Make sure images and buttons behave predictably */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Link styling */
+a {
+  color: #02538A;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* Page layout defaults */
+main {
+  min-height: 80vh;
+  padding: 2rem;
+}
+
+/* Brand color variables (optional use in other files) */
+:root {
+  --orange: #EA802F
