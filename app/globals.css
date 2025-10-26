@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Primary Colors */
+  --primary-soil: #233D00;
+  --gradient-start: #226214;
+  --gradient-end: #43CC25;
+  
+  /* Accent Colors */
+  --harvest-orange: #FF7A3D;
+  --leaf-light: #A6D47A;
+  --leaf-mid: #6FBF3C;
+  
+  /* Neutrals */
+  --cream: #F8F6F0;
+  --charcoal: #1A1A1A;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  color: var(--charcoal);
+  background: var(--cream);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Custom utility classes */
+.bg-primary-soil {
+  background-color: var(--primary-soil);
+}
+
+.bg-harvest-orange {
+  background-color: var(--harvest-orange);
+}
+
+.bg-leaf-light {
+  background-color: var(--leaf-light);
+}
+
+.bg-leaf-mid {
+  background-color: var(--leaf-mid);
+}
+
+.bg-cream {
+  background-color: var(--cream);
+}
+
+.text-primary-soil {
+  color: var(--primary-soil);
+}
+
+.text-harvest-orange {
+  color: var(--harvest-orange);
+}
+
+.gradient-green {
+  background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+  color: white;
+  padding: 0.875rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-secondary {
+  background: var(--harvest-orange);
+  color: white;
+  padding: 0.875rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.btn-secondary:hover {
+  background: #FF6A2D;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--primary-soil);
+  padding: 0.875rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 2px solid var(--primary-soil);
+  cursor: pointer;
+  display: inline-block;
+}
+
+.btn-outline:hover {
+  background: var(--primary-soil);
+  color: white;
+}
