@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function DonatePage() {
   return (
-    <main className="min-h-screen bg-gray-50 pt-20 sm:pt-24 md:pt-32 lg:pt-44">
+    <main className="min-h-screen bg-gray-50 pt-20 sm:pt-[88px] md:pt-24 lg:pt-[104px]">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 md:py-12">
         <header className="mb-8 sm:mb-10 md:mb-12 text-center">
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4">

@@ -1,6 +1,6 @@
 export default function HeroVideo() {
   return (
-    <section className="relative w-full mt-16 sm:mt-20 md:mt-36 lg:mt-44">
+    <section className="relative w-full mt-16 sm:mt-[72px] md:mt-20 lg:mt-[88px]">
       <video
         autoPlay
         loop

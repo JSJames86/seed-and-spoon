@@ -16,16 +16,16 @@ export default function Header() {
   return (
     <>
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-sm shadow-md' : 'bg-white'}`}>
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between py-2">
+        <div className="max-w-screen-xl mx-auto px-3 sm:px-4 lg:px-6 flex items-center justify-between py-1">
           <img
             src={scrolled ? '/assets/logo/seed-and-spoon-logo-full-compact.png' : '/assets/logo/seed-and-spoon-logo-full.png'}
             alt="Seed & Spoon NJ"
-            className={`transition-all duration-300 ${scrolled ? 'h-10 sm:h-12 md:h-20 lg:h-24' : 'h-12 sm:h-16 md:h-32 lg:h-40'}`}
+            className={`transition-all duration-300 ${scrolled ? 'h-12 sm:h-14 md:h-16 lg:h-18' : 'h-14 sm:h-16 md:h-18 lg:h-20'}`}
           />
 
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-1 sm:gap-2">
             {/* Social Icons - Desktop Only */}
-            <div className="hidden lg:flex items-center gap-3">
+            <div className="hidden lg:flex items-center gap-2">
               <a href="https://www.facebook.com/profile.php?id=61582824954208" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-green-600 transition-colors" aria-label="Facebook">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
               </a>
@@ -44,21 +44,21 @@ export default function Header() {
             </div>
 
             {/* Desktop Nav */}
-            <nav className="hidden md:flex items-center gap-4 lg:gap-6 xl:gap-8">
+            <nav className="hidden md:flex items-center gap-2 lg:gap-4 xl:gap-5">
               <a href="#about" className="text-sm lg:text-base text-gray-700 hover:text-green-600 font-medium transition-colors">About</a>
               <a href="#programs" className="text-sm lg:text-base text-gray-700 hover:text-green-600 font-medium transition-colors">Programs</a>
               <a href="#volunteer" className="text-sm lg:text-base text-gray-700 hover:text-green-600 font-medium transition-colors">Volunteer</a>
-              <a href="#donate" className="bg-green-600 text-white px-4 lg:px-6 py-2 rounded-full hover:bg-green-700 font-semibold text-sm lg:text-base transition-colors">Donate</a>
+              <a href="#donate" className="bg-green-600 text-white px-3 lg:px-5 py-1.5 rounded-full hover:bg-green-700 font-semibold text-sm lg:text-base transition-colors">Donate</a>
             </nav>
 
             {/* Mobile Hamburger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden text-gray-700 hover:text-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 rounded p-1 transition-colors"
+              className="md:hidden text-gray-700 hover:text-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 rounded p-0.5 transition-colors"
               aria-label="Toggle menu"
               aria-expanded={mobileMenuOpen}
             >
-              <svg className="w-7 h-7 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {mobileMenuOpen ? (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 ) : (
@@ -74,12 +74,12 @@ export default function Header() {
       {mobileMenuOpen && (
         <div
           className="fixed inset-0 z-40 bg-white md:hidden overflow-y-auto"
-          style={{top: scrolled ? '56px' : '72px'}}
+          style={{top: scrolled ? '56px' : '64px'}}
           role="dialog"
           aria-modal="true"
           aria-label="Mobile navigation menu"
         >
-          <nav className="flex flex-col items-center gap-6 py-8 px-4">
+          <nav className="flex flex-col items-center gap-5 py-6 px-4">
             <a
               href="#about"
               onClick={() => setMobileMenuOpen(false)}
