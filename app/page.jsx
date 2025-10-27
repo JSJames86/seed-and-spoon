@@ -1,4 +1,5 @@
 import HeroVideo from '../components/HeroVideo';
+import StayConnected from '../components/StayConnected';
 
 export default function Home() {
   return (
@@ -207,6 +208,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Stay Connected Section */}
+      <StayConnected />
     </main>
   );
 }
