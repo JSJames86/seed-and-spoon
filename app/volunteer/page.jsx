@@ -78,7 +78,7 @@ export default function VolunteerPage() {
         'Follow food safety protocols'
       ],
       idealFor: 'Team players who enjoy prep work',
-      summary: 'Light teamwork that fuels Thursday's cook day.',
+      summary: 'Light teamwork that fuels Thursday\'s cook day.',
       category: 'Kitchen'
     },
     {
@@ -770,7 +770,7 @@ export default function VolunteerPage() {
                       className="mt-1 mr-3 w-5 h-5 text-green-600 focus:ring-2 focus:ring-green-500"
                     />
                     <span className="text-gray-700">
-                      I consent to being photographed during volunteer activities for Seed & Spoon's promotional materials (optional).
+                      I consent to being photographed during volunteer activities for Seed & Spoon\'s promotional materials (optional).
                     </span>
                   </label>
                 </div>
