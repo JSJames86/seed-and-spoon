@@ -47,7 +47,7 @@ export default function Header() {
             <nav className="hidden md:flex items-center gap-8">
               <a href="#about" className="text-gray-700 hover:text-green-600 font-medium">About</a>
               <a href="#programs" className="text-gray-700 hover:text-green-600 font-medium">Programs</a>
-              <a href="#volunteer" className="text-gray-700 hover:text-green-600 font-medium">Volunteer</a>
+              <a href="/volunteer" className="text-gray-700 hover:text-green-600 font-medium">Volunteer</a>
               <a href="#donate" className="bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700 font-semibold">Donate</a>
             </nav>
 
@@ -75,7 +75,7 @@ export default function Header() {
           <nav className="flex flex-col items-center gap-6 py-8">
             <a href="#about" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 text-xl font-medium">About</a>
             <a href="#programs" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 text-xl font-medium">Programs</a>
-            <a href="#volunteer" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 text-xl font-medium">Volunteer</a>
+            <a href="/volunteer" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 text-xl font-medium">Volunteer</a>
             <a href="#donate" onClick={() => setMobileMenuOpen(false)} className="bg-green-600 text-white px-8 py-3 rounded-full text-xl font-semibold">Donate</a>
             
             {/* Social Links in Mobile Menu */}
