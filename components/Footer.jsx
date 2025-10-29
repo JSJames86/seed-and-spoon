@@ -1,6 +1,8 @@
 // components/Footer.jsx
 import Image from 'next/image';
 import Link from 'next/link';
+import { FaFacebookF, FaInstagram, FaTwitter, FaTiktok } from 'react-icons/fa';
+import { SiThreads } from 'react-icons/si';
 import logo from '../assets/logo-transparent.png'; // adjust path if needed
 
 export default function Footer() {
@@ -28,11 +30,13 @@ export default function Footer() {
         <Link href="/food-safety-waiver" style={{ margin: '0 1rem' }}>Food Safety Waiver</Link>
       </div>
 
-      {/* Social Media Links */}
-      <div style={{ marginBottom: '1rem' }}>
-        <a href="https://facebook.com/yourpage" target="_blank" rel="noopener noreferrer" style={{ margin: '0 0.5rem' }}>Facebook</a>
-        <a href="https://instagram.com/yourpage" target="_blank" rel="noopener noreferrer" style={{ margin: '0 0.5rem' }}>Instagram</a>
-        <a href="https://tiktok.com/@yourpage" target="_blank" rel="noopener noreferrer" style={{ margin: '0 0.5rem' }}>TikTok</a>
+      {/* Social Media Icons */}
+      <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'center', gap: '1rem', fontSize: '1.5rem' }}>
+        <a href="https://twitter.com/yourpage" target="_blank" rel="noopener noreferrer"><FaTwitter /></a>
+        <a href="https://facebook.com/yourpage" target="_blank" rel="noopener noreferrer"><FaFacebookF /></a>
+        <a href="https://instagram.com/yourpage" target="_blank" rel="noopener noreferrer"><FaInstagram /></a>
+        <a href="https://tiktok.com/@yourpage" target="_blank" rel="noopener noreferrer"><FaTiktok /></a>
+        <a href="https://www.threads.net/yourpage" target="_blank" rel="noopener noreferrer"><SiThreads /></a>
       </div>
 
       {/* Copyright */}
