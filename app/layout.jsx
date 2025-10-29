@@ -1,5 +1,11 @@
-import './globals.css';
-import Footer from '../components/Footer';
+// app/layout.jsx
+import './globals.css';                 // globals.css is in the same folder
+import Footer from '../components/Footer'; // go up one level to root, then into components
+
+export const metadata = {
+  title: 'Seed & Spoon',
+  description: 'Meal-prepped food, grocery boxes, and community meals',
+};
 
 export default function RootLayout({ children }) {
   return (
