@@ -1,40 +1,44 @@
-// app/components/Footer.jsx
+// components/Footer.jsx
+import Image from 'next/image';
 import Link from 'next/link';
+import logo from '../assets/logo-transparent.png'; // adjust path if needed
 
 export default function Footer() {
   return (
-    <footer className="bg-green-800 text-white py-8 mt-8">
-      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-        
-        {/* Logo */}
-        <div className="mb-4 md:mb-0">
-          <Link href="/">
-            <img
-              src="/assets/logo-transparent.png"
-              alt="Seed & Spoon Logo"
-              className="h-12"
-            />
-          </Link>
-        </div>
-
-        {/* Footer Links */}
-        <div className="flex flex-col md:flex-row gap-4 md:gap-6 text-center">
-          <Link href="/privacy-policy" className="hover:underline">
-            Privacy Policy
-          </Link>
-          <Link href="/terms-of-service" className="hover:underline">
-            Terms of Service
-          </Link>
-          <Link href="/food-safety-waiver" className="hover:underline">
-            Food Safety Waiver
-          </Link>
-        </div>
-
-        {/* Optional copyright */}
-        <div className="mt-4 md:mt-0 text-sm text-gray-300 text-center md:text-right">
-          &copy; {new Date().getFullYear()} Seed & Spoon NJ. All rights reserved.
-        </div>
+    <footer style={{
+      backgroundColor: '#f5f5f5',
+      padding: '2rem',
+      textAlign: 'center'
+    }}>
+      {/* Logo */}
+      <div style={{ marginBottom: '1rem' }}>
+        <Image src={logo} alt="Seed & Spoon Logo" width={150} height={50} />
       </div>
+
+      {/* Contact Info */}
+      <div style={{ marginBottom: '1rem' }}>
+        <p>Phone: <a href="tel:+1234567890">+1 (234) 567-890</a></p>
+        <p>Email: <a href="mailto:info@seedandspoon.org">info@seedandspoon.org</a></p>
+      </div>
+
+      {/* Footer Links */}
+      <div style={{ marginBottom: '1rem' }}>
+        <Link href="/privacy-policy" style={{ margin: '0 1rem' }}>Privacy Policy</Link>
+        <Link href="/terms-of-service" style={{ margin: '0 1rem' }}>Terms of Service</Link>
+        <Link href="/food-safety-waiver" style={{ margin: '0 1rem' }}>Food Safety Waiver</Link>
+      </div>
+
+      {/* Social Media Links */}
+      <div style={{ marginBottom: '1rem' }}>
+        <a href="https://facebook.com/yourpage" target="_blank" rel="noopener noreferrer" style={{ margin: '0 0.5rem' }}>Facebook</a>
+        <a href="https://instagram.com/yourpage" target="_blank" rel="noopener noreferrer" style={{ margin: '0 0.5rem' }}>Instagram</a>
+        <a href="https://tiktok.com/@yourpage" target="_blank" rel="noopener noreferrer" style={{ margin: '0 0.5rem' }}>TikTok</a>
+      </div>
+
+      {/* Copyright */}
+      <p style={{ fontSize: '0.8rem' }}>
+        &copy; {new Date().getFullYear()} Seed & Spoon. All rights reserved.
+      </p>
     </footer>
   );
 }
