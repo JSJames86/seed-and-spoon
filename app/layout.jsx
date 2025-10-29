@@ -1,20 +1,16 @@
+// app/layout.jsx
 import './globals.css';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import Footer from './components/Footer';
 
 export const metadata = {
-  title: 'Seed & Spoon NJ | Harvesting Potential and Serving Dignity',
-  description: 'We turn local surplus produce into freshly prepared, nutritious meals for New Jersey families facing food insecurity.',
-  icons: {
-    icon: '/favicon.svg',
-  },
+  title: 'Seed & Spoon',
+  description: 'Community Meals and Meal Prepped Food',
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="antialiased">
-        <Header />
+      <body className="bg-white text-gray-900">
         {children}
         <Footer />
       </body>
