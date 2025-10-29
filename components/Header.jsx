@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -17,11 +18,13 @@ export default function Header() {
     <>
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-md' : 'bg-white'}`}>
         <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
-          <img
-            src={scrolled ? '/assets/logo/seed-and-spoon-logo-full-compact.png' : '/assets/logo/seed-and-spoon-logo-full.png'}
-            alt="Seed & Spoon NJ"
-            className={`transition-all duration-300 ${scrolled ? 'h-12 md:h-32' : 'h-16 md:h-40'}`}
-          />
+          <Link href="/">
+            <img
+              src={scrolled ? '/assets/logo/seed-and-spoon-logo-full-compact.png' : '/assets/logo/seed-and-spoon-logo-full.png'}
+              alt="Seed & Spoon NJ"
+              className={`transition-all duration-300 cursor-pointer ${scrolled ? 'h-12 md:h-32' : 'h-16 md:h-40'}`}
+            />
+          </Link>
           
           <div className="flex items-center gap-4">
             {/* Social Icons - Desktop Only */}
@@ -45,9 +48,11 @@ export default function Header() {
 
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-8">
+              <Link href="/" className="text-gray-700 hover:text-green-600 font-medium">Home</Link>
               <a href="#about" className="text-gray-700 hover:text-green-600 font-medium">About</a>
               <a href="#programs" className="text-gray-700 hover:text-green-600 font-medium">Programs</a>
-              <a href="/volunteer" className="text-gray-700 hover:text-green-600 font-medium">Volunteer</a>
+              <Link href="/causes" className="text-gray-700 hover:text-green-600 font-medium">Causes</Link>
+              <Link href="/volunteer" className="text-gray-700 hover:text-green-600 font-medium">Volunteer</Link>
               <a href="#donate" className="bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700 font-semibold">Donate</a>
             </nav>
 
@@ -73,9 +78,11 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 bg-white md:hidden" style={{top: scrolled ? '48px' : '64px'}}>
           <nav className="flex flex-col items-center gap-6 py-8">
+            <Link href="/" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 text-xl font-medium">Home</Link>
             <a href="#about" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 text-xl font-medium">About</a>
             <a href="#programs" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 text-xl font-medium">Programs</a>
-            <a href="/volunteer" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 text-xl font-medium">Volunteer</a>
+            <Link href="/causes" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 text-xl font-medium">Causes</Link>
+            <Link href="/volunteer" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 text-xl font-medium">Volunteer</Link>
             <a href="#donate" onClick={() => setMobileMenuOpen(false)} className="bg-green-600 text-white px-8 py-3 rounded-full text-xl font-semibold">Donate</a>
             
             {/* Social Links in Mobile Menu */}
