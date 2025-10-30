@@ -22,6 +22,26 @@ Place these in: **`/public/images/about/`**
 
 ---
 
+### 🌱 Causes Page Photos (5 images)
+
+Place these in: **`/public/images/causes/`**
+
+```
+/public/images/causes/
+├── community-meal.jpg          ← Volunteers serving hot meals
+├── pantry-network.jpg          ← Community pantry with fresh food
+├── family-food-boxes.jpg       ← Packed food boxes ready for families
+├── holiday-meal-drive.jpg      ← Thanksgiving/holiday meal prep
+└── youth-garden.jpg            ← Children learning to garden
+```
+
+**What these are used for:**
+- These appear on your Causes page (`/causes`)
+- Each image shows above its respective program description
+- Images alternate left/right for visual interest
+
+---
+
 ### 🚫 404 Page Photo (1 image)
 
 Place this in: **`/public/assets/`**
@@ -52,7 +72,13 @@ Place this in: **`/public/assets/`**
    ```
    Copy your 5 photos (problem.jpg, kitchen.jpg, distribution.jpg, volunteers.jpg, impact-graph.png)
 
-3. **Put 404 page photo here:**
+3. **Put Causes page photos here:**
+   ```
+   seed-and-spoon/public/images/causes/
+   ```
+   Copy your 5 photos (community-meal.jpg, pantry-network.jpg, family-food-boxes.jpg, holiday-meal-drive.jpg, youth-garden.jpg)
+
+4. **Put 404 page photo here:**
    ```
    seed-and-spoon/public/assets/
    ```
@@ -71,6 +97,13 @@ cp /path/to/your/distribution.jpg public/images/about/
 cp /path/to/your/volunteers.jpg public/images/about/
 cp /path/to/your/impact-graph.png public/images/about/
 
+# For Causes page photos
+cp /path/to/your/community-meal.jpg public/images/causes/
+cp /path/to/your/pantry-network.jpg public/images/causes/
+cp /path/to/your/family-food-boxes.jpg public/images/causes/
+cp /path/to/your/holiday-meal-drive.jpg public/images/causes/
+cp /path/to/your/youth-garden.jpg public/images/causes/
+
 # For 404 page photo
 cp /path/to/your/empty-pantry.png public/assets/
 ```
@@ -82,6 +115,7 @@ cp /path/to/your/empty-pantry.png public/assets/
 ### 1. Check files are in place:
 ```bash
 ls -lh public/images/about/
+ls -lh public/images/causes/
 ls -lh public/assets/
 ```
 
@@ -96,13 +130,15 @@ npm run dev
 Then visit:
 - **About page**: http://localhost:3000/about
   - Should see your photos in all sections
+- **Causes page**: http://localhost:3000/causes
+  - Should see your 5 program photos
 - **404 page**: http://localhost:3000/nonexistent-page
   - Should see empty-pantry.png
 
 ### 3. Check if images load directly:
 Open in browser:
 - http://localhost:3000/images/about/problem.jpg
-- http://localhost:3000/images/about/kitchen.jpg
+- http://localhost:3000/images/causes/community-meal.jpg
 - http://localhost:3000/assets/empty-pantry.png
 
 If you see the images, they're correctly placed!
@@ -120,6 +156,7 @@ Just replace the files in the same locations. The filenames must match exactly:
 
 ## 📐 Recommended Image Sizes
 
+### About Page Images
 | Photo | Recommended Size | Format |
 |-------|------------------|--------|
 | problem.jpg | 1200 x 800 px | JPG |
@@ -127,9 +164,22 @@ Just replace the files in the same locations. The filenames must match exactly:
 | distribution.jpg | 1200 x 800 px | JPG |
 | volunteers.jpg | 1200 x 800 px | JPG |
 | impact-graph.png | 800 x 600 px | PNG |
+
+### Causes Page Images
+| Photo | Recommended Size | Format |
+|-------|------------------|--------|
+| community-meal.jpg | 1200 x 800 px | JPG |
+| pantry-network.jpg | 1200 x 800 px | JPG |
+| family-food-boxes.jpg | 1200 x 800 px | JPG |
+| holiday-meal-drive.jpg | 1200 x 800 px | JPG |
+| youth-garden.jpg | 1200 x 800 px | JPG |
+
+### 404 Page Image
+| Photo | Recommended Size | Format |
+|-------|------------------|--------|
 | empty-pantry.png | 600 x 600 px | PNG |
 
-**Note:** Images will be automatically optimized by Next.js if you use Next.js Image component (which we'll add if you need real images instead of the current gradient placeholders).
+**Note:** Images are used as standard `<img>` tags on the Causes page, so they'll display immediately when you add them.
 
 ---
 
