@@ -1,11 +1,14 @@
 "use client";
 // components/Header.jsx
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,11 +18,15 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // On homepage: transparent at top, green when scrolled
+  // On other pages: always green
+  const headerBg = isHomePage
+    ? (isScrolled ? "bg-green-800 shadow-md" : "bg-transparent")
+    : "bg-green-800 shadow-md";
+
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 transition-colors duration-300 ${
-        isScrolled ? "bg-green-800 shadow-md" : "bg-transparent"
-      }`}
+      className={`fixed top-0 left-0 w-full z-50 transition-colors duration-300 ${headerBg}`}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
         {/* Logo */}
@@ -38,6 +45,9 @@ export default function Header() {
           </Link>
           <Link href="#programs" className="text-white font-semibold hover:text-yellow-400 transition-colors">
             Programs
+          </Link>
+          <Link href="/causes" className="text-white font-semibold hover:text-yellow-400 transition-colors">
+            Causes
           </Link>
           <Link href="#donate" className="text-white font-semibold hover:text-yellow-400 transition-colors">
             Donate
@@ -77,6 +87,7 @@ export default function Header() {
         <div className="md:hidden bg-green-800 flex flex-col gap-4 px-6 py-4 text-white">
           <Link href="#about" className="hover:text-yellow-400 transition-colors">About</Link>
           <Link href="#programs" className="hover:text-yellow-400 transition-colors">Programs</Link>
+          <Link href="/causes" className="hover:text-yellow-400 transition-colors">Causes</Link>
           <Link href="#donate" className="hover:text-yellow-400 transition-colors">Donate</Link>
           <Link href="/volunteer" className="hover:text-yellow-400 transition-colors">Volunteer</Link>
 
