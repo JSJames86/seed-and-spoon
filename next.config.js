@@ -1,9 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    unoptimized: true,
+    domains: [],
   },
-  // Vercel handles static export automatically, no need for output: 'export'
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
