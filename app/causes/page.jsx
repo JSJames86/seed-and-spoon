@@ -122,7 +122,7 @@ const causesData = [
 
 export default function CausesPage() {
   return (
-    <main className="min-h-screen bg-[#F9EED4]">
+    <main className="min-h-screen bg-[#F9EED4] pt-16 md:pt-20 lg:pt-24">
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-[#0B88C2] to-[#02538A] text-white py-20 px-4">
         <div className="max-w-7xl mx-auto text-center">
