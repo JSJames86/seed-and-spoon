@@ -17,24 +17,20 @@ export default function Header() {
   const toggleMobile = () => setMobileOpen(!mobileOpen);
 
   return (
-    <header
-      className={`fixed top-0 left-0 w-full z-[100] transition-all duration-300 ${
-        scrolled ? "bg-white/100 shadow-md h-20" : "bg-transparent h-28"
-      }`}
-    >
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 h-full">
+    <header className="fixed top-0 left-0 w-full z-[100] transition-all duration-300">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
         {/* Logo */}
         <Image
-          src={scrolled ? "/logo-dark.png" : "/logo-light.png"}
+          src="/logo-light.png"
           alt="Seed & Spoon"
-          width={scrolled ? 200 : 320}
-          height={scrolled ? 65 : 100}
-          className="transition-all duration-300 drop-shadow-lg"
+          width={300}
+          height={90}
+          className="transition-all duration-300 sm:w-[200px] sm:h-auto md:w-[250px] md:h-auto lg:w-[300px] lg:h-auto"
           priority
         />
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-6 font-semibold text-lg">
+        <nav className="hidden md:flex items-center space-x-6 font-semibold text-lg text-white">
           <a href="#about" className="hover:text-green-600 transition-colors">About</a>
           <a href="#programs" className="hover:text-green-600 transition-colors">Programs</a>
           <a href="#donate" className="hover:text-yellow-500 transition-colors">Donate</a>
@@ -53,8 +49,8 @@ export default function Header() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-white/90 backdrop-blur-md shadow-lg">
-          <nav className="flex flex-col items-center space-y-4 py-6">
+        <div className="md:hidden absolute top-full left-0 w-full bg-transparent">
+          <nav className="flex flex-col items-center space-y-4 py-6 bg-white/90">
             <a href="#about" className="text-gray-800 font-semibold text-lg">About</a>
             <a href="#programs" className="text-gray-800 font-semibold text-lg">Programs</a>
             <a href="#donate" className="text-gray-800 font-semibold text-lg">Donate</a>
