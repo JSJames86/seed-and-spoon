@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <>
       {/* HERO SECTION */}
-      <section className="relative h-screen w-full overflow-hidden">
+      <section className="relative h-[75vh] md:h-[80vh] w-full overflow-hidden">
         <HeroVideo />
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 flex h-full items-center justify-center px-6">
