@@ -41,7 +41,7 @@ export default function Header() {
 
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map(({ href, label }) => (
-            
+            <a  // ✅ FIXED - Added <a tag
               key={href}
               href={href}
               className="text-lg font-semibold text-white hover:text-yellow-400 transition-colors duration-200"
@@ -70,7 +70,7 @@ export default function Header() {
         <div className="md:hidden absolute inset-x-0 top-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-xl">
           <nav className="container mx-auto px-6 py-6 flex flex-col gap-4">
             {navLinks.map(({ href, label }) => (
-              
+              <a  // ✅ FIXED - Added <a tag
                 key={href}
                 href={href}
                 onClick={() => setMobileOpen(false)}
