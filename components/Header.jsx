@@ -1,85 +1,89 @@
-"use client";
-import { useState } from "react";
-import Image from "next/image";
-import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
-import ThemeToggle from "./ThemeToggle";
-
-const navLinks = [
-  { href: "#about", label: "About" },
-  { href: "#programs", label: "Programs" },
-  { href: "#donate", label: "Donate" },
-];
+// components/Header.jsx
+import { useState, useEffect } from "react";
+import Link from "next/link";
 
 export default function Header() {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
+
+  // Optional: add slight shadow when scrolling
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <header 
-      className="fixed top-0 left-0 right-0 z-50"
-      style={{
-        backgroundColor: "transparent",
-        background: "none",
-        backdropFilter: "none",
-        WebkitBackdropFilter: "none"
-      }}
+    <header
+      className={`fixed top-0 left-0 w-full z-50 transition-all ${
+        scrollY > 20 ? "shadow-md" : ""
+      }`}
     >
-      <div 
-        className="container mx-auto flex h-16 md:h-20 lg:h-24 items-center justify-between px-4 md:px-6"
-        style={{ backgroundColor: "transparent" }}
-      >
-        <a href="/" className="flex-shrink-0">
-          <Image
-            src="/logo-light.png"
-            alt="Seed & Spoon"
-            width={320}
-            height={96}
-            className="h-12 md:h-16 lg:h-20 w-auto object-contain"
-            style={{ filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.8))" }}
-            priority
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4 bg-transparent">
+        {/* Logo */}
+        <Link href="/">
+          <img
+            src="/assets/logo/seed-and-spoon-logo-full-compact.png"
+            alt="Seed & Spoon NJ"
+            className="h-24 md:h-28 object-contain"
           />
-        </a>
+        </Link>
 
-        <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map(({ href, label }) => (
-            <a  // ✅ FIXED - Added <a tag
-              key={href}
-              href={href}
-              className="text-lg font-semibold text-white hover:text-yellow-400 transition-colors duration-200"
-              style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
-            >
-              {label}
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-6">
+          <Link href="#about" className="text-green-500 font-semibold hover:text-yellow-400 transition-colors">
+            About
+          </Link>
+          <Link href="#programs" className="text-green-500 font-semibold hover:text-yellow-400 transition-colors">
+            Programs
+          </Link>
+          <Link href="#donate" className="text-green-500 font-semibold hover:text-yellow-400 transition-colors">
+            Donate
+          </Link>
+          <Link href="/volunteer" className="text-green-500 font-semibold hover:text-yellow-400 transition-colors">
+            Volunteer
+          </Link>
+
+          {/* Social Icons */}
+          <div className="flex gap-3 ml-4">
+            <a href="https://www.instagram.com/seedandspoon_nj" target="_blank" rel="noopener noreferrer" className="text-green-500 hover:text-yellow-400 transition-colors" aria-label="Instagram">
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="..."/></svg>
             </a>
-          ))}
-          <ThemeToggle />
+            <a href="https://www.facebook.com/seedandspoon_nj" target="_blank" rel="noopener noreferrer" className="text-green-500 hover:text-yellow-400 transition-colors" aria-label="Facebook">
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="..."/></svg>
+            </a>
+            <a href="https://x.com/seedandspoon_nj" target="_blank" rel="noopener noreferrer" className="text-green-500 hover:text-yellow-400 transition-colors" aria-label="X (Twitter)">
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="..."/></svg>
+            </a>
+          </div>
         </nav>
 
-        <div className="md:hidden flex items-center gap-3">
-          <ThemeToggle />
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
-            className="p-2 text-green-400 hover:text-yellow-400 transition-colors"
-            style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.8))" }}
-          >
-            {mobileOpen ? <HiOutlineX size={28} /> : <HiOutlineMenu size={28} />}
-          </button>
-        </div>
+        {/* Mobile Hamburger */}
+        <button
+          className="md:hidden flex flex-col gap-1"
+          onClick={() => setIsOpen(!isOpen)}
+          aria-label="Toggle Menu"
+        >
+          <span className={`block w-6 h-0.5 transition-all ${isOpen ? "rotate-45 translate-y-1 bg-yellow-400" : "bg-green-500"}`}></span>
+          <span className={`block w-6 h-0.5 transition-all ${isOpen ? "opacity-0" : "bg-green-500"}`}></span>
+          <span className={`block w-6 h-0.5 transition-all ${isOpen ? "-rotate-45 -translate-y-1 bg-yellow-400" : "bg-green-500"}`}></span>
+        </button>
       </div>
 
-      {mobileOpen && (
-        <div className="md:hidden absolute inset-x-0 top-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-xl">
-          <nav className="container mx-auto px-6 py-6 flex flex-col gap-4">
-            {navLinks.map(({ href, label }) => (
-              <a  // ✅ FIXED - Added <a tag
-                key={href}
-                href={href}
-                onClick={() => setMobileOpen(false)}
-                className="text-lg font-semibold text-gray-800 dark:text-gray-100 hover:text-green-600 transition-colors text-center py-2"
-              >
-                {label}
-              </a>
-            ))}
-          </nav>
+      {/* Mobile Menu */}
+      {isOpen && (
+        <div className="md:hidden bg-transparent flex flex-col gap-4 px-6 py-4 text-green-500">
+          <Link href="#about" className="hover:text-yellow-400 transition-colors">About</Link>
+          <Link href="#programs" className="hover:text-yellow-400 transition-colors">Programs</Link>
+          <Link href="#donate" className="hover:text-yellow-400 transition-colors">Donate</Link>
+          <Link href="/volunteer" className="hover:text-yellow-400 transition-colors">Volunteer</Link>
+
+          {/* Optional mobile social links */}
+          <div className="flex gap-4 mt-2">
+            <a href="https://www.instagram.com/seedandspoon_nj" target="_blank" rel="noopener noreferrer" className="hover:text-yellow-400 transition-colors">IG</a>
+            <a href="https://www.facebook.com/seedandspoon_nj" target="_blank" rel="noopener noreferrer" className="hover:text-yellow-400 transition-colors">FB</a>
+            <a href="https://x.com/seedandspoon_nj" target="_blank" rel="noopener noreferrer" className="hover:text-yellow-400 transition-colors">X</a>
+          </div>
         </div>
       )}
     </header>
