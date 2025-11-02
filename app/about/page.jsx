@@ -361,7 +361,7 @@ export default function AboutPage() {
         }}
       />
 
-      <main className="bg-white">
+      <main className="bg-white pt-16 md:pt-20 lg:pt-24">
         {/* Hero Section */}
         <HeroSection />
 
