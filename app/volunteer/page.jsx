@@ -289,4 +289,4 @@ export default function VolunteerPage() {
   return (
     <main className="bg-cream pt-16 md:pt-20 lg:pt-24">
       {/* Hero Section */}
-      <section className={`relative py-20 md:py-32 bg-gradient-to-br from-green-700 to-green-900 text-white transition-opacity duration-1000 ${visible ? 'opacity-100' : 'opacity-
+  <section className={`relative py-20 md:py-32 bg-gradient-to-br from-green-700 to-green-900 text-white transition-opacity duration-1000 ${visible ? 'opacity-100' : 'opacity-0'}`}>
