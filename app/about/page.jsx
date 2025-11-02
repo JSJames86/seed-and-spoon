@@ -440,11 +440,13 @@ function ProblemSection() {
         <div className="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto mb-12">
           {CONTENT.problem.challenges.map((challenge, index) => (
             <article key={index} className="bg-white rounded-lg shadow-lg overflow-hidden">
-              {/* Image placeholder - Replace with actual images */}
-              <div className="relative h-64 bg-gradient-to-br from-orange-400 to-orange-600">
-                <div className="absolute inset-0 flex items-center justify-center text-white text-6xl opacity-50">
-                  {index === 0 ? '🍽️' : '🗑️'}
-                </div>
+              {/* Images */}
+              <div className="relative h-64">
+                <img
+                  src={index === 0 ? '/images/about/problem.jpeg' : '/images/about/distribution.jpeg'}
+                  alt={index === 0 ? 'Community members facing food insecurity' : 'Food waste and distribution challenges'}
+                  className="w-full h-full object-cover"
+                />
               </div>
 
               <div className="p-8">
@@ -501,15 +503,24 @@ function SolutionSection() {
                 index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
               } gap-8 items-center`}
             >
-              {/* Image placeholder - Replace with actual images */}
+              {/* Images */}
               <div className="w-full md:w-1/2">
-                <div className="relative h-80 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg overflow-hidden shadow-xl">
-                  <div className="absolute inset-0 flex items-center justify-center text-white text-7xl opacity-40">
-                    {index === 0 && '🥬'}
-                    {index === 1 && '👨‍🍳'}
-                    {index === 2 && '📦'}
-                    {index === 3 && '🚚'}
-                  </div>
+                <div className="relative h-80 rounded-lg overflow-hidden shadow-xl">
+                  <img
+                    src={
+                      index === 0 ? '/images/about/problem.jpeg' :
+                      index === 1 ? '/images/about/kitchen.png' :
+                      index === 2 ? '/images/about/distribution.jpeg' :
+                      '/images/about/volunteers.jpg'
+                    }
+                    alt={
+                      index === 0 ? 'Rescued surplus food and fresh produce' :
+                      index === 1 ? 'Volunteers cooking meals in commercial kitchen' :
+                      index === 2 ? 'Meals being packaged for distribution' :
+                      'Delivery team distributing meals to community'
+                    }
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
 
@@ -637,6 +648,15 @@ function ImpactSection() {
                 <div className="text-gray-700 font-medium">{stat.label}</div>
               </div>
             ))}
+          </div>
+
+          {/* Impact Graph */}
+          <div className="mt-12 text-center">
+            <img
+              src="/images/about/impact-graph.png"
+              alt="Impact metrics visualization showing growth over time"
+              className="mx-auto rounded-lg shadow-lg max-w-full h-auto"
+            />
           </div>
         </div>
 
