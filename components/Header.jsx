@@ -15,13 +15,15 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? "bg-white shadow-md h-16" : "bg-transparent h-28"
+      className={`fixed top-0 left-0 w-full z-[100] transition-all duration-300 ${
+        scrolled
+          ? "bg-white shadow-md h-16"
+          : "bg-transparent h-28"
       }`}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 h-full">
-        
-        {/* Logo with lift */}
+
+        {/* Logo */}
         <div
           className={`flex items-center transition-all duration-300 ${
             scrolled ? "-translate-y-1" : "translate-y-0"
@@ -33,24 +35,19 @@ export default function Header() {
             width={scrolled ? 180 : 280}
             height={scrolled ? 60 : 90}
             className="transition-all duration-300"
+            priority
           />
         </div>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Nav */}
         <nav
           className={`hidden md:flex space-x-6 font-medium transition-colors duration-300 ${
             scrolled ? "text-gray-800" : "text-white"
           }`}
         >
-          <a href="#about" className="hover:text-green-600 transition-colors">
-            About
-          </a>
-          <a href="#programs" className="hover:text-green-600 transition-colors">
-            Programs
-          </a>
-          <a href="#contact" className="hover:text-green-600 transition-colors">
-            Contact
-          </a>
+          <a href="#about" className="hover:text-green-600 transition-colors">About</a>
+          <a href="#programs" className="hover:text-green-600 transition-colors">Programs</a>
+          <a href="#contact" className="hover:text-green-600 transition-colors">Contact</a>
         </nav>
 
         {/* Mobile Hamburger */}
@@ -89,7 +86,7 @@ export default function Header() {
 
           {/* Mobile Menu */}
           <div
-            className={`absolute top-full left-0 w-full bg-white/95 shadow-lg transform transition-transform duration-300 origin-top ${
+            className={`absolute top-full left-0 w-full bg-white shadow-lg transform transition-transform duration-300 origin-top ${
               menuOpen ? "scale-y-100" : "scale-y-0"
             } md:hidden`}
           >
