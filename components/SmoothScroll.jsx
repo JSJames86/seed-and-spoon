@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 export default function SmoothScroll() {
   useEffect(() => {
-    const handleClick = (e: any) => {
+    const handleClick = (e) => {
       const href = e.target.getAttribute("href");
       if (href?.startsWith("#")) {
         e.preventDefault();
