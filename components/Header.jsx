@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
 import ThemeToggle from "./ThemeToggle";
@@ -14,15 +14,27 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-transparent">
-      <div className="container mx-auto flex h-16 md:h-20 lg:h-24 items-center justify-between px-4 md:px-6">
+    <header 
+      className="fixed top-0 left-0 right-0 z-50"
+      style={{
+        backgroundColor: "transparent",
+        background: "none",
+        backdropFilter: "none",
+        WebkitBackdropFilter: "none"
+      }}
+    >
+      <div 
+        className="container mx-auto flex h-16 md:h-20 lg:h-24 items-center justify-between px-4 md:px-6"
+        style={{ backgroundColor: "transparent" }}
+      >
         <a href="/" className="flex-shrink-0">
           <Image
             src="/logo-light.png"
             alt="Seed & Spoon"
             width={320}
             height={96}
-            className="h-12 md:h-16 lg:h-20 w-auto object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+            className="h-12 md:h-16 lg:h-20 w-auto object-contain"
+            style={{ filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.8))" }}
             priority
           />
         </a>
@@ -32,7 +44,8 @@ export default function Header() {
             
               key={href}
               href={href}
-              className="text-lg font-semibold text-white hover:text-yellow-400 transition-colors duration-200 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
+              className="text-lg font-semibold text-white hover:text-yellow-400 transition-colors duration-200"
+              style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
             >
               {label}
             </a>
@@ -45,7 +58,8 @@ export default function Header() {
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
-            className="p-2 text-green-400 hover:text-yellow-400 transition-colors rounded-md drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
+            className="p-2 text-green-400 hover:text-yellow-400 transition-colors"
+            style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.8))" }}
           >
             {mobileOpen ? <HiOutlineX size={28} /> : <HiOutlineMenu size={28} />}
           </button>
