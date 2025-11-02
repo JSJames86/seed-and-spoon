@@ -1,9 +1,15 @@
 export default function HeroVideo() {
   return (
-    <section className="relative w-full mt-24">
-      <video autoPlay loop muted playsInline className="w-full h-auto">
-        <source src="/assets/hero-video.mp4" type="video/mp4" />
-      </video>
-    </section>
+    <video
+      autoPlay
+      muted
+      loop
+      playsInline
+      poster="/hero-fallback.jpg"
+      className="absolute inset-0 w-full h-full object-cover -z-10"
+    >
+      <source src="/hero.mp4" type="video/mp4" />
+      <source src="/hero.webm" type="video/webm" />
+    </video>
   );
 }
