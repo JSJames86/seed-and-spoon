@@ -3,57 +3,82 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
+import ThemeToggle from "./ThemeToggle";
+
+const navLinks = [
+  { href: "#about", label: "About" },
+  { href: "#programs", label: "Programs" },
+  { href: "#donate", label: "Donate" },
+];
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const toggleMobile = () => setMobileOpen(!mobileOpen);
-
   return (
-    <header className="fixed top-0 left-0 w-full z-[100] transition-all duration-300">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-        {/* Logo */}
-        <Image
-          src="/logo-light.png"
-          alt="Seed & Spoon"
-          width={300}
-          height={90}
-          className="transition-all duration-300 sm:w-[200px] sm:h-auto md:w-[250px] md:h-auto lg:w-[300px] lg:h-auto"
-          priority
-        />
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-lg"
+          : "bg-transparent"
+      }`}
+    >
+      <div className="container mx-auto flex h-16 md:h-20 lg:h-24 items-center justify-between px-4 md:px-6">
+        <a href="/" className="flex-shrink-0">
+          <Image
+            src={scrolled ? "/logo-dark.png" : "/logo-light.png"}
+            alt="Seed & Spoon"
+            width={320}
+            height={96}
+            className="h-12 md:h-16 lg:h-20 w-auto object-contain transition-all duration-300"
+            priority
+          />
+        </a>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-6 font-semibold text-lg text-white">
-          <a href="#about" className="hover:text-green-600 transition-colors">About</a>
-          <a href="#programs" className="hover:text-green-600 transition-colors">Programs</a>
-          <a href="#donate" className="hover:text-yellow-500 transition-colors">Donate</a>
+        <nav className="hidden md:flex items-center gap-8">
+          {navLinks.map(({ href, label }) => (
+            <a
+              key={href}
+              href={href}
+              className="text-lg font-semibold text-white dark:text-gray-100 hover:text-yellow-400 transition-colors duration-200"
+            >
+              {label}
+            </a>
+          ))}
+          <ThemeToggle />
         </nav>
 
-        {/* Mobile Hamburger */}
-        <div className="md:hidden flex items-center">
+        <div className="md:hidden flex items-center gap-3">
+          <ThemeToggle />
           <button
-            onClick={toggleMobile}
-            className="text-green-600 hover:text-yellow-500 text-3xl focus:outline-none"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Toggle menu"
+            className="p-2 text-green-600 dark:text-green-400 hover:text-yellow-400 transition-colors focus-visible:ring-2 focus-visible:ring-yellow-400 rounded-md"
           >
-            {mobileOpen ? <HiOutlineX /> : <HiOutlineMenu />}
+            {mobileOpen ? <HiOutlineX size={28} /> : <HiOutlineMenu size={28} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-transparent">
-          <nav className="flex flex-col items-center space-y-4 py-6 bg-white/90">
-            <a href="#about" className="text-gray-800 font-semibold text-lg">About</a>
-            <a href="#programs" className="text-gray-800 font-semibold text-lg">Programs</a>
-            <a href="#donate" className="text-gray-800 font-semibold text-lg">Donate</a>
+        <div className="md:hidden fixed inset-x-0 top-16 bg-white/98 dark:bg-gray-900/98 backdrop-blur-sm shadow-xl">
+          <nav className="container mx-auto px-6 py-6 flex flex-col gap-4">
+            {navLinks.map(({ href, label }) => (
+              <a
+                key={href}
+                href={href}
+                onClick={() => setMobileOpen(false)}
+                className="text-lg font-semibold text-gray-800 dark:text-gray-100 hover:text-green-600 dark:hover:text-green-400 transition-colors text-center py-2"
+              >
+                {label}
+              </a>
+            ))}
           </nav>
         </div>
       )}
