@@ -27,9 +27,9 @@ export default function Header() {
         <Image
           src={scrolled ? "/logo-dark.png" : "/logo-light.png"}
           alt="Seed & Spoon"
-          width={scrolled ? 200 : 320} // very big, scales slightly on scroll
+          width={scrolled ? 200 : 320}
           height={scrolled ? 65 : 100}
-          className="transition-all duration-300"
+          className="transition-all duration-300 drop-shadow-lg"
           priority
         />
 
@@ -42,7 +42,10 @@ export default function Header() {
 
         {/* Mobile Hamburger */}
         <div className="md:hidden flex items-center">
-          <button onClick={toggleMobile} className="text-green-600 hover:text-yellow-500 text-3xl focus:outline-none">
+          <button
+            onClick={toggleMobile}
+            className="text-green-600 hover:text-yellow-500 text-3xl focus:outline-none"
+          >
             {mobileOpen ? <HiOutlineX /> : <HiOutlineMenu />}
           </button>
         </div>
