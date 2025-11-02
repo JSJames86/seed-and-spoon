@@ -11,7 +11,7 @@ const causesData = [
   {
     id: 'community-meal',
     title: 'Community Meal Program',
-    image: '/images/causes/community-meal.jpg',
+    image: '/images/causes/community-meal.png',
     imageAlt: 'Volunteers serving hot meals to community members',
     description: [
       'Every week, our dedicated volunteers gather in community kitchens across New Jersey to prepare fresh, nutritious meals for families who need them most. We believe that no child should go to bed hungry, and no parent should have to choose between paying rent and feeding their family.',
@@ -33,7 +33,7 @@ const causesData = [
   {
     id: 'pantry-network',
     title: 'Neighborhood Pantry Network',
-    image: '/images/causes/pantry-network.jpg',
+    image: '/images/causes/pantry-network.jpeg',
     imageAlt: 'Community pantry stocked with fresh food and essentials',
     description: [
       'Hunger doesn\'t follow a schedule, and help shouldn\'t either. Our Neighborhood Pantry Network brings food security directly into the heart of communities—at schools, churches, and community centers—where families can access fresh groceries and essentials with dignity and ease.',
@@ -55,7 +55,7 @@ const causesData = [
   {
     id: 'family-food-boxes',
     title: 'Family Food Boxes',
-    image: '/images/causes/family-food-boxes.jpg',
+    image: '/images/causes/family-food-boxes.jpeg',
     imageAlt: 'Packed food boxes ready for family distribution',
     description: [
       'Life gets overwhelming. Job loss, medical emergencies, unexpected expenses—sometimes families just need a little help to get through a tough week or month. Our Family Food Boxes provide a full week\'s worth of groceries and household essentials, carefully packed to support families of all sizes.',
@@ -77,7 +77,7 @@ const causesData = [
   {
     id: 'holiday-meal-drive',
     title: 'Holiday Meal Drive',
-    image: '/images/causes/holiday-meal-drive.jpg',
+    image: '/images/causes/holiday-meal-drive.jpeg',
     imageAlt: 'Thanksgiving meal boxes being prepared by volunteers',
     description: [
       'The holidays should be a time of joy, togetherness, and celebration—not stress and scarcity. Every Thanksgiving and Christmas, we mobilize hundreds of volunteers to cook and distribute complete holiday meals to families who might otherwise go without.',
@@ -99,7 +99,7 @@ const causesData = [
   {
     id: 'youth-garden',
     title: 'Youth Garden Project',
-    image: '/images/causes/youth-garden.jpg',
+    image: '/images/causes/youth-garden.png',
     imageAlt: 'Children learning to plant vegetables in community garden',
     description: [
       'When children learn where their food comes from and how to grow it themselves, something powerful happens. They connect with nature, build confidence, develop healthy eating habits, and understand their role in creating sustainable communities.',
