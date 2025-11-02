@@ -443,8 +443,8 @@ function ProblemSection() {
               {/* Images */}
               <div className="relative h-64">
                 <img
-                  src={index === 0 ? '/images/about/problem.jpeg' : '/images/about/distribution.jpeg'}
-                  alt={index === 0 ? 'Community members facing food insecurity' : 'Food waste and distribution challenges'}
+                  src={index === 0 ? '/images/about/problem.jpeg' : '/images/about/food-waste.jpg'}
+                  alt={index === 0 ? 'Community members facing food insecurity' : 'Food waste in landfills'}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -510,13 +510,13 @@ function SolutionSection() {
                     src={
                       index === 0 ? '/images/about/problem.jpeg' :
                       index === 1 ? '/images/about/kitchen.png' :
-                      index === 2 ? '/images/about/distribution.jpeg' :
+                      index === 2 ? '/images/about/packaged-meals.jpg' :
                       '/images/about/volunteers.jpg'
                     }
                     alt={
                       index === 0 ? 'Rescued surplus food and fresh produce' :
                       index === 1 ? 'Volunteers cooking meals in commercial kitchen' :
-                      index === 2 ? 'Meals being packaged for distribution' :
+                      index === 2 ? 'Meals packaged in containers ready for distribution' :
                       'Delivery team distributing meals to community'
                     }
                     className="w-full h-full object-cover"
