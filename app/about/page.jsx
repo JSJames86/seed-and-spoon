@@ -653,7 +653,7 @@ function ImpactSection() {
           {/* Impact Graph */}
           <div className="mt-12 text-center">
             <img
-              src="/images/about/impact-graph.png"
+              src="/images/about/2551788D-1887-4017-BC24-22046F4E26F6.png"
               alt="Impact metrics visualization showing growth over time"
               className="mx-auto rounded-lg shadow-lg max-w-full h-auto"
             />
