@@ -5,19 +5,20 @@ import Link from "next/link";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
 
-  // Optional: add slight shadow when scrolling
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > window.innerHeight * 0.8);
+    };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrollY > 20 ? "bg-cream shadow-md" : "bg-transparent"
+      className={`fixed top-0 left-0 w-full z-50 transition-colors duration-300 ${
+        isScrolled ? "bg-green-800 shadow-md" : "bg-transparent"
       }`}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
@@ -32,28 +33,28 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
-          <Link href="#about" className="text-green-500 font-semibold hover:text-yellow-400 transition-colors">
+          <Link href="#about" className="text-white font-semibold hover:text-yellow-400 transition-colors">
             About
           </Link>
-          <Link href="#programs" className="text-green-500 font-semibold hover:text-yellow-400 transition-colors">
+          <Link href="#programs" className="text-white font-semibold hover:text-yellow-400 transition-colors">
             Programs
           </Link>
-          <Link href="#donate" className="text-green-500 font-semibold hover:text-yellow-400 transition-colors">
+          <Link href="#donate" className="text-white font-semibold hover:text-yellow-400 transition-colors">
             Donate
           </Link>
-          <Link href="/volunteer" className="text-green-500 font-semibold hover:text-yellow-400 transition-colors">
+          <Link href="/volunteer" className="text-white font-semibold hover:text-yellow-400 transition-colors">
             Volunteer
           </Link>
 
           {/* Social Icons */}
           <div className="flex gap-3 ml-4">
-            <a href="https://www.instagram.com/seedandspoon_nj" target="_blank" rel="noopener noreferrer" className="text-green-500 hover:text-yellow-400 transition-colors" aria-label="Instagram">
+            <a href="https://www.instagram.com/seedandspoon_nj" target="_blank" rel="noopener noreferrer" className="text-white hover:text-yellow-400 transition-colors" aria-label="Instagram">
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="..."/></svg>
             </a>
-            <a href="https://www.facebook.com/seedandspoon_nj" target="_blank" rel="noopener noreferrer" className="text-green-500 hover:text-yellow-400 transition-colors" aria-label="Facebook">
+            <a href="https://www.facebook.com/seedandspoon_nj" target="_blank" rel="noopener noreferrer" className="text-white hover:text-yellow-400 transition-colors" aria-label="Facebook">
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="..."/></svg>
             </a>
-            <a href="https://x.com/seedandspoon_nj" target="_blank" rel="noopener noreferrer" className="text-green-500 hover:text-yellow-400 transition-colors" aria-label="X (Twitter)">
+            <a href="https://x.com/seedandspoon_nj" target="_blank" rel="noopener noreferrer" className="text-white hover:text-yellow-400 transition-colors" aria-label="X (Twitter)">
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="..."/></svg>
             </a>
           </div>
@@ -65,15 +66,15 @@ export default function Header() {
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle Menu"
         >
-          <span className={`block w-6 h-0.5 transition-all ${isOpen ? "rotate-45 translate-y-1 bg-yellow-400" : "bg-green-500"}`}></span>
-          <span className={`block w-6 h-0.5 transition-all ${isOpen ? "opacity-0" : "bg-green-500"}`}></span>
-          <span className={`block w-6 h-0.5 transition-all ${isOpen ? "-rotate-45 -translate-y-1 bg-yellow-400" : "bg-green-500"}`}></span>
+          <span className={`block w-6 h-0.5 transition-all ${isOpen ? "rotate-45 translate-y-1 bg-yellow-400" : "bg-white"}`}></span>
+          <span className={`block w-6 h-0.5 transition-all ${isOpen ? "opacity-0" : "bg-white"}`}></span>
+          <span className={`block w-6 h-0.5 transition-all ${isOpen ? "-rotate-45 -translate-y-1 bg-yellow-400" : "bg-white"}`}></span>
         </button>
       </div>
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-cream flex flex-col gap-4 px-6 py-4 text-green-500">
+        <div className="md:hidden bg-green-800 flex flex-col gap-4 px-6 py-4 text-white">
           <Link href="#about" className="hover:text-yellow-400 transition-colors">About</Link>
           <Link href="#programs" className="hover:text-yellow-400 transition-colors">Programs</Link>
           <Link href="#donate" className="hover:text-yellow-400 transition-colors">Donate</Link>

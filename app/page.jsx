@@ -1,26 +1,46 @@
 // app/page.jsx
 import HeroVideo from "@/components/HeroVideo";
-import HeroContent from "@/components/HeroContent";
 import ScrollReveal from "@/components/ScrollReveal";
 import StayConnected from "@/components/StayConnected";
 
 export default function Home() {
   return (
     <>
-      {/* HERO SECTION */}
-      <section className="relative h-[75vh] md:h-[80vh] w-full overflow-hidden">
+      {/* HERO SECTION - Video Only */}
+      <section className="relative w-full overflow-hidden">
         <HeroVideo />
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="relative z-10 flex h-full items-center justify-center px-6">
-          <HeroContent />
-        </div>
+        {/* Optional subtle overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent"></div>
       </section>
 
-      {/* GREEN HERO CONTENT SECTION */}
+      {/* GREEN HERO CONTENT SECTION - CTAs and Main Message */}
       <ScrollReveal>
         <section className="bg-gradient-to-br from-green-700 to-green-900 py-20 text-white">
           <div className="container mx-auto px-6 text-center">
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">
+            {/* Main Headline */}
+            <h1 className="mb-6 text-4xl font-bold leading-tight md:text-5xl lg:text-6xl">
+              We grow food. We serve meals. But mostly, we <span className="text-yellow-300">see</span> people.
+            </h1>
+
+            <p className="mb-8 text-lg md:text-xl lg:text-2xl max-w-4xl mx-auto">
+              Building food sovereignty in Essex County—one family, one meal, one skill at a time.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center mb-12">
+              <a href="#gethelp" className="rounded-lg bg-green-600 px-8 py-4 font-bold text-white transition hover:bg-green-500 shadow-lg hover:shadow-xl">
+                Get Help
+              </a>
+              <a href="#donate" className="rounded-lg bg-orange-600 px-8 py-4 font-bold text-white transition hover:bg-orange-500 shadow-lg hover:shadow-xl">
+                Donate Now
+              </a>
+              <a href="/volunteer" className="rounded-lg border-2 border-white px-8 py-4 font-bold text-white transition hover:bg-white hover:text-green-900 shadow-lg hover:shadow-xl">
+                Volunteer
+              </a>
+            </div>
+
+            {/* Mission Statement */}
+            <h2 className="text-2xl md:text-4xl font-bold mb-6 border-t border-white/30 pt-12">
               Bridging the gap between surplus and sustenance.
             </h2>
             <p className="text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
