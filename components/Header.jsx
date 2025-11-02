@@ -16,14 +16,12 @@ export default function Header() {
   return (
     <header
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-white/90 backdrop-blur-sm shadow-md h-16"
-          : "bg-transparent h-28"
+        scrolled ? "bg-white shadow-md h-16" : "bg-transparent h-28"
       }`}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 h-full">
         
-        {/* Logo with lift and bigger size */}
+        {/* Logo with lift */}
         <div
           className={`flex items-center transition-all duration-300 ${
             scrolled ? "-translate-y-1" : "translate-y-0"
@@ -34,14 +32,16 @@ export default function Header() {
             alt="Seed & Spoon"
             width={scrolled ? 180 : 280}
             height={scrolled ? 60 : 90}
-            className={`transition-all duration-300 ${
-              scrolled ? "drop-shadow-md" : "drop-shadow-lg"
-            }`}
+            className="transition-all duration-300"
           />
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex space-x-6 text-white md:text-gray-800 font-medium">
+        <nav
+          className={`hidden md:flex space-x-6 font-medium transition-colors duration-300 ${
+            scrolled ? "text-gray-800" : "text-white"
+          }`}
+        >
           <a href="#about" className="hover:text-green-600 transition-colors">
             About
           </a>
@@ -61,7 +61,9 @@ export default function Header() {
             aria-label="Toggle Menu"
           >
             <svg
-              className="w-6 h-6 text-white md:text-gray-800"
+              className={`w-6 h-6 transition-colors duration-300 ${
+                scrolled ? "text-gray-800" : "text-white"
+              }`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -87,7 +89,7 @@ export default function Header() {
 
           {/* Mobile Menu */}
           <div
-            className={`absolute top-full left-0 w-full bg-white/95 backdrop-blur-sm shadow-lg transform transition-transform duration-300 origin-top ${
+            className={`absolute top-full left-0 w-full bg-white/95 shadow-lg transform transition-transform duration-300 origin-top ${
               menuOpen ? "scale-y-100" : "scale-y-0"
             } md:hidden`}
           >
