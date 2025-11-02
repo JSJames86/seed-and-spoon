@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
@@ -5,7 +7,6 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Handle scroll for shrink + background
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
@@ -22,8 +23,12 @@ export default function Header() {
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 h-full">
         
-        {/* Logo */}
-        <div className="flex items-center transition-all duration-300">
+        {/* Logo with lift on scroll */}
+        <div
+          className={`flex items-center transition-all duration-300 ${
+            scrolled ? "-translate-y-1" : "translate-y-0"
+          }`}
+        >
           <Image
             src={scrolled ? "/logo-dark.png" : "/logo-light.png"}
             alt="Seed & Spoon"
