@@ -18,12 +18,12 @@ export default function Header() {
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
         scrolled
           ? "bg-white/90 backdrop-blur-sm shadow-md h-16"
-          : "bg-white/0 backdrop-blur-0 h-24"
+          : "bg-transparent h-28"
       }`}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 h-full">
         
-        {/* Logo with lift on scroll */}
+        {/* Logo with lift and bigger size */}
         <div
           className={`flex items-center transition-all duration-300 ${
             scrolled ? "-translate-y-1" : "translate-y-0"
@@ -32,8 +32,8 @@ export default function Header() {
           <Image
             src={scrolled ? "/logo-dark.png" : "/logo-light.png"}
             alt="Seed & Spoon"
-            width={scrolled ? 180 : 240}
-            height={scrolled ? 60 : 80}
+            width={scrolled ? 180 : 280}
+            height={scrolled ? 60 : 90}
             className={`transition-all duration-300 ${
               scrolled ? "drop-shadow-md" : "drop-shadow-lg"
             }`}
@@ -41,7 +41,7 @@ export default function Header() {
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex space-x-6 text-gray-800 font-medium">
+        <nav className="hidden md:flex space-x-6 text-white md:text-gray-800 font-medium">
           <a href="#about" className="hover:text-green-600 transition-colors">
             About
           </a>
@@ -61,7 +61,7 @@ export default function Header() {
             aria-label="Toggle Menu"
           >
             <svg
-              className="w-6 h-6 text-gray-800"
+              className="w-6 h-6 text-white md:text-gray-800"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
