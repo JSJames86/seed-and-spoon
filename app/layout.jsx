@@ -35,6 +35,13 @@ export default function RootLayout({ children }) {
         <link rel="preload" as="video" href="/hero.mp4" />
         <link rel="preload" as="image" href="/logo-light.png" />
         <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<meta property="og:image" content="/og-image.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:title" content="Seed & Spoon NJ – Tackling Food Insecurity, Preventing Waste" />
+<meta property="og:description" content="From rescue to table: turning surplus food into meals for those in need." />
       </Head>
       <body className="min-h-screen bg-white dark:bg-gray-900 antialiased transition-colors duration-300">
         <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 bg-green-600 text-white px-4 py-2 rounded-lg">
