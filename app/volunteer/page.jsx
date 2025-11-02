@@ -380,70 +380,72 @@ export default function VolunteerPage() {
       </section>
 
       {/* Filter Bar */}
-      <section id="roles" className="py-8 bg-gray-50 sticky top-16 md:top-40 z-30 shadow-md">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-center flex-wrap">
-            <div>
-              <label htmlFor="day-filter" className="mr-2 font-semibold text-gray-700">Day:</label>
-              <select
-                id="day-filter"
-                value={selectedFilters.day}
-                onChange={(e) => setSelectedFilters({...selectedFilters, day: e.target.value})}
-                className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
-              >
-                <option value="all">All Days</option>
-                <option value="monday">Monday</option>
-                <option value="tuesday">Tuesday</option>
-                <option value="wednesday">Wednesday</option>
-                <option value="thursday">Thursday</option>
-                <option value="friday">Friday</option>
-                <option value="saturday">Saturday</option>
-                <option value="flexible">Flexible</option>
-              </select>
-            </div>
-
-            <div>
-              <label htmlFor="category-filter" className="mr-2 font-semibold text-gray-700">Category:</label>
-              <select
-                id="category-filter"
-                value={selectedFilters.category}
-                onChange={(e) => setSelectedFilters({...selectedFilters, category: e.target.value})}
-                className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
-              >
-                <option value="all">All Categories</option>
-                <option value="Kitchen">Kitchen</option>
-                <option value="Logistics">Logistics</option>
-                <option value="Outreach">Outreach</option>
-                <option value="Admin">Admin</option>
-                <option value="Youth">Youth</option>
-                <option value="Fundraising">Fundraising</option>
-                <option value="Support">Support</option>
-              </select>
-            </div>
-
-            <div>
-              <label htmlFor="type-filter" className="mr-2 font-semibold text-gray-700">Type:</label>
-              <select
-                id="type-filter"
-                value={selectedFilters.type}
-                onChange={(e) => setSelectedFilters({...selectedFilters, type: e.target.value})}
-                className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
-              >
-                <option value="all">All</option>
-                <option value="volunteer">Volunteer</option>
-                <option value="paid">Paid/Stipend</option>
-              </select>
-            </div>
-
-            <button
-              onClick={() => setSelectedFilters({ day: 'all', category: 'all', type: 'all' })}
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
-            >
-              Clear Filters
-            </button>
-          </div>
+      <<section id="roles" className="relative z-30">
+  <div className="sticky top-16 md:top-40 bg-gray-50 shadow-md py-4">
+    <div className="container mx-auto px-6">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-center flex-wrap">
+        <div>
+          <label htmlFor="day-filter" className="mr-2 font-semibold text-gray-700">Day:</label>
+          <select
+            id="day-filter"
+            value={selectedFilters.day}
+            onChange={(e) => setSelectedFilters({...selectedFilters, day: e.target.value})}
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+          >
+            <option value="all">All Days</option>
+            <option value="monday">Monday</option>
+            <option value="tuesday">Tuesday</option>
+            <option value="wednesday">Wednesday</option>
+            <option value="thursday">Thursday</option>
+            <option value="friday">Friday</option>
+            <option value="saturday">Saturday</option>
+            <option value="flexible">Flexible</option>
+          </select>
         </div>
-      </section>
+
+        <div>
+          <label htmlFor="category-filter" className="mr-2 font-semibold text-gray-700">Category:</label>
+          <select
+            id="category-filter"
+            value={selectedFilters.category}
+            onChange={(e) => setSelectedFilters({...selectedFilters, category: e.target.value})}
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+          >
+            <option value="all">All Categories</option>
+            <option value="Kitchen">Kitchen</option>
+            <option value="Logistics">Logistics</option>
+            <option value="Outreach">Outreach</option>
+            <option value="Admin">Admin</option>
+            <option value="Youth">Youth</option>
+            <option value="Fundraising">Fundraising</option>
+            <option value="Support">Support</option>
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="type-filter" className="mr-2 font-semibold text-gray-700">Type:</label>
+          <select
+            id="type-filter"
+            value={selectedFilters.type}
+            onChange={(e) => setSelectedFilters({...selectedFilters, type: e.target.value})}
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+          >
+            <option value="all">All</option>
+            <option value="volunteer">Volunteer</option>
+            <option value="paid">Paid/Stipend</option>
+          </select>
+        </div>
+
+        <button
+          onClick={() => setSelectedFilters({ day: 'all', category: 'all', type: 'all' })}
+          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+        >
+          Clear Filters
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Volunteer Roles Grid */}
       <section className="py-20 bg-gray-50">
