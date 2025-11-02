@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <>
       {/* HERO SECTION - Video Only */}
-      <section className="relative w-full overflow-hidden">
+      <section className="relative w-full overflow-hidden pt-32 md:pt-36">
         <HeroVideo />
         {/* Optional subtle overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent"></div>
