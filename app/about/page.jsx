@@ -508,7 +508,7 @@ function SolutionSection() {
                 <div className="relative h-80 rounded-lg overflow-hidden shadow-xl">
                   <img
                     src={
-                      index === 0 ? '/images/about/problem.jpeg' :
+                      index === 0 ? '/images/about/distribution.jpeg' :
                       index === 1 ? '/images/about/kitchen.png' :
                       index === 2 ? '/images/about/meal-prep.jpg' :
                       '/images/about/volunteers.jpg'
