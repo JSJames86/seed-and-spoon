@@ -16,11 +16,11 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 transition-all ${
-        scrollY > 20 ? "shadow-md" : ""
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+        scrollY > 20 ? "bg-cream shadow-md" : "bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4 bg-transparent">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
         {/* Logo */}
         <Link href="/">
           <img
@@ -73,7 +73,7 @@ export default function Header() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-transparent flex flex-col gap-4 px-6 py-4 text-green-500">
+        <div className="md:hidden bg-cream flex flex-col gap-4 px-6 py-4 text-green-500">
           <Link href="#about" className="hover:text-yellow-400 transition-colors">About</Link>
           <Link href="#programs" className="hover:text-yellow-400 transition-colors">Programs</Link>
           <Link href="#donate" className="hover:text-yellow-400 transition-colors">Donate</Link>
