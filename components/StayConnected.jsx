@@ -97,4 +97,5 @@ export default function StayConnected() {
         </div>
       </section>
     </ScrollReveal>
-​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​
+  );
+}

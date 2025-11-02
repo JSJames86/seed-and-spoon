@@ -1,3 +1,4 @@
+"use client";
 // components/Header.jsx
 import { useState, useEffect } from "react";
 import Link from "next/link";
