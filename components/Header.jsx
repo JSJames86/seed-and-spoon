@@ -39,6 +39,9 @@ export default function Header() {
           <Link href="#programs" className="text-white font-semibold hover:text-yellow-400 transition-colors">
             Programs
           </Link>
+          <Link href="/causes" className="text-white font-semibold hover:text-yellow-400 transition-colors">
+            Causes
+          </Link>
           <Link href="#donate" className="text-white font-semibold hover:text-yellow-400 transition-colors">
             Donate
           </Link>
@@ -77,6 +80,7 @@ export default function Header() {
         <div className="md:hidden bg-green-800 flex flex-col gap-4 px-6 py-4 text-white">
           <Link href="#about" className="hover:text-yellow-400 transition-colors">About</Link>
           <Link href="#programs" className="hover:text-yellow-400 transition-colors">Programs</Link>
+          <Link href="/causes" className="hover:text-yellow-400 transition-colors">Causes</Link>
           <Link href="#donate" className="hover:text-yellow-400 transition-colors">Donate</Link>
           <Link href="/volunteer" className="hover:text-yellow-400 transition-colors">Volunteer</Link>
 
