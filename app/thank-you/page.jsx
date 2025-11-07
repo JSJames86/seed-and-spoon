@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
-export default function ThankYouPage() {
+function ThankYouContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
 
@@ -264,5 +264,22 @@ export default function ThankYouPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function ThankYouPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-orange-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-green-600 mx-auto mb-4"></div>
+            <p className="text-gray-600 text-lg">Loading...</p>
+          </div>
+        </div>
+      }
+    >
+      <ThankYouContent />
+    </Suspense>
   );
 }
