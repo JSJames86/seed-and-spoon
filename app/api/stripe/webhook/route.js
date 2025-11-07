@@ -15,12 +15,8 @@ import {
 } from '@/lib/models';
 import { Logger } from '@/lib/api-helpers';
 
-// Disable body parsing for webhooks (Next.js will provide raw body)
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// Next.js 14 App Router automatically provides raw body for webhooks
+// No config needed - request.text() gives us the raw body
 
 export async function POST(request) {
   const logger = new Logger();
