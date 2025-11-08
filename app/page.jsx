@@ -31,7 +31,7 @@ export default function Home() {
               <a href="#gethelp" className="rounded-lg bg-green-600 px-8 py-4 font-bold text-white transition hover:bg-green-500 shadow-lg hover:shadow-xl">
                 Get Help
               </a>
-              <a href="#donate" className="rounded-lg bg-orange-600 px-8 py-4 font-bold text-white transition hover:bg-orange-500 shadow-lg hover:shadow-xl">
+              <a href="/donate" className="rounded-lg bg-orange-600 px-8 py-4 font-bold text-white transition hover:bg-orange-500 shadow-lg hover:shadow-xl">
                 Donate Now
               </a>
               <a href="/volunteer" className="rounded-lg border-2 border-white px-8 py-4 font-bold text-white transition hover:bg-white hover:text-green-900 shadow-lg hover:shadow-xl">
