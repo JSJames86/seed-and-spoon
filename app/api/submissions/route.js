@@ -21,6 +21,9 @@ import {
 } from '@/lib/validation';
 import { createSubmission } from '@/lib/models';
 
+// Force this route to be dynamic (not evaluated at build time)
+export const dynamic = 'force-dynamic';
+
 async function handler(request, context, logger) {
   // Only allow POST requests
   if (request.method !== 'POST') {

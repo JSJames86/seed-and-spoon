@@ -12,6 +12,9 @@ import {
 } from '@/lib/api-helpers';
 import { findDonationBySessionId, getSafeDonationData } from '@/lib/models';
 
+// Force this route to be dynamic (not evaluated at build time)
+export const dynamic = 'force-dynamic';
+
 async function handler(request, { params }, logger) {
   // Only allow GET requests
   if (request.method !== 'GET') {

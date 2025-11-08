@@ -22,6 +22,9 @@ import {
 import { donationCheckoutSchema, validateRequest } from '@/lib/validation';
 import { createDonation, findDonationBySessionId } from '@/lib/models';
 
+// Force this route to be dynamic (not evaluated at build time)
+export const dynamic = 'force-dynamic';
+
 async function handler(request, context, logger) {
   // Only allow POST requests
   if (request.method !== 'POST') {

@@ -15,6 +15,10 @@ import {
 } from '@/lib/models';
 import { Logger } from '@/lib/api-helpers';
 
+// Force this route to be dynamic (not evaluated at build time)
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 // Next.js 14 App Router automatically provides raw body for webhooks
 // No config needed - request.text() gives us the raw body
 
