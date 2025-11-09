@@ -37,7 +37,7 @@ export default function Footer() {
 
   return (
     <footer
-      className="mt-24 border-t border-black/10 bg-white text-black"
+      className="border-t border-black/10 bg-white text-black"
       aria-label="Footer"
     >
       {/* Banner */}
@@ -53,10 +53,10 @@ export default function Footer() {
           {/* Newsletter Form */}
           <div className="max-w-xl mx-auto text-center mb-8">
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-black mb-3">
-              Stay Connected
+              Get Updates
             </h2>
             <p className="text-sm text-black/70 mb-6">
-              Get updates on fresh food, volunteer opportunities, and community impact.
+              Fresh food resources, volunteer opportunities, and impact stories—straight to your inbox.
             </p>
             <form
               onSubmit={handleSubscribe}
