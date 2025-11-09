@@ -1,9 +1,11 @@
 // components/Footer.jsx
 import Link from 'next/link';
+import FooterBanner from './FooterBanner';
 
 export default function Footer() {
   return (
     <footer className="bg-leaf-mid text-cream py-12 px-4">
+      <FooterBanner />
       <div className="max-w-7xl mx-auto">
         {/* Logo */}
         <div className="text-center mb-8">
