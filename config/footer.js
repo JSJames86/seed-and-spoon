@@ -64,17 +64,19 @@ export const columns = [
       { label: "Newsletter Archive", href: "/resources/newsletter" },
     ],
   },
-];
-
-export const legal = [
-  { label: "Privacy Policy", href: "/legal/privacy" },
-  { label: "Terms & Conditions", href: "/legal/terms" },
-  { label: "Food Safety & Allergy Waiver", href: "/legal/food-waiver" },
-  { label: "Donor Privacy Policy", href: "/legal/donor-privacy" },
-  { label: "Non-Discrimination Statement", href: "/legal/non-discrimination" },
-  { label: "Accessibility", href: "/accessibility" },
-  { label: "Cookie Settings", href: "/legal/cookies" },
-  { label: "Sitemap", href: "/sitemap" },
+  {
+    title: "Legal & Policies",
+    links: [
+      { label: "Privacy Policy", href: "/legal/privacy" },
+      { label: "Terms & Conditions", href: "/legal/terms" },
+      { label: "Food Safety & Allergy Waiver", href: "/legal/food-waiver" },
+      { label: "Donor Privacy Policy", href: "/legal/donor-privacy" },
+      { label: "Non-Discrimination Statement", href: "/legal/non-discrimination" },
+      { label: "Accessibility", href: "/accessibility" },
+      { label: "Cookie Settings", href: "/legal/cookies" },
+      { label: "Sitemap", href: "/sitemap" },
+    ],
+  },
 ];
 
 export const socials = [

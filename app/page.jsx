@@ -1,7 +1,7 @@
 // app/page.jsx
 import HeroVideo from "@/components/HeroVideo";
 import ScrollReveal from "@/components/ScrollReveal";
-import StayConnected from "@/components/StayConnected";
+import SocialCTA from "@/components/SocialCTA";
 
 export default function Home() {
   return (
@@ -84,7 +84,7 @@ export default function Home() {
         </section>
       </ScrollReveal>
 
-      <StayConnected />
+      <SocialCTA />
     </>
   );
 }
