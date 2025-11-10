@@ -49,21 +49,29 @@
     OVERLAY MODE: Negative margin pulls hero up under header
     This achieves visual overlay WITHOUT changing document flow
     Result: no CLS, no jump
+
+    DEFAULT: Assume hero is at top (prevents flash on page load)
   */
-  body.has-hero-at-top .hero-section {
+  .hero-section {
     margin-top: calc(-1 * (var(--header-h-mobile) + env(safe-area-inset-top, 0)));
+    transition: margin-top 0.2s ease-out;
   }
 
   @media (min-width: 641px) {
-    body.has-hero-at-top .hero-section {
+    .hero-section {
       margin-top: calc(-1 * (var(--header-h-tablet) + env(safe-area-inset-top, 0)));
     }
   }
 
   @media (min-width: 1025px) {
-    body.has-hero-at-top .hero-section {
+    .hero-section {
       margin-top: calc(-1 * (var(--header-h-desktop) + env(safe-area-inset-top, 0)));
     }
+  }
+
+  /* When scrolled past hero, remove negative margin */
+  body:not(.has-hero-at-top) .hero-section {
+    margin-top: 0;
   }
 }
 
