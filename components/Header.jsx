@@ -33,49 +33,34 @@ export default function Header() {
       return;
     }
 
-    let lastState = false; // Track last state for hysteresis
+    // Set initial state immediately to prevent FOUC
+    document.body.classList.add("has-hero-at-top");
+    setIsScrolled(false);
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          // Hysteresis logic: require crossing a threshold before changing state
-          // When scrolling down: wait until sentinel is fully out of view + 16px
-          // When scrolling up: wait until sentinel is back in view + 16px
-          const shouldBeTransparent = entry.isIntersecting && entry.intersectionRatio > 0.5;
+          // Simple intersection check - when sentinel leaves viewport, header is scrolled
+          const isAtTop = entry.isIntersecting;
 
-          // Only update if state actually changed (prevents thrashing)
-          if (shouldBeTransparent !== lastState) {
-            lastState = shouldBeTransparent;
-            setIsScrolled(!shouldBeTransparent);
+          setIsScrolled(!isAtTop);
 
-            // Toggle body class for layout adjustments
-            if (shouldBeTransparent) {
-              document.body.classList.add("has-hero-at-top");
-            } else {
-              document.body.classList.remove("has-hero-at-top");
-            }
+          // Toggle body class for layout adjustments
+          if (isAtTop) {
+            document.body.classList.add("has-hero-at-top");
+          } else {
+            document.body.classList.remove("has-hero-at-top");
           }
         });
       },
       {
-        // rootMargin creates the hysteresis dead-zone
-        // Negative top margin means sentinel must be 16px out of viewport to trigger
+        // Root margin creates hysteresis - sentinel must be 16px past viewport edge to trigger
         rootMargin: "-16px 0px 0px 0px",
-        threshold: [0, 0.5, 1],
+        threshold: 0,
       }
     );
 
     observer.observe(sentinel);
-
-    // Set initial state
-    const rect = sentinel.getBoundingClientRect();
-    const isAtTop = rect.top >= -16 && rect.top <= 16;
-    setIsScrolled(!isAtTop);
-    if (isAtTop) {
-      document.body.classList.add("has-hero-at-top");
-    } else {
-      document.body.classList.remove("has-hero-at-top");
-    }
 
     return () => {
       observer.disconnect();
