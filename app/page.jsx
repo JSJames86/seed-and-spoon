@@ -8,7 +8,8 @@ export default function Home() {
   return (
     <>
       {/* HERO SECTION - Video Only */}
-      <section className="relative w-full overflow-hidden pt-32 md:pt-36">
+      {/* Padding matches header height: pt-14 (56px) md:pt-16 (64px) lg:pt-[72px] */}
+      <section className="relative w-full overflow-hidden pt-14 md:pt-16 lg:pt-[72px]">
         <HeroVideo />
         {/* Optional subtle overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent"></div>
