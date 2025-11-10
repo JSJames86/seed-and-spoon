@@ -165,15 +165,13 @@ export default function Header() {
           Using h-14 (56px), md:h-16 (64px), lg:h-18 (72px)
         */}
         <div className="max-w-7xl mx-auto h-14 md:h-16 lg:h-[72px] flex items-center justify-between px-4 sm:px-6">
-          {/* Logo with swap on scroll */}
+          {/* Logo with swap on scroll - subtle scale animation for premium feel */}
           <Link href="/" className="flex-shrink-0">
             <img
               src={isScrolled ? logoScrolled : logoDefault}
               alt="Seed & Spoon NJ"
-              className={`w-auto object-contain transition-all duration-200 ${
-                isScrolled
-                  ? "h-8 sm:h-9 md:h-10 lg:h-11 scale-90"
-                  : "h-9 sm:h-10 md:h-11 lg:h-12"
+              className={`h-9 sm:h-10 md:h-11 lg:h-12 w-auto object-contain transition-all duration-200 ${
+                isScrolled ? "scale-95" : "scale-100"
               }`}
               style={{ minWidth: "120px" }}
             />
