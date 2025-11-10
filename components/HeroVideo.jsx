@@ -6,7 +6,7 @@ export default function HeroVideo() {
       loop
       playsInline
       poster="/hero-fallback.jpg"
-      className="w-full h-auto max-h-[90vh] object-cover md:max-h-[100vh]"
+      className="absolute inset-0 w-full h-full object-cover"
       aria-label="Background video showing Seed & Spoon community impact"
     >
       <source src="/hero.mp4" type="video/mp4" />

@@ -159,6 +159,7 @@ export default function Header() {
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-200 ${
           isScrolled ? "bg-green-800 shadow-md" : "bg-transparent"
         }`}
+        style={{ willChange: 'opacity, background-color' }}
       >
         {/*
           Header heights: 56px mobile (≤640px), 64px tablet (641-1024px), 72px desktop (≥1025px)
