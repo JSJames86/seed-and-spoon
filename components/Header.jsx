@@ -120,6 +120,12 @@ export default function Header() {
               Causes
             </Link>
             <Link
+              href="/get-help"
+              className="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700 transition-colors shadow-lg"
+            >
+              Get Help
+            </Link>
+            <Link
               href="/donate"
               className="bg-orange-500 text-white px-6 py-2 rounded-lg font-bold hover:bg-orange-600 transition-colors shadow-lg"
             >
@@ -247,6 +253,13 @@ export default function Header() {
                   className="text-white text-3xl font-bold hover:text-yellow-400 transition-colors text-center"
                 >
                   Causes
+                </Link>
+                <Link
+                  href="/get-help"
+                  onClick={handleLinkClick}
+                  className="text-white text-3xl font-bold hover:text-yellow-400 transition-colors text-center"
+                >
+                  Get Help
                 </Link>
                 <Link
                   href="/volunteer"
