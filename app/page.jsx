@@ -1,4 +1,5 @@
 // app/page.jsx
+import Link from "next/link";
 import HeroVideo from "@/components/HeroVideo";
 import ScrollReveal from "@/components/ScrollReveal";
 import SocialCTA from "@/components/SocialCTA";
@@ -28,15 +29,15 @@ export default function Home() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center mb-12">
-              <a href="#gethelp" className="rounded-lg bg-green-600 px-8 py-4 font-bold text-white transition hover:bg-green-500 shadow-lg hover:shadow-xl">
+              <Link href="/get-help" className="rounded-lg bg-green-600 px-8 py-4 font-bold text-white transition hover:bg-green-500 shadow-lg hover:shadow-xl">
                 Get Help
-              </a>
-              <a href="/donate" className="rounded-lg bg-orange-600 px-8 py-4 font-bold text-white transition hover:bg-orange-500 shadow-lg hover:shadow-xl">
+              </Link>
+              <Link href="/donate" className="rounded-lg bg-orange-600 px-8 py-4 font-bold text-white transition hover:bg-orange-500 shadow-lg hover:shadow-xl">
                 Donate Now
-              </a>
-              <a href="/volunteer" className="rounded-lg border-2 border-white px-8 py-4 font-bold text-white transition hover:bg-white hover:text-green-900 shadow-lg hover:shadow-xl">
+              </Link>
+              <Link href="/volunteer" className="rounded-lg border-2 border-white px-8 py-4 font-bold text-white transition hover:bg-white hover:text-green-900 shadow-lg hover:shadow-xl">
                 Volunteer
-              </a>
+              </Link>
             </div>
 
             {/* Mission Statement */}
