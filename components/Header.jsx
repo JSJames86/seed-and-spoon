@@ -141,16 +141,16 @@ export default function Header() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-200 ${
+        className={`fixed top-0 left-0 right-0 h-14 md:h-16 lg:h-[72px] z-[1000] transition-colors duration-200 ${
           isScrolled ? "bg-green-800 shadow-md" : "bg-transparent"
         }`}
         style={{ willChange: 'opacity, background-color' }}
       >
         {/*
           Header heights: 56px mobile (≤640px), 64px tablet (641-1024px), 72px desktop (≥1025px)
-          Using h-14 (56px), md:h-16 (64px), lg:h-18 (72px)
+          Fixed height prevents any reflow. Only background-color transitions.
         */}
-        <div className="max-w-7xl mx-auto h-14 md:h-16 lg:h-[72px] flex items-center justify-between px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto h-full flex items-center justify-between px-4 sm:px-6">
           {/* Logo with swap on scroll - subtle scale animation for premium feel */}
           <Link href="/" className="flex-shrink-0">
             <img
