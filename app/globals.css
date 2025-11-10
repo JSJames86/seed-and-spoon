@@ -11,6 +11,11 @@
     body {
       padding-bottom: env(safe-area-inset-bottom);
     }
+
+    /* Header safe area support - ensures header hugs top on iOS with notch */
+    header {
+      padding-top: env(safe-area-inset-top, 0);
+    }
   }
 }
 

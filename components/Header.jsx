@@ -9,12 +9,42 @@ export default function Header() {
   const hamburgerRef = useRef(null);
   const menuRef = useRef(null);
 
+  // Logo assets
+  const logoDefault = "/assets/logo/seed-and-spoon-logo-full-compact.png";
+  const logoScrolled = "/assets/logo/seed-and-spoon-logo-full.png";
+
+  // Preload logo assets to prevent flicker
+  useEffect(() => {
+    const preloadImages = [logoDefault, logoScrolled];
+    preloadImages.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, [logoDefault, logoScrolled]);
+
+  // Improved scroll detection - triggers at 24px for early transition
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > window.innerHeight * 0.8);
+      setIsScrolled(window.scrollY > 24);
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    // Set initial state
+    handleScroll();
+
+    // Throttle scroll events for performance
+    let ticking = false;
+    const scrollListener = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", scrollListener, { passive: true });
+    return () => window.removeEventListener("scroll", scrollListener);
   }, []);
 
   // Handle ESC key to close menu
@@ -90,18 +120,22 @@ export default function Header() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 w-full z-50 transition-colors duration-300 ${
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-200 ${
           isScrolled ? "bg-green-800 shadow-md" : "bg-transparent"
         }`}
-        style={{ paddingTop: "env(safe-area-inset-top)" }}
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-          {/* Logo */}
-          <Link href="/">
+        {/*
+          Header heights: 56px mobile (≤640px), 64px tablet (641-1024px), 72px desktop (≥1025px)
+          Using h-14 (56px), md:h-16 (64px), lg:h-18 (72px)
+        */}
+        <div className="max-w-7xl mx-auto h-14 md:h-16 lg:h-[72px] flex items-center justify-between px-4 sm:px-6">
+          {/* Logo with swap on scroll */}
+          <Link href="/" className="flex-shrink-0">
             <img
-              src="/assets/logo/seed-and-spoon-logo-full-compact.png"
+              src={isScrolled ? logoScrolled : logoDefault}
               alt="Seed & Spoon NJ"
-              className="h-24 md:h-28 object-contain"
+              className="h-8 sm:h-10 md:h-12 lg:h-14 w-auto object-contain transition-opacity duration-200"
+              style={{ minWidth: "120px" }}
             />
           </Link>
 
@@ -188,31 +222,36 @@ export default function Header() {
             </div>
           </nav>
 
-          {/* Mobile Hamburger */}
+          {/* Mobile Hamburger - 44x44px tap target for accessibility */}
           <button
             ref={hamburgerRef}
-            className="md:hidden flex flex-col gap-1 z-50"
+            className="md:hidden flex flex-col gap-1 z-50 p-3 -mr-3"
             onClick={() => setIsOpen(!isOpen)}
             aria-label={isOpen ? "Close Menu" : "Open Menu"}
             aria-expanded={isOpen}
             aria-controls="mobile-menu"
+            style={{ minWidth: "44px", minHeight: "44px" }}
           >
             <span
-              className={`block w-6 h-0.5 transition-all ${
+              className={`block w-6 h-0.5 transition-all duration-200 ${
                 isOpen
                   ? "rotate-45 translate-y-1.5 bg-yellow-400"
+                  : isScrolled
+                  ? "bg-white"
                   : "bg-white"
               }`}
             ></span>
             <span
-              className={`block w-6 h-0.5 transition-all ${
-                isOpen ? "opacity-0" : "bg-white"
+              className={`block w-6 h-0.5 transition-all duration-200 ${
+                isOpen ? "opacity-0" : isScrolled ? "bg-white" : "bg-white"
               }`}
             ></span>
             <span
-              className={`block w-6 h-0.5 transition-all ${
+              className={`block w-6 h-0.5 transition-all duration-200 ${
                 isOpen
                   ? "-rotate-45 -translate-y-1.5 bg-yellow-400"
+                  : isScrolled
+                  ? "bg-white"
                   : "bg-white"
               }`}
             ></span>
