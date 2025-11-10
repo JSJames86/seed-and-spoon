@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "test:db": "node scripts/test-mongodb.js",
-    "init:db": "node scripts/init-db.js"
+    "init:db": "node scripts/init-db.js",
+    "import": "node scripts/import-excel.js",
+    "import:resources": "node scripts/import-resources.js"
   },
   "dependencies": {
     "date-fns": "^4.1.0",
