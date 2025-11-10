@@ -99,7 +99,7 @@ export default function Footer() {
                 <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-600 mb-4">
                   {column.title}
                 </h3>
-                <ul className="space-y-3">
+                <ul className="space-y-2.5">
                   {column.links.map((link, linkIdx) => (
                     <li key={linkIdx}>
                       <Link
@@ -147,7 +147,7 @@ export default function Footer() {
           </div>
 
           {/* Legal Row 1 */}
-          <div className="flex flex-wrap justify-center items-center gap-3 text-xs text-neutral-500 mb-3">
+          <div className="flex flex-wrap justify-center items-center gap-x-3 gap-y-2 text-xs text-neutral-500 mb-3">
             <span>© {currentYear} {org.name}</span>
             <span>•</span>
             <Link href="/legal/privacy" className="hover:text-black hover:underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-sm">
@@ -164,7 +164,7 @@ export default function Footer() {
           </div>
 
           {/* Legal Row 2 */}
-          <div className="flex flex-wrap justify-center items-center gap-3 text-xs text-neutral-500">
+          <div className="flex flex-wrap justify-center items-center gap-x-3 gap-y-2 text-xs text-neutral-500">
             <a href={`tel:${org.phone}`} className="hover:text-black hover:underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-sm">
               (732) 707-1769
             </a>
