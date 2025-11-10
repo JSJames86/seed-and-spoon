@@ -170,7 +170,11 @@ export default function Header() {
             <img
               src={isScrolled ? logoScrolled : logoDefault}
               alt="Seed & Spoon NJ"
-              className="h-8 sm:h-10 md:h-12 lg:h-14 w-auto object-contain transition-opacity duration-200"
+              className={`w-auto object-contain transition-all duration-200 ${
+                isScrolled
+                  ? "h-8 sm:h-9 md:h-10 lg:h-11 scale-90"
+                  : "h-9 sm:h-10 md:h-11 lg:h-12"
+              }`}
               style={{ minWidth: "120px" }}
             />
           </Link>
