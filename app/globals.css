@@ -25,12 +25,21 @@
 
   html {
     scroll-behavior: smooth;
+    /* iOS Safari viewport fix */
+    height: -webkit-fill-available;
   }
 
   body {
     /* CONSTANT padding - never toggled (prevents CLS) */
     padding-top: var(--header-h);
     padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  /* iOS Safari min-h-screen fix */
+  @supports (-webkit-touch-callout: none) {
+    .min-h-screen {
+      min-height: -webkit-fill-available;
+    }
   }
 
   /* Header safe area - applies internally, not to body */
