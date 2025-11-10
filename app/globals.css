@@ -17,6 +17,29 @@
       padding-top: env(safe-area-inset-top, 0);
     }
   }
+
+  /* Body padding for fixed header - only when NOT in overlay mode */
+  body:not(.has-hero-at-top) {
+    /* Add padding equal to header height + safe area to prevent content overlap */
+    padding-top: calc(56px + env(safe-area-inset-top, 0)); /* Mobile: 56px (h-14) */
+  }
+
+  @media (min-width: 641px) {
+    body:not(.has-hero-at-top) {
+      padding-top: calc(64px + env(safe-area-inset-top, 0)); /* Tablet: 64px (md:h-16) */
+    }
+  }
+
+  @media (min-width: 1025px) {
+    body:not(.has-hero-at-top) {
+      padding-top: calc(72px + env(safe-area-inset-top, 0)); /* Desktop: 72px (lg:h-[72px]) */
+    }
+  }
+
+  /* When hero is at top (overlay mode), no body padding needed */
+  body.has-hero-at-top {
+    padding-top: 0;
+  }
 }
 
 @layer components {

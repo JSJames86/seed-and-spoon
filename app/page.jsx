@@ -8,8 +8,9 @@ export default function Home() {
   return (
     <>
       {/* HERO SECTION - Video Only */}
-      {/* Padding matches header height: pt-14 (56px) md:pt-16 (64px) lg:pt-[72px] */}
-      <section className="relative w-full overflow-hidden pt-14 md:pt-16 lg:pt-[72px]">
+      {/* Sentinel for IntersectionObserver - triggers header overlay mode */}
+      <section className="relative w-full overflow-hidden">
+        <div id="hero-sentinel" className="absolute top-0 left-0 w-full h-px pointer-events-none" aria-hidden="true"></div>
         <HeroVideo />
         {/* Optional subtle overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent"></div>

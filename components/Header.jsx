@@ -22,29 +22,65 @@ export default function Header() {
     });
   }, [logoDefault, logoScrolled]);
 
-  // Improved scroll detection - triggers at 24px for early transition
+  // IntersectionObserver with hysteresis to prevent state thrashing
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 24);
-    };
+    const sentinel = document.getElementById("hero-sentinel");
+
+    // Fallback: if no sentinel (pages without hero), start in scrolled state
+    if (!sentinel) {
+      setIsScrolled(true);
+      document.body.classList.remove("has-hero-at-top");
+      return;
+    }
+
+    let lastState = false; // Track last state for hysteresis
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          // Hysteresis logic: require crossing a threshold before changing state
+          // When scrolling down: wait until sentinel is fully out of view + 16px
+          // When scrolling up: wait until sentinel is back in view + 16px
+          const shouldBeTransparent = entry.isIntersecting && entry.intersectionRatio > 0.5;
+
+          // Only update if state actually changed (prevents thrashing)
+          if (shouldBeTransparent !== lastState) {
+            lastState = shouldBeTransparent;
+            setIsScrolled(!shouldBeTransparent);
+
+            // Toggle body class for layout adjustments
+            if (shouldBeTransparent) {
+              document.body.classList.add("has-hero-at-top");
+            } else {
+              document.body.classList.remove("has-hero-at-top");
+            }
+          }
+        });
+      },
+      {
+        // rootMargin creates the hysteresis dead-zone
+        // Negative top margin means sentinel must be 16px out of viewport to trigger
+        rootMargin: "-16px 0px 0px 0px",
+        threshold: [0, 0.5, 1],
+      }
+    );
+
+    observer.observe(sentinel);
 
     // Set initial state
-    handleScroll();
+    const rect = sentinel.getBoundingClientRect();
+    const isAtTop = rect.top >= -16 && rect.top <= 16;
+    setIsScrolled(!isAtTop);
+    if (isAtTop) {
+      document.body.classList.add("has-hero-at-top");
+    } else {
+      document.body.classList.remove("has-hero-at-top");
+    }
 
-    // Throttle scroll events for performance
-    let ticking = false;
-    const scrollListener = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          handleScroll();
-          ticking = false;
-        });
-        ticking = true;
-      }
+    return () => {
+      observer.disconnect();
+      document.body.classList.remove("has-hero-at-top");
     };
-
-    window.addEventListener("scroll", scrollListener, { passive: true });
-    return () => window.removeEventListener("scroll", scrollListener);
   }, []);
 
   // Handle ESC key to close menu
