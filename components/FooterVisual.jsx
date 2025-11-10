@@ -1,51 +1,14 @@
 import Image from "next/image";
 
-// Inline placeholder logo if SVG assets are missing
-function PlaceholderLogo({ className }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 560 80"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      role="img"
-      aria-label="Seed & Spoon logo"
-    >
-      {/* Simple seed/leaf icon */}
-      <circle cx="40" cy="40" r="28" fill="currentColor" opacity="0.08" />
-      <path
-        d="M40 20C33 20 28 25 28 32C28 41 33 46 40 46C40 46 40 39 40 32C40 32 45 32 50 32C55 32 60 37 60 46C60 55 55 60 48 60C41 60 36 55 36 46"
-        stroke="currentColor"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-      {/* Text */}
-      <text
-        x="90"
-        y="52"
-        fontFamily="system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
-        fontSize="32"
-        fontWeight="700"
-        fill="currentColor"
-        letterSpacing="-0.02em"
-      >
-        Seed &amp; Spoon
-      </text>
-    </svg>
-  );
-}
-
 export default function FooterVisual() {
-  // Detect which illustration files exist (all 4 tight variants are available)
+  // Illustration configuration
   const illustrationSrc = "/brand/footer-illustration-tight-1600.webp";
   const illustrationWidth = 1600;
   const illustrationHeight = 480;
 
-  // Logo priority: lockup.svg → icon.svg → placeholder
-  // Since no SVG files exist yet, we'll use placeholder
-  const logoSrc = "/brand/logo-lockup.svg"; // Will fallback to placeholder if missing
+  // Logo: Use real brand asset (PNG until SVG is uploaded)
+  const logoSvg = "/brand/logo-lockup.svg";
+  const logoPng = "/assets/logo/seed-and-spoon-logo-full-compact.png";
 
   return (
     <div className="bg-white">
@@ -74,21 +37,19 @@ export default function FooterVisual() {
         {/* Logo - sits directly below illustration with negative margin to close gap */}
         <div className="block mx-auto -mt-[3px] w-[min(560px,92vw)] sm:w-[min(640px,92vw)] md:w-[min(720px,92vw)]">
           <img
-            src={logoSrc}
+            src={`${logoPng}?v=1`}
             alt="Seed & Spoon logo"
             draggable={false}
             className="w-full h-auto"
             onError={(e) => {
-              // If SVG logo fails, render inline placeholder
-              const placeholder = document.createElement('div');
-              placeholder.innerHTML = `
-                <svg viewBox="0 0 560 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto text-neutral-900">
-                  <circle cx="40" cy="40" r="28" fill="currentColor" opacity="0.08" />
-                  <path d="M40 20C33 20 28 25 28 32C28 41 33 46 40 46C40 46 40 39 40 32C40 32 45 32 50 32C55 32 60 37 60 46C60 55 55 60 48 60C41 60 36 55 36 46" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-                  <text x="90" y="52" font-family="system-ui, -apple-system, BlinkMacSystemFont, sans-serif" font-size="32" font-weight="700" fill="currentColor" letter-spacing="-0.02em">Seed &amp; Spoon</text>
-                </svg>
-              `;
-              e.target.replaceWith(placeholder.firstElementChild);
+              // Try SVG if PNG fails (future-proofing for when you upload SVG)
+              if (!e.target.dataset.tried) {
+                e.target.dataset.tried = "true";
+                e.target.src = `${logoSvg}?v=1`;
+              } else {
+                console.warn("Footer visual logo failed to load - no logo displayed");
+                e.target.style.display = "none";
+              }
             }}
           />
         </div>
