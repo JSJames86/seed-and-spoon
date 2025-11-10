@@ -9,11 +9,11 @@ export default function Home() {
     <>
       {/* HERO SECTION - Video Only */}
       {/* Sentinel for IntersectionObserver - triggers header overlay mode */}
-      <section className="relative w-full overflow-hidden">
+      <section className="hero-section relative w-full overflow-hidden min-h-screen" style={{ blockSize: '100svh' }}>
         <div id="hero-sentinel" className="absolute top-0 left-0 w-full h-px pointer-events-none" aria-hidden="true"></div>
         <HeroVideo />
         {/* Optional subtle overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none"></div>
       </section>
 
       {/* GREEN HERO CONTENT SECTION - CTAs and Main Message */}
