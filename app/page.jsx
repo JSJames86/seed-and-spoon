@@ -1,15 +1,34 @@
 // app/page.jsx
+"use client";
+import { useEffect } from "react";
 import Link from "next/link";
 import HeroVideo from "@/components/HeroVideo";
 import ScrollReveal from "@/components/ScrollReveal";
 import SocialCTA from "@/components/SocialCTA";
 
 export default function Home() {
+  // Set --vh CSS variable for iOS viewport height fix
+  useEffect(() => {
+    const setVh = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+
+    setVh();
+    window.addEventListener('resize', setVh);
+    window.addEventListener('orientationchange', setVh);
+
+    return () => {
+      window.removeEventListener('resize', setVh);
+      window.removeEventListener('orientationchange', setVh);
+    };
+  }, []);
+
   return (
     <>
       {/* HERO SECTION - Video Only */}
       {/* Sentinel for IntersectionObserver - triggers header overlay mode */}
-      <section className="hero-section relative w-full overflow-hidden min-h-screen" style={{ blockSize: '100svh' }}>
+      <section className="hero-section relative w-full overflow-hidden">
         <div id="hero-sentinel" className="absolute top-0 left-0 w-full h-px pointer-events-none" aria-hidden="true"></div>
         <HeroVideo />
         {/* Optional subtle overlay */}

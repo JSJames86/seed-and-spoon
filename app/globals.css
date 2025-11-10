@@ -8,68 +8,60 @@
     --header-h-mobile: 56px;    /* h-14 */
     --header-h-tablet: 64px;    /* md:h-16 */
     --header-h-desktop: 72px;   /* lg:h-[72px] */
+    --header-h: var(--header-h-mobile); /* Default */
+  }
+
+  @media (min-width: 641px) {
+    :root {
+      --header-h: var(--header-h-tablet);
+    }
+  }
+
+  @media (min-width: 1025px) {
+    :root {
+      --header-h: var(--header-h-desktop);
+    }
   }
 
   html {
     scroll-behavior: smooth;
   }
 
-  @supports (padding: max(0px)) {
-    body {
-      padding-bottom: env(safe-area-inset-bottom);
-    }
-
-    /* Header safe area support - ensures header hugs top on iOS with notch */
-    header {
-      padding-top: env(safe-area-inset-top, 0);
-    }
-  }
-
-  /*
-    CONSTANT body padding prevents CLS jumps
-    Applied at all times - never toggled on/off
-  */
   body {
-    padding-top: calc(var(--header-h-mobile) + env(safe-area-inset-top, 0));
+    /* CONSTANT padding - never toggled (prevents CLS) */
+    padding-top: var(--header-h);
+    padding-bottom: env(safe-area-inset-bottom, 0);
   }
 
-  @media (min-width: 641px) {
-    body {
-      padding-top: calc(var(--header-h-tablet) + env(safe-area-inset-top, 0));
-    }
-  }
-
-  @media (min-width: 1025px) {
-    body {
-      padding-top: calc(var(--header-h-desktop) + env(safe-area-inset-top, 0));
-    }
+  /* Header safe area - applies internally, not to body */
+  header {
+    padding-top: env(safe-area-inset-top, 0);
   }
 
   /*
-    OVERLAY MODE: Negative margin pulls hero up under header
-    This achieves visual overlay WITHOUT changing document flow
-    Result: no CLS, no jump
-
-    DEFAULT: Assume hero is at top (prevents flash on page load)
+    HERO SECTION: Full viewport height with iOS fallback
+    Uses both modern viewport units and --vh variable
   */
   .hero-section {
-    margin-top: calc(-1 * (var(--header-h-mobile) + env(safe-area-inset-top, 0)));
+    /* Full viewport height with fallbacks */
+    min-height: 100vh; /* Fallback 1 */
+    min-height: calc(var(--vh, 1vh) * 100); /* Fallback 2: iOS --vh shim */
+    height: 100svh; /* Modern: small viewport height */
+    height: 100dvh; /* Modern: dynamic viewport height (overrides if supported) */
+
+    /* Negative margin for overlay - pulls hero up under header */
+    /* Note: Does NOT include safe-area-inset (header handles it internally) */
+    margin-top: calc(-1 * var(--header-h));
+
+    /* Smooth transition */
     transition: margin-top 0.2s ease-out;
+
+    /* Prevent iOS scroll bounce issues */
+    overflow: hidden;
+    position: relative;
   }
 
-  @media (min-width: 641px) {
-    .hero-section {
-      margin-top: calc(-1 * (var(--header-h-tablet) + env(safe-area-inset-top, 0)));
-    }
-  }
-
-  @media (min-width: 1025px) {
-    .hero-section {
-      margin-top: calc(-1 * (var(--header-h-desktop) + env(safe-area-inset-top, 0)));
-    }
-  }
-
-  /* When scrolled past hero, remove negative margin */
+  /* When scrolled past hero, remove negative margin (normal flow) */
   body:not(.has-hero-at-top) .hero-section {
     margin-top: 0;
   }
