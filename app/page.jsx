@@ -28,11 +28,11 @@ export default function Home() {
     <>
       {/* HERO SECTION - Video Only */}
       {/* Sentinel for IntersectionObserver - triggers header overlay mode */}
-      <section className="hero-section relative w-full overflow-hidden">
+      <section className="hero-section relative w-full min-h-screen overflow-hidden flex items-center justify-center bg-black">
         <div id="hero-sentinel" className="absolute top-0 left-0 w-full h-px pointer-events-none" aria-hidden="true"></div>
         <HeroVideo />
-        {/* Optional subtle overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none"></div>
+        {/* Improved overlay for text contrast */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50 pointer-events-none" aria-hidden="true"></div>
       </section>
 
       {/* GREEN HERO CONTENT SECTION - CTAs and Main Message */}
