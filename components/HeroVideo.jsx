@@ -17,16 +17,22 @@ export default function HeroVideo() {
   }, []);
 
   useEffect(() => {
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.as = 'image';
-    link.href = '/media/hero/hero-poster.jpg';
-    document.head.appendChild(link);
+    const posterLink = document.createElement('link');
+    posterLink.rel = 'preload';
+    posterLink.as = 'image';
+    posterLink.href = '/media/hero/hero-poster.jpg';
+    document.head.appendChild(posterLink);
+
+    const webmLink = document.createElement('link');
+    webmLink.rel = 'preload';
+    webmLink.as = 'video';
+    webmLink.href = '/media/hero/hero-video.webm';
+    webmLink.type = 'video/webm';
+    document.head.appendChild(webmLink);
 
     return () => {
-      if (link.parentNode) {
-        link.parentNode.removeChild(link);
-      }
+      if (posterLink.parentNode) posterLink.parentNode.removeChild(posterLink);
+      if (webmLink.parentNode) webmLink.parentNode.removeChild(webmLink);
     };
   }, []);
 

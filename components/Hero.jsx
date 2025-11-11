@@ -1,7 +1,6 @@
 "use client";
 import { useEffect } from "react";
 import HeroVideo from "./HeroVideo";
-import HeroContent from "./HeroContent";
 
 export default function Hero() {
   useEffect(() => {
@@ -21,7 +20,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="hero-section relative w-full min-h-[100dvh] overflow-hidden flex items-center justify-center bg-black">
+    <section className="hero-section relative w-full h-screen min-h-[100dvh] overflow-hidden bg-black">
       <div
         id="hero-sentinel"
         className="absolute top-0 left-0 w-full h-px pointer-events-none"
@@ -31,11 +30,9 @@ export default function Hero() {
       <HeroVideo />
 
       <div
-        className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60 pointer-events-none"
+        className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50 pointer-events-none"
         aria-hidden="true"
       />
-
-      <HeroContent />
     </section>
   );
 }
