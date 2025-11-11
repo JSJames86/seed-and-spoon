@@ -59,11 +59,8 @@
     height: 100dvh; /* Modern: dynamic viewport height (overrides if supported) */
 
     /* Negative margin for overlay - pulls hero up under header */
-    /* Note: Does NOT include safe-area-inset (header handles it internally) */
-    margin-top: calc(-1 * var(--header-h));
-
-    /* Smooth transition */
-    transition: margin-top 0.2s ease-out;
+    /* Includes safe-area-inset to account for iOS notch/Dynamic Island */
+    margin-top: calc(-1 * (var(--header-h) + env(safe-area-inset-top, 0px)));
 
     /* Prevent iOS scroll bounce issues */
     overflow: hidden;
