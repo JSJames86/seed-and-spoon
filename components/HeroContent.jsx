@@ -5,12 +5,12 @@ const words = "We grow food. We serve meals. But mostly, we see people.".split("
 
 export default function HeroContent() {
   return (
-    <div className="relative z-10 text-center text-white max-w-5xl mx-auto px-6">
+    <div className="text-center text-gray-900">
       <motion.h1
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, staggerChildren: 0.05 }}
-        className="mb-8 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight drop-shadow-2xl"
+        className="mb-8 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight"
       >
         {words.map((word, i) => (
           <motion.span
@@ -18,7 +18,7 @@ export default function HeroContent() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
-            className={word === "see" ? "text-yellow-300" : ""}
+            className={word === "see" ? "text-green-600" : ""}
           >
             {word}{" "}
           </motion.span>
@@ -29,7 +29,7 @@ export default function HeroContent() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.9 }}
-        className="mb-10 text-xl md:text-2xl lg:text-3xl font-light drop-shadow-lg"
+        className="mb-10 text-xl md:text-2xl lg:text-3xl text-gray-700 font-light"
       >
         Building food sovereignty in Essex County—one family, one meal, one skill at a time.
       </motion.p>
@@ -41,7 +41,7 @@ export default function HeroContent() {
         className="flex flex-col gap-4 sm:flex-row sm:justify-center"
       >
         <a
-          href="#gethelp"
+          href="/get-help"
           className="rounded-lg bg-green-600 px-10 py-4 font-bold text-white text-lg transition-all hover:bg-green-500 hover:scale-105 shadow-xl"
         >
           Get Help
@@ -54,7 +54,7 @@ export default function HeroContent() {
         </a>
         <a
           href="/volunteer"
-          className="rounded-lg border-2 border-white px-10 py-4 font-bold text-white text-lg transition-all hover:bg-white hover:text-green-900 hover:scale-105 shadow-xl"
+          className="rounded-lg border-2 border-green-600 px-10 py-4 font-bold text-green-600 text-lg transition-all hover:bg-green-600 hover:text-white hover:scale-105 shadow-xl"
         >
           Volunteer
         </a>

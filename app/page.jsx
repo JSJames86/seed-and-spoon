@@ -2,6 +2,7 @@
 "use client";
 import Link from "next/link";
 import Hero from "@/components/Hero";
+import HeroContent from "@/components/HeroContent";
 import HeroSlideshow from "@/components/HeroSlideshow";
 import ScrollReveal from "@/components/ScrollReveal";
 import SocialCTA from "@/components/SocialCTA";
@@ -10,6 +11,15 @@ export default function Home() {
   return (
     <>
       <Hero />
+
+      {/* HERO CONTENT SECTION - Below Video */}
+      <ScrollReveal>
+        <section className="py-16 px-6 bg-white">
+          <div className="max-w-4xl mx-auto text-center">
+            <HeroContent />
+          </div>
+        </section>
+      </ScrollReveal>
 
       {/* IMAGE SLIDESHOW & MISSION SECTION */}
       <ScrollReveal>
