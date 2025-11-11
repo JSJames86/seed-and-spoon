@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import HeroVideo from "@/components/HeroVideo";
+import HeroSlideshow from "@/components/HeroSlideshow";
 import ScrollReveal from "@/components/ScrollReveal";
 import SocialCTA from "@/components/SocialCTA";
 
@@ -43,6 +44,9 @@ export default function Home() {
             <h1 className="mb-6 text-4xl font-bold leading-tight md:text-5xl lg:text-6xl">
               We grow food. We serve meals. But mostly, we <span className="text-yellow-300">see</span> people.
             </h1>
+
+            {/* Hero Slideshow */}
+            <HeroSlideshow />
 
             <p className="mb-8 text-lg md:text-xl lg:text-2xl max-w-4xl mx-auto">
               Building food sovereignty in Essex County—one family, one meal, one skill at a time.
