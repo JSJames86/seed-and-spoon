@@ -1,40 +1,15 @@
 // app/page.jsx
 "use client";
-import { useEffect } from "react";
 import Link from "next/link";
-import HeroVideo from "@/components/HeroVideo";
+import Hero from "@/components/Hero";
 import HeroSlideshow from "@/components/HeroSlideshow";
 import ScrollReveal from "@/components/ScrollReveal";
 import SocialCTA from "@/components/SocialCTA";
 
 export default function Home() {
-  // Set --vh CSS variable for iOS viewport height fix
-  useEffect(() => {
-    const setVh = () => {
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    };
-
-    setVh();
-    window.addEventListener('resize', setVh);
-    window.addEventListener('orientationchange', setVh);
-
-    return () => {
-      window.removeEventListener('resize', setVh);
-      window.removeEventListener('orientationchange', setVh);
-    };
-  }, []);
-
   return (
     <>
-      {/* HERO SECTION - Video Only */}
-      {/* Sentinel for IntersectionObserver - triggers header overlay mode */}
-      <section className="hero-section relative w-full min-h-screen overflow-hidden flex items-center justify-center bg-black">
-        <div id="hero-sentinel" className="absolute top-0 left-0 w-full h-px pointer-events-none" aria-hidden="true"></div>
-        <HeroVideo />
-        {/* Improved overlay for text contrast */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50 pointer-events-none" aria-hidden="true"></div>
-      </section>
+      <Hero />
 
       {/* GREEN HERO CONTENT SECTION - CTAs and Main Message */}
       <ScrollReveal>

@@ -1,17 +1,16 @@
 "use client";
-
 import { motion } from "framer-motion";
 
 const words = "We grow food. We serve meals. But mostly, we see people.".split(" ");
 
 export default function HeroContent() {
   return (
-    <div className="text-center text-white max-w-4xl">
+    <div className="relative z-10 text-center text-white max-w-5xl mx-auto px-6">
       <motion.h1
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, staggerChildren: 0.05 }}
-        className="mb-6 text-4xl font-bold leading-tight md:text-5xl lg:text-6xl"
+        className="mb-8 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight drop-shadow-2xl"
       >
         {words.map((word, i) => (
           <motion.span
@@ -24,14 +23,13 @@ export default function HeroContent() {
             {word}{" "}
           </motion.span>
         ))}
-        <br />
       </motion.h1>
 
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.9 }}
-        className="mb-8 text-lg md:text-xl lg:text-2xl"
+        className="mb-10 text-xl md:text-2xl lg:text-3xl font-light drop-shadow-lg"
       >
         Building food sovereignty in Essex County—one family, one meal, one skill at a time.
       </motion.p>
@@ -42,13 +40,22 @@ export default function HeroContent() {
         transition={{ delay: 1.1 }}
         className="flex flex-col gap-4 sm:flex-row sm:justify-center"
       >
-        <a href="#gethelp" className="rounded-lg bg-green-600 px-8 py-4 font-bold text-white transition hover:bg-green-500">
+        <a
+          href="#gethelp"
+          className="rounded-lg bg-green-600 px-10 py-4 font-bold text-white text-lg transition-all hover:bg-green-500 hover:scale-105 shadow-xl"
+        >
           Get Help
         </a>
-        <a href="/donate" className="rounded-lg bg-orange-600 px-8 py-4 font-bold text-white transition hover:bg-orange-500">
+        <a
+          href="/donate"
+          className="rounded-lg bg-orange-600 px-10 py-4 font-bold text-white text-lg transition-all hover:bg-orange-500 hover:scale-105 shadow-xl"
+        >
           Donate Now
         </a>
-        <a href="/volunteer" className="rounded-lg border-2 border-white px-8 py-4 font-bold text-white transition hover:bg-white hover:text-green-900">
+        <a
+          href="/volunteer"
+          className="rounded-lg border-2 border-white px-10 py-4 font-bold text-white text-lg transition-all hover:bg-white hover:text-green-900 hover:scale-105 shadow-xl"
+        >
           Volunteer
         </a>
       </motion.div>

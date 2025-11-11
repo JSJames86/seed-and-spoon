@@ -155,16 +155,16 @@ export default function Header() {
         */}
         <div className="max-w-7xl mx-auto h-full flex items-center justify-between px-4 sm:px-6">
           {/* Logo - CSS-controlled size transition, no image swap */}
-          <Link href="/" className="flex-shrink-0">
+          <Link href="/" className="flex-shrink-0 group">
             <img
               src={logoScrolled}
               alt="Seed & Spoon NJ"
-              className={`w-auto object-contain transition-all duration-200 ${
+              className={`w-auto object-contain transition-all duration-200 group-hover:scale-105 ${
                 isScrolled
-                  ? 'h-8 sm:h-9 md:h-10 lg:h-11'
-                  : 'h-9 sm:h-10 md:h-11 lg:h-12'
+                  ? 'h-10 sm:h-12 md:h-13 lg:h-14'
+                  : 'h-12 sm:h-14 md:h-15 lg:h-16'
               }`}
-              style={{ minWidth: '120px' }}
+              style={{ minWidth: '140px' }}
             />
           </Link>
 
@@ -190,7 +190,7 @@ export default function Header() {
             </Link>
             <Link
               href="/donate"
-              className="bg-orange-500 text-white px-6 py-2 rounded-lg font-bold hover:bg-orange-600 transition-colors shadow-lg"
+              className="bg-orange-500 text-white px-6 py-2 rounded-lg font-bold hover:bg-orange-600 transition-all shadow-lg hover:scale-105"
             >
               Donate
             </Link>
