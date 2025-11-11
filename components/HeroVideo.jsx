@@ -5,7 +5,6 @@ export default function HeroVideo() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
-    // Check for reduced motion preference
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setPrefersReducedMotion(mediaQuery.matches);
 
@@ -17,38 +16,47 @@ export default function HeroVideo() {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  // If reduced motion is preferred, show poster only
+  useEffect(() => {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = '/media/hero/hero-poster.jpg';
+    document.head.appendChild(link);
+
+    return () => {
+      if (link.parentNode) {
+        link.parentNode.removeChild(link);
+      }
+    };
+  }, []);
+
   if (prefersReducedMotion) {
     return (
-      <img
-        src="/media/hero/hero-poster.jpg"
-        alt="Seed & Spoon community"
-        className="absolute inset-0 w-full h-full object-cover object-center"
-      />
+      <div className="absolute inset-0 w-full h-full">
+        <img
+          src="/media/hero/hero-poster.jpg"
+          alt="Seed & Spoon community"
+          className="absolute inset-0 w-full h-full object-cover object-top md:object-center"
+        />
+      </div>
     );
   }
 
   return (
-    <video
-      autoPlay
-      muted
-      loop
-      playsInline
-      poster="/media/hero/hero-poster.jpg"
-      className="absolute inset-0 w-full h-full object-cover object-center"
-      preload="metadata"
-      aria-label="Background video showing Seed & Spoon community impact"
-    >
-      {/* WebM first for Chrome/Android - better compression */}
-      <source src="/media/hero/hero-video.webm" type="video/webm" />
-      {/* MP4 for Safari/iOS - better compatibility */}
-      <source src="/media/hero/hero-video.mp4" type="video/mp4" />
-      {/* Fallback image for browsers that don't support video */}
-      <img
-        src="/media/hero/hero-poster.jpg"
-        alt="Seed & Spoon community"
-        className="w-full h-full object-cover object-center"
-      />
-    </video>
+    <div className="absolute inset-0 w-full h-full">
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        poster="/media/hero/hero-poster.jpg"
+        className="absolute inset-0 w-full h-full object-cover object-top md:object-center"
+        preload="auto"
+        aria-label="Background video showing Seed & Spoon community impact"
+      >
+        <source src="/media/hero/hero-video.webm" type="video/webm" />
+        <source src="/media/hero/hero-video.mp4" type="video/mp4" />
+      </video>
+    </div>
   );
 }
