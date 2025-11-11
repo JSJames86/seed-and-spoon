@@ -1,5 +1,5 @@
 // app/page.jsx
-import Header from "@/components/header";
+import Header from "@/components/Header";  // Capital H, exact match
 import HeroVideo from "@/components/HeroVideo";
 import HeroContent from "@/components/HeroContent";
 
