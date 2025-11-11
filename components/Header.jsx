@@ -141,25 +141,30 @@ export default function Header() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 h-14 md:h-16 lg:h-[72px] z-[1000] transition-colors duration-200 ${
+        className={`fixed top-0 left-0 right-0 h-14 md:h-16 lg:h-[72px] z-[1000] ${
           isScrolled ? "bg-green-800 shadow-md" : "bg-transparent"
         }`}
-        style={{ willChange: 'opacity, background-color' }}
+        style={{
+          transition: 'background-color 200ms ease-in-out, box-shadow 200ms ease-in-out',
+          willChange: 'background-color'
+        }}
       >
         {/*
           Header heights: 56px mobile (≤640px), 64px tablet (641-1024px), 72px desktop (≥1025px)
           Fixed height prevents any reflow. Only background-color transitions.
         */}
         <div className="max-w-7xl mx-auto h-full flex items-center justify-between px-4 sm:px-6">
-          {/* Logo with swap on scroll - subtle scale animation for premium feel */}
+          {/* Logo - CSS-controlled size transition, no image swap */}
           <Link href="/" className="flex-shrink-0">
             <img
-              src={isScrolled ? logoScrolled : logoDefault}
+              src={logoScrolled}
               alt="Seed & Spoon NJ"
-              className={`h-9 sm:h-10 md:h-11 lg:h-12 w-auto object-contain transition-all duration-200 ${
-                isScrolled ? "scale-95" : "scale-100"
+              className={`w-auto object-contain transition-all duration-200 ${
+                isScrolled
+                  ? 'h-8 sm:h-9 md:h-10 lg:h-11'
+                  : 'h-9 sm:h-10 md:h-11 lg:h-12'
               }`}
-              style={{ minWidth: "120px" }}
+              style={{ minWidth: '120px' }}
             />
           </Link>
 
