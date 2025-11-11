@@ -159,10 +159,10 @@ export default function Header() {
             <img
               src={logoScrolled}
               alt="Seed & Spoon NJ"
-              className={`w-auto object-contain transition-all duration-200 group-hover:scale-105 ${
+              className={`w-auto object-contain transition-all duration-200 ${
                 isScrolled
-                  ? 'h-10 sm:h-12 md:h-13 lg:h-14'
-                  : 'h-12 sm:h-14 md:h-15 lg:h-16'
+                  ? 'h-10 sm:h-12 md:h-14 lg:h-14'
+                  : 'h-12 sm:h-14 md:h-16 lg:h-16'
               }`}
               style={{ minWidth: '140px' }}
             />

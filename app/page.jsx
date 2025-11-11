@@ -11,37 +11,15 @@ export default function Home() {
     <>
       <Hero />
 
-      {/* GREEN HERO CONTENT SECTION - CTAs and Main Message */}
+      {/* IMAGE SLIDESHOW & MISSION SECTION */}
       <ScrollReveal>
         <section className="bg-gradient-to-br from-green-700 to-green-900 py-20 text-white">
           <div className="container mx-auto px-6 text-center">
-            {/* Main Headline */}
-            <h1 className="mb-6 text-4xl font-bold leading-tight md:text-5xl lg:text-6xl">
-              We grow food. We serve meals. But mostly, we <span className="text-yellow-300">see</span> people.
-            </h1>
-
             {/* Hero Slideshow */}
             <HeroSlideshow />
 
-            <p className="mb-8 text-lg md:text-xl lg:text-2xl max-w-4xl mx-auto">
-              Building food sovereignty in Essex County—one family, one meal, one skill at a time.
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center mb-12">
-              <Link href="/get-help" className="rounded-lg bg-green-600 px-8 py-4 font-bold text-white transition hover:bg-green-500 shadow-lg hover:shadow-xl">
-                Get Help
-              </Link>
-              <Link href="/donate" className="rounded-lg bg-orange-600 px-8 py-4 font-bold text-white transition hover:bg-orange-500 shadow-lg hover:shadow-xl">
-                Donate Now
-              </Link>
-              <Link href="/volunteer" className="rounded-lg border-2 border-white px-8 py-4 font-bold text-white transition hover:bg-white hover:text-green-900 shadow-lg hover:shadow-xl">
-                Volunteer
-              </Link>
-            </div>
-
             {/* Mission Statement */}
-            <h2 className="text-2xl md:text-4xl font-bold mb-6 border-t border-white/30 pt-12">
+            <h2 className="text-2xl md:text-4xl font-bold mb-6 border-t border-white/30 pt-12 mt-12">
               Bridging the gap between surplus and sustenance.
             </h2>
             <p className="text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
