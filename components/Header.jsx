@@ -11,8 +11,8 @@ export default function Header() {
   const hamburgerRef = useRef(null);
   const menuRef = useRef(null);
 
-  const logoDefault = "/assets/new-logos/logo-compact.svg";
-  const logoScrolled = "/assets/new-logos/logo-full.svg";
+  const logoDefault = "/assets/new-logos/logo-compact.png";
+  const logoScrolled = "/assets/new-logos/logo-full.png";
 
   // Force transparency on load and ensure sentinel exists
   useEffect(() => {
