@@ -11,13 +11,13 @@
     --header-h: var(--header-h-mobile); /* Default */
   }
 
-  @media (min-width: 641px) {
+  @media (min-width: 768px) {
     :root {
       --header-h: var(--header-h-tablet);
     }
   }
 
-  @media (min-width: 1025px) {
+  @media (min-width: 1024px) {
     :root {
       --header-h: var(--header-h-desktop);
     }
