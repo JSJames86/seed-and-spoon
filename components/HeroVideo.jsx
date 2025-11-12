@@ -1,14 +1,30 @@
 // components/HeroVideo.jsx
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
 export default function HeroVideo() {
   const [videoError, setVideoError] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Check if screen is < 480px (mobile) - show poster only to save data/battery
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 480);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Show poster-only on mobile (<480px) or if video errors
+  const showPosterOnly = isMobile || videoError;
 
   return (
     <>
-      {!videoError ? (
+      {!showPosterOnly ? (
         <video
           autoPlay
           muted
