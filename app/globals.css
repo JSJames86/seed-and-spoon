@@ -78,6 +78,24 @@
     position: relative;
   }
 
+  /* Mobile portrait: reduce height for better fit */
+  @media (max-width: 768px) and (orientation: portrait) {
+    .hero-section {
+      height: 70vh;
+      min-height: calc(var(--vh, 1vh) * 70);
+    }
+  }
+
+  /* Mobile landscape: keep full height */
+  @media (max-width: 768px) and (orientation: landscape) {
+    .hero-section {
+      height: 100vh;
+      min-height: calc(var(--vh, 1vh) * 100);
+      height: 100svh;
+      height: 100dvh;
+    }
+  }
+
   /* Hero video: Fully responsive for all screen sizes */
   .hero-video {
     /* Position and size */
@@ -134,8 +152,11 @@
   /* Portrait orientation on mobile */
   @media (max-width: 768px) and (orientation: portrait) {
     .hero-video {
-      /* Optimize for vertical mobile screens */
+      /* Use contain instead of cover to prevent excessive cropping */
+      object-fit: contain;
       object-position: center center;
+      /* Ensure no horizontal overflow */
+      max-width: 100vw;
     }
   }
 
