@@ -45,6 +45,17 @@
   /* Header safe area - applies internally, not to body */
   header {
     padding-top: env(safe-area-inset-top, 0);
+    /* Ensure glassmorphism works on all browsers */
+    -webkit-backdrop-filter: var(--header-backdrop-filter, blur(16px));
+    backdrop-filter: var(--header-backdrop-filter, blur(16px));
+  }
+
+  /* Enhanced logo rendering */
+  header img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   /*
@@ -65,6 +76,29 @@
     /* Prevent iOS scroll bounce issues */
     overflow: hidden;
     position: relative;
+  }
+
+  /* Hero video mobile optimization */
+  .hero-section video {
+    /* Ensure video is fully responsive on all devices */
+    min-width: 100%;
+    min-height: 100%;
+    width: 100vw;
+    height: 100vh;
+    /* iOS Safari specific fixes */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    /* Prevent video flickering on mobile */
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  /* Mobile-specific video adjustments */
+  @media (max-width: 768px) {
+    .hero-section video {
+      /* Center video on mobile */
+      object-position: center center;
+    }
   }
 
   /* When scrolled past hero, remove negative margin (normal flow) */

@@ -15,7 +15,15 @@ export default function HeroVideo() {
           loop
           playsInline
           poster="/hero-fallback.jpg"
-          className="absolute inset-0 w-full h-full object-cover object-top md:object-center"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          style={{
+            objectFit: 'cover',
+            objectPosition: 'center',
+            width: '100%',
+            height: '100%',
+            maxWidth: '100vw',
+            maxHeight: '100vh'
+          }}
           preload="auto"
           aria-label="Seed & Spoon community impact"
           onError={(e) => {
@@ -31,7 +39,11 @@ export default function HeroVideo() {
           src="/hero-fallback.jpg"
           alt="Seed & Spoon community - building food sovereignty in Essex County"
           fill
-          className="object-cover object-top md:object-center"
+          className="object-cover object-center"
+          style={{
+            objectFit: 'cover',
+            objectPosition: 'center'
+          }}
           priority
           sizes="100vw"
         />

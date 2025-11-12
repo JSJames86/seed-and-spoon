@@ -20,7 +20,14 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="hero-section relative w-full h-screen min-h-[100dvh] overflow-hidden bg-black">
+    <section
+      className="hero-section relative w-full h-screen min-h-[100dvh] overflow-hidden bg-black"
+      style={{
+        minHeight: '100vh',
+        minHeight: '100dvh',
+        touchAction: 'pan-y'
+      }}
+    >
       <div
         id="hero-sentinel"
         className="absolute top-0 left-0 w-full h-px pointer-events-none"
