@@ -6,8 +6,11 @@ import Image from "next/image";
 export default function HeroVideo() {
   const [videoError, setVideoError] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+
     // Check if screen is < 480px (mobile) - show poster only to save data/battery
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 480);
@@ -22,6 +25,20 @@ export default function HeroVideo() {
   // Show poster-only on mobile (<480px) or if video errors
   const showPosterOnly = isMobile || videoError;
 
+  // Prevent hydration mismatch - show poster during SSR
+  if (!mounted) {
+    return (
+      <Image
+        src="/media/hero/hero-poster.jpg"
+        alt="Seed & Spoon community"
+        fill
+        className="object-cover object-center"
+        priority
+        sizes="100vw"
+      />
+    );
+  }
+
   return (
     <>
       {!showPosterOnly ? (
@@ -30,7 +47,7 @@ export default function HeroVideo() {
           muted
           loop
           playsInline
-          poster="/hero-fallback.jpg"
+          poster="/media/hero/hero-poster.jpg"
           className="hero-video"
           preload="auto"
           aria-label="Seed & Spoon community impact"
@@ -44,7 +61,7 @@ export default function HeroVideo() {
         </video>
       ) : (
         <Image
-          src="/hero-fallback.jpg"
+          src="/media/hero/hero-poster.jpg"
           alt="Seed & Spoon community - building food sovereignty in Essex County"
           fill
           className="object-cover object-center"
