@@ -63,9 +63,11 @@
     Uses both modern viewport units and --vh variable
   */
   .hero-section {
-    /* Responsive heights: mobile 55vh, tablet 70vh, desktop 100vh */
-    height: 55vh; /* Mobile default */
-    min-height: calc(var(--vh, 1vh) * 55); /* iOS fallback for mobile */
+    /* Full viewport height for all devices */
+    height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100); /* iOS --vh fallback */
+    height: 100svh; /* Small viewport height */
+    height: 100dvh; /* Dynamic viewport height (preferred) */
 
     /* Negative margin for overlay - pulls hero up under header */
     /* Includes safe-area-inset to account for iOS notch/Dynamic Island */
@@ -74,24 +76,6 @@
     /* Prevent iOS scroll bounce issues */
     overflow: hidden;
     position: relative;
-  }
-
-  /* Tablet: 70vh */
-  @media (min-width: 480px) and (max-width: 768px) {
-    .hero-section {
-      height: 70vh;
-      min-height: calc(var(--vh, 1vh) * 70);
-    }
-  }
-
-  /* Desktop: 100vh */
-  @media (min-width: 769px) {
-    .hero-section {
-      height: 100vh;
-      min-height: calc(var(--vh, 1vh) * 100);
-      height: 100svh;
-      height: 100dvh;
-    }
   }
 
   /* Hero video: Fully responsive for all screen sizes */
