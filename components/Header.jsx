@@ -145,17 +145,31 @@ export default function Header() {
             </div>
           </nav>
 
-          {/* YOUR ORIGINAL HAMBURGER DESIGN */}
+          {/* Brand-Styled Hamburger Menu */}
           <button
             ref={hamburgerRef}
-            className="md:hidden p-3 relative w-10 h-10"
+            className="md:hidden p-3 relative w-12 h-12 flex items-center justify-center"
             onClick={() => setIsOpen(!isOpen)}
             aria-label={isOpen ? "Close menu" : "Open menu"}
             aria-expanded={isOpen}
           >
-            <span className={`absolute top-3 left-1 block w-8 h-0.5 bg-white transition-all duration-300 ${isOpen ? 'rotate-45' : '-translate-y-2'}`}></span>
-            <span className={`absolute top-5 left-1 block w-8 h-0.5 bg-white transition-all duration-300 ${isOpen ? 'opacity-0' : ''}`}></span>
-            <span className={`absolute top-7 left-1 block w-8 h-0.5 bg-white transition-all duration-300 ${isOpen ? '-rotate-45' : 'translate-y-2'}`}></span>
+            <div className="relative w-8 h-6 flex flex-col justify-between">
+              <span
+                className={`block w-full h-1 bg-gradient-to-r from-orange-500 to-yellow-400 rounded-full transition-all duration-300 ease-in-out transform origin-center ${
+                  isOpen ? 'rotate-45 translate-y-[10px]' : 'rotate-0 translate-y-0'
+                }`}
+              ></span>
+              <span
+                className={`block w-full h-1 bg-gradient-to-r from-orange-500 to-yellow-400 rounded-full transition-all duration-300 ease-in-out ${
+                  isOpen ? 'opacity-0 scale-0' : 'opacity-100 scale-100'
+                }`}
+              ></span>
+              <span
+                className={`block w-full h-1 bg-gradient-to-r from-orange-500 to-yellow-400 rounded-full transition-all duration-300 ease-in-out transform origin-center ${
+                  isOpen ? '-rotate-45 -translate-y-[10px]' : 'rotate-0 translate-y-0'
+                }`}
+              ></span>
+            </div>
           </button>
         </div>
       </header>
