@@ -21,7 +21,7 @@ export default function FooterBanner() {
       {/* Logo - positioned to visually touch the banner */}
       <div className="flex justify-center bg-white -mt-[2px]">
         <img
-          src="/assets/logo/seed-and-spoon-logo-full-compact.png"
+          src="/assets/logo/seed-and-spoon-logo-compact.webp"
           alt="Seed & Spoon logo"
           className="w-40 sm:w-48 md:w-56"
         />

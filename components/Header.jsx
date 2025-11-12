@@ -11,8 +11,8 @@ export default function Header() {
   const hamburgerRef = useRef(null);
   const menuRef = useRef(null);
 
-  const logoDefault = "/logo-compact.png";
-  const logoScrolled = "/logo-full.png";
+  const logoDefault = "/logo-compact.webp";
+  const logoScrolled = "/logo-full.webp";
 
   // Force transparency on load
   useEffect(() => {
