@@ -110,7 +110,9 @@ export default function Header() {
     <>
       <header
         className={`fixed top-0 left-0 right-0 h-16 md:h-20 z-[1000] transition-all duration-300 ${
-          isScrolled ? "bg-green-800 shadow-lg" : "bg-transparent"
+          isScrolled
+            ? "bg-green-800/95 backdrop-blur-md shadow-lg border-b border-white/20"
+            : "bg-transparent backdrop-blur-md"
         }`}
       >
         <div className="max-w-7xl mx-auto h-full flex items-center justify-between px-4 sm:px-6">
@@ -118,12 +120,14 @@ export default function Header() {
             <img
               src={isScrolled ? logoScrolled : logoDefault}
               alt="Seed & Spoon NJ"
+              style={{ background: 'transparent' }}
               className={`
                 h-12 sm:h-14 md:h-16 lg:h-20
                 w-auto object-contain
                 transition-all duration-300
                 hover:scale-105
                 min-w-40
+                bg-transparent !bg-none
                 ${isScrolled ? "scale-95" : "scale-100"}
               `}
             />
