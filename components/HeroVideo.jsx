@@ -1,33 +1,41 @@
 // components/HeroVideo.jsx
+"use client";
+import { useState } from "react";
+import Image from "next/image";
+
 export default function HeroVideo() {
+  const [videoError, setVideoError] = useState(false);
+
   return (
     <>
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        poster="/hero-fallback.jpg"
-        className="absolute inset-0 w-full h-full object-cover object-center"
-        preload="auto"
-        aria-label="Seed & Spoon community impact"
-        style={{
-          minWidth: '100%',
-          minHeight: '100%',
-        }}
-      >
-        <source src="/hero.mp4" type="video/mp4" />
-        <source src="/hero.webm" type="video/webm" />
-      </video>
-
-      {/* Fallback image — only shows if video fails */}
-      <noscript>
-        <img
+      {!videoError ? (
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster="/hero-fallback.jpg"
+          className="absolute inset-0 w-full h-full object-cover object-top md:object-center"
+          preload="auto"
+          aria-label="Seed & Spoon community impact"
+          onError={(e) => {
+            console.warn("Hero video failed to load, using fallback image");
+            setVideoError(true);
+          }}
+        >
+          <source src="/hero.mp4" type="video/mp4" />
+          <source src="/hero.webm" type="video/webm" />
+        </video>
+      ) : (
+        <Image
           src="/hero-fallback.jpg"
-          alt="Community garden and food justice"
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          alt="Seed & Spoon community - building food sovereignty in Essex County"
+          fill
+          className="object-cover object-top md:object-center"
+          priority
+          sizes="100vw"
         />
-      </noscript>
+      )}
     </>
   );
 }

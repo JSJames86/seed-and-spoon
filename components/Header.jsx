@@ -14,9 +14,25 @@ export default function Header() {
   const logoDefault = "/logo-compact.webp";
   const logoScrolled = "/logo-full.webp";
 
-  // Force transparency on load
+  // Force transparency on load and ensure sentinel exists
   useEffect(() => {
-    document.body.classList.add("has-hero-at-top");
+    // Wait for DOM to be ready
+    const checkSentinel = () => {
+      const sentinel = document.getElementById("hero-sentinel");
+      if (sentinel) {
+        document.body.classList.add("has-hero-at-top");
+        setIsScrolled(false);
+      } else {
+        // No hero on this page, show solid header
+        setIsScrolled(true);
+        document.body.classList.remove("has-hero-at-top");
+      }
+    };
+
+    // Check immediately and after a short delay to ensure DOM is ready
+    checkSentinel();
+    const timer = setTimeout(checkSentinel, 50);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -29,14 +45,7 @@ export default function Header() {
 
   useEffect(() => {
     const sentinel = document.getElementById("hero-sentinel");
-    if (!sentinel) {
-      setIsScrolled(true);
-      document.body.classList.remove("has-hero-at-top");
-      return;
-    }
-
-    document.body.classList.add("has-hero-at-top");
-    setIsScrolled(false);
+    if (!sentinel) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -110,9 +119,9 @@ export default function Header() {
               src={isScrolled ? logoScrolled : logoDefault}
               alt="Seed & Spoon NJ"
               className={`
-                h-12 sm:h-14 md:h-16 lg:h-20 
-                w-auto object-contain 
-                transition-all duration-300 
+                h-12 sm:h-14 md:h-16 lg:h-20
+                w-auto object-contain
+                transition-all duration-300
                 hover:scale-105
                 min-w-40
                 ${isScrolled ? "scale-95" : "scale-100"}
@@ -145,28 +154,35 @@ export default function Header() {
             </div>
           </nav>
 
-          {/* Brand-Styled Hamburger Menu */}
+          {/* Brand-Styled Hamburger Menu - Fixed to prevent icon overlap */}
           <button
             ref={hamburgerRef}
-            className="md:hidden p-3 relative w-12 h-12 flex items-center justify-center"
+            className="md:hidden p-2 relative w-12 h-12 flex items-center justify-center"
             onClick={() => setIsOpen(!isOpen)}
             aria-label={isOpen ? "Close menu" : "Open menu"}
             aria-expanded={isOpen}
           >
-            <div className="relative w-8 h-6 flex flex-col justify-between">
+            <div className="relative w-7 h-7">
+              {/* Top bar */}
               <span
-                className={`block w-full h-1 bg-gradient-to-r from-orange-500 to-yellow-400 rounded-full transition-all duration-300 ease-in-out transform origin-center ${
-                  isOpen ? 'rotate-45 translate-y-[10px]' : 'rotate-0 translate-y-0'
+                className={`absolute left-0 block w-full h-1 bg-gradient-to-r from-orange-500 to-yellow-400 rounded-full transition-all duration-300 ease-in-out ${
+                  isOpen
+                    ? 'top-3 rotate-45'
+                    : 'top-0 rotate-0'
                 }`}
               ></span>
+              {/* Middle bar */}
               <span
-                className={`block w-full h-1 bg-gradient-to-r from-orange-500 to-yellow-400 rounded-full transition-all duration-300 ease-in-out ${
+                className={`absolute left-0 top-3 block w-full h-1 bg-gradient-to-r from-orange-500 to-yellow-400 rounded-full transition-all duration-300 ease-in-out ${
                   isOpen ? 'opacity-0 scale-0' : 'opacity-100 scale-100'
                 }`}
               ></span>
+              {/* Bottom bar */}
               <span
-                className={`block w-full h-1 bg-gradient-to-r from-orange-500 to-yellow-400 rounded-full transition-all duration-300 ease-in-out transform origin-center ${
-                  isOpen ? '-rotate-45 -translate-y-[10px]' : 'rotate-0 translate-y-0'
+                className={`absolute left-0 block w-full h-1 bg-gradient-to-r from-orange-500 to-yellow-400 rounded-full transition-all duration-300 ease-in-out ${
+                  isOpen
+                    ? 'top-3 -rotate-45'
+                    : 'top-6 rotate-0'
                 }`}
               ></span>
             </div>
@@ -210,7 +226,8 @@ export default function Header() {
               </div>
             </div>
             <button onClick={closeMenu} className="mt-6 text-gray-300 text-sm hover:text-white">Press ESC to close</button>
-            <div className="absolute inset-0 -z-10" onClick={closeMenu} />          </motion.div>
+            <div className="absolute inset-0 -z-10" onClick={closeMenu} />
+          </motion.div>
         )}
       </AnimatePresence>
     </>
