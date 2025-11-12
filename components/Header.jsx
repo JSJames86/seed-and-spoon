@@ -11,8 +11,8 @@ export default function Header() {
   const hamburgerRef = useRef(null);
   const menuRef = useRef(null);
 
-  const logoDefault = "/logo-compact.webp";
-  const logoScrolled = "/logo-full.webp";
+  const logoDefault = "/assets/new-logos/logo-compact.svg";
+  const logoScrolled = "/assets/new-logos/logo-full.svg";
 
   // Force transparency on load and ensure sentinel exists
   useEffect(() => {
@@ -112,7 +112,7 @@ export default function Header() {
         className={`fixed top-0 left-0 right-0 h-16 md:h-20 z-[1000] transition-all duration-300 ${
           isScrolled
             ? "bg-green-800/95 backdrop-blur-md shadow-lg"
-            : "bg-white/5 backdrop-blur-md"
+            : "backdrop-blur-md"
         }`}
       >
         <div className="max-w-7xl mx-auto h-full flex items-center justify-between px-4 sm:px-6">

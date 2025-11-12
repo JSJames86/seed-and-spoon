@@ -14,7 +14,7 @@ export default function HeroVideo() {
           muted
           loop
           playsInline
-          poster="/hero-fallback.jpg"
+          poster="/hero-slide-3.jpeg"
           className="absolute inset-0 w-full h-full object-cover object-top md:object-center"
           preload="auto"
           aria-label="Seed & Spoon community impact"
@@ -28,7 +28,7 @@ export default function HeroVideo() {
         </video>
       ) : (
         <Image
-          src="/hero-fallback.jpg"
+          src="/hero-slide-3.jpeg"
           alt="Seed & Spoon community - building food sovereignty in Essex County"
           fill
           className="object-cover object-top md:object-center"
