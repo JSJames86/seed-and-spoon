@@ -6,8 +6,8 @@ export default function FooterVisual() {
   const illustrationWidth = 1600;
   const illustrationHeight = 480;
 
-  // Logo: Use real brand asset (PNG until SVG is uploaded)
-  const logoSvg = "/brand/logo-lockup.svg";
+  // Logo: Use real brand asset (WebP for best performance)
+  const logoWebp = "/assets/logo/seed-and-spoon-logo-compact.webp";
   const logoPng = "/assets/logo/seed-and-spoon-logo-full-compact.png";
 
   return (
@@ -37,15 +37,15 @@ export default function FooterVisual() {
         {/* Logo - sits directly below illustration with negative margin to close gap */}
         <div className="block mx-auto -mt-[3px] w-[min(560px,92vw)] sm:w-[min(640px,92vw)] md:w-[min(720px,92vw)]">
           <img
-            src={`${logoPng}?v=1`}
+            src={`${logoWebp}?v=2`}
             alt="Seed & Spoon logo"
             draggable={false}
             className="w-full h-auto"
             onError={(e) => {
-              // Try SVG if PNG fails (future-proofing for when you upload SVG)
+              // Try PNG fallback if WebP fails
               if (!e.target.dataset.tried) {
                 e.target.dataset.tried = "true";
-                e.target.src = `${logoSvg}?v=1`;
+                e.target.src = `${logoPng}?v=2`;
               } else {
                 console.warn("Footer visual logo failed to load - no logo displayed");
                 e.target.style.display = "none";
