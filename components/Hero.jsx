@@ -21,10 +21,8 @@ export default function Hero() {
 
   return (
     <section
-      className="hero-section relative w-full h-screen min-h-[100dvh] overflow-hidden bg-black"
+      className="hero-section relative w-full overflow-hidden bg-black"
       style={{
-        minHeight: '100vh',
-        minHeight: '100dvh',
         touchAction: 'pan-y'
       }}
     >
@@ -37,7 +35,7 @@ export default function Hero() {
       <HeroVideo />
 
       <div
-        className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50 pointer-events-none"
+        className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/30 pointer-events-none"
         aria-hidden="true"
       />
     </section>
