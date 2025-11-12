@@ -23,8 +23,8 @@ export default function HeroVideo() {
             setVideoError(true);
           }}
         >
-          <source src="/hero.mp4" type="video/mp4" />
-          <source src="/hero.webm" type="video/webm" />
+          <source src="/media/hero/hero-video.mp4" type="video/mp4" />
+          <source src="/media/hero/hero-video.webm" type="video/webm" />
         </video>
       ) : (
         <Image
