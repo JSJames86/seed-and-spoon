@@ -78,25 +78,71 @@
     position: relative;
   }
 
-  /* Hero video mobile optimization */
-  .hero-section video {
-    /* Ensure video is fully responsive on all devices */
-    min-width: 100%;
-    min-height: 100%;
-    width: 100vw;
-    height: 100vh;
+  /* Hero video: Fully responsive for all screen sizes */
+  .hero-video {
+    /* Position and size */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    /* Ensure video covers the entire container */
+    object-fit: cover;
+    object-position: center;
+
+    /* Remove any default spacing */
+    margin: 0;
+    padding: 0;
+    display: block;
+
     /* iOS Safari specific fixes */
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
+
     /* Prevent video flickering on mobile */
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    perspective: 1000;
   }
 
-  /* Mobile-specific video adjustments */
-  @media (max-width: 768px) {
-    .hero-section video {
-      /* Center video on mobile */
+  /* Tablet adjustments */
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .hero-video {
+      /* Ensure proper scaling on tablets */
+      object-fit: cover;
+    }
+  }
+
+  /* Desktop adjustments */
+  @media (min-width: 1025px) {
+    .hero-video {
+      /* Optimal viewing on large screens */
+      object-fit: cover;
+    }
+  }
+
+  /* Ultra-wide screens */
+  @media (min-width: 1920px) {
+    .hero-video {
+      /* Maintain aspect ratio on ultra-wide displays */
+      object-fit: cover;
+    }
+  }
+
+  /* Portrait orientation on mobile */
+  @media (max-width: 768px) and (orientation: portrait) {
+    .hero-video {
+      /* Optimize for vertical mobile screens */
+      object-position: center center;
+    }
+  }
+
+  /* Landscape orientation on mobile */
+  @media (max-width: 768px) and (orientation: landscape) {
+    .hero-video {
+      /* Optimize for horizontal mobile screens */
       object-position: center center;
     }
   }
