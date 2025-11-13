@@ -81,8 +81,8 @@
   /* Mobile portrait: reduce height for better fit */
   @media (max-width: 768px) and (orientation: portrait) {
     .hero-section {
-      height: 70vh;
-      min-height: calc(var(--vh, 1vh) * 70);
+      height: 80vh;
+      min-height: calc(var(--vh, 1vh) * 80);
     }
   }
 
@@ -152,11 +152,9 @@
   /* Portrait orientation on mobile */
   @media (max-width: 768px) and (orientation: portrait) {
     .hero-video {
-      /* Use contain instead of cover to prevent excessive cropping */
-      object-fit: contain;
-      object-position: center center;
-      /* Ensure no horizontal overflow */
-      max-width: 100vw;
+      /* Fill the entire hero section without letterboxing */
+      object-fit: cover;
+      object-position: center;
     }
   }
 
