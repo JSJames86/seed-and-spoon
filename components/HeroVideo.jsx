@@ -4,23 +4,13 @@ import Image from "next/image";
 
 export default function HeroVideo() {
   const [videoError, setVideoError] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 480);
-    };
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-
-    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  const showPosterOnly = isMobile || videoError;
+  const showPosterOnly = videoError; // Only show poster on error
 
   // SSR fallback – poster only
   if (!mounted) {
