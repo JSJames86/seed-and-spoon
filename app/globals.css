@@ -88,7 +88,7 @@
   @media (max-width: 768px) and (orientation: portrait) {
     .hero-video {
       object-fit: cover;
-      object-position: center 40%;   /* Adjust focal point if needed */
+      object-position: center;   /* Adjust focal point if needed */
     }
   }
 
