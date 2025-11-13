@@ -16,13 +16,13 @@ export default function SurplusRescuePage() {
             Saving good food. Feeding our neighbors. Respecting the planet.
           </p>
           <p className="text-sm sm:text-base text-neutral-700 max-w-2xl mb-8">
-            Every day, perfectly good food gets tossed—not because it&apos;s unsafe, but because it&apos;s extra.
-            Seed &amp; Spoon NJ&apos;s Surplus Rescue Program steps in before that happens. We collect surplus
-            from grocery stores, bakeries, food banks, and local partners, then transform it into fresh meals,
-            grocery boxes, and community dinners for families in need.
+            Every day, perfectly good food gets tossed—not because it&apos;s unsafe, but because it&apos;s
+            extra. Seed &amp; Spoon NJ&apos;s Surplus Rescue Program steps in before that happens.
+            We collect surplus from grocery stores, bakeries, food banks, and local partners, then
+            transform it into fresh meals, grocery boxes, and community dinners for families in need.
           </p>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-3 mb-8">
             <Link
               href="/contact"
               className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
@@ -36,16 +36,12 @@ export default function SurplusRescuePage() {
               Donate to Fuel Rescues
             </Link>
           </div>
-        </div>
-      </section>
 
-      {/* Hero Image — replace with your Gemini image */}
-      <section className="border-b border-neutral-100 bg-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          {/* Hero Image: volunteers */}
           <div className="overflow-hidden rounded-2xl border border-neutral-100">
             <img
-              src="/images/surplus-rescue-hero.jpg"
-              alt="Volunteers sorting rescued food"
+              src="/images/causes/surplus-rescue/surplus-rescue-volunteers.png"
+              alt="Seed & Spoon volunteers rescuing surplus food and preparing it for community distribution"
               className="w-full h-[260px] sm:h-[320px] object-cover"
             />
           </div>
@@ -63,12 +59,45 @@ export default function SurplusRescuePage() {
           </p>
           <p className="text-sm sm:text-base text-neutral-700 mb-3">
             Seed &amp; Spoon NJ partners with businesses that have unsold, safe food—produce, bread,
-            pantry items, and more. Our team picks it up, sorts it, and distributes it through our meal
-            program, grocery boxes, and community events.
+            pantry items, prepared items, and more. Our team picks it up, sorts it, and distributes it
+            through our meal program, grocery boxes, and community events.
           </p>
           <p className="text-sm sm:text-base text-neutral-700">
             Surplus Rescue lets us feed more families while reducing food waste and environmental harm.
           </p>
+        </div>
+      </section>
+
+      {/* Split section with second image */}
+      <section className="bg-white border-b border-neutral-100">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+          <div className="grid gap-6 sm:grid-cols-[1.1fr,1fr] items-center">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-semibold text-neutral-900 mb-4">
+                From Back Room to Family Table
+              </h2>
+              <p className="text-sm sm:text-base text-neutral-700 mb-3">
+                Once surplus arrives at Seed &amp; Spoon, it doesn&apos;t sit. Volunteers move quickly to
+                sort, label, and pack it into family-sized boxes and ingredients for cooked meals.
+              </p>
+              <p className="text-sm sm:text-base text-neutral-700 mb-3">
+                Boxes are built with care—balancing fresh produce, pantry staples, and proteins so
+                families can stretch what they receive into several days of meals.
+              </p>
+              <p className="text-sm sm:text-base text-neutral-700">
+                Every box is more than food. It&apos;s proof that what others were ready to throw away
+                can become stability, dignity, and relief for a neighbor.
+              </p>
+            </div>
+
+            <div className="overflow-hidden rounded-2xl border border-neutral-100">
+              <img
+                src="/images/causes/surplus-rescue/surplus-rescue-food-boxes.jpg"
+                alt="Surplus food rescued by Seed & Spoon organized into boxes ready for distribution to families"
+                className="w-full h-[220px] sm:h-[260px] object-cover"
+              />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -78,12 +107,16 @@ export default function SurplusRescuePage() {
           <h2 className="text-xl sm:text-2xl font-semibold text-neutral-900 mb-4">
             Where the Food Comes From
           </h2>
-          <ul className="list-disc pl-5 space-y-1 text-sm sm:text-base text-neutral-700">
+          <p className="text-sm sm:text-base text-neutral-700 mb-4">
+            We work with local partners across New Jersey who care about reducing waste and feeding
+            their neighbors:
+          </p>
+          <ul className="list-disc pl-5 space-y-1.5 text-sm sm:text-base text-neutral-700">
             <li>Grocery stores and supermarkets</li>
             <li>Bakeries and cafés</li>
             <li>Food banks and pantries with overflow</li>
-            <li>Restaurants and caterers</li>
-            <li>Seasonal events and donation drives</li>
+            <li>Restaurants, caterers, and event venues</li>
+            <li>Seasonal donation drives and community collections</li>
           </ul>
         </div>
       </section>
@@ -99,14 +132,16 @@ export default function SurplusRescuePage() {
             <li>
               <h3 className="text-sm font-semibold text-neutral-900 mb-1">1. Partners notify us</h3>
               <p className="text-sm sm:text-base text-neutral-700">
-                Stores or organizations contact us when they have safe, unsold food.
+                Stores or organizations contact us when they have safe, unsold food approaching its
+                sell-by date or left over from service.
               </p>
             </li>
 
             <li>
               <h3 className="text-sm font-semibold text-neutral-900 mb-1">2. Pickup &amp; safe transport</h3>
               <p className="text-sm sm:text-base text-neutral-700">
-                Our trained volunteers pick up surplus items using food-safe handling and proper temperature control.
+                Our trained volunteers pick up surplus items using food-safe handling, proper storage,
+                and temperature control from door to door.
               </p>
             </li>
 
@@ -115,7 +150,8 @@ export default function SurplusRescuePage() {
                 3. Sorting &amp; quality checks
               </h3>
               <p className="text-sm sm:text-base text-neutral-700">
-                Everything is sorted, inspected, and labeled before being prepared or packed.
+                Everything is inspected, sorted, and labeled by type and date. Items that don&apos;t
+                meet our standards are composted whenever possible instead of landfilled.
               </p>
             </li>
 
@@ -124,7 +160,8 @@ export default function SurplusRescuePage() {
                 4. Distributed to families
               </h3>
               <p className="text-sm sm:text-base text-neutral-700">
-                Surplus fuels our weekly meal program, monthly grocery boxes, and community dinners.
+                Surplus fuels our weekly meal program, monthly grocery boxes, and community dinners—
+                reaching families referred by schools, social workers, and community partners.
               </p>
             </li>
           </ol>
@@ -141,21 +178,24 @@ export default function SurplusRescuePage() {
             <div>
               <h3 className="text-sm font-semibold text-neutral-900 mb-2">For families</h3>
               <p className="text-sm sm:text-base text-neutral-700">
-                Fresh, nutritious food at no cost — feeding families with dignity.
+                Fresh, nutritious food at no cost—reducing stress and stretching tight budgets with
+                dignity, not judgment.
               </p>
             </div>
 
             <div>
               <h3 className="text-sm font-semibold text-neutral-900 mb-2">For partners</h3>
               <p className="text-sm sm:text-base text-neutral-700">
-                Reduce waste, reduce costs, and create real local impact.
+                Turn what would be waste into local impact. Lower disposal costs, support neighbors,
+                and show your values in action.
               </p>
             </div>
 
             <div>
               <h3 className="text-sm font-semibold text-neutral-900 mb-2">For the planet</h3>
               <p className="text-sm sm:text-base text-neutral-700">
-                Less waste → lower emissions → a cleaner, more sustainable NJ.
+                Food waste is a major driver of emissions. Rescuing surplus keeps good food out of
+                landfills and helps build a more sustainable New Jersey.
               </p>
             </div>
           </div>
@@ -169,8 +209,8 @@ export default function SurplusRescuePage() {
             Join the Surplus Rescue Network
           </h2>
           <p className="text-sm sm:text-base text-neutral-700 mb-6 max-w-2xl">
-            Whether you donate food, time, or resources, you&apos;re helping Seed &amp; Spoon NJ transform
-            surplus into nourishment — and waste into hope.
+            Whether you donate food, time, or resources, you&apos;re helping Seed &amp; Spoon NJ
+            transform surplus into nourishment—and waste into hope.
           </p>
 
           <div className="flex flex-wrap gap-3">
@@ -186,6 +226,13 @@ export default function SurplusRescuePage() {
               className="inline-flex items-center justify-center px-5 py-2.5 rounded-full border border-neutral-200 bg-white text-sm font-medium text-neutral-800 hover:border-neutral-900 hover:text-neutral-900"
             >
               Volunteer on the Rescue Team
+            </Link>
+
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center px-5 py-2.5 rounded-full border border-neutral-200 bg-white text-sm font-medium text-neutral-800 hover:border-neutral-900 hover:text-neutral-900"
+            >
+              Become a Surplus Partner
             </Link>
           </div>
         </div>
