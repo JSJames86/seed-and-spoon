@@ -59,30 +59,25 @@
   }
 
   /*
-    HERO SECTION: Full viewport height with iOS fallback
-    Uses both modern viewport units and --vh variable
+    HERO SECTION: Full viewport height with modern units
   */
   .hero-section {
     /* Full viewport height for all devices */
     height: 100vh;
-    min-height: calc(var(--vh, 1vh) * 100); /* iOS --vh fallback */
-    height: 100svh; /* Small viewport height */
-    height: 100dvh; /* Dynamic viewport height (preferred) */
+    height: 100svh;
+    height: 100dvh;
 
     /* Negative margin for overlay - pulls hero up under header */
-    /* Includes safe-area-inset to account for iOS notch/Dynamic Island */
     margin-top: calc(-1 * (var(--header-h) + env(safe-area-inset-top, 0px)));
 
-    /* Prevent iOS scroll bounce issues */
     overflow: hidden;
     position: relative;
   }
 
-  /* Mobile portrait: reduce height for better fit */
+  /* Mobile portrait: use dynamic viewport height */
   @media (max-width: 768px) and (orientation: portrait) {
     .hero-section {
-      height: 80vh;
-      min-height: calc(var(--vh, 1vh) * 80);
+      height: 100dvh;
     }
   }
 
@@ -90,13 +85,12 @@
   @media (max-width: 768px) and (orientation: landscape) {
     .hero-section {
       height: 100vh;
-      min-height: calc(var(--vh, 1vh) * 100);
       height: 100svh;
       height: 100dvh;
     }
   }
 
-  /* Hero video: Fully responsive for all screen sizes */
+  /* Hero video: Always cover, no letterboxing */
   .hero-video {
     /* Position and size */
     position: absolute;
@@ -105,7 +99,7 @@
     width: 100%;
     height: 100%;
 
-    /* Ensure video covers the entire container */
+    /* Always cover the entire container */
     object-fit: cover;
     object-position: center;
 
@@ -125,44 +119,11 @@
     perspective: 1000;
   }
 
-  /* Tablet adjustments */
-  @media (min-width: 768px) and (max-width: 1024px) {
-    .hero-video {
-      /* Ensure proper scaling on tablets */
-      object-fit: cover;
-    }
-  }
-
-  /* Desktop adjustments */
-  @media (min-width: 1025px) {
-    .hero-video {
-      /* Optimal viewing on large screens */
-      object-fit: cover;
-    }
-  }
-
-  /* Ultra-wide screens */
-  @media (min-width: 1920px) {
-    .hero-video {
-      /* Maintain aspect ratio on ultra-wide displays */
-      object-fit: cover;
-    }
-  }
-
-  /* Portrait orientation on mobile */
+  /* Portrait orientation on mobile: adjust focal point if needed */
   @media (max-width: 768px) and (orientation: portrait) {
     .hero-video {
-      /* Fill the entire hero section without letterboxing */
       object-fit: cover;
-      object-position: center;
-    }
-  }
-
-  /* Landscape orientation on mobile */
-  @media (max-width: 768px) and (orientation: landscape) {
-    .hero-video {
-      /* Optimize for horizontal mobile screens */
-      object-position: center center;
+      object-position: center 40%; /* Adjust this percentage to frame your video content */
     }
   }
 

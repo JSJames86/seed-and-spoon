@@ -11,10 +11,7 @@ export default function HeroVideo() {
     setMounted(true);
   }, []);
 
-  // Show poster-only if video errors
-  const showPosterOnly = videoError;
-
-  // Prevent hydration mismatch - show poster during SSR
+  // SSR: show poster only to avoid hydration mismatch
   if (!mounted) {
     return (
       <Image
@@ -28,8 +25,10 @@ export default function HeroVideo() {
     );
   }
 
+  const showPosterOnly = videoError;
+
   return (
-    <>
+    <div className="relative w-full h-full overflow-hidden">
       {!showPosterOnly ? (
         <video
           autoPlay
@@ -40,7 +39,7 @@ export default function HeroVideo() {
           className="hero-video"
           preload="auto"
           aria-label="Seed & Spoon community impact"
-          onError={(e) => {
+          onError={() => {
             console.warn("Hero video failed to load, using fallback image");
             setVideoError(true);
           }}
@@ -58,6 +57,6 @@ export default function HeroVideo() {
           sizes="100vw"
         />
       )}
-    </>
+    </div>
   );
 }
