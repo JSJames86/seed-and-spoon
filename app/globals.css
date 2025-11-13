@@ -10,12 +10,8 @@
     --header-h: var(--header-h-mobile);
   }
 
-  @media (min-width: 768px) {
-    :root { --header-h: var(--header-h-tablet); }
-  }
-  @media (min-width: 1024px) {
-    :root { --header-h: var(--header-h-desktop); }
-  }
+  @media (min-width: 768px) { :root { --header-h: var(--header-h-tablet); } }
+  @media (min-width: 1024px) { :root { --header-h: var(--header-h-desktop); } }
 
   html { scroll-behavior: smooth; height: -webkit-fill-available; }
   body { padding-top: var(--header-h); padding-bottom: env(safe-area-inset-bottom, 0); }
@@ -37,7 +33,7 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* HERO SECTION */
+  /* ──────── HERO SECTION ──────── */
   .hero-section {
     height: 100vh;
     min-height: calc(var(--vh, 1vh) * 100);
@@ -48,13 +44,15 @@
     position: relative;
   }
 
+  /* Portrait mobile – taller hero, no special positioning */
   @media (max-width: 768px) and (orientation: portrait) {
     .hero-section {
-      height: 85vh;                     /* Increased for better mobile look */
-      min-height: calc(var(--vh, 1vh) * 85);
+      height: 90vh;                     /* gives breathing room */
+      min-height: calc(var(--vh, 1vh) * 90);
     }
   }
 
+  /* Landscape mobile – full viewport */
   @media (max-width: 768px) and (orientation: landscape) {
     .hero-section {
       height: 100vh;
@@ -64,15 +62,14 @@
     }
   }
 
-  /* HERO VIDEO – ALWAYS COVER */
+  /* ──────── HERO VIDEO ──────── */
   .hero-video {
     position: absolute;
-    top: 0;
-    left: 0;
+    inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    object-position: center;
+    object-fit: cover;          /* always cover */
+    object-position: center;    /* always centered */
     margin: 0;
     padding: 0;
     display: block;
@@ -84,35 +81,13 @@
     perspective: 1000;
   }
 
-  /* Mobile portrait – COVER, no contain */
-  @media (max-width: 768px) and (orientation: portrait) {
-    .hero-video {
-      object-fit: cover;
-      object-position: center;   /* Adjust focal point if needed */
-    }
-  }
-
-  @media (min-width: 768px) and (max-width: 1024px) {
-    .hero-video { object-fit: cover; }
-  }
-  @media (min-width: 1025px) {
-    .hero-video { object-fit: cover; }
-  }
-  @media (min-width: 1920px) {
-    .hero-video { object-fit: cover; }
-  }
-
-  @media (max-width: 768px) and (orientation: landscape) {
-    .hero-video { object-position: center center; }
-  }
+  /* NO portrait-specific overrides – base rules are enough */
 
   body:not(.has-hero-at-top) .hero-section { margin-top: 0; }
 }
 
 @layer components {
-  .container {
-    @apply max-w-7xl mx-auto;
-  }
+  .container { @apply max-w-7xl mx-auto; }
 }
 
 /* Reduced motion */
