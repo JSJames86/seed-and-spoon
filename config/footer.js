@@ -25,12 +25,12 @@ export const columns = [
     ],
   },
   {
-    title: "Programs",
+    title: "Causes",
     links: [
-      { label: "Surplus Rescue", href: "/programs/surplus-rescue" },
-      { label: "Community Pantry Partners", href: "/programs/pantry-partners" },
-      { label: "Prepared Meals", href: "/programs/prepared-meals" },
-      { label: "Education & Workshops", href: "/programs/workshops" },
+      { label: "Surplus Rescue", href: "/causes/surplus-rescue" },
+      { label: "Community Pantry Partners", href: "/causes/pantry-partners" },
+      { label: "Prepared Meals", href: "/causes/prepared-meals" },
+      { label: "Education & Workshops", href: "/causes/workshops" },
       { label: "Impact Dashboard", href: "/impact" },
     ],
   },
