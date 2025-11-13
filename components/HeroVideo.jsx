@@ -1,17 +1,28 @@
-// components/HeroVideo.jsx
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
 export default function HeroVideo() {
   const [videoError, setVideoError] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 480);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // SSR: show poster only to avoid hydration mismatch
+  const showPosterOnly = isMobile || videoError;
+
+  // SSR fallback – poster only
   if (!mounted) {
     return (
       <Image
@@ -25,8 +36,6 @@ export default function HeroVideo() {
     );
   }
 
-  const showPosterOnly = videoError;
-
   return (
     <div className="relative w-full h-full overflow-hidden">
       {!showPosterOnly ? (
@@ -39,7 +48,7 @@ export default function HeroVideo() {
           className="hero-video"
           preload="auto"
           aria-label="Seed & Spoon community impact"
-          onError={() => {
+          onError={(e) => {
             console.warn("Hero video failed to load, using fallback image");
             setVideoError(true);
           }}
