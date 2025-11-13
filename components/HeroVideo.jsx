@@ -5,25 +5,14 @@ import Image from "next/image";
 
 export default function HeroVideo() {
   const [videoError, setVideoError] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-
-    // Check if screen is < 480px (mobile) - show poster only to save data/battery
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 480);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Show poster-only on mobile (<480px) or if video errors
-  const showPosterOnly = isMobile || videoError;
+  // Show poster-only if video errors
+  const showPosterOnly = videoError;
 
   // Prevent hydration mismatch - show poster during SSR
   if (!mounted) {
