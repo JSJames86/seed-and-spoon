@@ -4,53 +4,32 @@
 
 @layer base {
   :root {
-    /* Header height tokens - must match Tailwind classes in Header.jsx */
-    --header-h-mobile: 56px;    /* h-14 */
-    --header-h-tablet: 64px;    /* md:h-16 */
-    --header-h-desktop: 72px;   /* lg:h-[72px] */
-    --header-h: var(--header-h-mobile); /* Default */
+    --header-h-mobile: 56px;
+    --header-h-tablet: 64px;
+    --header-h-desktop: 72px;
+    --header-h: var(--header-h-mobile);
   }
 
   @media (min-width: 768px) {
-    :root {
-      --header-h: var(--header-h-tablet);
-    }
+    :root { --header-h: var(--header-h-tablet); }
   }
-
   @media (min-width: 1024px) {
-    :root {
-      --header-h: var(--header-h-desktop);
-    }
+    :root { --header-h: var(--header-h-desktop); }
   }
 
-  html {
-    scroll-behavior: smooth;
-    /* iOS Safari viewport fix */
-    height: -webkit-fill-available;
-  }
+  html { scroll-behavior: smooth; height: -webkit-fill-available; }
+  body { padding-top: var(--header-h); padding-bottom: env(safe-area-inset-bottom, 0); }
 
-  body {
-    /* CONSTANT padding - never toggled (prevents CLS) */
-    padding-top: var(--header-h);
-    padding-bottom: env(safe-area-inset-bottom, 0);
-  }
-
-  /* iOS Safari min-h-screen fix */
   @supports (-webkit-touch-callout: none) {
-    .min-h-screen {
-      min-height: -webkit-fill-available;
-    }
+    .min-h-screen { min-height: -webkit-fill-available; }
   }
 
-  /* Header safe area - applies internally, not to body */
   header {
     padding-top: env(safe-area-inset-top, 0);
-    /* Ensure glassmorphism works on all browsers */
     -webkit-backdrop-filter: var(--header-backdrop-filter, blur(16px));
     backdrop-filter: var(--header-backdrop-filter, blur(16px));
   }
 
-  /* Enhanced logo rendering */
   header img {
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
@@ -58,79 +37,76 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /*
-    HERO SECTION: Full viewport height with modern units
-  */
+  /* HERO SECTION */
   .hero-section {
-    /* Full viewport height for all devices */
     height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
     height: 100svh;
     height: 100dvh;
-
-    /* Negative margin for overlay - pulls hero up under header */
     margin-top: calc(-1 * (var(--header-h) + env(safe-area-inset-top, 0px)));
-
     overflow: hidden;
     position: relative;
   }
 
-  /* Mobile portrait: use dynamic viewport height */
   @media (max-width: 768px) and (orientation: portrait) {
     .hero-section {
-      height: 100dvh;
+      height: 85vh;                     /* Increased for better mobile look */
+      min-height: calc(var(--vh, 1vh) * 85);
     }
   }
 
-  /* Mobile landscape: keep full height */
   @media (max-width: 768px) and (orientation: landscape) {
     .hero-section {
       height: 100vh;
+      min-height: calc(var(--vh, 1vh) * 100);
       height: 100svh;
       height: 100dvh;
     }
   }
 
-  /* Hero video: Always cover, no letterboxing */
+  /* HERO VIDEO – ALWAYS COVER */
   .hero-video {
-    /* Position and size */
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-
-    /* Always cover the entire container */
     object-fit: cover;
     object-position: center;
-
-    /* Remove any default spacing */
     margin: 0;
     padding: 0;
     display: block;
-
-    /* iOS Safari specific fixes */
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
-
-    /* Prevent video flickering on mobile */
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     -webkit-perspective: 1000;
     perspective: 1000;
   }
 
-  /* Portrait orientation on mobile: adjust focal point if needed */
+  /* Mobile portrait – COVER, no contain */
   @media (max-width: 768px) and (orientation: portrait) {
     .hero-video {
       object-fit: cover;
-      object-position: center 40%; /* Adjust this percentage to frame your video content */
+      object-position: center 40%;   /* Adjust focal point if needed */
     }
   }
 
-  /* When scrolled past hero, remove negative margin (normal flow) */
-  body:not(.has-hero-at-top) .hero-section {
-    margin-top: 0;
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .hero-video { object-fit: cover; }
   }
+  @media (min-width: 1025px) {
+    .hero-video { object-fit: cover; }
+  }
+  @media (min-width: 1920px) {
+    .hero-video { object-fit: cover; }
+  }
+
+  @media (max-width: 768px) and (orientation: landscape) {
+    .hero-video { object-position: center center; }
+  }
+
+  body:not(.has-hero-at-top) .hero-section { margin-top: 0; }
 }
 
 @layer components {
