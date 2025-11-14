@@ -20,13 +20,6 @@ export const metadata = {
 };
 import Image from "next/image";
 import Link from "next/link";
-
-export const metadata = {
-  title: "Education & Workshops | Seed & Spoon NJ",
-  description:
-    "Budgeting, cooking, food preservation, smart grocery shopping, and youth agriculture workshops that help New Jersey families build long-term food stability.",
-};
-
 export default function WorkshopsPage() {
   return (
     <main className="min-h-screen bg-[#F9EED4] pt-16 md:pt-20 lg:pt-24">
