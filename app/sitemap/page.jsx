@@ -1,10 +1,27 @@
 // Sitemap page - renders an HTML sitemap for users
-import Link from "next/link";
 
 export const metadata = {
-  title: "Sitemap | Seed and Spoon",
-  description: "Complete sitemap of Seed and Spoon website pages",
+  title: "Sitemap | Seed & Spoon NJ - Complete Site Navigation",
+  description:
+    "Explore all pages on Seed & Spoon NJ's website. Find resources for getting help, volunteering, donating, and learning about our food rescue mission.",
+  openGraph: {
+    title: "Sitemap | Seed & Spoon NJ",
+    description:
+      "Browse the complete Seed & Spoon NJ site map to find food assistance resources, volunteer opportunities, and ways to support our mission.",
+    url: "https://seedandspoon.org/sitemap",
+    images: ["/og-default.jpg"],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sitemap | Seed & Spoon NJ",
+    description:
+      "Complete site navigation for Seed & Spoon NJ - food rescue, hunger relief, and community empowerment.",
+    images: ["/og-default.jpg"],
+  },
 };
+
+import Link from "next/link";
 
 export default function SitemapPage() {
   const baseUrl =
