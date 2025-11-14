@@ -1,119 +1,103 @@
-// app/sitemap.js
-import { MetadataRoute } from "next";
+// Sitemap page - renders an HTML sitemap for users
+import Link from "next/link";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const metadata = {
+  title: "Sitemap | Seed and Spoon",
+  description: "Complete sitemap of Seed and Spoon website pages",
+};
+
+export default function SitemapPage() {
   const baseUrl =
     process.env.NEXT_PUBLIC_SITE_URL || "https://seedandspoon.org";
 
-  const now = new Date();
-
-  return [
+  const pages = [
     // Core pages
-    {
-      url: `${baseUrl}/`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/causes`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/get-help`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/donate`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/volunteer`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-
-    // Causes detail pages
-    {
-      url: `${baseUrl}/causes/surplus-rescue`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/causes/pantry-partners`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/causes/prepared-meals`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/causes/workshops`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-
-    // Utility / legal pages
-    {
-      url: `${baseUrl}/accessibility`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/legal/privacy`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/legal/terms`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/legal/food-waiver`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/legal/donor-privacy`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/legal/non-discrimination`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/sitemap`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.2,
-    },
+    { url: "/", title: "Home", priority: "High" },
+    { url: "/about", title: "About Us", priority: "High" },
+    { url: "/causes", title: "Our Causes", priority: "High" },
+    { url: "/get-help", title: "Get Help", priority: "High" },
+    { url: "/donate", title: "Donate", priority: "High" },
+    { url: "/volunteer", title: "Volunteer", priority: "High" },
   ];
+
+  const causePages = [
+    { url: "/causes/surplus-rescue", title: "Surplus Rescue" },
+    { url: "/causes/pantry-partners", title: "Pantry Partners" },
+    { url: "/causes/prepared-meals", title: "Prepared Meals" },
+    { url: "/causes/workshops", title: "Workshops & Education" },
+  ];
+
+  const legalPages = [
+    { url: "/accessibility", title: "Accessibility Statement" },
+    { url: "/legal/privacy", title: "Privacy Policy" },
+    { url: "/legal/terms", title: "Terms of Service" },
+    { url: "/legal/food-waiver", title: "Food Donation Waiver" },
+    { url: "/legal/donor-privacy", title: "Donor Privacy Policy" },
+    { url: "/legal/non-discrimination", title: "Non-Discrimination Policy" },
+  ];
+
+  return (
+    <div className="container mx-auto px-4 py-16 max-w-4xl">
+      <h1 className="text-4xl font-bold mb-8">Sitemap</h1>
+
+      <div className="space-y-8">
+        <section>
+          <h2 className="text-2xl font-semibold mb-4 text-green-700">
+            Main Pages
+          </h2>
+          <ul className="space-y-2">
+            {pages.map((page) => (
+              <li key={page.url} className="flex items-center">
+                <Link
+                  href={page.url}
+                  className="text-blue-600 hover:underline flex-1"
+                >
+                  {page.title}
+                </Link>
+                <span className="text-sm text-gray-500 ml-4">
+                  {page.priority} Priority
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-semibold mb-4 text-green-700">
+            Our Causes
+          </h2>
+          <ul className="space-y-2">
+            {causePages.map((page) => (
+              <li key={page.url}>
+                <Link
+                  href={page.url}
+                  className="text-blue-600 hover:underline"
+                >
+                  {page.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-semibold mb-4 text-green-700">
+            Legal & Policies
+          </h2>
+          <ul className="space-y-2">
+            {legalPages.map((page) => (
+              <li key={page.url}>
+                <Link
+                  href={page.url}
+                  className="text-blue-600 hover:underline"
+                >
+                  {page.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
+    </div>
+  );
 }
