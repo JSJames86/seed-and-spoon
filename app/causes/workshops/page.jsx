@@ -1,3 +1,23 @@
+export const metadata = {
+  title: "Workshops & Education | Seed & Spoon NJ – Cooking, Budgeting & Urban Agriculture",
+  description:
+    "Seed & Spoon NJ offers free community workshops in cooking, nutrition, budgeting, and youth agriculture—empowering families with life skills that support long-term food security.",
+  openGraph: {
+    title: "Workshops & Education | Seed & Spoon NJ",
+    description:
+      "Learn how Seed & Spoon NJ teaches cooking, budgeting, nutrition, and youth agriculture to strengthen food security and build community resilience.",
+    url: "https://seedandspoon.org/causes/workshops",
+    images: ["/og-workshops.jpg"], // optional upload later
+    type: "article",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Workshops & Education | Seed & Spoon NJ",
+    description:
+      "Free community classes that teach cooking skills, budgeting, gardening, and nutrition—helping families become more food secure.",
+    images: ["/og-workshops.jpg"],
+  },
+};
 import Image from "next/image";
 import Link from "next/link";
 
