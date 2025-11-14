@@ -1,9 +1,25 @@
 export const metadata = {
-  title: "Community Pantry Partners | Seed & Spoon NJ",
+  title: "Community Pantry Partners | Seed & Spoon NJ – Expanding Food Access Together",
   description:
-    "Join Seed & Spoon NJ as a community pantry partner. We collaborate with schools, churches, local organizations, and micro-pantries to distribute fresh meals and groceries directly to families.",
+    "Seed & Spoon NJ partners with schools, churches, nonprofits, and local organizations to host community pantries that provide families with fresh groceries, dignity, and reliable access to food.",
+  openGraph: {
+    title: "Community Pantry Partners | Seed & Spoon NJ",
+    description:
+      "Discover how Seed & Spoon NJ builds neighborhood pantry partnerships across New Jersey—bringing fresh food directly into the heart of communities.",
+    url: "https://seedandspoon.org/causes/pantry-partners",
+    images: ["/og-pantry-partners.jpg"], // optional later upload
+    type: "article",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Community Pantry Partners | Seed & Spoon NJ",
+    description:
+      "Partner with Seed & Spoon NJ to bring food security directly into your community.",
+    images: ["/og-pantry-partners.jpg"],
+  },
 };
-
+import Image from "next/image";
+import Link from "next/link";
 export default function PantryPartnersPage() {
   return (
     <div className="bg-white">
