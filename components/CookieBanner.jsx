@@ -42,7 +42,7 @@ export default function CookieBanner() {
                 and analyze our traffic. By clicking "Accept All", you consent to our use of cookies.
                 You can manage your preferences or reject non-essential cookies.{' '}
                 <Link
-                  href="/privacy-policy"
+                  href="/legal/privacy"
                   className="text-green-600 hover:text-green-700 underline font-medium"
                 >
                   Learn more in our Privacy Policy
@@ -90,14 +90,14 @@ export default function CookieBanner() {
               are required for basic site functionality and cannot be disabled. For more
               information about our data practices, please review our{' '}
               <Link
-                href="/privacy-policy"
+                href="/legal/privacy"
                 className="text-green-600 hover:text-green-700 underline"
               >
                 Privacy Policy
               </Link>
               {' '}and{' '}
               <Link
-                href="/terms"
+                href="/legal/terms"
                 className="text-green-600 hover:text-green-700 underline"
               >
                 Terms & Conditions
