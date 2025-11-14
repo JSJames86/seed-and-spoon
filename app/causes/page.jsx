@@ -1,11 +1,26 @@
-import Image from "next/image";
-import Link from "next/link";
-
 export const metadata = {
   title: "Our Causes | Seed & Spoon NJ - Feeding Families, Growing Community",
   description:
-    "Explore Seed & Spoon NJ’s core causes: surplus food rescue, community pantry partners, prepared meals & family food boxes, and education & workshops that empower New Jersey families.",
+    "Explore Seed & Spoon NJ’s core causes: surplus food rescue, community pantry partners, prepared meals & family food boxes, and hands-on education & workshops that empower New Jersey families.",
+  openGraph: {
+    title: "Our Causes | Seed & Spoon NJ",
+    description:
+      "Learn about Seed & Spoon NJ’s essential programs: food rescue, pantry partnerships, meal distributions, and community education.",
+    url: "https://seedandspoon.org/causes",
+    images: ["/og-causes.jpg"],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Our Causes | Seed & Spoon NJ",
+    description:
+      "Discover how Seed & Spoon NJ feeds families, reduces food waste, and strengthens community resilience.",
+    images: ["/og-causes.jpg"],
+  },
 };
+
+import Image from "next/image";
+import Link from "next/link";
 
 // Causes hub data
 const causesData = [
