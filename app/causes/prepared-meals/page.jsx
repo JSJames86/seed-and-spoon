@@ -1,8 +1,25 @@
 export const metadata = {
-  title: "Prepared Meals | Seed & Spoon NJ",
+  title: "Prepared Meals | Seed & Spoon NJ – Fresh, Nutritious Meals for Families",
   description:
-    "Seed & Spoon NJ prepares fresh, home-style meals for families, veterans, elders, and disabled neighbors across New Jersey. Learn how our prepared meal program works and how to support it.",
+    "Seed & Spoon NJ prepares fresh, home-style meals for families, seniors, veterans, and neighbors in need—using rescued food, donated ingredients, and community-powered kitchens.",
+  openGraph: {
+    title: "Prepared Meals | Seed & Spoon NJ",
+    description:
+      "Explore how Seed & Spoon NJ transforms rescued ingredients into nutritious prepared meals that support families across New Jersey.",
+    url: "https://seedandspoon.org/causes/prepared-meals",
+    images: ["/og-prepared-meals.jpg"], // optional upload later
+    type: "article",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Prepared Meals | Seed & Spoon NJ",
+    description:
+      "Fresh, ready-to-eat meals made with love and delivered with dignity—discover our Prepared Meals program.",
+    images: ["/og-prepared-meals.jpg"],
+  },
 };
+import Image from "next/image";
+import Link from "next/link";
 
 export default function PreparedMealsPage() {
   return (
