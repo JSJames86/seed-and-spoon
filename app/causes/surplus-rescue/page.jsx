@@ -1,4 +1,26 @@
+export const metadata = {
+  title: "Surplus Rescue | Seed & Spoon NJ – Fighting Food Waste, Feeding Families",
+  description:
+    "Seed & Spoon NJ rescues surplus food from grocery stores, farms, bakeries, and community partners—turning perfectly good food into meals and grocery boxes for New Jersey families.",
+  openGraph: {
+    title: "Surplus Rescue | Seed & Spoon NJ",
+    description:
+      "Learn how Seed & Spoon NJ rescues surplus food and redistributes it to families, reducing waste and feeding communities across New Jersey.",
+    url: "https://seedandspoon.org/causes/surplus-rescue",
+    images: ["/og-surplus-rescue.jpg"], // optional for later
+    type: "article",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Surplus Rescue | Seed & Spoon NJ",
+    description:
+      "Rescuing surplus food. Reducing waste. Feeding New Jersey families with dignity.",
+    images: ["/og-surplus-rescue.jpg"],
+  },
+};
+
 import Link from "next/link";
+
 
 export default function SurplusRescuePage() {
   return (
