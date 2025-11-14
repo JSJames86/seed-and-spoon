@@ -3,6 +3,8 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SmoothScroll from "@/components/SmoothScroll";
+import CookieBanner from "@/components/CookieBanner";
+import CookieSettingsModal from "@/components/CookieSettingsModal";
 
 export const metadata = {
   title: "Seed & Spoon NJ | Neighbors Feeding Neighbors in Essex County",
@@ -50,6 +52,10 @@ export default function RootLayout({ children }) {
         <Header />
         <main id="main">{children}</main>
         <Footer />
+
+        {/* GDPR/CCPA Cookie Consent System */}
+        <CookieBanner />
+        <CookieSettingsModal />
       </body>
     </html>
   );
