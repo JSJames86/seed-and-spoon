@@ -1,6 +1,22 @@
 export const metadata = {
-  title: "Cookie Settings | Seed & Spoon NJ",
-  description: "Manage your cookie preferences and learn about our cookie usage.",
+  title: "Cookie Policy | Seed & Spoon NJ - Manage Your Preferences",
+  description:
+    "Learn how Seed & Spoon NJ uses cookies and similar technologies. Manage your cookie preferences and understand how we collect website usage data.",
+  openGraph: {
+    title: "Cookie Policy | Seed & Spoon NJ",
+    description:
+      "Manage your cookie preferences and learn about our cookie usage for website functionality and analytics.",
+    url: "https://seedandspoon.org/legal/cookies",
+    images: ["/og-default.jpg"],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Cookie Policy | Seed & Spoon NJ",
+    description:
+      "Learn about cookie usage and manage your preferences on our website.",
+    images: ["/og-default.jpg"],
+  },
 };
 
 export default function CookiesPage() {
