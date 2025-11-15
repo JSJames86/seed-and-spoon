@@ -34,51 +34,18 @@
   }
 
   /* ──────── HERO SECTION ──────── */
-.hero-section {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-
-  /* Pull hero under the fixed header */
-  margin-top: calc(-1 * (var(--header-h) + env(safe-area-inset-top, 0px)));
-
-  /* Full viewport height with modern + fallback units */
-  min-height: 100vh;
-  min-height: 100dvh;
-}
-
-/* iOS Safari fallback */
-@supports (-webkit-touch-callout: none) {
   .hero-section {
-    min-height: -webkit-fill-available;
-  }
-}
-
-body:not(.has-hero-at-top) .hero-section {
-  margin-top: 0;
-}
-  /* ──────── HERO VIDEO ──────── */
-  .hero-video {
-    position: absolute;
-    inset: 0;
+    position: relative;
     width: 100%;
-    height: 100%;
-    object-fit: cover;          /* always cover */
-    object-position: center;    /* always centered */
-    margin: 0;
-    padding: 0;
-    display: block;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    -webkit-perspective: 1000;
-    perspective: 1000;
+    overflow: hidden;
+
+    /* Pull hero under the fixed header */
+    margin-top: calc(-1 * (var(--header-h) + env(safe-area-inset-top, 0px)));
   }
 
-  /* NO portrait-specific overrides – base rules are enough */
-
-  body:not(.has-hero-at-top) .hero-section { margin-top: 0; }
+  body:not(.has-hero-at-top) .hero-section {
+    margin-top: 0;
+  }
 }
 
 @layer components {
