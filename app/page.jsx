@@ -23,6 +23,7 @@ export const metadata = {
 
 import Header from "@/components/Header";  // Capital H, exact match
 import Hero from "@/components/Hero";
+import WhyThisMatters from "@/components/WhyThisMatters";
 import StoryScroll from "@/components/StoryScroll";
 
 export default function Home() {
@@ -32,6 +33,9 @@ export default function Home() {
 
       {/* HERO */}
       <Hero />
+
+      {/* WHY THIS WORK MATTERS */}
+      <WhyThisMatters />
 
       {/* STORY SCROLL SECTION */}
       <StoryScroll />
