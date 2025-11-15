@@ -1,36 +1,13 @@
 "use client";
-import { useEffect } from "react";
-import HeroVideo from "./HeroVideo";
 
 export default function Hero() {
-  useEffect(() => {
-    const setVh = () => {
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty("--vh", `${vh}px`);
-    };
-
-    setVh();
-    window.addEventListener("resize", setVh);
-    window.addEventListener("orientationchange", setVh);
-
-    return () => {
-      window.removeEventListener("resize", setVh);
-      window.removeEventListener("orientationchange", setVh);
-    };
-  }, []);
-
   return (
-    <section
-      className="hero-section relative w-full overflow-hidden bg-black"
-      style={{ touchAction: "pan-y" }}
-    >
-      <div
-        id="hero-sentinel"
-        className="absolute top-0 left-0 w-full h-px pointer-events-none"
-        aria-hidden="true"
-      />
-      <HeroVideo />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/30 pointer-events-none" />
+    <section className="hero-section w-full overflow-hidden bg-[#EFE9DD]">
+      <div className="w-full py-24 flex items-center justify-center">
+        <h1 className="text-3xl font-semibold text-center">
+          Seed &amp; Spoon — Hero Placeholder
+        </h1>
+      </div>
     </section>
   );
 }
