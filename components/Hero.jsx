@@ -1,9 +1,27 @@
 "use client";
 
+import Image from "next/image";
+
 export default function Hero() {
   return (
-    <section className="relative w-full bg-gradient-to-b from-[#f5f1e8] to-[#faf8f4] py-16 sm:py-20 lg:py-24">
-      <div className="max-w-6xl mx-auto px-6 text-center">
+    <section className="relative w-full overflow-hidden bg-[#F8F6F0]">
+      {/* Background Image Layer */}
+      <div className="absolute inset-0">
+        <Image
+          src="/media/hero/hero-bg.jpg"
+          alt="Seed & Spoon community"
+          fill
+          className="object-cover"
+          priority
+          sizes="100vw"
+        />
+      </div>
+
+      {/* Overlay for readability */}
+      <div className="absolute inset-0 bg-[rgba(248,246,240,0.78)]" />
+
+      {/* Foreground Content */}
+      <div className="relative z-10 container mx-auto px-4 py-16 md:py-24 max-w-3xl text-center">
         {/* Main Heading */}
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-gray-900 mb-6">
           At Seed & Spoon, we don't just feed people.
