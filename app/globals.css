@@ -124,6 +124,11 @@
   .label-xs {
     @apply font-sans text-xs font-bold tracking-[0.18em] uppercase;
   }
+
+  .heading-underline {
+    @apply mx-auto mt-3 h-1 w-20 rounded-full;
+    background-image: linear-gradient(90deg, #4FAF3B, #FF7A3D);
+  }
 }
 
 /* Reduced motion */

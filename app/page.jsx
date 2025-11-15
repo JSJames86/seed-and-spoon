@@ -1,23 +1,23 @@
 // app/page.jsx
 
 export const metadata = {
-  title: "Seed & Spoon NJ | Fighting Hunger, Rescuing Food, Empowering Communities",
+  title: "Seed & Spoon | Nourishing Essex County with dignity",
   description:
-    "Seed & Spoon NJ transforms surplus food into nutritious meals for families facing food insecurity across New Jersey. Join our community-powered mission to end hunger with dignity and sustainability.",
+    "Seed & Spoon is a restorative care network in Essex County, NJ — connecting families, volunteers, and local kitchens to deliver meals, food boxes, and support with dignity.",
   openGraph: {
-    title: "Seed & Spoon NJ | Fighting Hunger Through Food Rescue",
+    title: "Seed & Spoon | Nourishing Essex County with dignity",
     description:
-      "Community-centered food rescue and hunger relief in New Jersey. We turn surplus food into fresh meals, support local pantries, and empower families with dignity.",
+      "Seed & Spoon is a restorative care network in Essex County, NJ — connecting families, volunteers, and local kitchens to deliver meals, food boxes, and support with dignity.",
     url: "https://seedandspoon.org",
-    images: ["/og-default.jpg"],
+    images: ["/media/hero/hero-bg.jpg"],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Seed & Spoon NJ | Fighting Hunger Through Food Rescue",
+    title: "Seed & Spoon | Nourishing Essex County with dignity",
     description:
-      "Transforming surplus into sustenance. Join our community-powered mission to end hunger in New Jersey.",
-    images: ["/og-default.jpg"],
+      "A restorative care network delivering meals, food boxes, and support with dignity across Essex County, NJ.",
+    images: ["/media/hero/hero-bg.jpg"],
   },
 };
 

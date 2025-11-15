@@ -2,11 +2,15 @@
 
 import { useRef, useState, useEffect } from "react";
 import { useAnimatedCounter } from "@/hooks/useAnimatedCounter";
+import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
 import Link from "next/link";
 
 function StatCard({ label, mainStat, percentage, description, delay = 0 }) {
   const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef(null);
+
+  // Apply reveal animation
+  useRevealOnScroll(cardRef, { duration: 0.6, delay: delay / 1000 });
 
   // Animated percentage counter
   const animatedPercentage = useAnimatedCounter(percentage, 1500, isVisible);
@@ -61,6 +65,11 @@ function StatCard({ label, mainStat, percentage, description, delay = 0 }) {
 }
 
 export default function WhyThisMatters() {
+  const wishlistRef = useRef(null);
+
+  // Apply reveal animation to wishlist CTA
+  useRevealOnScroll(wishlistRef, { duration: 0.7, y: 20 });
+
   const stats = [
     {
       label: "NATIONWIDE",
@@ -88,13 +97,14 @@ export default function WhyThisMatters() {
 
   return (
     <section className="bg-white py-16 md:py-24">
-      <div className="max-w-5xl mx-auto px-4">
+      <div className="max-w-5xl mx-auto px-4 md:px-6">
         {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="heading-h2 text-[var(--charcoal)]">
             Why this work matters
           </h2>
-          <p className="body-md text-slate-700 text-center max-w-2xl mx-auto mt-3">
+          <div className="heading-underline"></div>
+          <p className="body-md text-slate-700 text-center max-w-2xl mx-auto mt-6">
             Food insecurity isn't just a distant problem — it's happening right
             here in our community. These numbers represent real families,
             neighbors, and children who deserve better.
@@ -102,7 +112,7 @@ export default function WhyThisMatters() {
         </div>
 
         {/* Stat Cards */}
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
+        <div className="mt-10 grid gap-6 md:gap-8 md:grid-cols-2 xl:grid-cols-3">
           {stats.map((stat, idx) => (
             <StatCard key={idx} {...stat} />
           ))}
@@ -205,7 +215,7 @@ export default function WhyThisMatters() {
         </div>
 
         {/* Amazon Wishlist CTA - Soft highlight */}
-        <div className="mt-10 rounded-2xl bg-[var(--leaf-light)]/25 border border-[var(--leaf-light)]/40 px-6 py-6 md:px-8 md:py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div ref={wishlistRef} className="mt-10 rounded-2xl bg-[var(--leaf-light)]/25 border border-[var(--leaf-light)]/40 px-6 py-6 md:px-8 md:py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex-1">
             <h3 className="heading-h3 text-[var(--charcoal)] mb-2">
               Help us stock our pantry
