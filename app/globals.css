@@ -4,6 +4,30 @@
 
 @layer base {
   :root {
+    /* Brand colors */
+    --green-primary: #4FAF3B;
+    --orange-primary: #E86A1D;
+    --leaf-light: #A6D47A;
+    --leaf-mid: #6FBF3C;
+
+    /* Neutrals */
+    --cream: #F8F6F0;
+    --white: #FFFFFF;
+    --charcoal: #1A1A1A;
+
+    /* Gradients & overlays */
+    --green-gradient: linear-gradient(90deg, #226214 0%, #43CC25 100%);
+    --hero-overlay: rgba(0, 0, 0, 0.35);
+
+    /* Font families */
+    --font-sans: var(--font-libre-franklin), system-ui, -apple-system,
+      BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-serif-display: var(--font-roboto-slab), 'Georgia', 'Times New Roman',
+      serif;
+    --font-serif-quote: var(--font-crimson-text), 'Georgia', 'Times New Roman',
+      serif;
+
+    /* Header heights */
     --header-h-mobile: 56px;
     --header-h-tablet: 64px;
     --header-h-desktop: 72px;
@@ -14,7 +38,29 @@
   @media (min-width: 1024px) { :root { --header-h: var(--header-h-desktop); } }
 
   html { scroll-behavior: smooth; height: -webkit-fill-available; }
-  body { padding-top: var(--header-h); padding-bottom: env(safe-area-inset-bottom, 0); }
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--cream);
+    color: var(--charcoal);
+    padding-top: var(--header-h);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .font-sans {
+    font-family: var(--font-sans);
+  }
+
+  .font-display {
+    font-family: var(--font-serif-display);
+  }
+
+  .font-quote {
+    font-family: var(--font-serif-quote);
+  }
+
+  .hero-text-shadow {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  }
 
   @supports (-webkit-touch-callout: none) {
     .min-h-screen { min-height: -webkit-fill-available; }
@@ -50,6 +96,34 @@
 
 @layer components {
   .container { @apply max-w-7xl mx-auto; }
+
+  .heading-hero {
+    @apply font-display font-medium leading-tight md:leading-snug;
+  }
+
+  .heading-h2 {
+    @apply font-display font-medium text-2xl md:text-3xl leading-snug tracking-tight;
+  }
+
+  .heading-h3 {
+    @apply font-display font-medium text-xl md:text-2xl leading-snug;
+  }
+
+  .body-lg {
+    @apply font-sans text-base md:text-lg leading-relaxed;
+  }
+
+  .body-md {
+    @apply font-sans text-base leading-relaxed;
+  }
+
+  .body-sm {
+    @apply font-sans text-sm leading-relaxed;
+  }
+
+  .label-xs {
+    @apply font-sans text-xs font-bold tracking-[0.18em] uppercase;
+  }
 }
 
 /* Reduced motion */

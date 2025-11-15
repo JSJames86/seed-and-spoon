@@ -6,6 +6,28 @@ import SmoothScroll from "@/components/SmoothScroll";
 import CookieBanner from "@/components/CookieBanner";
 import CookieSettingsModal from "@/components/CookieSettingsModal";
 import AnalyticsLoader from "@/components/AnalyticsLoader";
+import { Libre_Franklin, Roboto_Slab, Crimson_Text } from 'next/font/google';
+
+const libreFranklin = Libre_Franklin({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  variable: '--font-libre-franklin',
+  display: 'swap',
+});
+
+const robotoSlab = Roboto_Slab({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-roboto-slab',
+  display: 'swap',
+});
+
+const crimsonText = Crimson_Text({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-crimson-text',
+  display: 'swap',
+});
 
 export const metadata = {
   title: "Seed & Spoon NJ | Neighbors Feeding Neighbors in Essex County",
@@ -42,10 +64,10 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className="min-h-screen antialiased transition-colors duration-300">
+      <body className={`${libreFranklin.variable} ${robotoSlab.variable} ${crimsonText.variable} font-sans min-h-screen antialiased transition-colors duration-300`}>
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 bg-green-600 text-white px-4 py-2 rounded-lg"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 bg-[var(--green-primary)] text-white px-4 py-2 rounded-lg body-sm font-bold"
         >
           Skip to content
         </a>
