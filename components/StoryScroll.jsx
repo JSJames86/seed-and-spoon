@@ -138,12 +138,12 @@ export default function StoryScroll() {
     <section
       ref={containerRef}
       id="our-story"
-      className="bg-[var(--cream)] py-16 px-4 sm:px-6 lg:px-8"
+      className="bg-[var(--cream)] py-16 md:py-24"
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-5xl mx-auto px-4">
         {/* Section intro */}
-        <div className="text-center mb-16">
-          <h2 className="heading-h2 text-[var(--charcoal)] mb-4">
+        <div className="text-center mb-12">
+          <h2 className="heading-h2 text-[var(--charcoal)]">
             Our Story
           </h2>
           <p className="body-md text-slate-700 mt-2 max-w-xl mx-auto">
@@ -151,56 +151,38 @@ export default function StoryScroll() {
           </p>
         </div>
 
-        {/* Story panels */}
-        <div className="space-y-24 md:space-y-32">
-          {storyPanels.map((panel, index) => {
-            const isEven = index % 2 === 1;
-
+        {/* Story cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {storyPanels.map((panel) => {
             return (
               <div
                 key={panel.id}
-                className="story-panel min-h-[400px] flex items-center"
+                className="story-panel overflow-hidden rounded-3xl shadow-sm border border-slate-100 bg-white"
               >
-                <div
-                  className={`grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center w-full ${
-                    isEven ? "md:flex-row-reverse" : ""
-                  }`}
-                >
-                  {/* Image */}
-                  <div
-                    className={`${
-                      isEven ? "md:order-2" : "md:order-1"
-                    }`}
-                  >
-                    <div className="story-image relative aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-xl">
-                      <Image
-                        src={panel.image}
-                        alt={panel.alt}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                      />
-                    </div>
-                  </div>
+                {/* Image */}
+                <div className="story-image relative w-full h-64 md:h-80">
+                  <Image
+                    src={panel.image}
+                    alt={panel.alt}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  />
+                </div>
 
-                  {/* Text */}
-                  <div
-                    className={`${
-                      isEven ? "md:order-1" : "md:order-2"
-                    }`}
-                  >
-                    <h3 className="heading-h3 text-[var(--charcoal)] mb-4 text-3xl md:text-4xl">
-                      {panel.heading}
-                    </h3>
-                    <p className="body-md text-slate-700 mb-6">
-                      {panel.subtext}
+                {/* Content */}
+                <div className="p-5 md:p-6">
+                  <h3 className="heading-h3 text-[var(--charcoal)] mb-2">
+                    {panel.heading}
+                  </h3>
+                  <p className="body-md text-slate-700">
+                    {panel.subtext}
+                  </p>
+                  {panel.highlighted && (
+                    <p className="font-quote text-lg md:text-xl text-[var(--charcoal)] mt-4">
+                      {panel.highlighted}
                     </p>
-                    {panel.highlighted && (
-                      <p className="font-quote text-lg md:text-xl text-[var(--charcoal)] mt-4 italic">
-                        {panel.highlighted}
-                      </p>
-                    )}
-                  </div>
+                  )}
                 </div>
               </div>
             );
