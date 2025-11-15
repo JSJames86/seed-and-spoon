@@ -23,7 +23,6 @@ export const metadata = {
 
 import Header from "@/components/Header";  // Capital H, exact match
 import Hero from "@/components/Hero";
-import HeroContent from "@/components/HeroContent";
 import StoryScroll from "@/components/StoryScroll";
 
 export default function Home() {
@@ -31,15 +30,8 @@ export default function Home() {
     <>
       <Header />
 
-      {/* HERO: VIDEO with dynamic viewport height handling */}
+      {/* HERO */}
       <Hero />
-
-      {/* CONTENT: BELOW HERO */}
-      <section className="py-16 px-6 bg-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <HeroContent />
-        </div>
-      </section>
 
       {/* STORY SCROLL SECTION */}
       <StoryScroll />
