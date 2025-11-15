@@ -215,7 +215,7 @@ export default function WhyThisMatters() {
             directly to us.
           </p>
           <Link
-            href="https://www.amazon.com/hz/wishlist/ls/YOUR_WISHLIST_ID"
+            href="https://www.amazon.com/hz/wishlist/ls/1ZC494TKCOAHJ?ref_=wl_share"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 bg-white text-[var(--green-primary)] px-8 py-4 rounded-full font-bold body-md hover:bg-[var(--cream)] transition-colors shadow-lg"
