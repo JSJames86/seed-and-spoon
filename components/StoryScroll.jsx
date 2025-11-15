@@ -186,11 +186,10 @@ export default function StoryScroll() {
       </section>
 
       {/* Manifesto Band */}
-      <section className="py-14 md:py-20 bg-gradient-to-r from-[var(--cream)] via-[var(--leaf-light)]/40 to-[var(--cream)]">
-        <div className="max-w-4xl mx-auto px-4">
-          <p className="text-center font-quote text-2xl md:text-3xl leading-snug text-[var(--charcoal)]">
-            At Seed &amp; Spoon, we don&apos;t just feed people.
-            <br className="hidden md:block" />
+      <section className="w-full bg-gradient-to-r from-[#FF7A3D] via-[#FF9A52] to-[#FFB278] py-12 md:py-20">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <p className="font-libre font-bold text-white text-2xl md:text-4xl leading-snug tracking-tight">
+            At Seed &amp; Spoon, we don&apos;t just feed people.<br />
             We see them — and respond with compassion and care.
           </p>
         </div>
