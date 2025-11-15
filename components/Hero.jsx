@@ -22,7 +22,7 @@ export default function Hero() {
       <div className="absolute inset-0 bg-black/40" />
 
       {/* Foreground Content */}
-      <div className="relative z-10 max-w-2xl mx-auto px-4 py-16 md:py-24 text-center space-y-4">
+      <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-6 py-16 md:py-24 text-center space-y-4">
         {/* Main Heading */}
         <h1 className="heading-hero hero-text-shadow text-white text-3xl sm:text-4xl md:text-5xl mb-6">
           At Seed &amp; Spoon, we don&apos;t just feed people.
