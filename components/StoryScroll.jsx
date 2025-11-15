@@ -47,8 +47,6 @@ const storyPanels = [
     heading: "The community that nourishes.",
     subtext:
       "Volunteers, donors, local chefs, gardens, and resources coming together so no one is left out.",
-    highlighted:
-      "At Seed & Spoon, we don't just feed people. We see them — and respond with compassion and care.",
   },
 ];
 
@@ -135,60 +133,68 @@ export default function StoryScroll() {
   }, []);
 
   return (
-    <section
-      ref={containerRef}
-      id="our-story"
-      className="bg-[var(--cream)] py-16 md:py-24"
-    >
-      <div className="max-w-5xl mx-auto px-4">
-        {/* Section intro */}
-        <div className="text-center mb-12">
-          <h2 className="heading-h2 text-[var(--charcoal)]">
-            Our Story
-          </h2>
-          <p className="body-md text-slate-700 mt-2 max-w-xl mx-auto">
-            Five moments that capture what Seed &amp; Spoon is all about.
+    <>
+      <section
+        ref={containerRef}
+        id="our-story"
+        className="bg-[var(--cream)] py-16 md:py-24"
+      >
+        <div className="max-w-5xl mx-auto px-4">
+          {/* Section intro */}
+          <div className="text-center mb-12">
+            <h2 className="heading-h2 text-[var(--charcoal)]">
+              Our Story
+            </h2>
+            <p className="body-md text-slate-700 mt-2 max-w-xl mx-auto">
+              Five moments that capture what Seed &amp; Spoon is all about.
+            </p>
+          </div>
+
+          {/* Story cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {storyPanels.map((panel) => {
+              return (
+                <div
+                  key={panel.id}
+                  className="story-panel overflow-hidden rounded-3xl shadow-sm border border-slate-100 bg-white"
+                >
+                  {/* Image */}
+                  <div className="story-image relative w-full h-64 md:h-80">
+                    <Image
+                      src={panel.image}
+                      alt={panel.alt}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-5 md:p-6">
+                    <h3 className="heading-h3 text-[var(--charcoal)] mb-2">
+                      {panel.heading}
+                    </h3>
+                    <p className="body-md text-slate-700">
+                      {panel.subtext}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Manifesto Band */}
+      <section className="py-14 md:py-20 bg-gradient-to-r from-[var(--cream)] via-[var(--leaf-light)]/40 to-[var(--cream)]">
+        <div className="max-w-4xl mx-auto px-4">
+          <p className="text-center font-quote text-2xl md:text-3xl leading-snug text-[var(--charcoal)]">
+            At Seed &amp; Spoon, we don&apos;t just feed people.
+            <br className="hidden md:block" />
+            We see them — and respond with compassion and care.
           </p>
         </div>
-
-        {/* Story cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {storyPanels.map((panel) => {
-            return (
-              <div
-                key={panel.id}
-                className="story-panel overflow-hidden rounded-3xl shadow-sm border border-slate-100 bg-white"
-              >
-                {/* Image */}
-                <div className="story-image relative w-full h-64 md:h-80">
-                  <Image
-                    src={panel.image}
-                    alt={panel.alt}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  />
-                </div>
-
-                {/* Content */}
-                <div className="p-5 md:p-6">
-                  <h3 className="heading-h3 text-[var(--charcoal)] mb-2">
-                    {panel.heading}
-                  </h3>
-                  <p className="body-md text-slate-700">
-                    {panel.subtext}
-                  </p>
-                  {panel.highlighted && (
-                    <p className="font-quote text-lg md:text-xl text-[var(--charcoal)] mt-4">
-                      {panel.highlighted}
-                    </p>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
