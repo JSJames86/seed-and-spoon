@@ -134,22 +134,25 @@ export default function StoryScroll() {
 
   return (
     <>
+      {/* Our Story Header - Full width green gradient */}
+      <section className="w-full bg-gradient-to-b from-[#226214] to-[#43CC25] py-16 md:py-20">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <h2 className="font-libre text-3xl md:text-4xl font-bold text-[#F8F6F0] tracking-tight">
+            Our Story
+          </h2>
+          <p className="mt-4 text-lg md:text-xl font-medium text-[#F8F6F0]/90">
+            Five moments that capture what Seed &amp; Spoon is all about.
+          </p>
+        </div>
+      </section>
+
+      {/* Story Cards Section */}
       <section
         ref={containerRef}
         id="our-story"
         className="bg-[var(--cream)] py-16 md:py-24"
       >
         <div className="max-w-5xl mx-auto px-4">
-          {/* Section intro */}
-          <div className="text-center mb-12">
-            <h2 className="heading-h2 text-[var(--charcoal)]">
-              Our Story
-            </h2>
-            <p className="body-md text-slate-700 mt-2 max-w-xl mx-auto">
-              Five moments that capture what Seed &amp; Spoon is all about.
-            </p>
-          </div>
-
           {/* Story cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {storyPanels.map((panel) => {
