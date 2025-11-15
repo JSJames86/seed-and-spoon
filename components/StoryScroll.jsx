@@ -147,6 +147,7 @@ export default function StoryScroll() {
           <h2 className="font-libre text-3xl md:text-4xl font-bold text-[#F8F6F0] tracking-tight">
             Our Story
           </h2>
+          <div className="heading-underline"></div>
           <p className="mt-4 text-lg md:text-xl font-medium text-[#F8F6F0]/90">
             Five moments that capture what Seed &amp; Spoon is all about.
           </p>

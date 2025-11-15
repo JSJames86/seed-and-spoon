@@ -103,7 +103,8 @@ export default function WhyThisMatters() {
           <h2 className="heading-h2 text-[var(--charcoal)]">
             Why this work matters
           </h2>
-          <p className="body-md text-slate-700 text-center max-w-2xl mx-auto mt-3">
+          <div className="heading-underline"></div>
+          <p className="body-md text-slate-700 text-center max-w-2xl mx-auto mt-6">
             Food insecurity isn't just a distant problem — it's happening right
             here in our community. These numbers represent real families,
             neighbors, and children who deserve better.
