@@ -24,6 +24,7 @@ export const metadata = {
 import Header from "@/components/Header";  // Capital H, exact match
 import Hero from "@/components/Hero";
 import HeroContent from "@/components/HeroContent";
+import StoryScroll from "@/components/StoryScroll";
 
 export default function Home() {
   return (
@@ -39,6 +40,9 @@ export default function Home() {
           <HeroContent />
         </div>
       </section>
+
+      {/* STORY SCROLL SECTION */}
+      <StoryScroll />
     </>
   );
 }
