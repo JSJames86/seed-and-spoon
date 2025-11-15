@@ -138,16 +138,16 @@ export default function StoryScroll() {
     <section
       ref={containerRef}
       id="our-story"
-      className="bg-gradient-to-b from-[#faf8f4] to-[#f5f1e8] py-16 px-4 sm:px-6 lg:px-8"
+      className="bg-[var(--cream)] py-16 px-4 sm:px-6 lg:px-8"
     >
       <div className="max-w-7xl mx-auto">
         {/* Section intro */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h2 className="heading-h2 text-[var(--charcoal)] mb-4">
             Our Story
           </h2>
-          <p className="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto">
-            Five moments that capture what Seed & Spoon is all about.
+          <p className="body-md text-slate-700 mt-2 max-w-xl mx-auto">
+            Five moments that capture what Seed &amp; Spoon is all about.
           </p>
         </div>
 
@@ -189,14 +189,14 @@ export default function StoryScroll() {
                       isEven ? "md:order-1" : "md:order-2"
                     }`}
                   >
-                    <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                    <h3 className="heading-h3 text-[var(--charcoal)] mb-4 text-3xl md:text-4xl">
                       {panel.heading}
                     </h3>
-                    <p className="text-lg md:text-xl text-gray-700 leading-relaxed mb-6">
+                    <p className="body-md text-slate-700 mb-6">
                       {panel.subtext}
                     </p>
                     {panel.highlighted && (
-                      <p className="text-xl md:text-2xl font-semibold text-[#8B4513] leading-relaxed border-l-4 border-[#8B4513] pl-4 py-2 bg-white/50 rounded-r-lg">
+                      <p className="font-quote text-lg md:text-xl text-[var(--charcoal)] mt-4 italic">
                         {panel.highlighted}
                       </p>
                     )}

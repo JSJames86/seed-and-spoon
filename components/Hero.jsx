@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Button from "./Button";
 
 export default function Hero() {
   return (
@@ -18,44 +19,33 @@ export default function Hero() {
       </div>
 
       {/* Overlay for readability */}
-      <div className="absolute inset-0 bg-[rgba(248,246,240,0.78)]" />
+      <div className="absolute inset-0 bg-[var(--hero-overlay)]" />
 
       {/* Foreground Content */}
-      <div className="relative z-10 container mx-auto px-4 py-16 md:py-24 max-w-3xl text-center">
+      <div className="relative z-10 max-w-2xl mx-auto px-4 py-16 md:py-24 text-center">
         {/* Main Heading */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-gray-900 mb-6">
-          At Seed & Spoon, we don't just feed people.
+        <h1 className="heading-hero hero-text-shadow text-white text-3xl sm:text-4xl md:text-5xl mb-6">
+          At Seed &amp; Spoon, we don&apos;t just feed people.
           <br />
-          <span className="text-[#8B4513]">
-            We see them — and respond with compassion and care.
-          </span>
+          We see them — and respond with compassion and care.
         </h1>
 
         {/* Subtext */}
-        <p className="text-lg sm:text-xl md:text-2xl text-gray-700 font-light mb-10 max-w-4xl mx-auto">
-          We're building a restorative care network in Essex County — meals, resources, and real support delivered with dignity across our community.
+        <p className="hero-text-shadow body-lg text-white/90 mt-4 mb-10">
+          We&apos;re building a restorative care network in Essex County — meals, resources, and real support delivered with dignity across our community.
         </p>
 
         {/* Call to Action Buttons */}
         <div className="flex flex-col gap-4 sm:flex-row sm:justify-center sm:gap-6">
-          <a
-            href="/get-help"
-            className="rounded-lg bg-green-600 px-8 py-4 font-bold text-white text-lg transition-all hover:bg-green-500 hover:scale-105 shadow-lg"
-          >
+          <Button variant="primary" href="/get-help">
             I need help
-          </a>
-          <a
-            href="/donate"
-            className="rounded-lg bg-orange-600 px-8 py-4 font-bold text-white text-lg transition-all hover:bg-orange-500 hover:scale-105 shadow-lg"
-          >
+          </Button>
+          <Button variant="secondary" href="/donate">
             I want to donate
-          </a>
-          <a
-            href="/volunteer"
-            className="rounded-lg border-2 border-green-600 px-8 py-4 font-bold text-green-600 text-lg transition-all hover:bg-green-600 hover:text-white hover:scale-105 shadow-lg"
-          >
+          </Button>
+          <Button variant="outline" href="/volunteer">
             I want to volunteer
-          </a>
+          </Button>
         </div>
       </div>
     </section>

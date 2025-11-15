@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import Button from "./Button";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -146,7 +147,7 @@ export default function Header() {
           <nav className="hidden md:flex items-center gap-6">
             <Link
               href="/about"
-              className="text-white font-semibold hover:text-yellow-400 transition"
+              className="body-sm font-bold text-white hover:text-[var(--leaf-light)] transition-colors"
             >
               About
             </Link>
@@ -159,7 +160,7 @@ export default function Header() {
             >
               <button
                 type="button"
-                className="inline-flex items-center gap-1 text-white font-semibold hover:text-yellow-400 transition"
+                className="inline-flex items-center gap-1 body-sm font-bold text-white hover:text-[var(--leaf-light)] transition-colors"
               >
                 <span>Causes</span>
                 <span
@@ -183,32 +184,32 @@ export default function Header() {
                   >
                     <Link
                       href="/causes"
-                      className="block px-4 py-2.5 text-sm text-gray-800 hover:bg-emerald-50 hover:text-emerald-700 font-semibold"
+                      className="block px-4 py-2.5 body-sm font-bold text-[var(--charcoal)] hover:bg-[#eaf6e5] hover:text-[var(--green-primary)]"
                     >
                       View All Causes
                     </Link>
                     <div className="my-1 border-t border-gray-100" />
                     <Link
                       href="/causes/surplus-rescue"
-                      className="block px-4 py-2.5 text-sm text-gray-800 hover:bg-emerald-50 hover:text-emerald-700"
+                      className="block px-4 py-2.5 body-sm text-[var(--charcoal)] hover:bg-[#eaf6e5] hover:text-[var(--green-primary)]"
                     >
                       Surplus Rescue
                     </Link>
                     <Link
                       href="/causes/pantry-partners"
-                      className="block px-4 py-2.5 text-sm text-gray-800 hover:bg-emerald-50 hover:text-emerald-700"
+                      className="block px-4 py-2.5 body-sm text-[var(--charcoal)] hover:bg-[#eaf6e5] hover:text-[var(--green-primary)]"
                     >
                       Community Pantry Partners
                     </Link>
                     <Link
                       href="/causes/prepared-meals"
-                      className="block px-4 py-2.5 text-sm text-gray-800 hover:bg-emerald-50 hover:text-emerald-700"
+                      className="block px-4 py-2.5 body-sm text-[var(--charcoal)] hover:bg-[#eaf6e5] hover:text-[var(--green-primary)]"
                     >
                       Prepared Meals
                     </Link>
                     <Link
                       href="/causes/workshops"
-                      className="block px-4 py-2.5 text-sm text-gray-800 hover:bg-emerald-50 hover:text-emerald-700"
+                      className="block px-4 py-2.5 body-sm text-[var(--charcoal)] hover:bg-[#eaf6e5] hover:text-[var(--green-primary)]"
                     >
                       Education & Workshops
                     </Link>
@@ -219,21 +220,18 @@ export default function Header() {
 
             <Link
               href="/get-help"
-              className="text-white font-semibold hover:text-yellow-400 transition"
+              className="body-sm font-bold text-white hover:text-[var(--leaf-light)] transition-colors"
             >
               Get Help
             </Link>
 
-            <Link
-              href="/donate"
-              className="bg-orange-500 text-white px-6 py-2 rounded-lg font-bold hover:bg-orange-600 transition shadow-lg"
-            >
+            <Button variant="secondary" href="/donate">
               Donate
-            </Link>
+            </Button>
 
             <Link
               href="/volunteer"
-              className="text-white font-semibold hover:text-yellow-400 transition"
+              className="body-sm font-bold text-white hover:text-[var(--leaf-light)] transition-colors"
             >
               Volunteer
             </Link>
@@ -312,46 +310,42 @@ export default function Header() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-gradient-to-b from-green-800 to-green-900 flex flex-col pt-32 px-8"
+            className="fixed inset-0 z-40 bg-[var(--green-primary)] flex flex-col pt-32 px-8"
           >
-            <nav className="flex-1 flex flex-col justify-center gap-8 text-center">
+            <nav className="flex-1 flex flex-col justify-center space-y-6 text-center">
               <Link
                 href="/about"
                 onClick={closeMenu}
-                className="text-white text-3xl font-bold hover:text-yellow-400"
+                className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
               >
                 About
               </Link>
               <Link
                 href="/causes"
                 onClick={closeMenu}
-                className="text-white text-3xl font-bold hover:text-yellow-400"
+                className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
               >
                 Causes
               </Link>
               <Link
                 href="/get-help"
                 onClick={closeMenu}
-                className="text-white text-3xl font-bold hover:text-yellow-400"
+                className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
               >
                 Get Help
               </Link>
               <Link
                 href="/volunteer"
                 onClick={closeMenu}
-                className="text-white text-3xl font-bold hover:text-yellow-400"
+                className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
               >
                 Volunteer
               </Link>
             </nav>
             <div className="mt-auto">
-              <Link
-                href="/donate"
-                onClick={closeMenu}
-                className="block w-full bg-orange-500 text-white text-center py-5 rounded-xl font-bold text-xl hover:bg-orange-600"
-              >
+              <Button variant="secondary" href="/donate" className="w-full text-xl py-5">
                 Donate Now
-              </Link>
+              </Button>
               <div className="flex justify-center gap-6 mt-8">
                 <a
                   href="https://instagram.com/seedandspoon_nj"
