@@ -12,8 +12,8 @@ export default function Header() {
   const hamburgerRef = useRef(null);
   const menuRef = useRef(null);
 
-  const logoDefault = "/assets/new-logos/logo-full.svg";
-  const logoScrolled = "/assets/new-logos/logo-compact.svg";
+  const logoDefault = "/assets/new-logos/logo-full.png";
+  const logoScrolled = "/assets/new-logos/logo-compact.png";
 
   // Force transparency on load and ensure sentinel exists
   useEffect(() => {
@@ -107,9 +107,19 @@ export default function Header() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-[1000] transition-all duration-300 bg-gradient-to-r from-[#E5D8C3] to-[#D8C4A6] border-b border-black/5 ${
-          isScrolled ? "py-2" : "py-3"
+        className={`fixed top-0 left-0 right-0 h-14 md:h-16 lg:h-[72px] z-[1000] transition-all duration-300 ${
+          isScrolled
+            ? "bg-white/10 backdrop-blur-xl shadow-2xl border-b border-white/30"
+            : "bg-white/5 backdrop-blur-lg"
         }`}
+        style={{
+          backdropFilter: isScrolled
+            ? "blur(24px) saturate(180%)"
+            : "blur(16px) saturate(150%)",
+          WebkitBackdropFilter: isScrolled
+            ? "blur(24px) saturate(180%)"
+            : "blur(16px) saturate(150%)",
+        }}
       >
         <div className="max-w-7xl mx-auto h-full flex items-center justify-between px-4 sm:px-6">
           <Link href="/" className="flex-shrink-0 bg-transparent">
@@ -137,7 +147,7 @@ export default function Header() {
           <nav className="hidden md:flex items-center gap-6">
             <Link
               href="/about"
-              className="body-sm font-bold text-white hover:text-[var(--leaf-light)] transition-colors"
+              className="body-sm font-bold text-[#F7E8D2] hover:text-white transition-colors"
             >
               About
             </Link>
@@ -150,7 +160,7 @@ export default function Header() {
             >
               <button
                 type="button"
-                className="inline-flex items-center gap-1 body-sm font-bold text-white hover:text-[var(--leaf-light)] transition-colors"
+                className="inline-flex items-center gap-1 body-sm font-bold text-[#F7E8D2] hover:text-white transition-colors"
               >
                 <span>Causes</span>
                 <span
@@ -210,7 +220,7 @@ export default function Header() {
 
             <Link
               href="/get-help"
-              className="body-sm font-bold text-white hover:text-[var(--leaf-light)] transition-colors"
+              className="body-sm font-bold text-[#F7E8D2] hover:text-white transition-colors"
             >
               Get Help
             </Link>
@@ -221,7 +231,7 @@ export default function Header() {
 
             <Link
               href="/volunteer"
-              className="body-sm font-bold text-white hover:text-[var(--leaf-light)] transition-colors"
+              className="body-sm font-bold text-[#F7E8D2] hover:text-white transition-colors"
             >
               Volunteer
             </Link>
@@ -231,7 +241,7 @@ export default function Header() {
                 href="https://instagram.com/seedandspoon_nj"
                 target="_blank"
                 rel="noopener"
-                className="text-white hover:text-yellow-400"
+                className="text-[#F7E8D2] hover:text-white transition-colors"
                 aria-label="Instagram"
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -242,7 +252,7 @@ export default function Header() {
                 href="https://facebook.com/seedandspoon_nj"
                 target="_blank"
                 rel="noopener"
-                className="text-white hover:text-yellow-400"
+                className="text-[#F7E8D2] hover:text-white transition-colors"
                 aria-label="Facebook"
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -253,7 +263,7 @@ export default function Header() {
                 href="https://x.com/seedandspoon_nj"
                 target="_blank"
                 rel="noopener"
-                className="text-white hover:text-yellow-400"
+                className="text-[#F7E8D2] hover:text-white transition-colors"
                 aria-label="X"
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
