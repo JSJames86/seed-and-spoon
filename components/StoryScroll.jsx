@@ -1,7 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useLayoutEffect } from "react";
 import Image from "next/image";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Register ScrollTrigger plugin (only runs in browser)
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const storyPanels = [
   {
@@ -46,8 +53,90 @@ const storyPanels = [
 ];
 
 export default function StoryScroll() {
+  const containerRef = useRef(null);
+
+  useLayoutEffect(() => {
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    // Skip animations if user prefers reduced motion
+    if (prefersReducedMotion) {
+      return;
+    }
+
+    // Get all story panels within the container
+    const panels = gsap.utils.toArray(".story-panel", containerRef.current);
+    const triggers = [];
+
+    panels.forEach((panel) => {
+      // Find the image element within this panel
+      const image = panel.querySelector(".story-image");
+
+      // Animate the panel: fade and slide up
+      const panelTween = gsap.fromTo(
+        panel,
+        {
+          opacity: 0,
+          y: 40,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: panel,
+            start: "top 75%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+
+      // Store the trigger for cleanup
+      if (panelTween.scrollTrigger) {
+        triggers.push(panelTween.scrollTrigger);
+      }
+
+      // Animate the image: subtle scale effect
+      if (image) {
+        const imageTween = gsap.fromTo(
+          image,
+          {
+            scale: 0.96,
+          },
+          {
+            scale: 1,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: panel,
+              start: "top 75%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+
+        // Store the trigger for cleanup
+        if (imageTween.scrollTrigger) {
+          triggers.push(imageTween.scrollTrigger);
+        }
+      }
+    });
+
+    // Cleanup function
+    return () => {
+      // Kill all stored triggers
+      triggers.forEach((trigger) => trigger.kill());
+      // Kill any remaining tweens on the panels
+      gsap.killTweensOf(panels);
+    };
+  }, []);
+
   return (
     <section
+      ref={containerRef}
       id="our-story"
       className="bg-gradient-to-b from-[#faf8f4] to-[#f5f1e8] py-16 px-4 sm:px-6 lg:px-8"
     >
@@ -83,7 +172,7 @@ export default function StoryScroll() {
                       isEven ? "md:order-2" : "md:order-1"
                     }`}
                   >
-                    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-xl">
+                    <div className="story-image relative aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-xl">
                       <Image
                         src={panel.image}
                         alt={panel.alt}
