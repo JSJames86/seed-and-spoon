@@ -1,14 +1,7 @@
 "use client";
 
-import React, { useRef, useLayoutEffect } from "react";
+import React from "react";
 import Image from "next/image";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-// Register ScrollTrigger plugin
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 const storyPanels = [
   {
@@ -53,80 +46,10 @@ const storyPanels = [
 ];
 
 export default function StoryScroll() {
-  const panelsRef = useRef([]);
-
-  useLayoutEffect(() => {
-    // Check for reduced motion preference
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    if (prefersReducedMotion) {
-      // Skip animations if user prefers reduced motion
-      return;
-    }
-
-    // Animate each panel as it enters viewport
-    const panels = panelsRef.current;
-
-    panels.forEach((panel, index) => {
-      if (!panel) return;
-
-      const image = panel.querySelector(".story-image");
-      const text = panel.querySelector(".story-text");
-
-      gsap.fromTo(
-        panel,
-        {
-          opacity: 0,
-          y: 40,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: panel,
-            start: "top 70%",
-            end: "top 20%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-
-      // Subtle image scale effect
-      if (image) {
-        gsap.fromTo(
-          image,
-          {
-            scale: 0.96,
-          },
-          {
-            scale: 1,
-            duration: 0.8,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: panel,
-              start: "top 70%",
-              end: "top 20%",
-              toggleActions: "play none none none",
-            },
-          }
-        );
-      }
-    });
-
-    // Cleanup ScrollTriggers on unmount
-    return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-    };
-  }, []);
-
   return (
     <section
       id="our-story"
-      className="bg-gradient-to-b from-[#f5f1e8] to-[#faf8f4] py-16 px-4 sm:px-6 lg:px-8"
+      className="bg-gradient-to-b from-[#faf8f4] to-[#f5f1e8] py-16 px-4 sm:px-6 lg:px-8"
     >
       <div className="max-w-7xl mx-auto">
         {/* Section intro */}
@@ -147,8 +70,7 @@ export default function StoryScroll() {
             return (
               <div
                 key={panel.id}
-                ref={(el) => (panelsRef.current[index] = el)}
-                className="story-panel min-h-[70vh] flex items-center"
+                className="story-panel min-h-[400px] flex items-center"
               >
                 <div
                   className={`grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center w-full ${
@@ -157,7 +79,7 @@ export default function StoryScroll() {
                 >
                   {/* Image */}
                   <div
-                    className={`story-image ${
+                    className={`${
                       isEven ? "md:order-2" : "md:order-1"
                     }`}
                   >
@@ -168,14 +90,13 @@ export default function StoryScroll() {
                         fill
                         className="object-cover"
                         sizes="(max-width: 768px) 100vw, 50vw"
-                        priority={index === 0}
                       />
                     </div>
                   </div>
 
                   {/* Text */}
                   <div
-                    className={`story-text ${
+                    className={`${
                       isEven ? "md:order-1" : "md:order-2"
                     }`}
                   >
