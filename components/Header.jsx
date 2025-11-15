@@ -12,8 +12,8 @@ export default function Header() {
   const hamburgerRef = useRef(null);
   const menuRef = useRef(null);
 
-  const logoDefault = "/assets/new-logos/logo-compact.png";
-  const logoScrolled = "/assets/new-logos/logo-full.png";
+  const logoDefault = "/assets/new-logos/logo-full.svg";
+  const logoScrolled = "/assets/new-logos/logo-compact.svg";
 
   // Force transparency on load and ensure sentinel exists
   useEffect(() => {
@@ -107,19 +107,9 @@ export default function Header() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 h-14 md:h-16 lg:h-[72px] z-[1000] transition-all duration-300 ${
-          isScrolled
-            ? "bg-white/10 backdrop-blur-xl shadow-2xl border-b border-white/30"
-            : "bg-white/5 backdrop-blur-lg"
+        className={`fixed top-0 left-0 right-0 z-[1000] transition-all duration-300 bg-gradient-to-r from-[#E5D8C3] to-[#D8C4A6] border-b border-black/5 ${
+          isScrolled ? "py-2" : "py-3"
         }`}
-        style={{
-          backdropFilter: isScrolled
-            ? "blur(24px) saturate(180%)"
-            : "blur(16px) saturate(150%)",
-          WebkitBackdropFilter: isScrolled
-            ? "blur(24px) saturate(180%)"
-            : "blur(16px) saturate(150%)",
-        }}
       >
         <div className="max-w-7xl mx-auto h-full flex items-center justify-between px-4 sm:px-6">
           <Link href="/" className="flex-shrink-0 bg-transparent">
