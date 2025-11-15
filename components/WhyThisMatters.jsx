@@ -2,11 +2,15 @@
 
 import { useRef, useState, useEffect } from "react";
 import { useAnimatedCounter } from "@/hooks/useAnimatedCounter";
+import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
 import Link from "next/link";
 
 function StatCard({ label, mainStat, percentage, description, delay = 0 }) {
   const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef(null);
+
+  // Apply reveal animation
+  useRevealOnScroll(cardRef, { duration: 0.6, delay: delay / 1000 });
 
   // Animated percentage counter
   const animatedPercentage = useAnimatedCounter(percentage, 1500, isVisible);
@@ -61,6 +65,11 @@ function StatCard({ label, mainStat, percentage, description, delay = 0 }) {
 }
 
 export default function WhyThisMatters() {
+  const wishlistRef = useRef(null);
+
+  // Apply reveal animation to wishlist CTA
+  useRevealOnScroll(wishlistRef, { duration: 0.7, y: 20 });
+
   const stats = [
     {
       label: "NATIONWIDE",
@@ -205,7 +214,7 @@ export default function WhyThisMatters() {
         </div>
 
         {/* Amazon Wishlist CTA - Soft highlight */}
-        <div className="mt-10 rounded-2xl bg-[var(--leaf-light)]/25 border border-[var(--leaf-light)]/40 px-6 py-6 md:px-8 md:py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div ref={wishlistRef} className="mt-10 rounded-2xl bg-[var(--leaf-light)]/25 border border-[var(--leaf-light)]/40 px-6 py-6 md:px-8 md:py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex-1">
             <h3 className="heading-h3 text-[var(--charcoal)] mb-2">
               Help us stock our pantry

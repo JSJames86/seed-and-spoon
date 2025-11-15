@@ -4,6 +4,7 @@ import React, { useRef, useLayoutEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
 
 // Register ScrollTrigger plugin (only runs in browser)
 if (typeof window !== "undefined") {
@@ -52,6 +53,12 @@ const storyPanels = [
 
 export default function StoryScroll() {
   const containerRef = useRef(null);
+  const storyHeaderRef = useRef(null);
+  const manifestoRef = useRef(null);
+
+  // Apply reveal animations
+  useRevealOnScroll(storyHeaderRef, { duration: 0.8 });
+  useRevealOnScroll(manifestoRef, { duration: 0.8 });
 
   useLayoutEffect(() => {
     // Check for reduced motion preference
@@ -136,7 +143,7 @@ export default function StoryScroll() {
     <>
       {/* Our Story Header - Full width green gradient */}
       <section className="w-full bg-gradient-to-b from-[#226214] to-[#43CC25] py-16 md:py-24">
-        <div className="max-w-5xl mx-auto px-4 md:px-6 text-center">
+        <div ref={storyHeaderRef} className="max-w-5xl mx-auto px-4 md:px-6 text-center">
           <h2 className="font-libre text-3xl md:text-4xl font-bold text-[#F8F6F0] tracking-tight">
             Our Story
           </h2>
@@ -190,7 +197,7 @@ export default function StoryScroll() {
 
       {/* Manifesto Band */}
       <section className="w-full bg-gradient-to-r from-[#FF7A3D] via-[#FF9A52] to-[#FFB278] py-16 md:py-24">
-        <div className="max-w-5xl mx-auto px-4 md:px-6 text-center">
+        <div ref={manifestoRef} className="max-w-5xl mx-auto px-4 md:px-6 text-center">
           <p className="font-libre font-bold text-white text-2xl md:text-4xl leading-snug tracking-tight">
             At Seed &amp; Spoon, we don&apos;t just feed people.<br />
             We see them — and respond with compassion and care.
