@@ -34,11 +34,11 @@ export default function Home() {
       {/* HERO */}
       <Hero />
 
-      {/* WHY THIS WORK MATTERS */}
-      <WhyThisMatters />
-
       {/* STORY SCROLL SECTION */}
       <StoryScroll />
+
+      {/* WHY THIS WORK MATTERS */}
+      <WhyThisMatters />
     </>
   );
 }
