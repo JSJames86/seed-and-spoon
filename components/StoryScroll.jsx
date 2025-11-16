@@ -4,6 +4,7 @@ import React, { useRef, useLayoutEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
 
 // Register ScrollTrigger plugin (only runs in browser)
 if (typeof window !== "undefined") {
@@ -52,6 +53,12 @@ const storyPanels = [
 
 export default function StoryScroll() {
   const containerRef = useRef(null);
+  const storyHeaderRef = useRef(null);
+  const manifestoRef = useRef(null);
+
+  // Apply reveal animations
+  useRevealOnScroll(storyHeaderRef, { duration: 0.8 });
+  useRevealOnScroll(manifestoRef, { duration: 0.8 });
 
   useLayoutEffect(() => {
     // Check for reduced motion preference
@@ -135,11 +142,12 @@ export default function StoryScroll() {
   return (
     <>
       {/* Our Story Header - Full width green gradient */}
-      <section className="w-full bg-gradient-to-b from-[#226214] to-[#43CC25] py-16 md:py-20">
-        <div className="max-w-4xl mx-auto px-6 text-center">
+      <section className="w-full bg-gradient-to-b from-[#226214] to-[#43CC25] py-16 md:py-24">
+        <div ref={storyHeaderRef} className="max-w-5xl mx-auto px-4 md:px-6 text-center">
           <h2 className="font-libre text-3xl md:text-4xl font-bold text-[#F8F6F0] tracking-tight">
             Our Story
           </h2>
+          <div className="heading-underline"></div>
           <p className="mt-4 text-lg md:text-xl font-medium text-[#F8F6F0]/90">
             Five moments that capture what Seed &amp; Spoon is all about.
           </p>
@@ -152,7 +160,7 @@ export default function StoryScroll() {
         id="our-story"
         className="bg-[var(--cream)] py-16 md:py-24"
       >
-        <div className="max-w-5xl mx-auto px-4">
+        <div className="max-w-5xl mx-auto px-4 md:px-6">
           {/* Story cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {storyPanels.map((panel) => {
@@ -189,8 +197,8 @@ export default function StoryScroll() {
       </section>
 
       {/* Manifesto Band */}
-      <section className="w-full bg-gradient-to-r from-[#FF7A3D] via-[#FF9A52] to-[#FFB278] py-12 md:py-20">
-        <div className="max-w-4xl mx-auto px-6 text-center">
+      <section className="w-full bg-gradient-to-r from-[#FF7A3D] via-[#FF9A52] to-[#FFB278] py-16 md:py-24">
+        <div ref={manifestoRef} className="max-w-5xl mx-auto px-4 md:px-6 text-center">
           <p className="font-libre font-bold text-white text-2xl md:text-4xl leading-snug tracking-tight">
             At Seed &amp; Spoon, we don&apos;t just feed people.<br />
             We see them — and respond with compassion and care.
