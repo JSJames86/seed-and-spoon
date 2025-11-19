@@ -16,7 +16,7 @@ const DynamicMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex items-center justify-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow">
+      <div className="flex items-center justify-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow min-h-[600px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-700 mx-auto mb-4"></div>
           <p className="text-gray-600 dark:text-gray-400">Loading map...</p>
@@ -26,7 +26,12 @@ const DynamicMap = dynamic(
   }
 );
 
-export default function ResourceMap() {
+export default function ResourceMap({
+  filters = {},
+  onFilterChange,
+  selectedResource,
+  onResourceSelect
+}) {
   // Backend API configuration
   const API_BASE_URL = "https://seed-spoon-backend.onrender.com";
 
@@ -34,21 +39,37 @@ export default function ResourceMap() {
   const [foodBanks, setFoodBanks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Ensure component is mounted (client-side only)
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Fetch food banks from Django backend
   useEffect(() => {
+    if (!isMounted) return;
+
     async function fetchFoodBanks() {
       try {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`${API_BASE_URL}/api/foodbanks/`);
+        console.log('Fetching food banks from:', `${API_BASE_URL}/api/foodbanks/`);
+
+        const response = await fetch(`${API_BASE_URL}/api/foodbanks/`, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+          },
+        });
 
         if (!response.ok) {
-          throw new Error(`API error: ${response.status}`);
+          throw new Error(`API error: ${response.status} ${response.statusText}`);
         }
 
         const data = await response.json();
+        console.log('API Response:', data);
 
         // Handle both array and paginated responses
         const banks = Array.isArray(data) ? data : data.results || [];
@@ -71,12 +92,24 @@ export default function ResourceMap() {
     }
 
     fetchFoodBanks();
-  }, []);
+  }, [isMounted]);
+
+  // Don't render anything on server
+  if (!isMounted) {
+    return (
+      <div className="flex items-center justify-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow min-h-[600px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-700 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading map...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Show loading state
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow">
+      <div className="flex items-center justify-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow min-h-[600px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-700 mx-auto mb-4"></div>
           <p className="text-gray-600 dark:text-gray-400">Loading food bank locations...</p>
@@ -88,9 +121,35 @@ export default function ResourceMap() {
   // Show error state
   if (error) {
     return (
-      <div className="p-8 bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-lg shadow text-center">
-        <p className="text-red-800 dark:text-red-300 font-semibold mb-2">{error}</p>
-        <p className="text-red-600 dark:text-red-400">Please try refreshing the page.</p>
+      <div className="space-y-4">
+        <div className="p-8 bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-lg shadow text-center">
+          <p className="text-red-800 dark:text-red-300 font-semibold mb-2">{error}</p>
+          <p className="text-red-600 dark:text-red-400 mb-4">
+            The backend API may not be accessible or requires CORS configuration.
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Show message if no food banks found
+  if (foodBanks.length === 0) {
+    return (
+      <div className="space-y-4">
+        <div className="p-8 bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-200 dark:border-yellow-800 rounded-lg shadow text-center">
+          <p className="text-yellow-800 dark:text-yellow-300 font-semibold mb-2">
+            No food banks found
+          </p>
+          <p className="text-yellow-600 dark:text-yellow-400">
+            The backend API returned no food bank locations with valid coordinates.
+          </p>
+        </div>
       </div>
     );
   }
@@ -107,7 +166,10 @@ export default function ResourceMap() {
         </div>
       </div>
 
-      <DynamicMap foodBanks={foodBanks} />
+      <DynamicMap
+        foodBanks={foodBanks}
+        onResourceSelect={onResourceSelect}
+      />
     </div>
   );
 }
