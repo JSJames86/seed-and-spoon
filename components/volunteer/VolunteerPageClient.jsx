@@ -226,7 +226,7 @@ export default function VolunteerPage() {
       </section>
 
       {/* Filter Bar */}
-      <section id="roles" className="py-8 bg-gray-50 sticky top-16 md:top-40 z-30 shadow-md">
+      <section id="roles" className="py-8 bg-gray-50 sticky top-14 md:top-16 lg:top-18 z-30 shadow-md">
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-center flex-wrap">
             <div>
