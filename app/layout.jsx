@@ -6,6 +6,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 import CookieBanner from "@/components/CookieBanner";
 import CookieSettingsModal from "@/components/CookieSettingsModal";
 import AnalyticsLoader from "@/components/AnalyticsLoader";
+import Providers from "@/components/Providers";
 import { Libre_Franklin, Roboto_Slab, Crimson_Text } from 'next/font/google';
 
 const libreFranklin = Libre_Franklin({
@@ -65,23 +66,25 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="scroll-smooth">
       <body className={`${libreFranklin.variable} ${robotoSlab.variable} ${crimsonText.variable} font-sans min-h-screen antialiased transition-colors duration-300`}>
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 bg-[var(--green-primary)] text-white px-4 py-2 rounded-lg body-sm font-bold"
-        >
-          Skip to content
-        </a>
-        <SmoothScroll />
-        <Header />
-        <main id="main">{children}</main>
-        <Footer />
+        <Providers>
+          <a
+            href="#main"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 bg-[var(--green-primary)] text-white px-4 py-2 rounded-lg body-sm font-bold"
+          >
+            Skip to content
+          </a>
+          <SmoothScroll />
+          <Header />
+          <main id="main">{children}</main>
+          <Footer />
 
-        {/* GDPR/CCPA Cookie Consent System */}
-        <CookieBanner />
-        <CookieSettingsModal />
+          {/* GDPR/CCPA Cookie Consent System */}
+          <CookieBanner />
+          <CookieSettingsModal />
 
-        {/* Analytics - Loads only after consent */}
-        <AnalyticsLoader />
+          {/* Analytics - Loads only after consent */}
+          <AnalyticsLoader />
+        </Providers>
       </body>
     </html>
   );
