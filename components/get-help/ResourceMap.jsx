@@ -82,11 +82,18 @@ export default function ResourceMap({
 
   // Initialize map
   useEffect(() => {
-    if (typeof window === 'undefined' || mapInstanceRef.current) return;
+    if (typeof window === 'undefined') return;
+    if (mapInstanceRef.current) return; // Already initialized
+    if (!mapRef.current) return; // DOM not ready
 
     const initMap = async () => {
       // Dynamic import of Leaflet to avoid SSR issues
       const L = (await import('leaflet')).default;
+
+      // Check if the container already has a map instance
+      if (mapRef.current._leaflet_id) {
+        return;
+      }
 
       // Fix for default marker icons in production
       delete L.Icon.Default.prototype._getIconUrl;
