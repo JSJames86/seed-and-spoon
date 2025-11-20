@@ -5,7 +5,10 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from core.models import DonorProfile
+from core.models import (
+    DonorProfile, Organization, Campaign, Donation, RecurringDonation,
+    VolunteerOpportunity, VolunteerApplication
+)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -212,3 +215,149 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
         instance.save()
         
         return instance
+
+
+class OrganizationSerializer(serializers.ModelSerializer):
+    """Organization serializer for public display"""
+    
+    class Meta:
+        model = Organization
+        fields = [
+            'id', 'name', 'slug', 'description', 'mission_statement',
+            'email', 'phone', 'website', 'logo',
+            'address_line1', 'address_line2', 'city', 'state', 'zip_code',
+            'ein', 'tax_exempt_status',
+            'facebook_url', 'twitter_url', 'instagram_url',
+            'primary_color', 'is_featured', 'created_at'
+        ]
+        read_only_fields = ['id', 'slug', 'created_at']
+
+
+class CampaignSerializer(serializers.ModelSerializer):
+    """Campaign serializer with organization details"""
+    organization = OrganizationSerializer(read_only=True)
+    progress_percentage = serializers.SerializerMethodField()
+    days_remaining = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Campaign
+        fields = [
+            'id', 'title', 'slug', 'description', 'campaign_type',
+            'goal_amount', 'amount_raised', 'donor_count',
+            'start_date', 'end_date', 'status',
+            'is_matching', 'matching_amount', 'matching_sponsor',
+            'impact_metric_label', 'impact_metric_value', 'impact_metric_amount',
+            'featured_image', 'is_featured',
+            'organization', 'progress_percentage', 'days_remaining',
+            'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'slug', 'amount_raised', 'donor_count', 'created_at', 'updated_at']
+    
+    def get_progress_percentage(self, obj):
+        """Calculate campaign progress percentage"""
+        if obj.goal_amount > 0:
+            return min(100, int((obj.amount_raised / obj.goal_amount) * 100))
+        return 0
+    
+    def get_days_remaining(self, obj):
+        """Calculate days remaining in campaign"""
+        if obj.end_date:
+            from django.utils import timezone
+            delta = obj.end_date - timezone.now()
+            return max(0, delta.days)
+        return None
+
+
+class DonationSerializer(serializers.ModelSerializer):
+    """Donation serializer for listing donations"""
+    campaign_name = serializers.CharField(source='campaign.title', read_only=True)
+    organization_name = serializers.CharField(source='organization.name', read_only=True)
+    
+    class Meta:
+        model = Donation
+        fields = [
+            'id', 'amount', 'currency', 'donation_type',
+            'campaign_name', 'organization_name',
+            'status', 'is_anonymous', 'created_at', 'completed_at'
+        ]
+        read_only_fields = fields
+
+
+class RecurringDonationSerializer(serializers.ModelSerializer):
+    """Recurring donation serializer"""
+    campaign_name = serializers.CharField(source='campaign.title', read_only=True, allow_null=True)
+    organization_name = serializers.CharField(source='organization.name', read_only=True)
+    
+    class Meta:
+        model = RecurringDonation
+        fields = [
+            'id', 'amount', 'currency', 'frequency',
+            'campaign_name', 'organization_name',
+            'status', 'total_payments', 'successful_payments', 'failed_payments',
+            'start_date', 'next_payment_date', 'created_at'
+        ]
+        read_only_fields = fields
+
+
+class OrganizationDetailSerializer(serializers.ModelSerializer):
+    """Detailed organization serializer with all fields"""
+    class Meta:
+        model = Organization
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+
+class CampaignDetailSerializer(serializers.ModelSerializer):
+    """Detailed campaign serializer with organization info"""
+    organization = OrganizationSerializer(read_only=True)
+    
+    class Meta:
+        model = Campaign
+        fields = '__all__'
+        read_only_fields = ['id', 'amount_raised', 'donor_count', 'created_at', 'updated_at']
+
+
+class VolunteerOpportunitySerializer(serializers.ModelSerializer):
+    """Volunteer opportunity serializer for public listing"""
+    
+    class Meta:
+        model = VolunteerOpportunity
+        fields = [
+            'id', 'title', 'emoji', 'slug', 'category', 'schedule', 
+            'duties', 'ideal_for', 'summary', 'days_available', 
+            'is_paid', 'sort_order'
+        ]
+
+
+class VolunteerApplicationSerializer(serializers.ModelSerializer):
+    """Volunteer application serializer"""
+    user = UserSerializer(read_only=True)
+    
+    class Meta:
+        model = VolunteerApplication
+        fields = [
+            'id', 'user', 'full_name', 'email', 'phone', 'preferred_contact',
+            'roles', 'availability', 'resume', 'linkedin', 'accessibility_notes',
+            'transportation', 'message', 'orientation_agreed', 'photo_consent',
+            'status', 'created_at'
+        ]
+        read_only_fields = ['id', 'status', 'created_at']
+
+
+class VolunteerApplicationCreateSerializer(serializers.ModelSerializer):
+    """Serializer for creating volunteer applications"""
+    
+    class Meta:
+        model = VolunteerApplication
+        fields = [
+            'full_name', 'email', 'phone', 'preferred_contact',
+            'roles', 'availability', 'resume', 'linkedin', 'accessibility_notes',
+            'transportation', 'message', 'orientation_agreed', 'photo_consent'
+        ]
+    
+    def create(self, validated_data):
+        # Associate with current user if authenticated
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            validated_data['user'] = request.user
+        return super().create(validated_data)

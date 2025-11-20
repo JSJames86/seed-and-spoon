@@ -1,7 +1,8 @@
 from django.contrib import admin
 from .models import (
     Organization, DonorProfile, Campaign, 
-    Donation, RecurringDonation, DonationReceipt
+    Donation, RecurringDonation, DonationReceipt,
+    OrganizationAdmin as OrgAdmin, VolunteerOpportunity, VolunteerApplication
 )
 
 
@@ -234,7 +235,7 @@ class DonationReceiptAdmin(admin.ModelAdmin):
                     'receipt_date', 'email_sent']
     list_filter = ['tax_year', 'email_sent']
     search_fields = ['receipt_number', 'donor_name', 'donor_email', 'donation__donor__user__username']
-    readonly_fields = ['receipt_number', 'receipt_date', 'created_at']
+    readonly_fields = ['receipt_number', 'receipt_date']
     date_hierarchy = 'receipt_date'
     
     fieldsets = (
@@ -256,8 +257,70 @@ class DonationReceiptAdmin(admin.ModelAdmin):
         ('PDF & Email', {
             'fields': ('pdf_file', 'email_sent', 'email_sent_at')
         }),
+    )
+
+
+@admin.register(OrgAdmin)
+class OrgAdminAdmin(admin.ModelAdmin):
+    list_display = ['user', 'organization', 'role', 'created_at']
+    list_filter = ['role', 'created_at']
+    search_fields = ['user__username', 'user__email', 'organization__name']
+    readonly_fields = ['created_at']
+    autocomplete_fields = ['user', 'organization', 'created_by']
+
+
+@admin.register(VolunteerOpportunity)
+class VolunteerOpportunityAdmin(admin.ModelAdmin):
+    list_display = ['title', 'category', 'is_active', 'sort_order', 'created_at']
+    list_filter = ['category', 'is_active', 'is_paid']
+    search_fields = ['title', 'summary', 'ideal_for']
+    prepopulated_fields = {'slug': ('title',)}
+    readonly_fields = ['created_at', 'updated_at']
+    ordering = ['sort_order', '-created_at']
+    
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('title', 'emoji', 'slug', 'category', 'is_active', 'sort_order')
+        }),
+        ('Content', {
+            'fields': ('summary', 'schedule', 'duties', 'ideal_for', 'days_available')
+        }),
+        ('Settings', {
+            'fields': ('is_paid',)
+        }),
         ('Metadata', {
-            'fields': ('created_at',),
+            'fields': ('created_by', 'created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(VolunteerApplication)
+class VolunteerApplicationAdmin(admin.ModelAdmin):
+    list_display = ['full_name', 'email', 'status', 'created_at', 'reviewed_by']
+    list_filter = ['status', 'preferred_contact', 'created_at']
+    search_fields = ['full_name', 'email', 'phone']
+    readonly_fields = ['created_at', 'updated_at']
+    date_hierarchy = 'created_at'
+    
+    fieldsets = (
+        ('Contact Information', {
+            'fields': ('user', 'full_name', 'email', 'phone', 'preferred_contact')
+        }),
+        ('Application Details', {
+            'fields': ('roles', 'availability', 'resume', 'linkedin', 'message')
+        }),
+        ('Accessibility & Logistics', {
+            'fields': ('accessibility_notes', 'transportation')
+        }),
+        ('Consents', {
+            'fields': ('orientation_agreed', 'photo_consent')
+        }),
+        ('Review', {
+            'fields': ('status', 'reviewed_by', 'reviewed_at', 'notes')
+        }),
+        ('Metadata', {
+            'fields': ('created_at', 'updated_at'),
             'classes': ('collapse',)
         }),
     )

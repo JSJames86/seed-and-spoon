@@ -67,6 +67,28 @@ class Organization(models.Model):
         return self.name
 
 
+class OrganizationAdmin(models.Model):
+    """Links users to organizations as admins"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='org_admin_roles')
+    organization = models.ForeignKey('Organization', on_delete=models.CASCADE, related_name='admins')
+    role = models.CharField(max_length=20, choices=[
+        ('admin', 'Administrator'),
+        ('editor', 'Editor'),
+        ('viewer', 'Viewer'),
+    ], default='admin')
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='org_admins_created')
+    
+    class Meta:
+        unique_together = ['user', 'organization']
+        indexes = [
+            models.Index(fields=['user', 'organization']),
+        ]
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.organization.name} ({self.role})"
+
+
 class DonorProfile(models.Model):
     """Extended profile for donors with preferences and giving history metadata"""
     
@@ -493,22 +515,102 @@ class DonationReceipt(models.Model):
     email_sent = models.BooleanField(default=False)
     email_sent_at = models.DateTimeField(null=True, blank=True)
     
-    # Metadata
-    created_at = models.DateTimeField(auto_now_add=True)
-    
     class Meta:
         ordering = ['-receipt_date']
         indexes = [
-            models.Index(fields=['receipt_number']),
-            models.Index(fields=['tax_year', 'donor_email']),
+            models.Index(fields=['tax_year', 'receipt_date']),
         ]
     
     def __str__(self):
-        return f"Receipt {self.receipt_number} - ${self.amount}"
+        return f"Receipt #{self.receipt_number} - {self.donor_name} - {self.tax_year}"
+
+
+class VolunteerOpportunity(models.Model):
+    """Volunteer roles and opportunities managed by super-admins"""
     
-    def generate_receipt_number(self):
-        """Generate unique receipt number"""
-        from datetime import datetime
-        year = datetime.now().year
-        # Format: YEAR-ORG_ID-DONATION_ID
-        return f"{year}-{self.donation.organization.id:04d}-{self.donation.id:06d}"
+    CATEGORY_CHOICES = [
+        ('admin', 'Admin'),
+        ('kitchen', 'Kitchen'),
+        ('logistics', 'Logistics'),
+        ('support', 'Support'),
+    ]
+    
+    DAYS_CHOICES = [
+        ('monday', 'Monday'),
+        ('tuesday', 'Tuesday'),
+        ('wednesday', 'Wednesday'),
+        ('thursday', 'Thursday'),
+        ('friday', 'Friday'),
+        ('saturday', 'Saturday'),
+        ('sunday', 'Sunday'),
+    ]
+    
+    title = models.CharField(max_length=200)
+    emoji = models.CharField(max_length=10, default='📋')
+    slug = models.SlugField(max_length=200, unique=True)
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
+    schedule = models.CharField(max_length=100, help_text="e.g., 'Mon-Fri (few hrs/day)'")
+    duties = models.JSONField(default=list, help_text="List of duties/responsibilities")
+    ideal_for = models.TextField(help_text="Who this role is ideal for")
+    summary = models.TextField(help_text="Brief summary of the role")
+    days_available = models.JSONField(default=list, help_text="List of day slugs: ['monday', 'tuesday']")
+    is_paid = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    sort_order = models.IntegerField(default=0)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='volunteer_opportunities_created')
+    
+    class Meta:
+        ordering = ['sort_order', 'title']
+        indexes = [
+            models.Index(fields=['category', 'is_active']),
+        ]
+    
+    def __str__(self):
+        return f"{self.emoji} {self.title}"
+
+
+class VolunteerApplication(models.Model):
+    """Applications from users wanting to volunteer"""
+    
+    STATUS_CHOICES = [
+        ('pending', 'Pending Review'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+        ('contacted', 'Contacted'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='volunteer_applications')
+    full_name = models.CharField(max_length=200)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20)
+    preferred_contact = models.CharField(max_length=10, choices=[('email', 'Email'), ('phone', 'Phone')], default='email')
+    roles = models.JSONField(default=list, help_text="List of opportunity IDs or titles")
+    availability = models.TextField()
+    resume = models.FileField(upload_to='volunteer_resumes/', blank=True, null=True)
+    linkedin = models.URLField(blank=True)
+    accessibility_notes = models.TextField(blank=True)
+    transportation = models.CharField(max_length=200, blank=True)
+    message = models.TextField(blank=True)
+    orientation_agreed = models.BooleanField(default=False)
+    photo_consent = models.BooleanField(default=False)
+    
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    reviewed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='reviewed_applications')
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    notes = models.TextField(blank=True, help_text="Internal notes from reviewers")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['status', 'created_at']),
+            models.Index(fields=['email']),
+        ]
+    
+    def __str__(self):
+        return f"{self.full_name} - {self.status}"

@@ -154,6 +154,9 @@ export default function SignupPage() {
                 value={formData.password}
                 onChange={handleChange}
               />
+              <p className="mt-1 text-xs text-gray-500">
+                Must be at least 8 characters and not a common password
+              </p>
             </div>
 
             <div>
@@ -176,7 +179,7 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-soil hover:bg-gradient-green focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-soil disabled:opacity-50"
+              className="group relative w-full flex justify-center py-4 px-6 border border-transparent text-base font-bold rounded-lg text-white bg-primary-soil hover:bg-gradient-green focus:outline-none focus:ring-4 focus:ring-primary-soil/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
             >
               {loading ? 'Creating account...' : 'Create account'}
             </button>

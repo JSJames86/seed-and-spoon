@@ -182,7 +182,7 @@ export default function ProfilePage() {
                 <button
                   type="submit"
                   disabled={profileLoading}
-                  className="w-full md:w-auto px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-soil hover:bg-gradient-green focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-soil disabled:opacity-50"
+                  className="w-full md:w-auto px-6 py-3 border border-transparent text-base font-bold rounded-lg text-white bg-primary-soil hover:bg-gradient-green focus:outline-none focus:ring-4 focus:ring-primary-soil/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
                 >
                   {profileLoading ? 'Saving...' : 'Save Changes'}
                 </button>
@@ -256,7 +256,7 @@ export default function ProfilePage() {
                 <button
                   type="submit"
                   disabled={passwordLoading}
-                  className="w-full md:w-auto px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-soil hover:bg-gradient-green focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-soil disabled:opacity-50"
+                  className="w-full md:w-auto px-6 py-3 border border-transparent text-base font-bold rounded-lg text-white bg-primary-soil hover:bg-gradient-green focus:outline-none focus:ring-4 focus:ring-primary-soil/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
                 >
                   {passwordLoading ? 'Changing...' : 'Change Password'}
                 </button>

@@ -57,7 +57,19 @@ export function AuthProvider({ children }) {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Registration failed');
+        // Handle validation errors
+        if (data.password) {
+          throw new Error(`Password: ${data.password[0]}`);
+        }
+        if (data.email) {
+          throw new Error(`Email: ${data.email[0]}`);
+        }
+        if (data.username) {
+          throw new Error(`Username: ${data.username[0]}`);
+        }
+        // Generic error fallback
+        const errorMsg = data.error || data.detail || JSON.stringify(data) || 'Registration failed';
+        throw new Error(errorMsg);
       }
 
       // Store tokens
