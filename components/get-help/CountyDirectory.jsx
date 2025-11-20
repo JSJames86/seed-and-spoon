@@ -2,31 +2,20 @@
  * County Directory Component
  *
  * Grouped list of food resources by New Jersey county
+ * Updated to work with Django backend API with auto-pagination
  */
 
 'use client';
 
 import { useState, useEffect } from 'react';
-import { NJ_COUNTIES } from '@/lib/validation';
-import { formatTime, getTodayHours, isOpenNow } from '@/lib/hours-utils';
 
-const TYPE_LABELS = {
-  food_pantry: 'Food Pantry',
-  hot_meal: 'Hot Meal',
-  mobile_pantry: 'Mobile Pantry',
-  community_fridge: 'Community Fridge',
-  other: 'Other',
-};
-
-const SERVICE_BADGES = {
-  formula: { label: 'Formula', color: 'bg-pink-100 text-pink-800' },
-  baby_food: { label: 'Baby Food', color: 'bg-yellow-100 text-yellow-800' },
-  diapers: { label: 'Diapers', color: 'bg-blue-100 text-blue-800' },
-  halal: { label: 'Halal', color: 'bg-green-100 text-green-800' },
-  kosher: { label: 'Kosher', color: 'bg-purple-100 text-purple-800' },
-  vegetarian: { label: 'Vegetarian', color: 'bg-green-100 text-green-800' },
-  vegan: { label: 'Vegan', color: 'bg-green-100 text-green-800' },
-};
+// NJ Counties list
+const NJ_COUNTIES = [
+  'Atlantic', 'Bergen', 'Burlington', 'Camden', 'Cape May', 'Cumberland',
+  'Essex', 'Gloucester', 'Hudson', 'Hunterdon', 'Mercer', 'Middlesex',
+  'Monmouth', 'Morris', 'Ocean', 'Passaic', 'Salem', 'Somerset',
+  'Sussex', 'Union', 'Warren'
+];
 
 export default function CountyDirectory({ filters = {}, onResourceClick }) {
   const [resources, setResources] = useState([]);
@@ -35,29 +24,39 @@ export default function CountyDirectory({ filters = {}, onResourceClick }) {
   const [error, setError] = useState(null);
   const [expandedCounties, setExpandedCounties] = useState(new Set());
 
-  // Fetch resources
+  // Fetch ALL resources from Django backend (handles pagination automatically)
   useEffect(() => {
     const fetchResources = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        const params = new URLSearchParams();
+        let allResources = [];
+        let nextUrl = 'https://seed-spoon-backend.onrender.com/api/foodbanks/';
 
-        if (filters.county) params.append('county', filters.county);
-        if (filters.type) params.append('type', filters.type);
-        if (filters.service) params.append('service', filters.service);
-        if (filters.openNow) params.append('openNow', 'true');
-        if (filters.zip) params.append('zip', filters.zip);
+        // Fetch all pages
+        while (nextUrl) {
+          const response = await fetch(nextUrl);
+          
+          if (!response.ok) {
+            throw new Error(`Failed to load resources (${response.status})`);
+          }
 
-        const response = await fetch(`/api/resources?${params}`);
-        const data = await response.json();
+          const data = await response.json();
+          
+          // Add results from this page
+          if (data.results) {
+            allResources = [...allResources, ...data.results];
+          } else if (Array.isArray(data)) {
+            allResources = data;
+          }
 
-        if (!response.ok) {
-          throw new Error(data.message || 'Failed to load resources');
+          // Get next page URL (will be null if no more pages)
+          nextUrl = data.next;
         }
 
-        setResources(data.resources || []);
+        console.log(`Loaded ${allResources.length} total food banks`);
+        setResources(allResources);
       } catch (err) {
         console.error('Error fetching resources:', err);
         setError(err.message);
@@ -73,15 +72,49 @@ export default function CountyDirectory({ filters = {}, onResourceClick }) {
   useEffect(() => {
     const grouped = {};
 
+    // Initialize all counties
     NJ_COUNTIES.forEach(county => {
-      grouped[county] = resources.filter(r => r.county === county);
+      grouped[county] = [];
+    });
+
+    // Group resources
+    resources.forEach(resource => {
+      // Extract county name (remove any prefix like "Newark - ")
+      let countyName = resource.county || '';
+      
+      // Handle special formats like "Newark - Central Ward" -> "Essex"
+      // Map known patterns to actual counties
+      if (countyName.includes('Newark') || countyName.includes('Central Ward') || 
+          countyName.includes('East Orange') || countyName.includes('Montclair') || 
+          countyName.includes('South Orange') || countyName.includes('West Orange')) {
+        countyName = 'Essex';
+      } else if (countyName.includes('Bayonne') || countyName.includes('Jersey City')) {
+        countyName = 'Hudson';
+      }
+      
+      // Find matching county (case-insensitive)
+      const matchedCounty = NJ_COUNTIES.find(c => 
+        countyName.toLowerCase().includes(c.toLowerCase()) ||
+        c.toLowerCase() === countyName.toLowerCase()
+      );
+
+      if (matchedCounty && grouped[matchedCounty]) {
+        grouped[matchedCounty].push(resource);
+      } else if (countyName && !grouped[countyName]) {
+        // Create new group for unlisted county
+        grouped[countyName] = [resource];
+      } else if (countyName && grouped[countyName]) {
+        grouped[countyName].push(resource);
+      }
     });
 
     setGroupedResources(grouped);
 
     // Auto-expand counties with resources (limit to first 3)
-    const countiesWithResources = NJ_COUNTIES.filter(county => grouped[county]?.length > 0);
-    setExpandedCounties(new Set(countiesWithResources.slice(0, 3)));
+    const countiesWithResources = Object.keys(grouped)
+      .filter(county => grouped[county]?.length > 0)
+      .slice(0, 3);
+    setExpandedCounties(new Set(countiesWithResources));
   }, [resources]);
 
   const toggleCounty = (county) => {
@@ -97,11 +130,13 @@ export default function CountyDirectory({ filters = {}, onResourceClick }) {
   };
 
   const handleCallClick = (phone) => {
-    window.location.href = `tel:${phone}`;
+    if (phone) {
+      window.location.href = `tel:${phone}`;
+    }
   };
 
-  const handleDirectionsClick = (address) => {
-    const query = encodeURIComponent(`${address.street}, ${address.city}, ${address.state} ${address.zip}`);
+  const handleDirectionsClick = (address, city, county) => {
+    const query = encodeURIComponent(`${address}, ${city}, NJ`);
     window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
   };
 
@@ -118,7 +153,7 @@ export default function CountyDirectory({ filters = {}, onResourceClick }) {
 
   if (error) {
     return (
-      <div className="bg-red-50 border-2 border-red-200 text-red-800 px-4 py-3 rounded-lg">
+      <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 text-red-800 dark:text-red-300 px-4 py-3 rounded-lg">
         <p className="font-semibold">Error loading directory</p>
         <p className="text-sm">{error}</p>
       </div>
@@ -127,6 +162,11 @@ export default function CountyDirectory({ filters = {}, onResourceClick }) {
 
   const totalResources = resources.length;
   const countiesWithResources = Object.values(groupedResources).filter(arr => arr.length > 0).length;
+  
+  // Get all counties that have resources, sorted
+  const sortedCounties = Object.keys(groupedResources)
+    .filter(county => groupedResources[county].length > 0)
+    .sort();
 
   return (
     <div className="space-y-4">
@@ -140,13 +180,9 @@ export default function CountyDirectory({ filters = {}, onResourceClick }) {
 
       {/* County Groups */}
       <div className="space-y-2">
-        {NJ_COUNTIES.map(county => {
+        {sortedCounties.map(county => {
           const countyResources = groupedResources[county] || [];
           const isExpanded = expandedCounties.has(county);
-
-          if (countyResources.length === 0 && filters.county) {
-            return null; // Hide empty counties when filtering
-          }
 
           return (
             <div key={county} className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
@@ -158,7 +194,7 @@ export default function CountyDirectory({ filters = {}, onResourceClick }) {
               >
                 <div className="flex items-center gap-3">
                   <h4 className="font-semibold text-lg">{county} County</h4>
-                  <span className="px-2 py-0.5 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                  <span className="px-2 py-0.5 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 rounded-full text-sm font-medium">
                     {countyResources.length}
                   </span>
                 </div>
@@ -175,119 +211,93 @@ export default function CountyDirectory({ filters = {}, onResourceClick }) {
               {/* County Resources */}
               {isExpanded && (
                 <div className="border-t border-gray-200 dark:border-gray-700">
-                  {countyResources.length === 0 ? (
-                    <p className="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
-                      No resources in this county
-                    </p>
-                  ) : (
-                    <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                      {countyResources.map(resource => {
-                        const todayHours = getTodayHours(resource.hours);
-                        const openNow = isOpenNow(resource.hours);
-
-                        return (
-                          <div
-                            key={resource.id}
-                            className="px-4 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
-                            onClick={() => onResourceClick && onResourceClick(resource)}
-                          >
-                            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                              <div className="flex-1">
-                                {/* Name and Type */}
-                                <h5 className="font-semibold text-gray-900 dark:text-white mb-1">
-                                  {resource.name}
-                                </h5>
+                  <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                    {countyResources.map(resource => {
+                      return (
+                        <div
+                          key={resource.id}
+                          className="px-4 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                          onClick={() => onResourceClick && onResourceClick(resource)}
+                        >
+                          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                            <div className="flex-1">
+                              {/* Name and Type */}
+                              <h5 className="font-semibold text-gray-900 dark:text-white mb-1">
+                                {resource.name}
+                              </h5>
+                              
+                              {resource.service_type && (
                                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                                  {TYPE_LABELS[resource.type] || resource.type}
+                                  {resource.service_type}
                                 </p>
+                              )}
 
-                                {/* Address */}
+                              {/* Address */}
+                              {resource.address && (
                                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                                  {resource.address.street && `${resource.address.street}, `}
-                                  {resource.address.city}, {resource.address.state} {resource.address.zip}
+                                  {resource.address}
+                                  {resource.city && `, ${resource.city}`}
                                 </p>
+                              )}
 
-                                {/* Hours */}
-                                {todayHours && (
-                                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                                    <strong>Today:</strong> {formatTime(todayHours.open)} - {formatTime(todayHours.close)}
-                                    {openNow && (
-                                      <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-800 rounded text-xs font-medium">
-                                        Open Now
-                                      </span>
-                                    )}
-                                  </p>
-                                )}
+                              {/* Hours */}
+                              {resource.hours && (
+                                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                                  <strong>Hours:</strong> {resource.hours}
+                                </p>
+                              )}
 
-                                {/* Service Badges */}
-                                {resource.services && resource.services.length > 0 && (
-                                  <div className="flex flex-wrap gap-1 mt-2">
-                                    {resource.services
-                                      .filter(service => SERVICE_BADGES[service])
-                                      .map(service => {
-                                        const badge = SERVICE_BADGES[service];
-                                        return (
-                                          <span
-                                            key={service}
-                                            className={`px-2 py-0.5 rounded-full text-xs font-medium ${badge.color}`}
-                                          >
-                                            {badge.label}
-                                          </span>
-                                        );
-                                      })}
-                                  </div>
-                                )}
+                              {/* Notes */}
+                              {resource.notes && (
+                                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 italic">
+                                  {resource.notes}
+                                </p>
+                              )}
+                            </div>
 
-                                {/* Languages */}
-                                {resource.languages && resource.languages.length > 1 && (
-                                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                                    Languages: {resource.languages.join(', ')}
-                                  </p>
-                                )}
-                              </div>
-
-                              {/* Actions */}
-                              <div className="flex sm:flex-col gap-2 flex-wrap sm:flex-nowrap">
-                                {resource.contact?.phone && (
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleCallClick(resource.contact.phone);
-                                    }}
-                                    className="px-3 py-1.5 bg-green-700 text-white rounded-lg hover:bg-green-800 transition-colors text-sm font-medium whitespace-nowrap"
-                                  >
-                                    📞 Call
-                                  </button>
-                                )}
-
+                            {/* Actions */}
+                            <div className="flex sm:flex-col gap-2 flex-wrap sm:flex-nowrap">
+                              {resource.phone && (
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    handleDirectionsClick(resource.address);
+                                    handleCallClick(resource.phone);
+                                  }}
+                                  className="px-3 py-1.5 bg-green-700 text-white rounded-lg hover:bg-green-800 transition-colors text-sm font-medium whitespace-nowrap"
+                                >
+                                  📞 Call
+                                </button>
+                              )}
+
+                              {resource.address && resource.city && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDirectionsClick(resource.address, resource.city, resource.county);
                                   }}
                                   className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium whitespace-nowrap"
                                 >
                                   🗺️ Directions
                                 </button>
+                              )}
 
-                                {resource.contact?.website && (
-                                  <a
-                                    href={resource.contact.website}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="px-3 py-1.5 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium whitespace-nowrap text-center"
-                                  >
-                                    🌐 Website
-                                  </a>
-                                )}
-                              </div>
+                              {resource.website && resource.website.startsWith('http') && (
+                                <a
+                                  href={resource.website}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="px-3 py-1.5 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium whitespace-nowrap text-center"
+                                >
+                                  🌐 Website
+                                </a>
+                              )}
                             </div>
                           </div>
-                        );
-                      })}
-                    </div>
-                  )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
             </div>
