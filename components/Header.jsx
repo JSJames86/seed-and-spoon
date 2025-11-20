@@ -288,7 +288,7 @@ export default function Header() {
             </div>
 
             {/* Authentication section */}
-            <div className={`flex items-center gap-3 border-l pl-4 ${isScrolled ? "border-charcoal/30" : "border-white/30"}`}>
+            <div className={`flex items-center gap-6 border-l pl-6 ${isScrolled ? "border-charcoal/30" : "border-white/30"}`}>
               {user ? (
                 <>
                   <Link href="/dashboard" className={getNavLinkClass(isScrolled)}>
@@ -307,15 +307,22 @@ export default function Header() {
                 </>
               ) : (
                 <>
-                  <Link href="/login" className={getNavLinkClass(isScrolled)}>
+                  <Link
+                    href="/login"
+                    className={`body-sm font-bold px-4 py-2 rounded-lg transition-all border ${
+                      isScrolled
+                        ? "border-charcoal/30 text-charcoal hover:bg-charcoal/5"
+                        : "border-white/30 text-white hover:bg-white/10 drop-shadow-lg"
+                    }`}
+                  >
                     Login
                   </Link>
                   <Link
                     href="/signup"
                     className={`body-sm font-bold px-4 py-2 rounded-lg transition-all ${
                       isScrolled
-                        ? "bg-primary-soil text-white hover:bg-primary-soil/90"
-                        : "bg-cream text-charcoal hover:bg-cream/90 drop-shadow-lg"
+                        ? "bg-primary-soil text-white hover:bg-primary-soil/90 shadow-md"
+                        : "bg-cream text-charcoal hover:bg-cream/90 drop-shadow-lg shadow-md"
                     }`}
                   >
                     Sign Up
@@ -402,13 +409,13 @@ export default function Header() {
               </Link>
 
               {/* Authentication options */}
-              <div className="border-t border-white/30 pt-6 space-y-6">
+              <div className="border-t border-white/30 pt-6 space-y-4">
                 {user ? (
                   <>
                     <Link
                       href="/dashboard"
                       onClick={closeMenu}
-                      className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+                      className="block text-center body-md font-bold text-white hover:text-[var(--leaf-light)] text-2xl py-3"
                     >
                       Dashboard
                     </Link>
@@ -417,7 +424,7 @@ export default function Header() {
                         logout();
                         closeMenu();
                       }}
-                      className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+                      className="w-full text-center body-md font-bold text-white hover:text-[var(--leaf-light)] text-2xl py-3"
                     >
                       Logout
                     </button>
@@ -427,14 +434,14 @@ export default function Header() {
                     <Link
                       href="/login"
                       onClick={closeMenu}
-                      className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+                      className="block text-center body-md font-bold text-white border-2 border-white/50 hover:bg-white/10 text-2xl py-3 rounded-lg transition-all"
                     >
                       Login
                     </Link>
                     <Link
                       href="/signup"
                       onClick={closeMenu}
-                      className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+                      className="block text-center body-md font-bold bg-cream text-charcoal hover:bg-cream/90 text-2xl py-3 rounded-lg transition-all shadow-lg"
                     >
                       Sign Up
                     </Link>
