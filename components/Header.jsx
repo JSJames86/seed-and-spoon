@@ -4,13 +4,33 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import Button from "./Button";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Header() {
+  const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isCausesOpen, setIsCausesOpen] = useState(false);
   const hamburgerRef = useRef(null);
   const menuRef = useRef(null);
+
+  // Helper function for dynamic navigation link styling
+  const getNavLinkClass = (isScrolled) => {
+    return `body-sm font-bold transition-colors ${
+      isScrolled
+        ? "text-charcoal hover:text-primary-soil"
+        : "text-white hover:text-cream drop-shadow-lg"
+    }`;
+  };
+
+  // Helper function for social media icon styling
+  const getSocialIconClass = (isScrolled) => {
+    return `transition-colors ${
+      isScrolled
+        ? "text-charcoal hover:text-primary-soil"
+        : "text-white hover:text-cream drop-shadow-lg"
+    }`;
+  };
 
   const logoDefault = "/assets/new-logos/logo-full.png";
   const logoScrolled = "/assets/new-logos/logo-compact.png";
@@ -145,10 +165,7 @@ export default function Header() {
 
           {/* DESKTOP NAV */}
           <nav className="hidden md:flex items-center gap-6">
-            <Link
-              href="/about"
-              className="body-sm font-bold text-[#F7E8D2] hover:text-white transition-colors"
-            >
+            <Link href="/about" className={getNavLinkClass(isScrolled)}>
               About
             </Link>
 
@@ -160,7 +177,7 @@ export default function Header() {
             >
               <button
                 type="button"
-                className="inline-flex items-center gap-1 body-sm font-bold text-[#F7E8D2] hover:text-white transition-colors"
+                className={`inline-flex items-center gap-1 ${getNavLinkClass(isScrolled)}`}
               >
                 <span>Causes</span>
                 <span
@@ -218,10 +235,11 @@ export default function Header() {
               </AnimatePresence>
             </div>
 
-            <Link
-              href="/get-help"
-              className="body-sm font-bold text-[#F7E8D2] hover:text-white transition-colors"
-            >
+            <Link href="/campaigns" className={getNavLinkClass(isScrolled)}>
+              Campaigns
+            </Link>
+
+            <Link href="/get-help" className={getNavLinkClass(isScrolled)}>
               Get Help
             </Link>
 
@@ -229,10 +247,7 @@ export default function Header() {
               Donate
             </Button>
 
-            <Link
-              href="/volunteer"
-              className="body-sm font-bold text-[#F7E8D2] hover:text-white transition-colors"
-            >
+            <Link href="/volunteer" className={getNavLinkClass(isScrolled)}>
               Volunteer
             </Link>
 
@@ -241,7 +256,7 @@ export default function Header() {
                 href="https://instagram.com/seedandspoon_nj"
                 target="_blank"
                 rel="noopener"
-                className="text-[#F7E8D2] hover:text-white transition-colors"
+                className={getSocialIconClass(isScrolled)}
                 aria-label="Instagram"
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -252,7 +267,7 @@ export default function Header() {
                 href="https://facebook.com/seedandspoon_nj"
                 target="_blank"
                 rel="noopener"
-                className="text-[#F7E8D2] hover:text-white transition-colors"
+                className={getSocialIconClass(isScrolled)}
                 aria-label="Facebook"
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -263,13 +278,50 @@ export default function Header() {
                 href="https://x.com/seedandspoon_nj"
                 target="_blank"
                 rel="noopener"
-                className="text-[#F7E8D2] hover:text-white transition-colors"
+                className={getSocialIconClass(isScrolled)}
                 aria-label="X"
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                 </svg>
               </a>
+            </div>
+
+            {/* Authentication section */}
+            <div className={`flex items-center gap-3 border-l pl-4 ${isScrolled ? "border-charcoal/30" : "border-white/30"}`}>
+              {user ? (
+                <>
+                  <Link href="/dashboard" className={getNavLinkClass(isScrolled)}>
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={logout}
+                    className={`body-sm font-bold transition-colors ${
+                      isScrolled
+                        ? "text-charcoal hover:text-primary-soil"
+                        : "text-white hover:text-cream drop-shadow-lg"
+                    }`}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" className={getNavLinkClass(isScrolled)}>
+                    Login
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className={`body-sm font-bold px-4 py-2 rounded-lg transition-all ${
+                      isScrolled
+                        ? "bg-primary-soil text-white hover:bg-primary-soil/90"
+                        : "bg-cream text-charcoal hover:bg-cream/90 drop-shadow-lg"
+                    }`}
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </div>
           </nav>
 
@@ -328,6 +380,13 @@ export default function Header() {
                 Causes
               </Link>
               <Link
+                href="/campaigns"
+                onClick={closeMenu}
+                className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+              >
+                Campaigns
+              </Link>
+              <Link
                 href="/get-help"
                 onClick={closeMenu}
                 className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
@@ -341,6 +400,47 @@ export default function Header() {
               >
                 Volunteer
               </Link>
+
+              {/* Authentication options */}
+              <div className="border-t border-white/30 pt-6 space-y-6">
+                {user ? (
+                  <>
+                    <Link
+                      href="/dashboard"
+                      onClick={closeMenu}
+                      className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+                    >
+                      Dashboard
+                    </Link>
+                    <button
+                      onClick={() => {
+                        logout();
+                        closeMenu();
+                      }}
+                      className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      onClick={closeMenu}
+                      className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      href="/signup"
+                      onClick={closeMenu}
+                      className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+                    >
+                      Sign Up
+                    </Link>
+                  </>
+                )}
+              </div>
             </nav>
             <div className="mt-auto">
               <Button variant="secondary" href="/donate" className="w-full text-xl py-5">
