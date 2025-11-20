@@ -2,7 +2,7 @@
  * County Directory Component
  *
  * Grouped list of food resources by New Jersey county
- * Updated to work with Django backend API
+ * Updated to work with Django backend API with auto-pagination
  */
 
 'use client';
@@ -24,33 +24,38 @@ export default function CountyDirectory({ filters = {}, onResourceClick }) {
   const [error, setError] = useState(null);
   const [expandedCounties, setExpandedCounties] = useState(new Set());
 
-  // Fetch resources from Django backend
+  // Fetch ALL resources from Django backend (handles pagination automatically)
   useEffect(() => {
     const fetchResources = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        // Fetch from Django API
-        const response = await fetch('https://seed-spoon-backend.onrender.com/api/foodbanks/');
-        
-        if (!response.ok) {
-          throw new Error(`Failed to load resources (${response.status})`);
-        }
-
-        const data = await response.json();
-        
-        // Handle paginated response
         let allResources = [];
-        if (data.results) {
-          allResources = data.results;
+        let nextUrl = 'https://seed-spoon-backend.onrender.com/api/foodbanks/';
+
+        // Fetch all pages
+        while (nextUrl) {
+          const response = await fetch(nextUrl);
           
-          // If there are more pages, fetch them (optional - for now just show first page)
-          // You can add pagination logic here if needed
-        } else if (Array.isArray(data)) {
-          allResources = data;
+          if (!response.ok) {
+            throw new Error(`Failed to load resources (${response.status})`);
+          }
+
+          const data = await response.json();
+          
+          // Add results from this page
+          if (data.results) {
+            allResources = [...allResources, ...data.results];
+          } else if (Array.isArray(data)) {
+            allResources = data;
+          }
+
+          // Get next page URL (will be null if no more pages)
+          nextUrl = data.next;
         }
 
+        console.log(`Loaded ${allResources.length} total food banks`);
         setResources(allResources);
       } catch (err) {
         console.error('Error fetching resources:', err);
