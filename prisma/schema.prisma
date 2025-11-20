@@ -1,0 +1,474 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model auth_group {
+  id                     Int                      @id @default(autoincrement())
+  name                   String                   @unique @db.VarChar(150)
+  auth_group_permissions auth_group_permissions[]
+  auth_user_groups       auth_user_groups[]
+
+  @@index([name], map: "auth_group_name_a6ea08ec_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model auth_group_permissions {
+  id              BigInt          @id @default(autoincrement())
+  group_id        Int
+  permission_id   Int
+  auth_permission auth_permission @relation(fields: [permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_group_permissio_permission_id_84c5c92e_fk_auth_perm")
+  auth_group      auth_group      @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_group_permissions_group_id_b120cbf9_fk_auth_group_id")
+
+  @@unique([group_id, permission_id], map: "auth_group_permissions_group_id_permission_id_0cd325b0_uniq")
+  @@index([group_id], map: "auth_group_permissions_group_id_b120cbf9")
+  @@index([permission_id], map: "auth_group_permissions_permission_id_84c5c92e")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model auth_permission {
+  id                         Int                          @id @default(autoincrement())
+  name                       String                       @db.VarChar(255)
+  content_type_id            Int
+  codename                   String                       @db.VarChar(100)
+  auth_group_permissions     auth_group_permissions[]
+  django_content_type        django_content_type          @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_permission_content_type_id_2f476e4b_fk_django_co")
+  auth_user_user_permissions auth_user_user_permissions[]
+
+  @@unique([content_type_id, codename], map: "auth_permission_content_type_id_codename_01ab375a_uniq")
+  @@index([content_type_id], map: "auth_permission_content_type_id_2f476e4b")
+}
+
+model auth_user {
+  id                         Int                          @id @default(autoincrement())
+  password                   String                       @db.VarChar(128)
+  last_login                 DateTime?                    @db.Timestamptz(6)
+  is_superuser               Boolean
+  username                   String                       @unique @db.VarChar(150)
+  first_name                 String                       @db.VarChar(150)
+  last_name                  String                       @db.VarChar(150)
+  email                      String                       @db.VarChar(254)
+  is_staff                   Boolean
+  is_active                  Boolean
+  date_joined                DateTime                     @db.Timestamptz(6)
+  auth_user_groups           auth_user_groups[]
+  auth_user_user_permissions auth_user_user_permissions[]
+  core_donorprofile          core_donorprofile?
+  django_admin_log           django_admin_log[]
+
+  @@index([username], map: "auth_user_username_6821ab7c_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model auth_user_groups {
+  id         BigInt     @id @default(autoincrement())
+  user_id    Int
+  group_id   Int
+  auth_group auth_group @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_groups_group_id_97559544_fk_auth_group_id")
+  auth_user  auth_user  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_groups_user_id_6a12ed8b_fk_auth_user_id")
+
+  @@unique([user_id, group_id], map: "auth_user_groups_user_id_group_id_94350c0c_uniq")
+  @@index([group_id], map: "auth_user_groups_group_id_97559544")
+  @@index([user_id], map: "auth_user_groups_user_id_6a12ed8b")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model auth_user_user_permissions {
+  id              BigInt          @id @default(autoincrement())
+  user_id         Int
+  permission_id   Int
+  auth_permission auth_permission @relation(fields: [permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm")
+  auth_user       auth_user       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_user_permissions_user_id_a95ead1b_fk_auth_user_id")
+
+  @@unique([user_id, permission_id], map: "auth_user_user_permissions_user_id_permission_id_14a6b632_uniq")
+  @@index([permission_id], map: "auth_user_user_permissions_permission_id_1fbb5f2c")
+  @@index([user_id], map: "auth_user_user_permissions_user_id_a95ead1b")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model django_admin_log {
+  id                  Int                  @id @default(autoincrement())
+  action_time         DateTime             @db.Timestamptz(6)
+  object_id           String?
+  object_repr         String               @db.VarChar(200)
+  action_flag         Int                  @db.SmallInt
+  change_message      String
+  content_type_id     Int?
+  user_id             Int
+  django_content_type django_content_type? @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "django_admin_log_content_type_id_c4bce8eb_fk_django_co")
+  auth_user           auth_user            @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "django_admin_log_user_id_c564eba6_fk_auth_user_id")
+
+  @@index([content_type_id], map: "django_admin_log_content_type_id_c4bce8eb")
+  @@index([user_id], map: "django_admin_log_user_id_c564eba6")
+}
+
+model django_celery_beat_clockedschedule {
+  id                              Int                               @id @default(autoincrement())
+  clocked_time                    DateTime                          @db.Timestamptz(6)
+  django_celery_beat_periodictask django_celery_beat_periodictask[]
+}
+
+model django_celery_beat_crontabschedule {
+  id                              Int                               @id @default(autoincrement())
+  minute                          String                            @db.VarChar(240)
+  hour                            String                            @db.VarChar(96)
+  day_of_week                     String                            @db.VarChar(64)
+  day_of_month                    String                            @db.VarChar(124)
+  month_of_year                   String                            @db.VarChar(64)
+  timezone                        String                            @db.VarChar(63)
+  django_celery_beat_periodictask django_celery_beat_periodictask[]
+}
+
+model django_celery_beat_intervalschedule {
+  id                              Int                               @id @default(autoincrement())
+  every                           Int
+  period                          String                            @db.VarChar(24)
+  django_celery_beat_periodictask django_celery_beat_periodictask[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model django_celery_beat_periodictask {
+  id                                  Int                                  @id @default(autoincrement())
+  name                                String                               @unique @db.VarChar(200)
+  task                                String                               @db.VarChar(200)
+  args                                String
+  kwargs                              String
+  queue                               String?                              @db.VarChar(200)
+  exchange                            String?                              @db.VarChar(200)
+  routing_key                         String?                              @db.VarChar(200)
+  expires                             DateTime?                            @db.Timestamptz(6)
+  enabled                             Boolean
+  last_run_at                         DateTime?                            @db.Timestamptz(6)
+  total_run_count                     Int
+  date_changed                        DateTime                             @db.Timestamptz(6)
+  description                         String
+  crontab_id                          Int?
+  interval_id                         Int?
+  solar_id                            Int?
+  one_off                             Boolean
+  start_time                          DateTime?                            @db.Timestamptz(6)
+  priority                            Int?
+  headers                             String
+  clocked_id                          Int?
+  expire_seconds                      Int?
+  django_celery_beat_clockedschedule  django_celery_beat_clockedschedule?  @relation(fields: [clocked_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "django_celery_beat_p_clocked_id_47a69f82_fk_django_ce")
+  django_celery_beat_crontabschedule  django_celery_beat_crontabschedule?  @relation(fields: [crontab_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "django_celery_beat_p_crontab_id_d3cba168_fk_django_ce")
+  django_celery_beat_intervalschedule django_celery_beat_intervalschedule? @relation(fields: [interval_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "django_celery_beat_p_interval_id_a8ca27da_fk_django_ce")
+  django_celery_beat_solarschedule    django_celery_beat_solarschedule?    @relation(fields: [solar_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "django_celery_beat_p_solar_id_a87ce72c_fk_django_ce")
+
+  @@index([clocked_id], map: "django_celery_beat_periodictask_clocked_id_47a69f82")
+  @@index([crontab_id], map: "django_celery_beat_periodictask_crontab_id_d3cba168")
+  @@index([interval_id], map: "django_celery_beat_periodictask_interval_id_a8ca27da")
+  @@index([name], map: "django_celery_beat_periodictask_name_265a36b7_like")
+  @@index([solar_id], map: "django_celery_beat_periodictask_solar_id_a87ce72c")
+}
+
+model django_celery_beat_periodictasks {
+  ident       Int      @id @db.SmallInt
+  last_update DateTime @db.Timestamptz(6)
+}
+
+model django_celery_beat_solarschedule {
+  id                              Int                               @id @default(autoincrement())
+  event                           String                            @db.VarChar(24)
+  latitude                        Decimal                           @db.Decimal(9, 6)
+  longitude                       Decimal                           @db.Decimal(9, 6)
+  django_celery_beat_periodictask django_celery_beat_periodictask[]
+
+  @@unique([event, latitude, longitude], map: "django_celery_beat_solar_event_latitude_longitude_ba64999a_uniq")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model django_celery_results_chordcounter {
+  id        Int    @id @default(autoincrement())
+  group_id  String @unique @db.VarChar(255)
+  sub_tasks String
+  count     Int
+
+  @@index([group_id], map: "django_celery_results_chordcounter_group_id_1f70858c_like")
+}
+
+model django_celery_results_groupresult {
+  id               Int      @id @default(autoincrement())
+  group_id         String   @unique @db.VarChar(255)
+  date_created     DateTime @db.Timestamptz(6)
+  date_done        DateTime @db.Timestamptz(6)
+  content_type     String   @db.VarChar(128)
+  content_encoding String   @db.VarChar(64)
+  result           String?
+
+  @@index([date_created], map: "django_cele_date_cr_bd6c1d_idx")
+  @@index([date_done], map: "django_cele_date_do_caae0e_idx")
+  @@index([group_id], map: "django_celery_results_groupresult_group_id_a085f1a9_like")
+}
+
+model django_celery_results_taskresult {
+  id                 Int      @id @default(autoincrement())
+  task_id            String   @unique @db.VarChar(255)
+  status             String   @db.VarChar(50)
+  content_type       String   @db.VarChar(128)
+  content_encoding   String   @db.VarChar(64)
+  result             String?
+  date_done          DateTime @db.Timestamptz(6)
+  traceback          String?
+  meta               String?
+  task_args          String?
+  task_kwargs        String?
+  task_name          String?  @db.VarChar(255)
+  worker             String?  @db.VarChar(100)
+  date_created       DateTime @db.Timestamptz(6)
+  periodic_task_name String?  @db.VarChar(255)
+
+  @@index([date_created], map: "django_cele_date_cr_f04a50_idx")
+  @@index([date_done], map: "django_cele_date_do_f59aad_idx")
+  @@index([status], map: "django_cele_status_9b6201_idx")
+  @@index([task_name], map: "django_cele_task_na_08aec9_idx")
+  @@index([worker], map: "django_cele_worker_d54dd8_idx")
+  @@index([task_id], map: "django_celery_results_taskresult_task_id_de0d95bf_like")
+}
+
+model django_content_type {
+  id               Int                @id @default(autoincrement())
+  app_label        String             @db.VarChar(100)
+  model            String             @db.VarChar(100)
+  auth_permission  auth_permission[]
+  django_admin_log django_admin_log[]
+
+  @@unique([app_label, model], map: "django_content_type_app_label_model_76bd3d3b_uniq")
+}
+
+model django_migrations {
+  id      BigInt   @id @default(autoincrement())
+  app     String   @db.VarChar(255)
+  name    String   @db.VarChar(255)
+  applied DateTime @db.Timestamptz(6)
+}
+
+model django_session {
+  session_key  String   @id @db.VarChar(40)
+  session_data String
+  expire_date  DateTime @db.Timestamptz(6)
+
+  @@index([expire_date], map: "django_session_expire_date_a5c62663")
+  @@index([session_key], map: "django_session_session_key_c0390e0f_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model core_campaign {
+  id                     BigInt                   @id @default(autoincrement())
+  title                  String                   @db.VarChar(255)
+  slug                   String                   @unique @db.VarChar(255)
+  description            String
+  campaign_type          String                   @db.VarChar(20)
+  goal_amount            Decimal                  @db.Decimal(10, 2)
+  start_date             DateTime                 @db.Timestamptz(6)
+  end_date               DateTime?                @db.Timestamptz(6)
+  amount_raised          Decimal                  @db.Decimal(10, 2)
+  donor_count            Int
+  is_matching            Boolean
+  matching_amount        Decimal?                 @db.Decimal(10, 2)
+  matching_sponsor       String                   @db.VarChar(255)
+  impact_metric_label    String                   @db.VarChar(100)
+  impact_metric_value    Int?
+  impact_metric_amount   Decimal?                 @db.Decimal(10, 2)
+  featured_image         String?                  @db.VarChar(100)
+  status                 String                   @db.VarChar(20)
+  is_featured            Boolean
+  created_at             DateTime                 @db.Timestamptz(6)
+  updated_at             DateTime                 @db.Timestamptz(6)
+  organization_id        BigInt
+  core_organization      core_organization        @relation(fields: [organization_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "core_campaign_organization_id_2be87280_fk_core_organization_id")
+  core_donation          core_donation[]
+  core_recurringdonation core_recurringdonation[]
+
+  @@index([organization_id, status], map: "core_campai_organiz_41ba95_idx")
+  @@index([slug], map: "core_campai_slug_6c73df_idx")
+  @@index([status, is_featured], map: "core_campai_status_6143a4_idx")
+  @@index([organization_id], map: "core_campaign_organization_id_2be87280")
+  @@index([slug], map: "core_campaign_slug_df35fe92_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model core_donation {
+  id                       BigInt                  @id @default(autoincrement())
+  amount                   Decimal                 @db.Decimal(10, 2)
+  currency                 String                  @db.VarChar(3)
+  donation_type            String                  @db.VarChar(20)
+  covers_processing_fee    Boolean
+  processing_fee_amount    Decimal                 @db.Decimal(10, 2)
+  stripe_payment_intent_id String?                 @unique @db.VarChar(255)
+  stripe_charge_id         String                  @db.VarChar(255)
+  stripe_customer_id       String                  @db.VarChar(255)
+  stripe_subscription_id   String                  @db.VarChar(255)
+  status                   String                  @db.VarChar(30)
+  failure_reason           String
+  is_anonymous             Boolean
+  dedication_type          String                  @db.VarChar(20)
+  dedication_name          String                  @db.VarChar(255)
+  donor_comment            String
+  created_at               DateTime                @db.Timestamptz(6)
+  updated_at               DateTime                @db.Timestamptz(6)
+  completed_at             DateTime?               @db.Timestamptz(6)
+  campaign_id              BigInt?
+  donor_id                 BigInt
+  organization_id          BigInt
+  recurring_donation_id    BigInt?
+  core_campaign            core_campaign?          @relation(fields: [campaign_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "core_donation_campaign_id_fff99c5f_fk_core_campaign_id")
+  core_donorprofile        core_donorprofile       @relation(fields: [donor_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "core_donation_donor_id_3af5d2f0_fk_core_donorprofile_id")
+  core_organization        core_organization       @relation(fields: [organization_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "core_donation_organization_id_e40cb004_fk_core_organization_id")
+  core_recurringdonation   core_recurringdonation? @relation(fields: [recurring_donation_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "core_donation_recurring_donation_i_c9b1e73c_fk_core_recu")
+  core_donationreceipt     core_donationreceipt?
+
+  @@index([campaign_id, status], map: "core_donati_campaig_3e9810_idx")
+  @@index([created_at], map: "core_donati_created_b3c808_idx")
+  @@index([donor_id, status], map: "core_donati_donor_i_0294b7_idx")
+  @@index([organization_id, status], map: "core_donati_organiz_7e229b_idx")
+  @@index([stripe_payment_intent_id], map: "core_donati_stripe__105dcc_idx")
+  @@index([stripe_subscription_id], map: "core_donati_stripe__dad691_idx")
+  @@index([campaign_id], map: "core_donation_campaign_id_fff99c5f")
+  @@index([donor_id], map: "core_donation_donor_id_3af5d2f0")
+  @@index([organization_id], map: "core_donation_organization_id_e40cb004")
+  @@index([recurring_donation_id], map: "core_donation_recurring_donation_id_c9b1e73c")
+  @@index([stripe_payment_intent_id], map: "core_donation_stripe_payment_intent_id_c59d2550_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model core_donationreceipt {
+  id                   BigInt        @id @default(autoincrement())
+  receipt_number       String        @unique @db.VarChar(50)
+  receipt_date         DateTime      @db.Timestamptz(6)
+  tax_year             Int
+  donor_name           String        @db.VarChar(255)
+  donor_email          String        @db.VarChar(254)
+  donor_address        String
+  organization_name    String        @db.VarChar(255)
+  organization_ein     String        @db.VarChar(20)
+  organization_address String
+  amount               Decimal       @db.Decimal(10, 2)
+  currency             String        @db.VarChar(3)
+  pdf_file             String?       @db.VarChar(100)
+  email_sent           Boolean
+  email_sent_at        DateTime?     @db.Timestamptz(6)
+  created_at           DateTime      @db.Timestamptz(6)
+  donation_id          BigInt        @unique
+  core_donation        core_donation @relation(fields: [donation_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "core_donationreceipt_donation_id_fd4bc1fd_fk_core_donation_id")
+
+  @@index([receipt_number], map: "core_donati_receipt_e67584_idx")
+  @@index([tax_year, donor_email], map: "core_donati_tax_yea_a64228_idx")
+  @@index([receipt_number], map: "core_donationreceipt_receipt_number_983f11bd_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model core_donorprofile {
+  id                      BigInt                   @id @default(autoincrement())
+  phone                   String                   @db.VarChar(20)
+  preferred_communication String                   @db.VarChar(10)
+  email_opt_in            Boolean
+  sms_opt_in              Boolean
+  donor_type              String                   @db.VarChar(20)
+  company_name            String                   @db.VarChar(255)
+  address_line1           String                   @db.VarChar(255)
+  address_line2           String                   @db.VarChar(255)
+  city                    String                   @db.VarChar(100)
+  state                   String                   @db.VarChar(2)
+  zip_code                String                   @db.VarChar(10)
+  country                 String                   @db.VarChar(2)
+  total_donated           Decimal                  @db.Decimal(10, 2)
+  donation_count          Int
+  first_donation_date     DateTime?                @db.Timestamptz(6)
+  last_donation_date      DateTime?                @db.Timestamptz(6)
+  average_donation        Decimal                  @db.Decimal(10, 2)
+  lifecycle_status        String                   @db.VarChar(20)
+  engagement_score        Int
+  tags                    Json
+  source_channel          String                   @db.VarChar(50)
+  stripe_customer_id      String?                  @unique @db.VarChar(255)
+  created_at              DateTime                 @db.Timestamptz(6)
+  updated_at              DateTime                 @db.Timestamptz(6)
+  user_id                 Int                      @unique
+  core_donation           core_donation[]
+  auth_user               auth_user                @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "core_donorprofile_user_id_e7790a24_fk_auth_user_id")
+  core_recurringdonation  core_recurringdonation[]
+
+  @@index([last_donation_date], map: "core_donorp_last_do_528b83_idx")
+  @@index([lifecycle_status, engagement_score], map: "core_donorp_lifecyc_12ae9a_idx")
+  @@index([stripe_customer_id], map: "core_donorp_stripe__200e8b_idx")
+  @@index([stripe_customer_id], map: "core_donorprofile_stripe_customer_id_0672d05e_like")
+}
+
+model core_organization {
+  id                     BigInt                   @id @default(autoincrement())
+  name                   String                   @unique @db.VarChar(255)
+  slug                   String                   @unique @db.VarChar(255)
+  description            String
+  mission_statement      String
+  email                  String                   @db.VarChar(254)
+  phone                  String                   @db.VarChar(20)
+  website                String                   @db.VarChar(200)
+  address_line1          String                   @db.VarChar(255)
+  address_line2          String                   @db.VarChar(255)
+  city                   String                   @db.VarChar(100)
+  state                  String                   @db.VarChar(2)
+  zip_code               String                   @db.VarChar(10)
+  ein                    String                   @db.VarChar(20)
+  tax_exempt_status      Boolean
+  facebook_url           String                   @db.VarChar(200)
+  twitter_url            String                   @db.VarChar(200)
+  instagram_url          String                   @db.VarChar(200)
+  logo                   String?                  @db.VarChar(100)
+  primary_color          String                   @db.VarChar(7)
+  status                 String                   @db.VarChar(20)
+  is_featured            Boolean
+  stripe_account_id      String                   @db.VarChar(255)
+  created_at             DateTime                 @db.Timestamptz(6)
+  updated_at             DateTime                 @db.Timestamptz(6)
+  core_campaign          core_campaign[]
+  core_donation          core_donation[]
+  core_recurringdonation core_recurringdonation[]
+
+  @@index([slug], map: "core_organi_slug_517c11_idx")
+  @@index([status, is_featured], map: "core_organi_status_71c14a_idx")
+  @@index([name], map: "core_organization_name_c83de100_like")
+  @@index([slug], map: "core_organization_slug_d23b3126_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model core_recurringdonation {
+  id                     BigInt            @id @default(autoincrement())
+  amount                 Decimal           @db.Decimal(10, 2)
+  currency               String            @db.VarChar(3)
+  frequency              String            @db.VarChar(20)
+  stripe_subscription_id String            @unique @db.VarChar(255)
+  stripe_customer_id     String            @db.VarChar(255)
+  stripe_price_id        String            @db.VarChar(255)
+  status                 String            @db.VarChar(20)
+  total_payments         Int
+  successful_payments    Int
+  failed_payments        Int
+  start_date             DateTime          @db.Timestamptz(6)
+  next_payment_date      DateTime?         @db.Timestamptz(6)
+  cancelled_at           DateTime?         @db.Timestamptz(6)
+  created_at             DateTime          @db.Timestamptz(6)
+  updated_at             DateTime          @db.Timestamptz(6)
+  campaign_id            BigInt?
+  donor_id               BigInt
+  organization_id        BigInt
+  core_donation          core_donation[]
+  core_donorprofile      core_donorprofile @relation(fields: [donor_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "core_recurringdonati_donor_id_bbd69a7f_fk_core_dono")
+  core_organization      core_organization @relation(fields: [organization_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "core_recurringdonati_organization_id_ad6bd9d7_fk_core_orga")
+  core_campaign          core_campaign?    @relation(fields: [campaign_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "core_recurringdonation_campaign_id_403d060f_fk_core_campaign_id")
+
+  @@index([donor_id, status], map: "core_recurr_donor_i_ff3907_idx")
+  @@index([status, next_payment_date], map: "core_recurr_status_51abc7_idx")
+  @@index([stripe_subscription_id], map: "core_recurr_stripe__c45782_idx")
+  @@index([campaign_id], map: "core_recurringdonation_campaign_id_403d060f")
+  @@index([donor_id], map: "core_recurringdonation_donor_id_bbd69a7f")
+  @@index([organization_id], map: "core_recurringdonation_organization_id_ad6bd9d7")
+  @@index([stripe_subscription_id], map: "core_recurringdonation_stripe_subscription_id_f3f36d5c_like")
+}

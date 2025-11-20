@@ -54,27 +54,31 @@ export default function DonatePage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/donations/checkout', {
+      const response = await fetch('http://localhost:8000/api/donations/checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           amount: finalAmount,
-          currency: 'usd',
-          interval,
-          source: 'donate_page',
+          interval: interval === 'month' ? 'monthly' : 'one_time',
+          cover_processing_fee: false,
         }),
       });
 
-      const result = await response.json();
-
-      if (!result.ok) {
-        throw new Error(result.error || 'Failed to create checkout session');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create checkout session');
       }
 
+      const result = await response.json();
+
       // Redirect to Stripe Checkout
-      window.location.href = result.data.checkoutUrl;
+      if (result.checkout_url) {
+        window.location.href = result.checkout_url;
+      } else {
+        throw new Error('No checkout URL returned');
+      }
     } catch (err) {
       setError(err.message);
       setIsLoading(false);

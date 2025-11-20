@@ -3,9 +3,11 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
 import Button from "./Button";
 
 export default function Header() {
+  const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isCausesOpen, setIsCausesOpen] = useState(false);
@@ -147,7 +149,11 @@ export default function Header() {
           <nav className="hidden md:flex items-center gap-6">
             <Link
               href="/about"
-              className="body-sm font-bold text-[#F7E8D2] hover:text-white transition-colors"
+              className={`body-sm font-bold transition-colors ${
+                isScrolled
+                  ? "text-charcoal hover:text-primary-soil"
+                  : "text-white hover:text-cream drop-shadow-lg"
+              }`}
             >
               About
             </Link>
@@ -160,7 +166,11 @@ export default function Header() {
             >
               <button
                 type="button"
-                className="inline-flex items-center gap-1 body-sm font-bold text-[#F7E8D2] hover:text-white transition-colors"
+                className={`inline-flex items-center gap-1 body-sm font-bold transition-colors ${
+                  isScrolled
+                    ? "text-charcoal hover:text-primary-soil"
+                    : "text-white hover:text-cream drop-shadow-lg"
+                }`}
               >
                 <span>Causes</span>
                 <span
@@ -219,8 +229,23 @@ export default function Header() {
             </div>
 
             <Link
+              href="/campaigns"
+              className={`body-sm font-bold transition-colors ${
+                isScrolled
+                  ? "text-charcoal hover:text-primary-soil"
+                  : "text-white hover:text-cream drop-shadow-lg"
+              }`}
+            >
+              Campaigns
+            </Link>
+
+            <Link
               href="/get-help"
-              className="body-sm font-bold text-[#F7E8D2] hover:text-white transition-colors"
+              className={`body-sm font-bold transition-colors ${
+                isScrolled
+                  ? "text-charcoal hover:text-primary-soil"
+                  : "text-white hover:text-cream drop-shadow-lg"
+              }`}
             >
               Get Help
             </Link>
@@ -231,7 +256,11 @@ export default function Header() {
 
             <Link
               href="/volunteer"
-              className="body-sm font-bold text-[#F7E8D2] hover:text-white transition-colors"
+              className={`body-sm font-bold transition-colors ${
+                isScrolled
+                  ? "text-charcoal hover:text-primary-soil"
+                  : "text-white hover:text-cream drop-shadow-lg"
+              }`}
             >
               Volunteer
             </Link>
@@ -241,7 +270,11 @@ export default function Header() {
                 href="https://instagram.com/seedandspoon_nj"
                 target="_blank"
                 rel="noopener"
-                className="text-[#F7E8D2] hover:text-white transition-colors"
+                className={`transition-colors ${
+                  isScrolled
+                    ? "text-charcoal hover:text-primary-soil"
+                    : "text-white hover:text-cream drop-shadow-lg"
+                }`}
                 aria-label="Instagram"
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -252,7 +285,11 @@ export default function Header() {
                 href="https://facebook.com/seedandspoon_nj"
                 target="_blank"
                 rel="noopener"
-                className="text-[#F7E8D2] hover:text-white transition-colors"
+                className={`transition-colors ${
+                  isScrolled
+                    ? "text-charcoal hover:text-primary-soil"
+                    : "text-white hover:text-cream drop-shadow-lg"
+                }`}
                 aria-label="Facebook"
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -263,13 +300,68 @@ export default function Header() {
                 href="https://x.com/seedandspoon_nj"
                 target="_blank"
                 rel="noopener"
-                className="text-[#F7E8D2] hover:text-white transition-colors"
+                className={`transition-colors ${
+                  isScrolled
+                    ? "text-charcoal hover:text-primary-soil"
+                    : "text-white hover:text-cream drop-shadow-lg"
+                }`}
                 aria-label="X"
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                 </svg>
               </a>
+            </div>
+
+            {/* Auth Buttons */}
+            <div className="flex items-center gap-2 ml-4 border-l border-white/30 pl-4">
+              {user ? (
+                <>
+                  <Link
+                    href="/dashboard"
+                    className={`body-sm font-medium transition-colors px-3 py-2 rounded-md ${
+                      isScrolled
+                        ? "text-charcoal hover:bg-gray-100"
+                        : "text-white hover:bg-white/10 drop-shadow-lg"
+                    }`}
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={logout}
+                    className={`body-sm font-medium transition-colors px-3 py-2 rounded-md ${
+                      isScrolled
+                        ? "text-charcoal hover:bg-gray-100"
+                        : "text-white hover:bg-white/10 drop-shadow-lg"
+                    }`}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className={`body-sm font-medium transition-colors px-3 py-2 rounded-md ${
+                      isScrolled
+                        ? "text-charcoal hover:bg-gray-100"
+                        : "text-white hover:bg-white/10 drop-shadow-lg"
+                    }`}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className={`body-sm font-bold transition-colors px-4 py-2 rounded-md ${
+                      isScrolled
+                        ? "bg-primary-soil text-white hover:bg-gradient-green"
+                        : "bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
+                    }`}
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </div>
           </nav>
 
@@ -335,12 +427,56 @@ export default function Header() {
                 Get Help
               </Link>
               <Link
+                href="/campaigns"
+                onClick={closeMenu}
+                className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+              >
+                Campaigns
+              </Link>
+              <Link
                 href="/volunteer"
                 onClick={closeMenu}
                 className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
               >
                 Volunteer
               </Link>
+              {user ? (
+                <>
+                  <Link
+                    href="/dashboard"
+                    onClick={closeMenu}
+                    className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={() => {
+                      logout();
+                      closeMenu();
+                    }}
+                    className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    onClick={closeMenu}
+                    className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/signup"
+                    onClick={closeMenu}
+                    className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </nav>
             <div className="mt-auto">
               <Button variant="secondary" href="/donate" className="w-full text-xl py-5">

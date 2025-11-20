@@ -7,9 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "import:resources": "node scripts/import-resources.js"
+    "import:resources": "node scripts/import-resources.js",
+    "prisma:generate": "prisma generate",
+    "prisma:pull": "prisma db pull",
+    "prisma:studio": "prisma studio"
   },
   "dependencies": {
+    "@prisma/client": "^6.19.0",
     "date-fns": "^4.1.0",
     "framer-motion": "^11.0.0",
     "gsap": "^3.13.0",
@@ -24,10 +28,14 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@types/node": "24.10.1",
+    "@types/react": "19.2.5",
     "autoprefixer": "^10.4.16",
     "dotenv": "^17.2.3",
     "postcss": "^8.4.32",
+    "prisma": "^6.19.0",
     "sharp": "^0.34.5",
-    "tailwindcss": "^3.3.6"
+    "tailwindcss": "^3.3.6",
+    "typescript": "5.9.3"
   }
 }
