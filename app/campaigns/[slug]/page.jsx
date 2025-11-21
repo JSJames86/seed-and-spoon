@@ -112,11 +112,11 @@ export default function CampaignDetailPage() {
   return (
     <div className="min-h-screen bg-cream">
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-primary-soil to-gradient-green text-white py-12 px-4">
+      <div className="bg-gradient-to-br from-primary-soil to-gradient-green py-12 px-4">
         <div className="max-w-4xl mx-auto">
           <Link
             href="/campaigns"
-            className="inline-flex items-center text-white/80 hover:text-white mb-4 text-sm"
+            className="inline-flex items-center text-cream/80 hover:text-cream mb-4 text-sm drop-shadow-md"
           >
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -126,10 +126,10 @@ export default function CampaignDetailPage() {
 
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <h1 className="heading-xl mb-3">{campaign.title}</h1>
-              <p className="body-md mb-4">by {campaign.organization_name}</p>
+              <h1 className="heading-xl mb-3 text-cream drop-shadow-lg">{campaign.title}</h1>
+              <p className="body-md mb-4 text-cream/90 drop-shadow-md">by {campaign.organization_name}</p>
               {campaign.is_matching && (
-                <div className="inline-block bg-orange-100 text-orange-800 px-4 py-2 rounded-full font-bold text-sm">
+                <div className="inline-block bg-orange-100 text-orange-800 px-4 py-2 rounded-full font-bold text-sm shadow-lg">
                   🎉 Matching Donations Available!
                 </div>
               )}

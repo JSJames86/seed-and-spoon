@@ -57,10 +57,10 @@ export default function CampaignsPage() {
   return (
     <div className="min-h-screen bg-cream">
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-primary-soil to-gradient-green text-white py-16 px-4">
+      <div className="bg-gradient-to-br from-primary-soil to-gradient-green py-16 px-4">
         <div className="max-w-7xl mx-auto text-center">
-          <h1 className="heading-xl mb-4">Our Campaigns</h1>
-          <p className="body-lg max-w-2xl mx-auto">
+          <h1 className="heading-xl mb-4 text-cream drop-shadow-lg">Our Campaigns</h1>
+          <p className="body-lg max-w-2xl mx-auto text-cream/90 drop-shadow-md">
             Support our mission to fight food insecurity in Essex County. Every donation makes a real difference.
           </p>
         </div>
