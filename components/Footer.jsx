@@ -41,8 +41,9 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Newsletter Form */}
           <div className="max-w-xl mx-auto text-center mb-6">
+            <p className="footer-heading mb-2">STAY CONNECTED</p>
             <h2 className="heading-h3 text-[var(--charcoal)] mb-2">
-              Get Updates
+              Get <span className="text-[var(--green-primary)]">Updates</span>
             </h2>
             <p className="body-sm text-slate-600 mb-6">
               Fresh food resources, volunteer opportunities, and impact stories—straight to your inbox.
@@ -54,11 +55,11 @@ export default function Footer() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 required
-                className="flex-1 px-4 py-3 rounded-full border border-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus:border-emerald-500 text-sm transition-colors"
+                className="form-input flex-1 px-5 py-3.5 rounded-full border-2 border-[var(--cream)] focus:outline-none text-sm transition-all duration-300 focus:border-[var(--green-primary)] focus:shadow-[0_0_0_3px_rgba(79,175,59,0.1)]"
               />
               <button
                 type="submit"
-                className="px-6 py-3 bg-[var(--green-primary)] text-white rounded-full font-bold body-sm hover:bg-[#3f932f] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--green-primary)] focus-visible:ring-offset-2 transition-all"
+                className="btn-primary px-8 py-3.5 bg-[var(--green-primary)] text-white rounded-full font-semibold body-sm hover:bg-[var(--leaf-mid)] hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--green-primary)] focus-visible:ring-offset-2 transition-all duration-300 shadow-green-glow hover:shadow-green-glow-lg"
               >
                 Subscribe
               </button>
@@ -76,7 +77,7 @@ export default function Footer() {
                 href={item.href}
                 target={item.external ? "_blank" : undefined}
                 rel={item.external ? "noopener noreferrer" : undefined}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-black/10 bg-white text-slate-700 body-sm font-medium hover:border-[var(--charcoal)] hover:text-[var(--charcoal)] hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--green-primary)] focus-visible:ring-offset-2 transition-all"
+                className="tag tag-light inline-flex items-center gap-1.5 px-[18px] py-2 rounded-[20px] text-sm font-medium hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--green-primary)] focus-visible:ring-offset-2 transition-all duration-300"
               >
                 {item.label}
                 {item.external && (
@@ -128,7 +129,7 @@ export default function Footer() {
       <div className="border-t border-neutral-100 bg-[var(--cream)] py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Social Icons */}
-          <div className="flex justify-center gap-3 mb-6">
+          <div className="flex justify-center gap-4 mb-6">
             {socials.map((social, idx) => {
               const Icon = iconMap[social.platform];
               return (
@@ -138,9 +139,9 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.ariaLabel}
-                  className="flex items-center justify-center h-9 w-9 rounded-full border border-neutral-200 text-slate-700 hover:border-[var(--green-primary)] hover:text-[var(--green-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--green-primary)] focus-visible:ring-offset-2 transition-all"
+                  className="flex items-center justify-center h-12 w-12 rounded-full border-2 border-neutral-200 text-slate-700 hover:border-[var(--green-primary)] hover:text-[var(--green-primary)] hover:bg-[rgba(79,175,59,0.1)] hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--green-primary)] focus-visible:ring-offset-2 transition-all duration-300"
                 >
-                  <Icon className="h-5 w-5" />
+                  <Icon className="h-6 w-6" />
                 </a>
               );
             })}

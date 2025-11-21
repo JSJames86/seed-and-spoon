@@ -4,9 +4,12 @@
 
 @layer base {
   :root {
-    /* Brand colors */
+    /* Primary Colors */
     --green-primary: #4FAF3B;
     --orange-primary: #E86A1D;
+    --dark-forest: #1B4332;
+
+    /* Secondary Colors */
     --leaf-light: #A6D47A;
     --leaf-mid: #6FBF3C;
 
@@ -15,9 +18,14 @@
     --white: #FFFFFF;
     --charcoal: #1A1A1A;
 
-    /* Gradients & overlays */
+    /* Gradients */
     --green-gradient: linear-gradient(90deg, #226214 0%, #43CC25 100%);
+    --dark-green-gradient: linear-gradient(135deg, #1B4332 0%, #2D6A4F 100%);
+    --orange-gradient: linear-gradient(90deg, #E86A1D 0%, #FFA500 100%);
+
+    /* Overlays */
     --hero-overlay: rgba(0, 0, 0, 0.35);
+    --dark-overlay: rgba(27, 67, 50, 0.5);
 
     /* Font families */
     --font-sans: var(--font-libre-franklin), system-ui, -apple-system,
@@ -97,6 +105,9 @@
 @layer components {
   .container { @apply max-w-7xl mx-auto; }
 
+  /* ===========================
+     TYPOGRAPHY
+     =========================== */
   .heading-hero {
     @apply font-display font-medium leading-tight md:leading-snug;
   }
@@ -129,6 +140,280 @@
     @apply mx-auto mt-3 h-1 w-20 rounded-full;
     background-image: linear-gradient(90deg, #4FAF3B, #FF7A3D);
   }
+
+  /* ===========================
+     BUTTON COMPONENTS
+     =========================== */
+  .btn {
+    @apply inline-flex items-center gap-2 font-semibold transition-all duration-300 border-0 cursor-pointer no-underline;
+  }
+
+  .btn-primary {
+    @apply bg-[var(--green-primary)] text-[var(--white)] px-8 py-3.5 rounded-full;
+    box-shadow: 0 4px 14px rgba(79, 175, 59, 0.3);
+  }
+
+  .btn-primary:hover {
+    @apply bg-[var(--leaf-mid)] -translate-y-0.5;
+    box-shadow: 0 6px 20px rgba(79, 175, 59, 0.4);
+  }
+
+  .btn-dark {
+    @apply bg-[var(--dark-forest)] text-[var(--white)] px-8 py-3.5 rounded-full;
+    box-shadow: 0 4px 14px rgba(27, 67, 50, 0.4);
+  }
+
+  .btn-dark:hover {
+    @apply -translate-y-0.5;
+    background: #2D6A4F;
+  }
+
+  .btn-accent {
+    @apply text-[var(--white)] px-8 py-3.5 rounded-full;
+    background: var(--orange-gradient);
+    box-shadow: 0 4px 20px rgba(232, 106, 29, 0.3);
+  }
+
+  .btn-accent:hover {
+    @apply -translate-y-0.5;
+    box-shadow: 0 6px 30px rgba(232, 106, 29, 0.5);
+  }
+
+  .btn-ghost {
+    @apply bg-transparent text-[var(--green-primary)] px-[30px] py-3 rounded-full;
+    border: 2px solid var(--green-primary);
+  }
+
+  .btn-ghost:hover {
+    background: rgba(79, 175, 59, 0.1);
+    border-color: var(--leaf-mid);
+  }
+
+  /* ===========================
+     NAVIGATION COMPONENTS
+     =========================== */
+  .nav-menu-item {
+    @apply text-[var(--charcoal)] px-5 py-2.5 rounded-[25px] transition-all duration-300;
+  }
+
+  .nav-menu-item:hover {
+    background: rgba(79, 175, 59, 0.1);
+    @apply text-[var(--green-primary)];
+  }
+
+  .nav-cta-donate {
+    @apply bg-[var(--orange-primary)] text-[var(--white)] px-6 py-2.5 rounded-[25px] ml-3;
+  }
+
+  .nav-cta-volunteer {
+    @apply bg-transparent text-[var(--green-primary)] px-[22px] py-2 rounded-[25px];
+    border: 2px solid var(--green-primary);
+  }
+
+  /* ===========================
+     CARD COMPONENTS
+     =========================== */
+  .card {
+    @apply bg-[var(--white)] rounded-[20px] p-[30px] transition-all duration-300;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .card:hover {
+    @apply -translate-y-1;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  .card-dark {
+    @apply bg-[var(--dark-forest)] text-[var(--white)];
+  }
+
+  .card-title {
+    @apply text-2xl font-bold mb-4 text-[var(--charcoal)];
+  }
+
+  .card-dark .card-title {
+    @apply text-[var(--leaf-light)];
+  }
+
+  /* ===========================
+     CATEGORY TAGS
+     =========================== */
+  .tag {
+    @apply px-[18px] py-2 rounded-[20px] text-sm inline-block m-1 transition-all duration-300 cursor-pointer;
+  }
+
+  .tag-light {
+    @apply bg-[var(--cream)] text-[var(--charcoal)];
+    border: 1px solid rgba(79, 175, 59, 0.2);
+  }
+
+  .tag-light:hover {
+    @apply bg-[var(--leaf-light)] -translate-y-0.5;
+    border-color: var(--leaf-mid);
+  }
+
+  .tag-dark {
+    @apply text-[var(--leaf-light)];
+    background: rgba(166, 212, 122, 0.2);
+    border: 1px solid rgba(166, 212, 122, 0.3);
+    backdrop-filter: blur(10px);
+  }
+
+  .tag-dark:hover {
+    @apply text-[var(--orange-primary)];
+    background: rgba(232, 106, 29, 0.2);
+    border-color: var(--orange-primary);
+  }
+
+  .tag.active {
+    @apply bg-[var(--orange-primary)] text-[var(--white)];
+    border-color: var(--orange-primary);
+  }
+
+  /* ===========================
+     FORM STYLES
+     =========================== */
+  .form-group {
+    @apply mb-5;
+  }
+
+  .form-label {
+    @apply block mb-2 font-medium text-[var(--charcoal)];
+  }
+
+  .form-input {
+    @apply w-full bg-[var(--white)] rounded-xl px-5 py-3.5 text-base transition-all duration-300;
+    border: 2px solid var(--cream);
+  }
+
+  .form-input:focus {
+    @apply outline-none;
+    border-color: var(--green-primary);
+    box-shadow: 0 0 0 3px rgba(79, 175, 59, 0.1);
+  }
+
+  /* Dark theme forms */
+  .form-dark .form-label {
+    @apply text-[var(--leaf-light)];
+  }
+
+  .form-dark .form-input {
+    @apply text-[var(--white)];
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(166, 212, 122, 0.3);
+    backdrop-filter: blur(10px);
+  }
+
+  .form-dark .form-input::placeholder {
+    color: rgba(166, 212, 122, 0.6);
+  }
+
+  .form-dark .form-input:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--orange-primary);
+    box-shadow: 0 0 0 3px rgba(232, 106, 29, 0.2);
+  }
+
+  /* ===========================
+     FOOTER REDESIGN
+     =========================== */
+  .footer-new {
+    @apply bg-[var(--dark-forest)] text-[var(--white)] pt-20 relative;
+  }
+
+  .footer-contact-section {
+    @apply px-[60px] py-[60px] rounded-[30px] shadow-2xl;
+    background: var(--dark-green-gradient);
+    margin: -100px 40px 60px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  }
+
+  .footer-heading {
+    @apply text-[var(--orange-primary)] text-sm font-semibold tracking-[2px] uppercase mb-3;
+  }
+
+  .footer-title {
+    @apply text-5xl font-bold mb-2;
+  }
+
+  .footer-title .highlight {
+    @apply text-[var(--leaf-light)];
+  }
+
+  .footer-info-item {
+    @apply flex items-center gap-4 my-4;
+  }
+
+  .footer-info-icon {
+    @apply w-10 h-10 bg-[var(--orange-primary)] rounded-full flex items-center justify-center flex-shrink-0;
+  }
+
+  .footer-bottom {
+    @apply px-10 py-5 flex justify-between items-center;
+    background: #0F2419;
+    border-top: 1px solid rgba(166, 212, 122, 0.1);
+  }
+
+  /* ===========================
+     BLOG COMPONENTS
+     =========================== */
+  .blog-grid {
+    @apply grid gap-[30px] my-10;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  }
+
+  .blog-card {
+    @apply bg-[var(--white)] rounded-[20px] overflow-hidden transition-all duration-300;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .blog-card:hover {
+    @apply -translate-y-1;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  }
+
+  .blog-card-image {
+    @apply w-full h-[200px] object-cover;
+  }
+
+  .blog-card-content {
+    @apply p-[25px];
+  }
+
+  .blog-card-category {
+    @apply inline-block bg-[var(--leaf-light)] text-[var(--dark-forest)] px-3 py-1 rounded-xl text-xs font-semibold mb-2.5;
+  }
+
+  .blog-card-title {
+    @apply text-xl font-bold text-[var(--charcoal)] mb-2.5;
+  }
+
+  .blog-card-excerpt {
+    @apply text-[#666] leading-relaxed mb-4;
+  }
+
+  .blog-card-footer {
+    @apply flex justify-between items-center pt-4;
+    border-top: 1px solid var(--cream);
+  }
+
+  /* ===========================
+     UTILITY CLASSES
+     =========================== */
+  .text-orange { color: var(--orange-primary); }
+  .text-green { color: var(--green-primary); }
+  .text-leaf { color: var(--leaf-light); }
+
+  .bg-dark-forest { background: var(--dark-forest); }
+  .bg-cream { background: var(--cream); }
+  .bg-orange { background: var(--orange-primary); }
+
+  .rounded { border-radius: 12px; }
+  .rounded-full { border-radius: 50px; }
+
+  .shadow-sm { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }
+  .shadow-md { box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15); }
+  .shadow-lg { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); }
 }
 
 /* Reduced motion */
