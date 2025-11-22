@@ -141,7 +141,7 @@ export default function SpoonAssistPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-green-600 via-green-500 to-emerald-400 py-20 md:py-28">
+      <section className="relative bg-gradient-to-b from-amber-50 via-yellow-100 to-green-500 py-20 md:py-28">
         <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
@@ -158,31 +158,31 @@ export default function SpoonAssistPage() {
             </div>
 
             {/* Title */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 drop-shadow-lg">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-800 mb-6 drop-shadow-sm">
               SpoonAssist
             </h1>
 
             {/* Tagline */}
-            <p className="text-xl md:text-2xl text-white/95 mb-8 max-w-2xl leading-relaxed drop-shadow-md">
+            <p className="text-xl md:text-2xl text-gray-700 mb-8 max-w-2xl leading-relaxed">
               Compare local grocery prices for any recipe and create smart shopping lists that save you money
             </p>
 
             {/* Features */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 w-full max-w-3xl">
-              <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 border border-white/30">
+              <div className="bg-white rounded-lg p-4 shadow-lg border border-gray-200">
                 <div className="text-3xl mb-2">💰</div>
-                <div className="font-semibold text-white">Price Comparison</div>
-                <div className="text-sm text-white/90">Multiple stores</div>
+                <div className="font-semibold text-gray-800">Price Comparison</div>
+                <div className="text-sm text-gray-600">Multiple stores</div>
               </div>
-              <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 border border-white/30">
+              <div className="bg-white rounded-lg p-4 shadow-lg border border-gray-200">
                 <div className="text-3xl mb-2">🥗</div>
-                <div className="font-semibold text-white">Dietary Options</div>
-                <div className="text-sm text-white/90">Filter preferences</div>
+                <div className="font-semibold text-gray-800">Dietary Options</div>
+                <div className="text-sm text-gray-600">Filter preferences</div>
               </div>
-              <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 border border-white/30">
+              <div className="bg-white rounded-lg p-4 shadow-lg border border-gray-200">
                 <div className="text-3xl mb-2">📋</div>
-                <div className="font-semibold text-white">Smart Lists</div>
-                <div className="text-sm text-white/90">Export to CSV</div>
+                <div className="font-semibold text-gray-800">Smart Lists</div>
+                <div className="text-sm text-gray-600">Export to CSV</div>
               </div>
             </div>
           </div>
