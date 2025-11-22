@@ -6,8 +6,8 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/:path*',
-        destination: '/spoonassist/:path*',
+        source: '/',
+        destination: '/spoonassist',
         has: [
           {
             type: 'host',
@@ -16,8 +16,8 @@ const nextConfig = {
         ],
       },
       {
-        source: '/',
-        destination: '/spoonassist',
+        source: '/:path*',
+        destination: '/spoonassist/:path*',
         has: [
           {
             type: 'host',
