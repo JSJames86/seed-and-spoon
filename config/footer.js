@@ -58,6 +58,7 @@ export const columns = [
   {
     title: "Resources",
     links: [
+      { label: "SpoonAssist", href: "/spoonassist" },
       { label: "Blog & Recipes", href: "/blog" },
       { label: "Research & Reports", href: "/resources/reports" },
       { label: "Brand Assets", href: "/brand" },

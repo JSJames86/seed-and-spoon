@@ -25,6 +25,7 @@ import Header from "@/components/Header";  // Capital H, exact match
 import Hero from "@/components/Hero";
 import WhyThisMatters from "@/components/WhyThisMatters";
 import StoryScroll from "@/components/StoryScroll";
+import SpoonAssistFeature from "@/components/SpoonAssistFeature";
 
 export default function Home() {
   return (
@@ -36,6 +37,9 @@ export default function Home() {
 
       {/* STORY SCROLL SECTION */}
       <StoryScroll />
+
+      {/* SPOONASSIST FEATURE */}
+      <SpoonAssistFeature />
 
       {/* WHY THIS WORK MATTERS */}
       <WhyThisMatters />
