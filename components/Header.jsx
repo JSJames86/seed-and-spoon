@@ -243,6 +243,10 @@ export default function Header() {
               Get Help
             </Link>
 
+            <Link href="/spoonassist" className={getNavLinkClass(isScrolled)}>
+              SpoonAssist
+            </Link>
+
             <Button variant="secondary" href="/donate">
               Donate
             </Button>
@@ -399,6 +403,13 @@ export default function Header() {
                 className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
               >
                 Get Help
+              </Link>
+              <Link
+                href="/spoonassist"
+                onClick={closeMenu}
+                className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+              >
+                SpoonAssist
               </Link>
               <Link
                 href="/volunteer"
