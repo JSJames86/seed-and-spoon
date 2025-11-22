@@ -140,27 +140,64 @@ export default function SpoonAssistPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center gap-4">
-            <Image
-              src="/spoonassist/logo.png"
-              alt="SpoonAssist Logo"
-              width={60}
-              height={60}
-              className="rounded-lg"
-            />
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">SpoonAssist</h1>
-              <p className="text-gray-600">Compare local grocery prices and save on recipes</p>
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-br from-green-600 via-green-500 to-emerald-400 py-20 md:py-28">
+        <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10"></div>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
+            {/* Logo */}
+            <div className="mb-8 transform hover:scale-105 transition-transform duration-300">
+              <Image
+                src="/spoonassist/logo.png"
+                alt="SpoonAssist Logo"
+                width={200}
+                height={200}
+                className="rounded-2xl shadow-2xl"
+                priority
+              />
+            </div>
+
+            {/* Title */}
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 drop-shadow-lg">
+              SpoonAssist
+            </h1>
+
+            {/* Tagline */}
+            <p className="text-xl md:text-2xl text-white/95 mb-8 max-w-2xl leading-relaxed drop-shadow-md">
+              Compare local grocery prices for any recipe and create smart shopping lists that save you money
+            </p>
+
+            {/* Features */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 w-full max-w-3xl">
+              <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 border border-white/30">
+                <div className="text-3xl mb-2">💰</div>
+                <div className="font-semibold text-white">Price Comparison</div>
+                <div className="text-sm text-white/90">Multiple stores</div>
+              </div>
+              <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 border border-white/30">
+                <div className="text-3xl mb-2">🥗</div>
+                <div className="font-semibold text-white">Dietary Options</div>
+                <div className="text-sm text-white/90">Filter preferences</div>
+              </div>
+              <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 border border-white/30">
+                <div className="text-3xl mb-2">📋</div>
+                <div className="font-semibold text-white">Smart Lists</div>
+                <div className="text-sm text-white/90">Export to CSV</div>
+              </div>
             </div>
           </div>
         </div>
-      </header>
+
+        {/* Wave divider */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" className="w-full h-auto">
+            <path fill="#ffffff" fillOpacity="1" d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,58.7C960,64,1056,64,1152,58.7C1248,53,1344,43,1392,37.3L1440,32L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z"></path>
+          </svg>
+        </div>
+      </section>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 max-w-7xl">
+      <main className="container mx-auto px-4 py-12 max-w-7xl">
         {/* Error Banner */}
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
