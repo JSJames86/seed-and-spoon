@@ -20,6 +20,7 @@ export const columns = [
       { label: "Find Food Today", href: "/get-help/locations" },
       { label: "Eligibility & How It Works", href: "/get-help/eligibility" },
       { label: "Hours & Pickup Info", href: "/get-help/hours" },
+      { label: "Recipes", href: "/recipes" },
       { label: "FAQs", href: "/help" },
       { label: "Emergency & Crisis Resources", href: "/get-help/crisis" },
     ],
@@ -59,7 +60,8 @@ export const columns = [
     title: "Resources",
     links: [
       { label: "SpoonAssist", href: "/spoonassist" },
-      { label: "Blog & Recipes", href: "/blog" },
+      { label: "Recipes", href: "/recipes" },
+      { label: "Blog", href: "/blog" },
       { label: "Research & Reports", href: "/resources/reports" },
       { label: "Brand Assets", href: "/brand" },
       { label: "Newsletter Archive", href: "/resources/newsletter" },
