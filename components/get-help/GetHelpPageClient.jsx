@@ -220,6 +220,73 @@ export default function GetHelpPage() {
         </div>
       </section>
 
+      {/* Helpful Resources Section */}
+      <section className="py-16 bg-green-50 dark:bg-gray-900">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Helpful Resources
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400">
+              Tools and information to help you make the most of available food resources
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Recipes Card */}
+            <a
+              href="/recipes"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all p-6 border-2 border-transparent hover:border-green-500 transform hover:-translate-y-1"
+            >
+              <div className="text-4xl mb-4">🍳</div>
+              <h3 className="font-bold text-xl mb-3 text-gray-900 dark:text-white">
+                Healthy Recipes
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                Browse our collection of nutritious, budget-friendly recipes using common pantry ingredients.
+              </p>
+              <div className="mt-4 text-green-700 dark:text-green-400 font-semibold text-sm">
+                View Recipes →
+              </div>
+            </a>
+
+            {/* SpoonAssist Card */}
+            <a
+              href="/spoonassist"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all p-6 border-2 border-transparent hover:border-green-500 transform hover:-translate-y-1"
+            >
+              <div className="text-4xl mb-4">🤖</div>
+              <h3 className="font-bold text-xl mb-3 text-gray-900 dark:text-white">
+                SpoonAssist AI
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                Get instant answers about food assistance, eligibility, and resources using our AI assistant.
+              </p>
+              <div className="mt-4 text-green-700 dark:text-green-400 font-semibold text-sm">
+                Chat with SpoonAssist →
+              </div>
+            </a>
+
+            {/* Blog Card */}
+            <a
+              href="/blog"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all p-6 border-2 border-transparent hover:border-green-500 transform hover:-translate-y-1"
+            >
+              <div className="text-4xl mb-4">📚</div>
+              <h3 className="font-bold text-xl mb-3 text-gray-900 dark:text-white">
+                Blog & Tips
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                Read articles about nutrition, food storage, meal planning, and making the most of your resources.
+              </p>
+              <div className="mt-4 text-green-700 dark:text-green-400 font-semibold text-sm">
+                Read Blog →
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Privacy & Support Section */}
       <section className="py-12 bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
         <div className="container mx-auto px-4 max-w-4xl">
