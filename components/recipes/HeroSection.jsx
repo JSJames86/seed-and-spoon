@@ -29,7 +29,7 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
         >
-          Discover Delicious Recipes
+          From Our Kitchen to Yours
         </motion.h1>
 
         {/* Animated Subtitle */}
@@ -39,8 +39,7 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
         >
-          Delicious comfort food and holiday favorites that bring warmth to your
-          table. From Southern classics to festive holiday dishes.
+          Recipes with care and community in mind
         </motion.p>
 
         {/* Animated Stats/Features */}
