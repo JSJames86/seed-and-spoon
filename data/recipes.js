@@ -168,7 +168,7 @@ export const recipes = [
     cookTime: "10 min",
     servings: "2.5-3 cups",
     description: "Savory, spicy Cajun-style turkey gravy perfect for drizzling over roasted turkey and mashed potatoes.",
-    image: "/images/recipes/placeholder.jpg", // TODO: Add cajun-turkey-gravy image
+    image: "/images/recipes/cajun-turkey-gravy.jpeg",
     ingredients: [
       "1 packet McCormick Turkey Gravy Mix",
       "1/4 cup all-purpose flour (optional, for thicker gravy)",
