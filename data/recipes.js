@@ -4,7 +4,7 @@
  * This file contains all recipe data for the recipes page.
  * Each recipe object includes metadata, ingredients, instructions, and image paths.
  *
- * TODO: Add actual images to /public/images/
+ * TODO: Add actual images to /public/images/recipes/
  * Images should be placed at the paths specified in the image field.
  */
 
@@ -19,7 +19,7 @@ export const recipes = [
     cookTime: "15 min",
     servings: "3 cups",
     description: "Sweet, tangy, and festive cranberry orange sauce perfect for holiday meals.",
-    image: "/images/cranberry-orange-sauce.jpg",
+    image: "/images/recipes/cranberry-orange-sauce.jpg",
     ingredients: [
       "3/4 cup water",
       "1/4 cup freshly squeezed orange juice",
@@ -51,7 +51,7 @@ export const recipes = [
     cookTime: "50 min",
     servings: "9-10 cups",
     description: "Classic stuffing with savory Italian sausage, tart apples, and herbs baked to golden perfection.",
-    image: "/images/sausage-apple-stuffing.jpg",
+    image: "/images/recipes/sausage-apple-stuffing.jpg",
     ingredients: [
       "12-14 oz herb-seasoned stuffing cubes",
       "1 lb Italian sausage, casings removed",
@@ -92,7 +92,7 @@ export const recipes = [
     cookTime: "Varies by weight",
     servings: "12-16 servings",
     description: "Juicy, flavorful Cajun-style turkey with a spicy butter marinade and aromatic rub, perfect for roasting or deep-frying.",
-    image: "/images/cajun-turkey.jpg",
+    image: "/images/recipes/cajun-turkey.jpg",
     ingredients: [
       "1 whole turkey (12-16 lbs), thawed",
       "1 cup unsalted butter, melted",
@@ -134,7 +134,7 @@ export const recipes = [
     cookTime: "20 min",
     servings: "4-6 servings",
     description: "Creamy, fluffy mashed potatoes made from scratch with butter and milk, perfect for holiday meals.",
-    image: "/images/mashed-potatoes.jpg",
+    image: "/images/recipes/mashed-potatoes.jpg",
     ingredients: [
       "2 lbs Russet or Yukon Gold potatoes",
       "1/2 cup whole milk or half-and-half",
@@ -168,7 +168,7 @@ export const recipes = [
     cookTime: "10 min",
     servings: "2.5-3 cups",
     description: "Savory, spicy Cajun-style turkey gravy perfect for drizzling over roasted turkey and mashed potatoes.",
-    image: "/images/cajun-turkey-gravy.jpg",
+    image: "/images/recipes/cajun-turkey-gravy.jpg",
     ingredients: [
       "1 packet McCormick Turkey Gravy Mix",
       "1/4 cup all-purpose flour (optional, for thicker gravy)",
@@ -202,7 +202,7 @@ export const recipes = [
     cookTime: "1 hr 30 min - 2 hr",
     servings: "6-8 servings",
     description: "Slow-simmered fresh green beans cooked with smoked turkey, onions, garlic, and rich broth for deep, soulful flavor.",
-    image: "/images/green-beans.jpg",
+    image: "/images/recipes/green-beans.jpg",
     ingredients: [
       "2 lbs fresh green beans, trimmed",
       "1 lb smoked turkey legs or necks",
@@ -239,7 +239,7 @@ export const recipes = [
     cookTime: "20-25 min",
     servings: "8 servings",
     description: "Ultra-moist, cake-like Jiffy cornbread boosted with vanilla pudding mix, served with a sweet cinnamon honey butter spread.",
-    image: "/images/moist-cornbread.jpg",
+    image: "/images/recipes/moist-cornbread.jpg",
     ingredients: [
       "1 box (8.5 oz) Jiffy Corn Muffin Mix",
       "1/2 box (~1.85 oz) instant vanilla pudding mix",
@@ -279,7 +279,7 @@ export const recipes = [
     cookTime: "1 hr 15 min",
     servings: "8 slices",
     description: "Velvety sweet potato base layered with a glossy pecan topping — a soulful holiday pie. Fill crust half sweet potato and half pecan topping to avoid overflow.",
-    image: "/images/sweet-potato-pecan-pie.jpg",
+    image: "/images/recipes/sweet-potato-pecan-pie.jpg",
     ingredients: [
       "Sweet Potato Filling:",
       "1 (9-inch) unbaked deep-dish pie crust",
