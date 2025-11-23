@@ -80,13 +80,13 @@ export default function RecipesPage() {
 }
 
 /**
- * Page Metadata (Optional - for better SEO)
+ * NOTE: Page Metadata for SEO
  *
- * If you want to add metadata, create a metadata export:
+ * This page uses "use client" for interactivity (filtering, modal state).
+ * In Next.js, you cannot export metadata from client components.
+ *
+ * The page title and description are handled via:
+ * 1. The screen-reader-only <h1> and <p> tags in the JSX above
+ * 2. If you need custom metadata, create a layout.jsx file in app/recipes/
+ *    without "use client" and export metadata there.
  */
-export const metadata = {
-  title: 'Recipes - Seed & Spoon',
-  description:
-    'Discover healthy, plant-based recipes that nourish your body and delight your taste buds. Browse soups, salads, pasta dishes, and more.',
-  keywords: 'recipes, plant-based, healthy eating, vegetarian, vegan, cooking',
-};
