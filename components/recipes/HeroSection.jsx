@@ -29,7 +29,7 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
         >
-          Discover Delicious Recipes
+          From Our Kitchen to Yours
         </motion.h1>
 
         {/* Animated Subtitle */}
@@ -39,8 +39,7 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
         >
-          Healthy, plant-based recipes that nourish your body and delight your
-          taste buds. From quick weeknight dinners to meal-prep favorites.
+          Recipes with care and community in mind
         </motion.p>
 
         {/* Animated Stats/Features */}
@@ -51,16 +50,16 @@ export default function HeroSection() {
           transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
         >
           <div className="text-center">
-            <div className="text-3xl font-bold">8+</div>
+            <div className="text-3xl font-bold">8</div>
             <div className="text-sm text-green-50">Recipes</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold">30min</div>
-            <div className="text-sm text-green-50">Average Time</div>
+            <div className="text-3xl font-bold">Easy-Med</div>
+            <div className="text-sm text-green-50">Difficulty</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold">100%</div>
-            <div className="text-sm text-green-50">Plant-Based</div>
+            <div className="text-3xl font-bold">Comfort</div>
+            <div className="text-sm text-green-50">Food Style</div>
           </div>
         </motion.div>
       </div>
