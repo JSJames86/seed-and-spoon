@@ -4,362 +4,318 @@
  * This file contains all recipe data for the recipes page.
  * Each recipe object includes metadata, ingredients, instructions, and image paths.
  *
- * TODO: Add actual images to /public/images/recipes/
- * Image naming convention: recipe-{id}.jpg (e.g., recipe-1.jpg)
+ * TODO: Add actual images to /public/images/
+ * Images should be placed at the paths specified in the image field.
  */
 
 export const recipes = [
   {
     id: 1,
-    title: "Hearty Vegetable Soup",
-    category: "Soups & Stews",
+    slug: "cranberry-orange-sauce",
+    title: "Cranberry Orange Sauce",
+    category: "Sauces",
     difficulty: "Easy",
-    prepTime: "15 min",
-    cookTime: "30 min",
-    servings: 6,
-    description: "A warming, nutritious soup packed with seasonal vegetables and aromatic herbs. Perfect for meal prep and feeding a crowd.",
-    image: "/images/recipes/recipe-1.jpg", // TODO: Add image
+    prepTime: "5 min",
+    cookTime: "15 min",
+    servings: "3 cups",
+    description: "Sweet, tangy, and festive cranberry orange sauce perfect for holiday meals.",
+    image: "/images/cranberry-orange-sauce.jpg",
     ingredients: [
-      "2 tablespoons olive oil",
-      "1 large onion, diced",
-      "3 cloves garlic, minced",
-      "3 carrots, sliced",
-      "3 celery stalks, chopped",
-      "1 zucchini, diced",
-      "1 cup green beans, trimmed and cut",
-      "1 can (14oz) diced tomatoes",
-      "6 cups vegetable broth",
-      "2 bay leaves",
-      "1 teaspoon dried thyme",
-      "Salt and pepper to taste",
-      "Fresh parsley for garnish"
+      "3/4 cup water",
+      "1/4 cup freshly squeezed orange juice",
+      "2 tbsp orange zest",
+      "1/2 cup sugar",
+      "12 oz fresh cranberries",
+      "1/2 tsp cinnamon"
     ],
     instructions: [
-      "Heat olive oil in a large pot over medium heat.",
-      "Sauté onion and garlic until fragrant, about 3-4 minutes.",
-      "Add carrots and celery, cook for 5 minutes.",
-      "Add remaining vegetables, tomatoes, broth, and herbs.",
-      "Bring to a boil, then reduce heat and simmer for 20-25 minutes.",
-      "Season with salt and pepper to taste.",
-      "Remove bay leaves and serve hot, garnished with fresh parsley."
+      "In a medium saucepan, combine water, orange juice, orange zest, and sugar over medium heat. Cook, stirring occasionally, until the sugar has dissolved.",
+      "Stir in cranberries and bring to a boil; reduce heat and let simmer until sauce has thickened, about 15 minutes.",
+      "Let cool completely before serving."
     ],
-    tags: ["vegetarian", "vegan", "gluten-free", "healthy", "comfort-food"],
+    tags: ["holiday", "sauce", "vegetarian", "vegan", "gluten-free"],
     nutrition: {
-      calories: 120,
-      protein: "4g",
-      carbs: "18g",
-      fat: "5g"
+      calories: 50,
+      protein: "0g",
+      carbs: "13g",
+      fat: "0g"
     }
   },
   {
     id: 2,
-    title: "Quinoa Buddha Bowl",
-    category: "Salads & Bowls",
-    difficulty: "Easy",
-    prepTime: "20 min",
-    cookTime: "15 min",
-    servings: 4,
-    description: "A colorful, nutrient-dense bowl featuring quinoa, roasted vegetables, and a creamy tahini dressing. Customizable and meal-prep friendly.",
-    image: "/images/recipes/recipe-2.jpg", // TODO: Add image
+    slug: "sausage-apple-stuffing",
+    title: "Sausage and Apple Stuffing",
+    category: "Side Dishes",
+    difficulty: "Medium",
+    prepTime: "15 min",
+    cookTime: "50 min",
+    servings: "9-10 cups",
+    description: "Classic stuffing with savory Italian sausage, tart apples, and herbs baked to golden perfection.",
+    image: "/images/sausage-apple-stuffing.jpg",
     ingredients: [
-      "1 cup quinoa, rinsed",
-      "2 cups water",
-      "2 sweet potatoes, cubed",
-      "1 can chickpeas, drained and rinsed",
-      "2 cups kale, chopped",
-      "1 avocado, sliced",
-      "2 tablespoons olive oil",
-      "1 teaspoon cumin",
-      "1 teaspoon paprika",
-      "For tahini dressing:",
-      "¼ cup tahini",
-      "2 tablespoons lemon juice",
-      "2 tablespoons water",
-      "1 clove garlic, minced",
-      "Salt to taste"
+      "12-14 oz herb-seasoned stuffing cubes",
+      "1 lb Italian sausage, casings removed",
+      "4 Tbsp unsalted butter",
+      "1 large onion, diced",
+      "2 stalks celery, diced",
+      "2 medium Granny Smith apples, peeled, cored, and chopped",
+      "1 Tbsp fresh sage, chopped",
+      "1 Tbsp fresh thyme, chopped",
+      "2.75 cups low-sodium chicken broth",
+      "2 large eggs, lightly beaten",
+      "1/2 tsp salt",
+      "1/2 tsp black pepper",
+      "1/2 cup chopped walnuts or pecans (optional)"
     ],
     instructions: [
-      "Preheat oven to 425°F (220°C).",
-      "Cook quinoa: combine with water, bring to boil, reduce heat, simmer 15 minutes.",
-      "Toss sweet potatoes and chickpeas with olive oil, cumin, and paprika.",
-      "Roast for 25-30 minutes until golden and crispy.",
-      "Massage kale with a drizzle of olive oil until softened.",
-      "Whisk together all dressing ingredients until smooth.",
-      "Assemble bowls with quinoa, roasted vegetables, kale, and avocado.",
-      "Drizzle with tahini dressing and serve."
+      "Preheat oven to 350°F (175°C) and grease a 9x13-inch baking dish. Place the stuffing cubes in a large bowl.",
+      "Melt 2 Tbsp butter in a skillet. Cook Italian sausage until browned; transfer to stuffing bowl.",
+      "Add remaining butter and sauté onion, celery, apples, salt, and pepper until tender. Stir in sage and thyme.",
+      "Combine stuffing, sausage, and sautéed vegetables. Whisk broth and eggs together, pour over mixture, and mix gently. Add nuts if desired.",
+      "Transfer to baking dish, cover with foil, and bake 30 minutes. Remove foil and bake an additional 20-30 minutes until top is golden."
     ],
-    tags: ["vegetarian", "vegan", "gluten-free", "protein-rich", "meal-prep"],
+    tags: ["holiday", "thanksgiving", "side-dish", "comfort-food"],
     nutrition: {
-      calories: 425,
-      protein: "14g",
-      carbs: "52g",
-      fat: "18g"
+      calories: 280,
+      protein: "12g",
+      carbs: "28g",
+      fat: "14g"
     }
   },
   {
     id: 3,
-    title: "Classic Marinara Pasta",
-    category: "Pasta & Grains",
-    difficulty: "Easy",
-    prepTime: "10 min",
-    cookTime: "25 min",
-    servings: 4,
-    description: "A simple yet delicious homemade marinara sauce that's far better than store-bought. Serve over your favorite pasta for a quick weeknight dinner.",
-    image: "/images/recipes/recipe-3.jpg", // TODO: Add image
+    slug: "cajun-turkey",
+    title: "Cajun Turkey",
+    category: "Meat & Poultry",
+    difficulty: "Hard",
+    prepTime: "30 min",
+    cookTime: "Varies by weight",
+    servings: "12-16 servings",
+    description: "Juicy, flavorful Cajun-style turkey with a spicy butter marinade and aromatic rub, perfect for roasting or deep-frying.",
+    image: "/images/cajun-turkey.jpg",
     ingredients: [
-      "1 pound pasta (spaghetti or penne)",
-      "3 tablespoons olive oil",
-      "4 cloves garlic, minced",
-      "1 can (28oz) crushed tomatoes",
-      "1 can (14oz) diced tomatoes",
-      "2 teaspoons dried basil",
-      "1 teaspoon dried oregano",
-      "½ teaspoon red pepper flakes (optional)",
-      "1 tablespoon sugar (optional, to balance acidity)",
-      "Salt and black pepper to taste",
-      "Fresh basil leaves for garnish",
-      "Grated Parmesan cheese (optional)"
+      "1 whole turkey (12-16 lbs), thawed",
+      "1 cup unsalted butter, melted",
+      "1/2 cup chicken stock",
+      "1/4 cup Louisiana-style hot sauce",
+      "2 Tbsp Worcestershire sauce",
+      "2 Tbsp garlic powder",
+      "2 Tbsp onion powder",
+      "1 tsp cayenne pepper",
+      "2 Tbsp smoked paprika",
+      "1 Tbsp dried oregano",
+      "1 Tbsp dried thyme",
+      "2 tsp ground black pepper",
+      "1 Tbsp salt",
+      "1/4 cup butter or oil (for binder)"
     ],
     instructions: [
-      "Bring a large pot of salted water to boil for pasta.",
-      "Heat olive oil in a large saucepan over medium heat.",
-      "Add garlic and sauté until fragrant, about 1 minute.",
-      "Add crushed tomatoes, diced tomatoes, basil, oregano, and red pepper flakes.",
-      "Stir well and bring to a simmer.",
-      "Reduce heat to low and let simmer for 20 minutes, stirring occasionally.",
-      "Meanwhile, cook pasta according to package directions until al dente.",
-      "Season sauce with salt, pepper, and sugar if needed.",
-      "Drain pasta and toss with marinara sauce.",
-      "Serve topped with fresh basil and Parmesan cheese."
+      "Thaw and dry turkey thoroughly. Prepare injection marinade by melting butter and whisking together with stock, hot sauce, Worcestershire sauce, garlic powder, onion powder, and cayenne.",
+      "Using a meat injector, inject marinade into breast, thighs, and legs. Combine all dry rub spices in a bowl and coat turkey with butter or oil binder.",
+      "Rub spice mixture all over turkey. Rest in refrigerator for 2 hours or overnight for best results.",
+      "Roast at 325°F (approximately 14 minutes per pound) until thigh reaches internal temperature of 165°F, or deep-fry according to safety instructions.",
+      "Let turkey rest 20-30 minutes before carving. Optional: baste with cheesecloth soaked in butter every 45 minutes while roasting."
     ],
-    tags: ["vegetarian", "italian", "comfort-food", "quick-meal"],
-    nutrition: {
-      calories: 380,
-      protein: "12g",
-      carbs: "68g",
-      fat: "8g"
-    }
-  },
-  {
-    id: 4,
-    title: "Spicy Black Bean Chili",
-    category: "Soups & Stews",
-    difficulty: "Medium",
-    prepTime: "15 min",
-    cookTime: "45 min",
-    servings: 8,
-    description: "A robust, flavorful chili that's perfect for cold days. Packed with protein and fiber, this crowd-pleaser can be made ahead and freezes beautifully.",
-    image: "/images/recipes/recipe-4.jpg", // TODO: Add image
-    ingredients: [
-      "2 tablespoons olive oil",
-      "1 large onion, diced",
-      "1 bell pepper (red or green), diced",
-      "4 cloves garlic, minced",
-      "2 tablespoons chili powder",
-      "1 tablespoon cumin",
-      "1 teaspoon smoked paprika",
-      "½ teaspoon cayenne pepper (adjust to taste)",
-      "3 cans (15oz each) black beans, drained and rinsed",
-      "1 can (28oz) crushed tomatoes",
-      "1 can (14oz) diced tomatoes",
-      "1 cup vegetable broth",
-      "1 tablespoon cocoa powder (secret ingredient!)",
-      "Salt and pepper to taste",
-      "For serving: sour cream, shredded cheese, cilantro, lime wedges"
-    ],
-    instructions: [
-      "Heat olive oil in a large pot over medium-high heat.",
-      "Add onion and bell pepper, cook until softened, about 5 minutes.",
-      "Add garlic and spices, cook until fragrant, about 1 minute.",
-      "Add black beans, crushed tomatoes, diced tomatoes, and broth.",
-      "Stir in cocoa powder (this adds depth to the flavor).",
-      "Bring to a boil, then reduce heat to low.",
-      "Simmer uncovered for 35-40 minutes, stirring occasionally.",
-      "The chili will thicken as it cooks; add more broth if needed.",
-      "Season with salt and pepper to taste.",
-      "Serve hot with desired toppings."
-    ],
-    tags: ["vegetarian", "vegan", "gluten-free", "spicy", "comfort-food", "freezer-friendly"],
-    nutrition: {
-      calories: 245,
-      protein: "12g",
-      carbs: "38g",
-      fat: "5g"
-    }
-  },
-  {
-    id: 5,
-    title: "Mediterranean Chickpea Salad",
-    category: "Salads & Bowls",
-    difficulty: "Easy",
-    prepTime: "15 min",
-    cookTime: "0 min",
-    servings: 4,
-    description: "A refreshing, no-cook salad bursting with Mediterranean flavors. Perfect for lunch, picnics, or as a side dish. Ready in just 15 minutes!",
-    image: "/images/recipes/recipe-5.jpg", // TODO: Add image
-    ingredients: [
-      "2 cans (15oz each) chickpeas, drained and rinsed",
-      "1 cup cherry tomatoes, halved",
-      "1 cucumber, diced",
-      "½ red onion, finely diced",
-      "½ cup Kalamata olives, pitted and halved",
-      "½ cup crumbled feta cheese",
-      "¼ cup fresh parsley, chopped",
-      "For dressing:",
-      "¼ cup extra virgin olive oil",
-      "2 tablespoons red wine vinegar",
-      "1 tablespoon lemon juice",
-      "1 teaspoon dried oregano",
-      "1 clove garlic, minced",
-      "Salt and pepper to taste"
-    ],
-    instructions: [
-      "In a large bowl, combine chickpeas, tomatoes, cucumber, onion, olives, feta, and parsley.",
-      "In a small bowl, whisk together all dressing ingredients.",
-      "Pour dressing over salad and toss gently to combine.",
-      "Let sit for 10 minutes to allow flavors to meld.",
-      "Taste and adjust seasoning if needed.",
-      "Serve immediately or refrigerate for up to 3 days."
-    ],
-    tags: ["vegetarian", "gluten-free", "no-cook", "mediterranean", "protein-rich"],
+    tags: ["holiday", "thanksgiving", "cajun", "spicy", "main-course"],
     nutrition: {
       calories: 320,
-      protein: "11g",
-      carbs: "32g",
+      protein: "42g",
+      carbs: "2g",
       fat: "16g"
     }
   },
   {
-    id: 6,
-    title: "Coconut Curry Lentils",
-    category: "Pasta & Grains",
-    difficulty: "Medium",
+    id: 4,
+    slug: "mashed-potatoes",
+    title: "Homemade Mashed Potatoes",
+    category: "Side Dishes",
+    difficulty: "Easy",
     prepTime: "10 min",
-    cookTime: "35 min",
-    servings: 6,
-    description: "Creamy, aromatic lentils in a rich coconut curry sauce. This Indian-inspired dish is comforting, nutritious, and incredibly flavorful. Serve over rice or with naan.",
-    image: "/images/recipes/recipe-6.jpg", // TODO: Add image
+    cookTime: "20 min",
+    servings: "4-6 servings",
+    description: "Creamy, fluffy mashed potatoes made from scratch with butter and milk, perfect for holiday meals.",
+    image: "/images/mashed-potatoes.jpg",
     ingredients: [
-      "2 tablespoons coconut oil",
-      "1 onion, diced",
-      "3 cloves garlic, minced",
-      "1 tablespoon fresh ginger, grated",
-      "2 tablespoons curry powder",
-      "1 teaspoon turmeric",
-      "1 teaspoon cumin",
-      "½ teaspoon cinnamon",
-      "1½ cups red lentils, rinsed",
-      "1 can (14oz) coconut milk",
-      "3 cups vegetable broth",
-      "1 can (14oz) diced tomatoes",
-      "2 cups spinach, chopped",
-      "Salt to taste",
-      "Fresh cilantro for garnish",
-      "Lime wedges for serving"
+      "2 lbs Russet or Yukon Gold potatoes",
+      "1/2 cup whole milk or half-and-half",
+      "4 Tbsp butter, cut into pieces",
+      "1 Tbsp salt (for cooking water)",
+      "Salt and pepper to taste"
     ],
     instructions: [
-      "Heat coconut oil in a large pot over medium heat.",
-      "Sauté onion until softened, about 5 minutes.",
-      "Add garlic and ginger, cook for 1 minute until fragrant.",
-      "Stir in curry powder, turmeric, cumin, and cinnamon, cook for 30 seconds.",
-      "Add lentils, coconut milk, broth, and tomatoes.",
-      "Bring to a boil, then reduce heat and simmer for 25-30 minutes.",
-      "Lentils should be tender and mixture should thicken.",
-      "Stir in spinach and cook until wilted, about 2 minutes.",
-      "Season with salt to taste.",
-      "Serve over basmati rice, garnished with cilantro and lime wedges."
+      "Peel and cut potatoes into chunks. Cover with cold salted water in a large pot.",
+      "Bring to a boil, then reduce heat and simmer until fork-tender, about 15-20 minutes.",
+      "Drain potatoes well and return to pot. Let them dry out for 1-2 minutes over low heat.",
+      "Meanwhile, warm milk and butter together in a small saucepan or microwave.",
+      "Mash potatoes using a potato masher or ricer. Gradually add warm milk mixture while mashing until desired consistency is reached.",
+      "Season with salt and pepper to taste. Serve hot."
     ],
-    tags: ["vegetarian", "vegan", "gluten-free", "indian", "comfort-food", "protein-rich"],
+    tags: ["side-dish", "comfort-food", "vegetarian", "gluten-free", "holiday"],
     nutrition: {
-      calories: 295,
-      protein: "14g",
-      carbs: "36g",
-      fat: "12g"
+      calories: 220,
+      protein: "4g",
+      carbs: "32g",
+      fat: "9g"
+    }
+  },
+  {
+    id: 5,
+    slug: "cajun-turkey-gravy",
+    title: "Cajun Turkey Gravy",
+    category: "Sauces",
+    difficulty: "Easy",
+    prepTime: "5 min",
+    cookTime: "10 min",
+    servings: "2.5-3 cups",
+    description: "Savory, spicy Cajun-style turkey gravy perfect for drizzling over roasted turkey and mashed potatoes.",
+    image: "/images/cajun-turkey-gravy.jpg",
+    ingredients: [
+      "1 packet McCormick Turkey Gravy Mix",
+      "1/4 cup all-purpose flour (optional, for thicker gravy)",
+      "1 cup turkey pan drippings",
+      "2 cups low-sodium chicken broth",
+      "1-2 tsp Cajun seasoning (adjust to taste)"
+    ],
+    instructions: [
+      "Skim excess fat from pan drippings, leaving about 1/4 cup fat in the pan.",
+      "Whisk together gravy mix and flour (if using) in a bowl.",
+      "Gradually add drippings and chicken broth to the dry mixture, whisking constantly until smooth.",
+      "Pour mixture into a saucepan and bring to a boil over medium-high heat, stirring frequently.",
+      "Stir in Cajun seasoning. Reduce heat and simmer for 5 minutes, stirring occasionally, until gravy thickens.",
+      "Taste and adjust seasoning as needed. Serve hot over turkey, mashed potatoes, or stuffing."
+    ],
+    tags: ["sauce", "cajun", "spicy", "holiday", "gluten-free-option"],
+    nutrition: {
+      calories: 35,
+      protein: "1g",
+      carbs: "5g",
+      fat: "2g"
+    }
+  },
+  {
+    id: 6,
+    slug: "janelle-green-beans",
+    title: "Janelle's Southern Green Beans",
+    category: "Side Dishes",
+    difficulty: "Medium",
+    prepTime: "10 min",
+    cookTime: "1 hr 30 min - 2 hr",
+    servings: "6-8 servings",
+    description: "Slow-simmered fresh green beans cooked with smoked turkey, onions, garlic, and rich broth for deep, soulful flavor.",
+    image: "/images/green-beans.jpg",
+    ingredients: [
+      "2 lbs fresh green beans, trimmed",
+      "1 lb smoked turkey legs or necks",
+      "6-8 cups water or chicken broth",
+      "1 onion, chopped",
+      "1 tbsp minced garlic",
+      "2 tsp all-purpose seasoning",
+      "1 tsp ground black pepper",
+      "Optional: 2-3 small potatoes, cubed"
+    ],
+    instructions: [
+      "In a large pot, add smoked turkey and enough water or broth to cover. Bring to a boil, then reduce heat and simmer for 1-2 hours until meat is tender and falling off the bone.",
+      "Remove turkey from pot, let cool slightly, then shred the meat. Set aside. Keep the flavorful broth in the pot.",
+      "Add green beans, chopped onion, garlic, all-purpose seasoning, and black pepper to the broth. If using potatoes, add them now.",
+      "Bring to a boil, then reduce heat and simmer for 40-50 minutes until green beans are tender and flavorful.",
+      "Return shredded turkey meat to the pot. Taste and adjust seasoning as needed.",
+      "Serve hot as a side dish with cornbread or rice."
+    ],
+    tags: ["southern", "soul-food", "comfort-food", "side-dish", "holiday"],
+    nutrition: {
+      calories: 180,
+      protein: "18g",
+      carbs: "12g",
+      fat: "6g"
     }
   },
   {
     id: 7,
-    title: "Roasted Vegetable Medley",
-    category: "Sides & Snacks",
+    slug: "moist-jiffy-cornbread",
+    title: "Moist Jiffy Cornbread with Cinnamon Honey Butter",
+    category: "Baking & Desserts",
     difficulty: "Easy",
-    prepTime: "15 min",
-    cookTime: "30 min",
-    servings: 6,
-    description: "Colorful roasted vegetables with herbs and a touch of balsamic. A versatile side dish that pairs well with any main course or can be tossed with grains for a complete meal.",
-    image: "/images/recipes/recipe-7.jpg", // TODO: Add image
+    prepTime: "10 min",
+    cookTime: "20-25 min",
+    servings: "8 servings",
+    description: "Ultra-moist, cake-like Jiffy cornbread boosted with vanilla pudding mix, served with a sweet cinnamon honey butter spread.",
+    image: "/images/moist-cornbread.jpg",
     ingredients: [
-      "2 bell peppers (mixed colors), cut into chunks",
-      "2 zucchini, sliced into half-moons",
-      "1 red onion, cut into wedges",
-      "2 cups broccoli florets",
-      "2 cups cauliflower florets",
-      "8 oz mushrooms, halved",
-      "3 tablespoons olive oil",
-      "2 tablespoons balsamic vinegar",
-      "2 teaspoons Italian seasoning",
-      "4 cloves garlic, minced",
-      "1 teaspoon salt",
-      "½ teaspoon black pepper",
-      "Fresh thyme or rosemary for garnish"
+      "1 box (8.5 oz) Jiffy Corn Muffin Mix",
+      "1/2 box (~1.85 oz) instant vanilla pudding mix",
+      "1 large egg",
+      "1/2 cup milk or buttermilk",
+      "1/4 cup sour cream (optional, for extra moisture)",
+      "2 Tbsp butter, melted",
+      "For Cinnamon Honey Butter:",
+      "1/2 cup butter, softened",
+      "2 Tbsp honey",
+      "1/2 tsp ground cinnamon"
     ],
     instructions: [
-      "Preheat oven to 425°F (220°C).",
-      "Line two large baking sheets with parchment paper.",
-      "In a large bowl, combine all vegetables.",
-      "In a small bowl, whisk together olive oil, balsamic vinegar, Italian seasoning, garlic, salt, and pepper.",
-      "Pour mixture over vegetables and toss until evenly coated.",
-      "Spread vegetables in a single layer on baking sheets (don't overcrowd).",
-      "Roast for 25-30 minutes, stirring halfway through.",
-      "Vegetables should be tender and caramelized at the edges.",
-      "Garnish with fresh herbs and serve warm."
+      "Preheat oven to 400°F. Grease an 8x8-inch baking pan or 9-inch cast iron skillet.",
+      "In a mixing bowl, whisk together egg, milk, sour cream (if using), and melted butter until well combined.",
+      "Add Jiffy Corn Muffin Mix and instant vanilla pudding mix to the wet ingredients. Stir until just combined (do not overmix).",
+      "Pour batter into prepared pan and smooth the top.",
+      "Bake for 20-25 minutes, or until golden brown and a toothpick inserted in the center comes out clean.",
+      "While cornbread bakes, make Cinnamon Honey Butter: Beat softened butter with honey and cinnamon until light and fluffy.",
+      "Serve cornbread warm with cinnamon honey butter."
     ],
-    tags: ["vegetarian", "vegan", "gluten-free", "side-dish", "healthy"],
+    tags: ["baking", "side-dish", "southern", "comfort-food", "vegetarian"],
     nutrition: {
-      calories: 110,
+      calories: 210,
       protein: "4g",
-      carbs: "14g",
-      fat: "7g"
+      carbs: "28g",
+      fat: "10g"
     }
   },
   {
     id: 8,
-    title: "Energy Balls - No Bake",
-    category: "Sides & Snacks",
-    difficulty: "Easy",
-    prepTime: "15 min",
-    cookTime: "0 min",
-    servings: 20,
-    description: "Healthy, no-bake energy balls perfect for snacking. Made with dates, nuts, and seeds, these provide sustained energy and are naturally sweetened. Great for meal prep!",
-    image: "/images/recipes/recipe-8.jpg", // TODO: Add image
+    slug: "sweet-potato-pecan-pie",
+    title: "Sweet Potato Pecan Pie",
+    category: "Baking & Desserts",
+    difficulty: "Medium",
+    prepTime: "25 min",
+    cookTime: "1 hr 15 min",
+    servings: "8 slices",
+    description: "Velvety sweet potato base layered with a glossy pecan topping — a soulful holiday pie. Fill crust half sweet potato and half pecan topping to avoid overflow.",
+    image: "/images/sweet-potato-pecan-pie.jpg",
     ingredients: [
-      "1 cup pitted Medjool dates (about 12-14 dates)",
-      "1 cup raw almonds or cashews",
-      "¼ cup ground flaxseed",
-      "2 tablespoons chia seeds",
-      "2 tablespoons cocoa powder",
-      "2 tablespoons honey or maple syrup",
-      "1 teaspoon vanilla extract",
-      "Pinch of salt",
-      "Optional toppings: shredded coconut, cocoa powder, sesame seeds"
+      "Sweet Potato Filling:",
+      "1 (9-inch) unbaked deep-dish pie crust",
+      "1 1/2 cups mashed cooked sweet potatoes",
+      "1/4 cup packed light brown sugar",
+      "2 large eggs, beaten",
+      "2 tbsp unsalted butter, melted",
+      "1 tsp vanilla extract",
+      "1 tsp orange zest (optional)",
+      "1/2 tsp ground cinnamon",
+      "1/4 tsp ground nutmeg",
+      "1/4 tsp kosher salt",
+      "Pecan Topping:",
+      "2 large eggs",
+      "3/4 cup packed light brown sugar",
+      "1/2 cup corn syrup",
+      "2 tbsp unsalted butter, melted",
+      "1 tsp vanilla extract",
+      "1/4 tsp kosher salt",
+      "2 cups chopped pecans"
     ],
     instructions: [
-      "If dates are dry, soak in warm water for 10 minutes, then drain.",
-      "Add almonds to food processor and pulse until coarsely chopped.",
-      "Add dates, flaxseed, chia seeds, cocoa powder, honey, vanilla, and salt.",
-      "Process until mixture comes together and is slightly sticky.",
-      "If too dry, add water 1 teaspoon at a time. If too wet, add more nuts.",
-      "Scoop about 1 tablespoon of mixture and roll into balls.",
-      "Optional: roll balls in coconut, cocoa powder, or sesame seeds.",
-      "Place on parchment-lined tray and refrigerate for 30 minutes to firm up.",
-      "Store in airtight container in refrigerator for up to 2 weeks.",
-      "Enjoy as a healthy snack or pre-workout energy boost!"
+      "Preheat oven to 300°F. Fit pie crust into a 9-inch pie plate and chill while preparing fillings.",
+      "Make sweet potato filling: In a bowl, whisk together mashed sweet potatoes, brown sugar, eggs, melted butter, vanilla, orange zest (if using), cinnamon, nutmeg, and salt until smooth.",
+      "Spread sweet potato filling into chilled pie crust, filling it about halfway (important to avoid overflow).",
+      "Make pecan topping: In another bowl, whisk together eggs, brown sugar, corn syrup, melted butter, vanilla, and salt until well combined. Stir in chopped pecans.",
+      "Carefully pour pecan topping over the sweet potato layer, filling to just below the crust edge.",
+      "Bake for 1 hour and 15 minutes, or until the center is set and filling doesn't jiggle when gently shaken.",
+      "Cool pie on a wire rack for at least 45 minutes before slicing. Serve at room temperature or chilled."
     ],
-    tags: ["vegetarian", "vegan", "gluten-free", "no-bake", "healthy", "snack", "meal-prep"],
+    tags: ["dessert", "pie", "holiday", "thanksgiving", "southern"],
     nutrition: {
-      calories: 85,
-      protein: "3g",
-      carbs: "11g",
-      fat: "4g"
+      calories: 520,
+      protein: "7g",
+      carbs: "68g",
+      fat: "26g"
     }
   }
 ];
@@ -385,4 +341,11 @@ export const filterRecipesByCategory = (category) => {
  */
 export const getRecipeById = (id) => {
   return recipes.find(recipe => recipe.id === id);
+};
+
+/**
+ * Get recipe by slug
+ */
+export const getRecipeBySlug = (slug) => {
+  return recipes.find(recipe => recipe.slug === slug);
 };
