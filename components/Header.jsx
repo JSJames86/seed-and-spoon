@@ -155,7 +155,7 @@ export default function Header() {
                 w-auto object-contain
                 transition-all duration-300
                 hover:scale-105
-                min-w-40
+                min-w-32 sm:min-w-40
                 bg-transparent
                 drop-shadow-lg
                 ${isScrolled ? "scale-95" : "scale-100"}
@@ -164,7 +164,7 @@ export default function Header() {
           </Link>
 
           {/* DESKTOP NAV */}
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-3 lg:gap-4">
             <Link href="/about" className={getNavLinkClass(isScrolled)}>
               About
             </Link>
@@ -255,7 +255,7 @@ export default function Header() {
               Volunteer
             </Link>
 
-            <div className="flex gap-3 ml-4">
+            <div className="flex gap-2 lg:gap-3 ml-2 lg:ml-4">
               <a
                 href="https://instagram.com/seedandspoon_nj"
                 target="_blank"
@@ -292,7 +292,7 @@ export default function Header() {
             </div>
 
             {/* Authentication section */}
-            <div className={`flex items-center gap-6 border-l pl-6 ${isScrolled ? "border-charcoal/30" : "border-white/30"}`}>
+            <div className={`flex items-center gap-3 lg:gap-4 border-l pl-3 lg:pl-4 ${isScrolled ? "border-charcoal/30" : "border-white/30"}`}>
               {user ? (
                 <>
                   <Link href="/dashboard" className={getNavLinkClass(isScrolled)}>
@@ -377,6 +377,13 @@ export default function Header() {
           >
             <nav className="flex-1 flex flex-col justify-center space-y-6 text-center">
               <Link
+                href="/"
+                onClick={closeMenu}
+                className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+              >
+                Home
+              </Link>
+              <Link
                 href="/about"
                 onClick={closeMenu}
                 className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
@@ -442,20 +449,22 @@ export default function Header() {
                   </>
                 ) : (
                   <>
-                    <Link
+                    <Button
+                      variant="secondary"
                       href="/login"
                       onClick={closeMenu}
-                      className="block text-center body-md font-bold text-white border-2 border-white/50 hover:bg-white/10 text-2xl py-3 rounded-lg transition-all"
+                      className="w-full text-xl py-5"
                     >
                       Login
-                    </Link>
-                    <Link
+                    </Button>
+                    <Button
+                      variant="secondary"
                       href="/signup"
                       onClick={closeMenu}
-                      className="block text-center body-md font-bold bg-cream text-charcoal hover:bg-cream/90 text-2xl py-3 rounded-lg transition-all shadow-lg"
+                      className="w-full text-xl py-5"
                     >
                       Sign Up
-                    </Link>
+                    </Button>
                   </>
                 )}
               </div>
