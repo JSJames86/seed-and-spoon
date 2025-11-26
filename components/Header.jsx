@@ -467,7 +467,7 @@ export default function Header() {
                 )}
               </div>
             </nav>
-            <div className="mt-auto">
+            <div className="mt-auto pt-8">
               <Button variant="secondary" href="/donate" className="w-full text-2xl py-3 px-8">
                 Donate Now
               </Button>
