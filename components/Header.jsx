@@ -449,28 +449,26 @@ export default function Header() {
                   </>
                 ) : (
                   <>
-                    <Button
-                      variant="secondary"
+                    <Link
                       href="/login"
                       onClick={closeMenu}
-                      className="w-full text-xl py-5"
+                      className="block text-center body-md font-bold text-white border-2 border-white/50 hover:bg-white/10 text-2xl py-3 px-8 rounded-full transition-all"
                     >
                       Login
-                    </Button>
-                    <Button
-                      variant="secondary"
+                    </Link>
+                    <Link
                       href="/signup"
                       onClick={closeMenu}
-                      className="w-full text-xl py-5"
+                      className="block text-center body-md font-bold bg-cream text-charcoal hover:bg-cream/90 text-2xl py-3 px-8 rounded-full transition-all shadow-lg"
                     >
                       Sign Up
-                    </Button>
+                    </Link>
                   </>
                 )}
               </div>
             </nav>
             <div className="mt-auto">
-              <Button variant="secondary" href="/donate" className="w-full text-xl py-5">
+              <Button variant="secondary" href="/donate" className="w-full text-2xl py-3 px-8">
                 Donate Now
               </Button>
               <div className="flex justify-center gap-6 mt-8">
