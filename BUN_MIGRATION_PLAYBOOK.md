@@ -317,7 +317,12 @@ export const config = {
 
 ### 1. GitHub Actions (Bun)
 
-Create `.github/workflows/nextjs-bun.yml`:
+**Note:** The workflow file included in this repository (`.github/workflows/nextjs-bun.yml`) is **smart and auto-detects** whether you're using npm or Bun:
+- **Before migration:** Detects `package-lock.json` → uses npm commands
+- **After migration:** Detects `bun.lockb` → uses Bun commands
+- This means the workflow works immediately, even before you migrate!
+
+Here's the full workflow:
 
 ```yaml
 name: Next.js CI with Bun
