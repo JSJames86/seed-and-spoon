@@ -1,0 +1,101 @@
+name: Next.js CI (npm/Bun compatible)
+
+on:
+  push:
+    branches: [main, develop, claude/**]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Detect package manager
+        id: detect-pm
+        run: |
+          if [ -f "bun.lockb" ]; then
+            echo "pm=bun" >> $GITHUB_OUTPUT
+            echo "lockfile=bun.lockb" >> $GITHUB_OUTPUT
+          elif [ -f "package-lock.json" ]; then
+            echo "pm=npm" >> $GITHUB_OUTPUT
+            echo "lockfile=package-lock.json" >> $GITHUB_OUTPUT
+          else
+            echo "pm=npm" >> $GITHUB_OUTPUT
+            echo "lockfile=none" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup Node.js (if using npm)
+        if: steps.detect-pm.outputs.pm == 'npm'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Setup Bun (if using Bun)
+        if: steps.detect-pm.outputs.pm == 'bun'
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: 1.0.21
+
+      - name: Cache Bun dependencies
+        if: steps.detect-pm.outputs.pm == 'bun'
+        uses: actions/cache@v3
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies (npm)
+        if: steps.detect-pm.outputs.pm == 'npm'
+        run: npm ci
+
+      - name: Install dependencies (Bun)
+        if: steps.detect-pm.outputs.pm == 'bun'
+        run: bun install --frozen-lockfile
+
+      - name: Run linter (npm)
+        if: steps.detect-pm.outputs.pm == 'npm'
+        run: npm run lint
+
+      - name: Run linter (Bun)
+        if: steps.detect-pm.outputs.pm == 'bun'
+        run: bun run lint
+
+      - name: Build Next.js app (npm)
+        if: steps.detect-pm.outputs.pm == 'npm'
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Build Next.js app (Bun)
+        if: steps.detect-pm.outputs.pm == 'bun'
+        run: bun run build
+        env:
+          NODE_ENV: production
+
+      - name: Test production server (npm)
+        if: steps.detect-pm.outputs.pm == 'npm'
+        run: |
+          npm start &
+          sleep 10
+          curl -f http://localhost:3000 || exit 1
+          pkill -f "next start"
+
+      - name: Test production server (Bun)
+        if: steps.detect-pm.outputs.pm == 'bun'
+        run: |
+          timeout 30s bun start &
+          sleep 10
+          curl -f http://localhost:3000 || exit 1
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: nextjs-build-${{ steps.detect-pm.outputs.pm }}
+          path: .next/
+          retention-days: 7
