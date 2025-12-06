@@ -1,0 +1,13 @@
+[install]
+# Use default npm registry
+registry = "https://registry.npmjs.org/"
+
+# Cache configuration
+cache = true
+
+# Frozen lockfile for CI
+# frozen-lockfile = false
+
+[install.scopes]
+# Default scope uses npm registry
+"@" = "https://registry.npmjs.org/"
