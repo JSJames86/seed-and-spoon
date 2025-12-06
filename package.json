@@ -3,11 +3,13 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "import:resources": "node scripts/import-resources.js"
+    "dev": "bun --bun next dev",
+    "build": "bun --bun next build",
+    "start": "bun --bun next start",
+    "lint": "bun --bun next lint",
+    "import:resources": "bun run scripts/import-resources.js",
+    "install:packages": "npm install",
+    "update:packages": "npm update"
   },
   "dependencies": {
     "date-fns": "^4.1.0",

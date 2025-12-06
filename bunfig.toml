@@ -5,8 +5,11 @@ registry = "https://registry.npmjs.org/"
 # Cache configuration
 cache = true
 
-# Frozen lockfile for CI
-# frozen-lockfile = false
+# Production mode
+production = false
+
+# Retry configuration for network issues
+retry = 5
 
 [install.scopes]
 # Default scope uses npm registry
