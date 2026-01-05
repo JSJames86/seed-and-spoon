@@ -2,6 +2,13 @@
  * Referral Intake Form
  *
  * Form for partner organizations to refer clients for food assistance
+ *
+ * Data Flow:
+ * 1. Partner organization fills out form and submits
+ * 2. Form calls submitReferralIntake() from /lib/api.js
+ * 3. API helper sends POST request to backend: /api/forms/intake-referral
+ * 4. Backend validates and saves referral, sends confirmation email
+ * 5. Form shows success message to user
  */
 
 'use client';
@@ -10,6 +17,7 @@ import { useState } from 'react';
 import FormField from './FormField';
 import FormSection from './FormSection';
 import Alert from './Alert';
+import { submitReferralIntake } from '@/lib/api';
 
 const ALLERGY_OPTIONS = [
   { value: 'peanuts', label: 'Peanuts' },
@@ -195,17 +203,8 @@ export default function ReferralIntakeForm({ onSuccess }) {
     setSubmitStatus(null);
 
     try {
-      const response = await fetch('/api/intakes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to submit referral');
-      }
+      // Use centralized API helper - handles all error cases
+      await submitReferralIntake(formData);
 
       setSubmitStatus('success');
       setSubmitMessage(`Thank you for your referral! We will reach out to ${formData.applicant.name} within 48 hours.`);
@@ -215,7 +214,7 @@ export default function ReferralIntakeForm({ onSuccess }) {
       }, 100);
 
       if (onSuccess) {
-        onSuccess(data);
+        onSuccess();
       }
     } catch (error) {
       console.error('Submission error:', error);

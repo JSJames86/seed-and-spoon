@@ -1,14 +1,21 @@
 /**
  * Resource Map Component
  *
- * Interactive map showing food bank locations from Django backend
+ * Interactive map showing food bank locations from backend API
  * Uses Leaflet for mapping with proper Next.js SSR handling
+ *
+ * Data Flow:
+ * 1. Component mounts and calls getFoodBanks() from /lib/api.js
+ * 2. API helper fetches from backend: GET /api/directory/food-banks
+ * 3. Backend returns food bank data with coordinates
+ * 4. Component filters for valid coordinates and displays on map
  */
 
 'use client';
 
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
+import { getFoodBanks } from '@/lib/api';
 
 // Dynamically import the map component with SSR disabled
 const DynamicMap = dynamic(
@@ -43,7 +50,7 @@ export default function ResourceMap({
     setIsMounted(true);
   }, []);
 
-  // Fetch food banks from Next.js API proxy (which calls Django backend)
+  // Fetch food banks from backend API via centralized API helper
   useEffect(() => {
     if (!isMounted) return;
 
@@ -52,24 +59,8 @@ export default function ResourceMap({
         setLoading(true);
         setError(null);
 
-        console.log('Fetching food banks from Next.js API proxy...');
-
-        const response = await fetch('/api/foodbanks', {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json',
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`API error: ${response.status} ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        console.log('API Response:', data);
-
-        // Handle both array and paginated responses
-        const banks = Array.isArray(data) ? data : data.results || [];
+        // Use centralized API helper - handles all error cases and retries
+        const banks = await getFoodBanks();
 
         // Filter only banks with valid coordinates
         const banksWithCoords = banks.filter(
@@ -82,7 +73,7 @@ export default function ResourceMap({
 
       } catch (err) {
         console.error("Error loading food banks:", err);
-        setError(`Failed to load food banks: ${err.message}`);
+        setError(err.message || 'Failed to load food banks. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -122,10 +113,8 @@ export default function ResourceMap({
         <div className="p-8 bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-lg shadow text-center">
           <p className="text-red-800 dark:text-red-300 font-semibold mb-2">{error}</p>
           <p className="text-red-600 dark:text-red-400 mb-4">
-            Unable to connect to the backend server. The Django backend at seed-spoon-backend.onrender.com may be sleeping or unreachable.
-          </p>
-          <p className="text-sm text-red-500 dark:text-red-400 mb-4">
-            Free Render services go to sleep after inactivity. Please wait 1-2 minutes and try again.
+            We're having trouble loading food bank locations right now.
+            Please try again in a moment.
           </p>
           <button
             onClick={() => window.location.reload()}

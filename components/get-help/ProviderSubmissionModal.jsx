@@ -2,6 +2,13 @@
  * Provider Submission Modal
  *
  * Modal form for food providers to request being listed in the directory
+ *
+ * Data Flow:
+ * 1. Food provider fills out form and submits
+ * 2. Form calls submitProvider() from /lib/api.js
+ * 3. API helper sends POST request to backend: /api/forms/provider-submission
+ * 4. Backend validates and saves provider info, sends confirmation email
+ * 5. Form shows success message to user
  */
 
 'use client';
@@ -11,6 +18,7 @@ import FormField from './FormField';
 import FormSection from './FormSection';
 import Alert from './Alert';
 import { NJ_COUNTIES } from '@/lib/validation';
+import { submitProvider } from '@/lib/api';
 
 const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -144,17 +152,8 @@ export default function ProviderSubmissionModal({ isOpen, onClose }) {
     setSubmitStatus(null);
 
     try {
-      const response = await fetch('/api/providers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to submit provider information');
-      }
+      // Use centralized API helper - handles all error cases
+      await submitProvider(formData);
 
       setSubmitStatus('success');
       setSubmitMessage('Thank you! Your submission has been received and will be reviewed within 3-5 business days.');

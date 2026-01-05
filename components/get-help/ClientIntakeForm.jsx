@@ -2,6 +2,13 @@
  * Client Intake Form
  *
  * Application form for individuals seeking food assistance
+ *
+ * Data Flow:
+ * 1. User fills out form and submits
+ * 2. Form calls submitClientIntake() from /lib/api.js
+ * 3. API helper sends POST request to backend: /api/forms/intake-client
+ * 4. Backend validates and saves application, sends confirmation email
+ * 5. Form shows success message to user
  */
 
 'use client';
@@ -10,6 +17,7 @@ import { useState } from 'react';
 import FormField from './FormField';
 import FormSection from './FormSection';
 import Alert from './Alert';
+import { submitClientIntake } from '@/lib/api';
 
 const ALLERGY_OPTIONS = [
   { value: 'peanuts', label: 'Peanuts' },
@@ -150,17 +158,8 @@ export default function ClientIntakeForm({ onSuccess, onScrollToMap }) {
     setSubmitStatus(null);
 
     try {
-      const response = await fetch('/api/intakes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to submit application');
-      }
+      // Use centralized API helper - handles all error cases
+      await submitClientIntake(formData);
 
       setSubmitStatus('success');
       setSubmitMessage(`Thank you! We've received your application and will contact you within 48 hours at ${formData.applicant.phone}.`);
@@ -171,7 +170,7 @@ export default function ClientIntakeForm({ onSuccess, onScrollToMap }) {
       }, 100);
 
       if (onSuccess) {
-        onSuccess(data);
+        onSuccess();
       }
     } catch (error) {
       console.error('Submission error:', error);
