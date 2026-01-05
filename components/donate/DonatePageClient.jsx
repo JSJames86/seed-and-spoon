@@ -1,7 +1,21 @@
+/**
+ * Donation Page Client Component
+ *
+ * Data Flow:
+ * 1. User selects amount and interval (one-time or monthly)
+ * 2. User clicks "Donate" button
+ * 3. Component calls createDonation() from /lib/api.js
+ * 4. API helper sends POST request to backend: /api/donations/create
+ * 5. Backend creates Stripe checkout session and returns clientSecret
+ * 6. Component redirects user to Stripe Checkout page
+ * 7. After payment, Stripe redirects to success or cancel URL
+ */
+
 'use client';
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { createDonation } from '@/lib/api';
 
 export default function DonatePage() {
   const [interval, setInterval] = useState('one_time');
@@ -54,29 +68,30 @@ export default function DonatePage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/donations/checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount: finalAmount,
-          currency: 'usd',
-          interval,
-          source: 'donate_page',
-        }),
+      // Generate success and cancel URLs
+      const baseUrl = window.location.origin;
+      const successUrl = `${baseUrl}/thank-you?session_id={CHECKOUT_SESSION_ID}`;
+      const cancelUrl = `${baseUrl}/donate`;
+
+      // Use centralized API helper to create donation
+      const result = await createDonation({
+        amount: finalAmount / 100, // Convert cents to dollars
+        interval: interval === 'one_time' ? 'one-time' : 'monthly',
+        successUrl,
+        cancelUrl,
       });
 
-      const result = await response.json();
+      // Redirect to Stripe Checkout using the session URL
+      // The backend should return either checkoutUrl or sessionUrl
+      const checkoutUrl = result.checkoutUrl || result.sessionUrl || result.url;
 
-      if (!result.ok) {
-        throw new Error(result.error || 'Failed to create checkout session');
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+      } else {
+        throw new Error('No checkout URL received from server');
       }
-
-      // Redirect to Stripe Checkout
-      window.location.href = result.data.checkoutUrl;
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Unable to process donation. Please try again.');
       setIsLoading(false);
     }
   };

@@ -2,12 +2,17 @@
  * County Directory Component
  *
  * Grouped list of food resources by New Jersey county
- * Updated to work with Django backend API with auto-pagination
+ *
+ * Data Flow:
+ * 1. Component mounts and calls getFoodBanks() from /lib/api.js
+ * 2. API helper fetches from backend: GET /api/directory/food-banks
+ * 3. Component groups resources by county and displays in accordion
  */
 
 'use client';
 
 import { useState, useEffect } from 'react';
+import { getFoodBanks } from '@/lib/api';
 
 // NJ Counties list
 const NJ_COUNTIES = [
@@ -24,42 +29,21 @@ export default function CountyDirectory({ filters = {}, onResourceClick }) {
   const [error, setError] = useState(null);
   const [expandedCounties, setExpandedCounties] = useState(new Set());
 
-  // Fetch ALL resources from Django backend (handles pagination automatically)
+  // Fetch all resources from backend API via centralized API helper
   useEffect(() => {
     const fetchResources = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        let allResources = [];
-        let nextUrl = 'https://seed-spoon-backend.onrender.com/api/foodbanks/';
-
-        // Fetch all pages
-        while (nextUrl) {
-          const response = await fetch(nextUrl);
-          
-          if (!response.ok) {
-            throw new Error(`Failed to load resources (${response.status})`);
-          }
-
-          const data = await response.json();
-          
-          // Add results from this page
-          if (data.results) {
-            allResources = [...allResources, ...data.results];
-          } else if (Array.isArray(data)) {
-            allResources = data;
-          }
-
-          // Get next page URL (will be null if no more pages)
-          nextUrl = data.next;
-        }
+        // Use centralized API helper - handles all error cases
+        const allResources = await getFoodBanks();
 
         console.log(`Loaded ${allResources.length} total food banks`);
         setResources(allResources);
       } catch (err) {
         console.error('Error fetching resources:', err);
-        setError(err.message);
+        setError(err.message || 'Failed to load directory. Please try again later.');
       } finally {
         setLoading(false);
       }
