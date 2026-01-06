@@ -2,44 +2,32 @@
 // API route to fetch food banks from Supabase
 
 import { NextResponse } from "next/server";
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+import { createClientSupabaseClient, handleSupabaseError } from "@/lib/supabase";
 
 export async function GET(request) {
   try {
     console.log('[API] Fetching food banks from Supabase...');
 
-    // Fetch from Supabase REST API
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/foodbanks?select=*`, {
-      method: 'GET',
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      // Add cache control for better performance
-      next: { revalidate: 300 }, // Revalidate every 5 minutes
-    });
+    const supabase = createClientSupabaseClient();
 
-    if (!response.ok) {
-      console.error(`[API] Supabase API error: ${response.status} ${response.statusText}`);
+    // Query all food banks from Supabase
+    const { data, error } = await supabase
+      .from('foodbanks')
+      .select('*')
+      .order('name', { ascending: true });
+
+    if (error) {
+      console.error(`[API] Supabase error:`, error);
       return NextResponse.json(
-        {
-          error: 'Failed to fetch from database',
-          status: response.status,
-          statusText: response.statusText
-        },
-        { status: response.status }
+        handleSupabaseError(error, 'Failed to fetch food banks'),
+        { status: 500 }
       );
     }
 
-    const data = await response.json();
-    console.log(`[API] Successfully fetched ${Array.isArray(data) ? data.length : 0} food banks`);
+    console.log(`[API] Successfully fetched ${data?.length || 0} food banks`);
 
-    // Return the data
-    return NextResponse.json(data, {
+    // Return the data with cache headers
+    return NextResponse.json(data || [], {
       headers: {
         'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
       },
