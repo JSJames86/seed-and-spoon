@@ -56,7 +56,7 @@ jobs:
 
       - name: Install dependencies (Bun)
         if: steps.detect-pm.outputs.pm == 'bun'
-        run: bun install --frozen-lockfile
+        run: bun install
 
       - name: Run linter (npm)
         if: steps.detect-pm.outputs.pm == 'npm'
