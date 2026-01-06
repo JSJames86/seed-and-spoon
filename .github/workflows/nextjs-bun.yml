@@ -43,7 +43,7 @@ jobs:
 
       - name: Cache Bun dependencies
         if: steps.detect-pm.outputs.pm == 'bun'
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.bun/install/cache
           key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
@@ -94,7 +94,7 @@ jobs:
           curl -f http://localhost:3000 || exit 1
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: nextjs-build-${{ steps.detect-pm.outputs.pm }}
           path: .next/
