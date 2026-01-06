@@ -7,9 +7,7 @@
     "build": "bun --bun next build",
     "start": "bun --bun next start",
     "lint": "bun --bun next lint",
-    "import:resources": "bun run scripts/import-resources.js",
-    "install:packages": "npm install",
-    "update:packages": "npm update"
+    "import:resources": "bun run scripts/import-resources.js"
   },
   "dependencies": {
     "date-fns": "^4.1.0",

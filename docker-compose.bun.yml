@@ -1,45 +1,6 @@
 version: '3.8'
 
 services:
-  # PostgreSQL database
-  postgres:
-    image: postgres:15-alpine
-    container_name: seedspoon-db
-    environment:
-      POSTGRES_USER: seedspoon
-      POSTGRES_PASSWORD: development
-      POSTGRES_DB: seedspoon_db
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U seedspoon"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # Django backend
-  django:
-    build:
-      context: .
-      dockerfile: Dockerfile.django
-    container_name: seedspoon-django
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - .:/app
-    ports:
-      - "8000:8000"
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      DATABASE_URL: postgresql://seedspoon:development@postgres:5432/seedspoon_db
-      DJANGO_SETTINGS_MODULE: seed_spoon.settings
-      DEBUG: "True"
-    env_file:
-      - .env
-
   # Next.js frontend with Bun
   nextjs:
     build:
@@ -48,15 +9,8 @@ services:
     container_name: seedspoon-nextjs
     ports:
       - "3000:3000"
-    depends_on:
-      - django
     environment:
       NODE_ENV: production
-      NEXT_PUBLIC_API_URL: http://django:8000
       NEXT_TELEMETRY_DISABLED: 1
     env_file:
       - .env
-
-volumes:
-  postgres_data:
-    driver: local
