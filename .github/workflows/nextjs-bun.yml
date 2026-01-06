@@ -33,7 +33,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
 
       - name: Setup Bun (if using Bun)
         if: steps.detect-pm.outputs.pm == 'bun'
