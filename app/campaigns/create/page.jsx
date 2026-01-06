@@ -27,7 +27,8 @@ export default function CreateCampaignPage() {
     impact_metric_amount: '',
   });
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  // TODO: Migrate to Supabase - currently uses legacy API endpoints
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
   useEffect(() => {
     if (!user) {

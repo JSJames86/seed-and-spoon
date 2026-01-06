@@ -9,7 +9,8 @@ export default function CampaignsPage() {
   const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  // TODO: Migrate to Supabase - currently uses legacy API endpoints
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
   useEffect(() => {
     fetchCampaigns();

@@ -2,7 +2,7 @@
  * County Directory Component
  *
  * Grouped list of food resources by New Jersey county
- * Updated to work with Django backend API with auto-pagination
+ * Fetches data from Supabase via Next.js API route
  */
 
 'use client';
@@ -24,7 +24,7 @@ export default function CountyDirectory({ filters = {}, onResourceClick }) {
   const [error, setError] = useState(null);
   const [expandedCounties, setExpandedCounties] = useState(new Set());
 
-  // Fetch ALL resources from Django backend (handles pagination automatically)
+  // Fetch ALL resources from Supabase database
   useEffect(() => {
     const fetchResources = async () => {
       setLoading(true);
@@ -32,7 +32,7 @@ export default function CountyDirectory({ filters = {}, onResourceClick }) {
 
       try {
         let allResources = [];
-        let nextUrl = 'https://seed-spoon-backend.onrender.com/api/foodbanks/';
+        let nextUrl = '/api/foodbanks';
 
         // Fetch all pages
         while (nextUrl) {

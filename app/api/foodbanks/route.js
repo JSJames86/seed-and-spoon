@@ -1,18 +1,21 @@
 // app/api/foodbanks/route.js
-// Proxy route to Django backend - avoids CORS issues
+// API route to fetch food banks from Supabase
 
 import { NextResponse } from "next/server";
 
-const DJANGO_API_URL = "https://seed-spoon-backend.onrender.com/api/foodbanks/";
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 export async function GET(request) {
   try {
-    console.log('[API Proxy] Fetching food banks from Django backend...');
+    console.log('[API] Fetching food banks from Supabase...');
 
-    // Fetch from Django backend
-    const response = await fetch(DJANGO_API_URL, {
+    // Fetch from Supabase REST API
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/foodbanks?select=*`, {
       method: 'GET',
       headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
@@ -21,10 +24,10 @@ export async function GET(request) {
     });
 
     if (!response.ok) {
-      console.error(`[API Proxy] Django API error: ${response.status} ${response.statusText}`);
+      console.error(`[API] Supabase API error: ${response.status} ${response.statusText}`);
       return NextResponse.json(
         {
-          error: 'Failed to fetch from Django backend',
+          error: 'Failed to fetch from database',
           status: response.status,
           statusText: response.statusText
         },
@@ -33,7 +36,7 @@ export async function GET(request) {
     }
 
     const data = await response.json();
-    console.log(`[API Proxy] Successfully fetched ${Array.isArray(data) ? data.length : data.results?.length || 0} food banks`);
+    console.log(`[API] Successfully fetched ${Array.isArray(data) ? data.length : 0} food banks`);
 
     // Return the data
     return NextResponse.json(data, {
@@ -43,12 +46,12 @@ export async function GET(request) {
     });
 
   } catch (error) {
-    console.error('[API Proxy] Error:', error);
+    console.error('[API] Error:', error);
     return NextResponse.json(
       {
         error: 'Internal server error',
         message: error.message,
-        details: 'Failed to connect to Django backend. The backend may be down or unreachable.'
+        details: 'Failed to connect to database. Please try again later.'
       },
       { status: 500 }
     );
