@@ -2,114 +2,135 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { createClientSupabaseClient } from '@/lib/supabase';
 
 const AuthContext = createContext({});
-
-// TODO: Migrate to Supabase Auth - this currently uses legacy API endpoints
-const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api/auth';
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const supabase = createClientSupabaseClient();
 
-  // Load user from localStorage on mount
+  // Load user session and set up auth state listener
   useEffect(() => {
-    const loadUser = async () => {
-      const token = localStorage.getItem('access_token');
-      if (token) {
-        try {
-          const response = await fetch(`${API_URL}/auth/me`, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-            },
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            setUser(data.user);
-            setProfile(data.profile);
-          } else {
-            // Token is invalid, clear it
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-          }
-        } catch (error) {
-          console.error('Error loading user:', error);
-        }
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setUser(session.user);
+        loadProfile(session.user.id);
       }
       setLoading(false);
-    };
+    });
 
-    loadUser();
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        setUser(session.user);
+        loadProfile(session.user.id);
+      } else {
+        setUser(null);
+        setProfile(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
+
+  // Load user profile from profiles table
+  const loadProfile = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error loading profile:', error);
+        return;
+      }
+
+      setProfile(data);
+    } catch (error) {
+      console.error('Error loading profile:', error);
+    }
+  };
 
   const register = async (userData) => {
     try {
-      const response = await fetch(`${API_URL}/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const { email, password, username, ...profileData } = userData;
+
+      // Sign up with Supabase Auth
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            username: username || email.split('@')[0],
+            ...profileData,
+          },
         },
-        body: JSON.stringify(userData),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        // Handle validation errors
-        if (data.password) {
-          throw new Error(`Password: ${data.password[0]}`);
-        }
-        if (data.email) {
-          throw new Error(`Email: ${data.email[0]}`);
-        }
-        if (data.username) {
-          throw new Error(`Username: ${data.username[0]}`);
-        }
-        // Generic error fallback
-        const errorMsg = data.error || data.detail || JSON.stringify(data) || 'Registration failed';
-        throw new Error(errorMsg);
+      if (error) {
+        throw new Error(error.message);
       }
 
-      // Store tokens
-      localStorage.setItem('access_token', data.tokens.access);
-      localStorage.setItem('refresh_token', data.tokens.refresh);
+      if (!data.user) {
+        throw new Error('Registration failed');
+      }
 
-      // Set user state
+      // Create profile record
+      const { error: profileError } = await supabase.from('profiles').insert([
+        {
+          id: data.user.id,
+          email: data.user.email,
+          username: username || email.split('@')[0],
+          ...profileData,
+        },
+      ]);
+
+      if (profileError) {
+        console.error('Profile creation error:', profileError);
+        // Don't fail registration if profile creation fails
+      }
+
       setUser(data.user);
-      setProfile(data.profile);
+      if (!profileError) {
+        loadProfile(data.user.id);
+      }
 
-      return { success: true, message: data.message };
+      return {
+        success: true,
+        message:
+          'Registration successful! Please check your email to verify your account.',
+      };
     } catch (error) {
       return { success: false, error: error.message };
     }
   };
 
-  const login = async (username, password) => {
+  const login = async (email, password) => {
     try {
-      const response = await fetch(`${API_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Login failed');
+      if (error) {
+        throw new Error(error.message);
       }
 
-      // Store tokens
-      localStorage.setItem('access_token', data.tokens.access);
-      localStorage.setItem('refresh_token', data.tokens.refresh);
+      if (!data.user) {
+        throw new Error('Login failed');
+      }
 
-      // Set user state
       setUser(data.user);
-      setProfile(data.profile);
+      loadProfile(data.user.id);
 
       return { success: true };
     } catch (error) {
@@ -119,25 +140,10 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     try {
-      const token = localStorage.getItem('access_token');
-      const refreshToken = localStorage.getItem('refresh_token');
-
-      if (token) {
-        await fetch(`${API_URL}/auth/logout`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ refresh_token: refreshToken }),
-        });
-      }
+      await supabase.auth.signOut();
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      // Clear local state
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
       setUser(null);
       setProfile(null);
       router.push('/');
@@ -146,34 +152,21 @@ export function AuthProvider({ children }) {
 
   const updateProfile = async (profileData) => {
     try {
-      const token = localStorage.getItem('access_token');
-      const response = await fetch(`${API_URL}/auth/profile`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(profileData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error('Profile update failed');
+      if (!user) {
+        throw new Error('No user logged in');
       }
 
-      // Refresh user data
-      const userResponse = await fetch(`${API_URL}/auth/me`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      const { error } = await supabase
+        .from('profiles')
+        .update(profileData)
+        .eq('id', user.id);
 
-      if (userResponse.ok) {
-        const userData = await userResponse.json();
-        setUser(userData.user);
-        setProfile(userData.profile);
+      if (error) {
+        throw new Error(error.message);
       }
+
+      // Refresh profile
+      await loadProfile(user.id);
 
       return { success: true };
     } catch (error) {
@@ -181,29 +174,33 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const changePassword = async (oldPassword, newPassword, newPasswordConfirm) => {
+  const changePassword = async (oldPassword, newPassword) => {
     try {
-      const token = localStorage.getItem('access_token');
-      const response = await fetch(`${API_URL}/auth/change-password`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          old_password: oldPassword,
-          new_password: newPassword,
-          new_password_confirm: newPasswordConfirm,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Password change failed');
+      // Supabase requires re-authentication to change password
+      if (!user?.email) {
+        throw new Error('No user email found');
       }
 
-      return { success: true, message: data.message };
+      // First verify old password by attempting to sign in
+      const { error: verifyError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: oldPassword,
+      });
+
+      if (verifyError) {
+        throw new Error('Current password is incorrect');
+      }
+
+      // Update to new password
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return { success: true, message: 'Password changed successfully' };
     } catch (error) {
       return { success: false, error: error.message };
     }
@@ -211,43 +208,37 @@ export function AuthProvider({ children }) {
 
   const requestPasswordReset = async (email) => {
     try {
-      const response = await fetch(`${API_URL}/auth/password-reset`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
       });
 
-      const data = await response.json();
-      return { success: true, message: data.message };
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return {
+        success: true,
+        message: 'Password reset email sent. Please check your inbox.',
+      };
     } catch (error) {
       return { success: false, error: error.message };
     }
   };
 
-  const resetPassword = async (uid, token, newPassword, newPasswordConfirm) => {
+  const resetPassword = async (newPassword) => {
     try {
-      const response = await fetch(`${API_URL}/auth/password-reset-confirm`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          uid,
-          token,
-          new_password: newPassword,
-          new_password_confirm: newPasswordConfirm,
-        }),
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Password reset failed');
+      if (error) {
+        throw new Error(error.message);
       }
 
-      return { success: true, message: data.message };
+      return {
+        success: true,
+        message: 'Password reset successfully. You can now log in with your new password.',
+      };
     } catch (error) {
       return { success: false, error: error.message };
     }
