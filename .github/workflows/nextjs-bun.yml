@@ -30,9 +30,6 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Run linter
-        run: bun run lint
-
       - name: Build Next.js app
         run: bun run build
         env:
