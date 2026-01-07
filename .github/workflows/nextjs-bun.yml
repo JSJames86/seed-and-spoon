@@ -29,11 +29,17 @@ jobs:
           fi
 
       - name: Setup Node.js (if using npm)
-        if: steps.detect-pm.outputs.pm == 'npm'
+        if: steps.detect-pm.outputs.pm == 'npm' && steps.detect-pm.outputs.lockfile != 'none'
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
+
+      - name: Setup Node.js (if using npm without lockfile)
+        if: steps.detect-pm.outputs.pm == 'npm' && steps.detect-pm.outputs.lockfile == 'none'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
 
       - name: Setup Bun (if using Bun)
         if: steps.detect-pm.outputs.pm == 'bun'
