@@ -10,6 +10,7 @@
     "import:resources": "bun run scripts/import-resources.js"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
     "date-fns": "^4.1.0",
     "framer-motion": "^11.0.0",
     "gsap": "^3.13.0",
