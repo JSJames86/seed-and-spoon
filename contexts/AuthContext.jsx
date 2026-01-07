@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 
 const AuthContext = createContext({});
 
@@ -252,6 +253,48 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const signInWithGoogle = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`,
+        },
+      });
+
+      if (error) {
+        console.error('Google OAuth error:', error);
+        throw error;
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
+  const signInWithFacebook = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'facebook',
+        options: {
+          redirectTo: `${window.location.origin}/`,
+        },
+      });
+
+      if (error) {
+        console.error('Facebook OAuth error:', error);
+        throw error;
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      console.error('Facebook sign-in error:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
   const value = {
     user,
     profile,
@@ -264,6 +307,8 @@ export function AuthProvider({ children }) {
     changePassword,
     requestPasswordReset,
     resetPassword,
+    signInWithGoogle,
+    signInWithFacebook,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
