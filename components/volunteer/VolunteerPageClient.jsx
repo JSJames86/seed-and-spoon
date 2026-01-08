@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { api, endpoints } from '@/lib/apiClient';
 
 export default function VolunteerPage() {
   const [selectedFilters, setSelectedFilters] = useState({
@@ -296,20 +297,23 @@ export default function VolunteerPage() {
     try {
       // Prepare submission data (exclude resume file for now, handle separately if needed)
       const submissionData = {
-        formType: 'volunteer',
-        ...formData,
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        preferredContact: formData.preferredContact,
+        roles: formData.roles,
+        availability: formData.availability,
         resume: formData.resume ? 'Uploaded' : null, // TODO: Handle file upload separately
+        linkedin: formData.linkedin,
+        accessibilityNotes: formData.accessibilityNotes,
+        transportation: formData.transportation,
+        message: formData.message,
+        orientationAgreed: formData.orientationAgreed,
+        photoConsent: formData.photoConsent,
       };
 
-      const response = await fetch('/api/submissions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submissionData),
-      });
-
-      const result = await response.json();
+      // Submit to backend API - no direct database writes
+      const result = await api.post(endpoints.volunteers.submit, submissionData, { skipAuth: true });
 
       if (!result.ok) {
         throw new Error(result.error || 'Failed to submit application');

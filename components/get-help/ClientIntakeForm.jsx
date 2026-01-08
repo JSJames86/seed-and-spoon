@@ -2,6 +2,7 @@
  * Client Intake Form
  *
  * Application form for individuals seeking food assistance
+ * Submits to backend API - no direct database writes
  */
 
 'use client';
@@ -10,6 +11,7 @@ import { useState } from 'react';
 import FormField from './FormField';
 import FormSection from './FormSection';
 import Alert from './Alert';
+import { api, endpoints } from '@/lib/apiClient';
 
 const ALLERGY_OPTIONS = [
   { value: 'peanuts', label: 'Peanuts' },
@@ -150,17 +152,14 @@ export default function ClientIntakeForm({ onSuccess, onScrollToMap }) {
     setSubmitStatus(null);
 
     try {
-      const response = await fetch('/api/intakes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
+      // Submit to backend API - no direct database writes
+      const response = await api.post(endpoints.intakes.submit, formData, { skipAuth: true });
 
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to submit application');
+        throw new Error(response.error || 'Failed to submit application');
       }
+
+      const data = response.data;
 
       setSubmitStatus('success');
       setSubmitMessage(`Thank you! We've received your application and will contact you within 48 hours at ${formData.applicant.phone}.`);

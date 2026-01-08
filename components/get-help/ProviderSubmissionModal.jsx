@@ -2,6 +2,7 @@
  * Provider Submission Modal
  *
  * Modal form for food providers to request being listed in the directory
+ * Submits to backend API - no direct database writes
  */
 
 'use client';
@@ -11,6 +12,7 @@ import FormField from './FormField';
 import FormSection from './FormSection';
 import Alert from './Alert';
 import { NJ_COUNTIES } from '@/lib/validation';
+import { api, endpoints } from '@/lib/apiClient';
 
 const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -144,16 +146,11 @@ export default function ProviderSubmissionModal({ isOpen, onClose }) {
     setSubmitStatus(null);
 
     try {
-      const response = await fetch('/api/providers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
+      // Submit to backend API - no direct database writes
+      const response = await api.post(endpoints.providers.submit, formData, { skipAuth: true });
 
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to submit provider information');
+        throw new Error(response.error || 'Failed to submit provider information');
       }
 
       setSubmitStatus('success');

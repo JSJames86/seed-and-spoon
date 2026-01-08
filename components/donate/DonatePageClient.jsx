@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { api, endpoints } from '@/lib/apiClient';
 
 export default function DonatePage() {
   const [interval, setInterval] = useState('one_time');
@@ -54,20 +55,13 @@ export default function DonatePage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/donations/checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount: finalAmount,
-          currency: 'usd',
-          interval,
-          source: 'donate_page',
-        }),
-      });
-
-      const result = await response.json();
+      // Call backend API for donation checkout
+      const result = await api.post(endpoints.donations.checkout, {
+        amount: finalAmount,
+        currency: 'usd',
+        interval,
+        source: 'donate_page',
+      }, { skipAuth: true }); // Donations don't require auth
 
       if (!result.ok) {
         throw new Error(result.error || 'Failed to create checkout session');
