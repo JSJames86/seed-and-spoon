@@ -16,6 +16,7 @@ export default function SignupPage() {
     phone: '',
   });
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState(false);
   const { register, signInWithGoogle, signInWithFacebook } = useAuth();
@@ -31,12 +32,31 @@ export default function SignupPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
+
+    // Validate passwords match
+    if (formData.password !== formData.password_confirm) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    // Validate password length
+    if (formData.password.length < 8) {
+      setError('Password must be at least 8 characters');
+      setLoading(false);
+      return;
+    }
 
     const result = await register(formData);
 
     if (result.success) {
-      router.push('/dashboard');
+      if (result.needsEmailVerification) {
+        setSuccess(result.message);
+      } else {
+        router.push('/dashboard');
+      }
     } else {
       setError(result.error);
     }
@@ -67,6 +87,31 @@ export default function SignupPage() {
       setOauthLoading(false);
     }
   };
+
+  // Show success message if email verification is needed
+  if (success) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-cream py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8 text-center">
+          <div className="rounded-md bg-green-50 p-6">
+            <div className="flex flex-col items-center">
+              <svg className="h-12 w-12 text-green-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <h2 className="text-2xl font-bold text-green-800 mb-2">Check your email</h2>
+              <p className="text-green-700">{success}</p>
+              <Link
+                href="/login"
+                className="mt-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700"
+              >
+                Go to login
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-cream py-12 px-4 sm:px-6 lg:px-8">
@@ -232,7 +277,7 @@ export default function SignupPage() {
                 onChange={handleChange}
               />
               <p className="mt-1 text-xs text-gray-500">
-                Must be at least 8 characters and not a common password
+                Must be at least 8 characters
               </p>
             </div>
 
