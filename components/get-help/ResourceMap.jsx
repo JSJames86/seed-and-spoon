@@ -1,7 +1,7 @@
 /**
  * Resource Map Component
  *
- * Interactive map showing food bank locations from Django backend
+ * Interactive map showing food bank locations from Supabase
  * Uses Leaflet for mapping with proper Next.js SSR handling
  */
 
@@ -43,7 +43,7 @@ export default function ResourceMap({
     setIsMounted(true);
   }, []);
 
-  // Fetch food banks from Next.js API proxy (which calls Django backend)
+  // Fetch food banks from Supabase via local API
   useEffect(() => {
     if (!isMounted) return;
 
@@ -122,10 +122,7 @@ export default function ResourceMap({
         <div className="p-8 bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-lg shadow text-center">
           <p className="text-red-800 dark:text-red-300 font-semibold mb-2">{error}</p>
           <p className="text-red-600 dark:text-red-400 mb-4">
-            Unable to connect to the backend server. The Django backend at seed-spoon-backend.onrender.com may be sleeping or unreachable.
-          </p>
-          <p className="text-sm text-red-500 dark:text-red-400 mb-4">
-            Free Render services go to sleep after inactivity. Please wait 1-2 minutes and try again.
+            Unable to load food bank locations. Please check your connection and try again.
           </p>
           <button
             onClick={() => window.location.reload()}

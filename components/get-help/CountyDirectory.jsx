@@ -2,7 +2,7 @@
  * County Directory Component
  *
  * Grouped list of food resources by New Jersey county
- * Updated to work with Django backend API with auto-pagination
+ * Fetches data from Supabase via local API
  */
 
 'use client';
@@ -24,36 +24,23 @@ export default function CountyDirectory({ filters = {}, onResourceClick }) {
   const [error, setError] = useState(null);
   const [expandedCounties, setExpandedCounties] = useState(new Set());
 
-  // Fetch ALL resources from Django backend (handles pagination automatically)
+  // Fetch resources from Supabase via local API
   useEffect(() => {
     const fetchResources = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        let allResources = [];
-        let nextUrl = 'https://seed-spoon-backend.onrender.com/api/foodbanks/';
+        const response = await fetch('/api/foodbanks');
 
-        // Fetch all pages
-        while (nextUrl) {
-          const response = await fetch(nextUrl);
-          
-          if (!response.ok) {
-            throw new Error(`Failed to load resources (${response.status})`);
-          }
-
-          const data = await response.json();
-          
-          // Add results from this page
-          if (data.results) {
-            allResources = [...allResources, ...data.results];
-          } else if (Array.isArray(data)) {
-            allResources = data;
-          }
-
-          // Get next page URL (will be null if no more pages)
-          nextUrl = data.next;
+        if (!response.ok) {
+          throw new Error(`Failed to load resources (${response.status})`);
         }
+
+        const data = await response.json();
+
+        // Handle both array and paginated responses
+        const allResources = Array.isArray(data) ? data : data.results || [];
 
         console.log(`Loaded ${allResources.length} total food banks`);
         setResources(allResources);
