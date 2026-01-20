@@ -113,11 +113,9 @@ function FoodBankPopupCard({ bank, onSelect }) {
 
   // Build Google Maps directions URL
   const getDirectionsUrl = useCallback(() => {
-    const address = encodeURIComponent(
-      `${bank.address || ''}, ${bank.city || ''}, NJ`
-    );
+    const address = encodeURIComponent(bank.address || '');
     return `https://www.google.com/maps/dir/?api=1&destination=${address}`;
-  }, [bank.address, bank.city]);
+  }, [bank.address]);
 
   // Format phone for tel: link
   const formatPhoneLink = useCallback((phone) => {
@@ -162,30 +160,17 @@ function FoodBankPopupCard({ bank, onSelect }) {
         {/* Card Body */}
         <div className="px-4 pb-3">
           {/* Address */}
-          <address className="not-italic text-sm text-gray-600 dark:text-gray-300 mb-3">
-            <p className="leading-relaxed">
-              {bank.address && <span className="block">{bank.address}</span>}
-              <span className="block">
-                {bank.city}{bank.city && bank.county ? ', ' : ''}{bank.county}
-                {(bank.city || bank.county) && ' NJ'}
-              </span>
-            </p>
-          </address>
+          {bank.address && (
+            <address className="not-italic text-sm text-gray-600 dark:text-gray-300 mb-3">
+              <p className="leading-relaxed">{bank.address}</p>
+            </address>
+          )}
 
           {/* Hours (optional) */}
           {bank.hours && (
             <div className="text-xs text-gray-500 dark:text-gray-400 mb-3 border-t border-gray-100 dark:border-gray-700 pt-2">
               <span className="font-medium">Hours:</span>
               <p className="whitespace-pre-line mt-1">{bank.hours}</p>
-            </div>
-          )}
-
-          {/* Service Type (optional) */}
-          {bank.service_type && (
-            <div className="mb-3">
-              <span className="inline-block px-2 py-1 text-xs font-medium bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full">
-                {bank.service_type}
-              </span>
             </div>
           )}
         </div>
