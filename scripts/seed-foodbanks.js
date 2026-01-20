@@ -197,13 +197,14 @@ async function seedPantries() {
     }
 
     // Build record matching pantries table schema
+    // Use PostGIS POINT format for geography column: POINT(longitude latitude)
     const record = {
       name: bank.name,
       address: bank.address,
-      location: location, // JSON: { lat: number, lng: number } or null
+      location: location ? `POINT(${location.lng} ${location.lat})` : null,
       phone: bank.phone || null,
       email: null, // Not in our data
-      hours: bank.hours || null,
+      hours: bank.hours || 'Call for hours', // Default if null (required field)
       capacity_households_per_day: null, // Not in our data
       manager_id: null, // Not in our data
       is_active: true,
