@@ -16,7 +16,7 @@
 
 'use client';
 
-import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -318,16 +318,18 @@ function MapLoadingOverlay({ isVisible }) {
 export default function MapComponent({ foodBanks = [], onResourceSelect }) {
   const [mapReady, setMapReady] = useState(false);
   const [markersLoading, setMarkersLoading] = useState(true);
-  const mapRef = useRef(null);
+  const mapInitialized = useRef(false);
+  const [shouldRenderMap, setShouldRenderMap] = useState(false);
 
   // Center coordinates for New Jersey
   const NJ_CENTER = useMemo(() => [40.0583, -74.4057], []);
   const DEFAULT_ZOOM = 9;
 
-  // Handle map ready state
+  // Only render map on client side after mount
   useEffect(() => {
-    if (mapRef.current) {
-      setMapReady(true);
+    if (!mapInitialized.current) {
+      mapInitialized.current = true;
+      setShouldRenderMap(true);
     }
   }, []);
 
@@ -361,12 +363,12 @@ export default function MapComponent({ foodBanks = [], onResourceSelect }) {
     >
       {/* Map Container */}
       <div className="w-full h-[500px] md:h-[600px]">
+        {shouldRenderMap && (
         <MapContainer
           center={NJ_CENTER}
           zoom={DEFAULT_ZOOM}
           scrollWheelZoom={true}
           className="h-full w-full z-0"
-          ref={mapRef}
           whenReady={() => setMapReady(true)}
         >
           {/* OpenStreetMap Tiles */}
@@ -388,6 +390,7 @@ export default function MapComponent({ foodBanks = [], onResourceSelect }) {
             />
           ))}
         </MapContainer>
+        )}
       </div>
 
       {/* Loading Overlay */}
