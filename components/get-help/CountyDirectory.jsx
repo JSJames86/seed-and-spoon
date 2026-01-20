@@ -17,6 +17,55 @@ const NJ_COUNTIES = [
   'Sussex', 'Union', 'Warren'
 ];
 
+// City to County mapping for NJ (used to extract county from address)
+const CITY_TO_COUNTY = {
+  // Essex County
+  'newark': 'Essex', 'east orange': 'Essex', 'orange': 'Essex', 'west orange': 'Essex',
+  'south orange': 'Essex', 'montclair': 'Essex', 'bloomfield': 'Essex', 'belleville': 'Essex',
+  'irvington': 'Essex', 'maplewood': 'Essex', 'millburn': 'Essex', 'nutley': 'Essex',
+  // Hudson County
+  'jersey city': 'Hudson', 'bayonne': 'Hudson', 'hoboken': 'Hudson', 'union city': 'Hudson',
+  'north bergen': 'Hudson', 'west new york': 'Hudson', 'secaucus': 'Hudson', 'kearny': 'Hudson',
+  'harrison': 'Hudson', 'east newark': 'Hudson', 'guttenberg': 'Hudson', 'weehawken': 'Hudson',
+  // Union County
+  'elizabeth': 'Union', 'plainfield': 'Union', 'union': 'Union', 'linden': 'Union',
+  'rahway': 'Union', 'westfield': 'Union', 'cranford': 'Union', 'summit': 'Union',
+  'roselle': 'Union', 'roselle park': 'Union', 'hillside': 'Union', 'kenilworth': 'Union',
+  'scotch plains': 'Union', 'fanwood': 'Union', 'clark': 'Union', 'springfield': 'Union',
+  // Bergen County
+  'hackensack': 'Bergen', 'englewood': 'Bergen', 'fort lee': 'Bergen', 'teaneck': 'Bergen',
+  'bergenfield': 'Bergen', 'fair lawn': 'Bergen', 'garfield': 'Bergen', 'lodi': 'Bergen',
+  'paramus': 'Bergen', 'ridgewood': 'Bergen', 'cliffside park': 'Bergen', 'palisades park': 'Bergen',
+  'new milford': 'Bergen', 'westwood': 'Bergen', 'ridgefield park': 'Bergen', 'hillsdale': 'Bergen',
+  // Passaic County
+  'paterson': 'Passaic', 'passaic': 'Passaic', 'clifton': 'Passaic', 'wayne': 'Passaic',
+  // Middlesex County
+  'new brunswick': 'Middlesex', 'perth amboy': 'Middlesex', 'edison': 'Middlesex',
+  'woodbridge': 'Middlesex', 'piscataway': 'Middlesex', 'sayreville': 'Middlesex',
+  // Mercer County
+  'trenton': 'Mercer', 'princeton': 'Mercer', 'hamilton': 'Mercer', 'ewing': 'Mercer',
+  // Camden County
+  'camden': 'Camden', 'cherry hill': 'Camden', 'gloucester city': 'Camden',
+  // Monmouth County
+  'asbury park': 'Monmouth', 'long branch': 'Monmouth', 'red bank': 'Monmouth',
+};
+
+/**
+ * Extract county from address string by matching city names
+ */
+function extractCountyFromAddress(address) {
+  if (!address) return null;
+  const addressLower = address.toLowerCase();
+
+  // Try to find a matching city in the address
+  for (const [city, county] of Object.entries(CITY_TO_COUNTY)) {
+    if (addressLower.includes(city)) {
+      return county;
+    }
+  }
+  return null;
+}
+
 export default function CountyDirectory({ filters = {}, onResourceClick }) {
   const [resources, setResources] = useState([]);
   const [groupedResources, setGroupedResources] = useState({});
@@ -66,32 +115,16 @@ export default function CountyDirectory({ filters = {}, onResourceClick }) {
 
     // Group resources
     resources.forEach(resource => {
-      // Extract county name (remove any prefix like "Newark - ")
-      let countyName = resource.county || '';
-      
-      // Handle special formats like "Newark - Central Ward" -> "Essex"
-      // Map known patterns to actual counties
-      if (countyName.includes('Newark') || countyName.includes('Central Ward') || 
-          countyName.includes('East Orange') || countyName.includes('Montclair') || 
-          countyName.includes('South Orange') || countyName.includes('West Orange')) {
-        countyName = 'Essex';
-      } else if (countyName.includes('Bayonne') || countyName.includes('Jersey City')) {
-        countyName = 'Hudson';
-      }
-      
+      // First try to get county from resource data, then extract from address
+      let countyName = resource.county || extractCountyFromAddress(resource.address) || '';
+
       // Find matching county (case-insensitive)
-      const matchedCounty = NJ_COUNTIES.find(c => 
-        countyName.toLowerCase().includes(c.toLowerCase()) ||
-        c.toLowerCase() === countyName.toLowerCase()
+      const matchedCounty = NJ_COUNTIES.find(c =>
+        countyName.toLowerCase() === c.toLowerCase()
       );
 
       if (matchedCounty && grouped[matchedCounty]) {
         grouped[matchedCounty].push(resource);
-      } else if (countyName && !grouped[countyName]) {
-        // Create new group for unlisted county
-        grouped[countyName] = [resource];
-      } else if (countyName && grouped[countyName]) {
-        grouped[countyName].push(resource);
       }
     });
 
@@ -122,8 +155,8 @@ export default function CountyDirectory({ filters = {}, onResourceClick }) {
     }
   };
 
-  const handleDirectionsClick = (address, city, county) => {
-    const query = encodeURIComponent(`${address}, ${city}, NJ`);
+  const handleDirectionsClick = (address) => {
+    const query = encodeURIComponent(address);
     window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
   };
 
@@ -223,7 +256,6 @@ export default function CountyDirectory({ filters = {}, onResourceClick }) {
                               {resource.address && (
                                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                                   {resource.address}
-                                  {resource.city && `, ${resource.city}`}
                                 </p>
                               )}
 
@@ -256,11 +288,11 @@ export default function CountyDirectory({ filters = {}, onResourceClick }) {
                                 </button>
                               )}
 
-                              {resource.address && resource.city && (
+                              {resource.address && (
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    handleDirectionsClick(resource.address, resource.city, resource.county);
+                                    handleDirectionsClick(resource.address);
                                   }}
                                   className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium whitespace-nowrap"
                                 >

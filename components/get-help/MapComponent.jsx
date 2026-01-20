@@ -318,19 +318,23 @@ function MapLoadingOverlay({ isVisible }) {
 export default function MapComponent({ foodBanks = [], onResourceSelect }) {
   const [mapReady, setMapReady] = useState(false);
   const [markersLoading, setMarkersLoading] = useState(true);
-  const mapInitialized = useRef(false);
-  const [shouldRenderMap, setShouldRenderMap] = useState(false);
+  const mapContainerRef = useRef(null);
+  const mapInstanceRef = useRef(null);
+  const [mapId] = useState(() => `leaflet-map-${Math.random().toString(36).substr(2, 9)}`);
 
   // Center coordinates for New Jersey
   const NJ_CENTER = useMemo(() => [40.0583, -74.4057], []);
   const DEFAULT_ZOOM = 9;
 
-  // Only render map on client side after mount
+  // Cleanup any existing map on the container before rendering
   useEffect(() => {
-    if (!mapInitialized.current) {
-      mapInitialized.current = true;
-      setShouldRenderMap(true);
-    }
+    return () => {
+      // Cleanup on unmount
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
   }, []);
 
   // Handle markers loading state
@@ -355,6 +359,12 @@ export default function MapComponent({ foodBanks = [], onResourceSelect }) {
     });
   }, [foodBanks]);
 
+  // Store map instance when ready
+  const handleMapReady = useCallback((map) => {
+    mapInstanceRef.current = map.target;
+    setMapReady(true);
+  }, []);
+
   return (
     <div
       className="relative bg-white dark:bg-gray-800 rounded-lg shadow-card overflow-hidden"
@@ -362,14 +372,14 @@ export default function MapComponent({ foodBanks = [], onResourceSelect }) {
       aria-label="Food bank locations map"
     >
       {/* Map Container */}
-      <div className="w-full h-[500px] md:h-[600px]">
-        {shouldRenderMap && (
+      <div className="w-full h-[500px] md:h-[600px]" ref={mapContainerRef}>
         <MapContainer
+          key={mapId}
           center={NJ_CENTER}
           zoom={DEFAULT_ZOOM}
           scrollWheelZoom={true}
           className="h-full w-full z-0"
-          whenReady={() => setMapReady(true)}
+          whenReady={handleMapReady}
         >
           {/* OpenStreetMap Tiles */}
           <TileLayer
@@ -390,7 +400,6 @@ export default function MapComponent({ foodBanks = [], onResourceSelect }) {
             />
           ))}
         </MapContainer>
-        )}
       </div>
 
       {/* Loading Overlay */}
