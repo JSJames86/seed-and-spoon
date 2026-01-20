@@ -46,12 +46,30 @@ export async function GET(request) {
     }
 
     // Transform data to include lat/lng at top level for easier access
-    const transformedData = (data || []).map(pantry => ({
-      ...pantry,
-      // Extract lat/lng from location JSON for backwards compatibility
-      latitude: pantry.location?.lat || null,
-      longitude: pantry.location?.lng || null,
-    }));
+    // PostGIS geography returns as GeoJSON: { type: "Point", coordinates: [lng, lat] }
+    const transformedData = (data || []).map(pantry => {
+      let latitude = null;
+      let longitude = null;
+
+      if (pantry.location) {
+        // Handle GeoJSON format from PostGIS
+        if (pantry.location.coordinates) {
+          longitude = pantry.location.coordinates[0];
+          latitude = pantry.location.coordinates[1];
+        }
+        // Handle JSON format { lat, lng }
+        else if (pantry.location.lat !== undefined) {
+          latitude = pantry.location.lat;
+          longitude = pantry.location.lng;
+        }
+      }
+
+      return {
+        ...pantry,
+        latitude,
+        longitude,
+      };
+    });
 
     console.log(`[Pantries API] Successfully fetched ${transformedData.length} pantries`);
 
