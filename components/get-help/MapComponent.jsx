@@ -1,13 +1,13 @@
 /**
  * MapComponent.jsx
  *
- * Interactive Leaflet map with food bank markers and styled card popups.
+ * Interactive Leaflet map with food bank markers and shadcn/ui styled popups.
  * Uses react-leaflet for React integration with Supabase backend data.
  *
  * Features:
- * - Card-styled popups with food bank details
- * - Call button (tel: link) with green-glow hover
- * - Get Directions button (Google Maps) with orange-glow hover
+ * - shadcn/ui Card-styled popups with food bank details
+ * - Call button (tel: link) with green styling
+ * - Get Directions button (Google Maps lat/lng) with orange styling
  * - Loading states for markers
  * - Full accessibility support
  * - Responsive design (mobile/desktop)
@@ -20,6 +20,10 @@ import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+
+// shadcn/ui components
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 // Fix for default marker icons in Leaflet + Webpack/Next.js
 const DefaultIcon = L.icon({
@@ -100,7 +104,53 @@ function MarkerLoadingSkeleton() {
 }
 
 /**
- * Card-styled popup content for food bank markers
+ * Phone Icon Component
+ */
+function PhoneIcon({ className }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+      />
+    </svg>
+  );
+}
+
+/**
+ * Directions Icon Component
+ */
+function DirectionsIcon({ className }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+      />
+    </svg>
+  );
+}
+
+/**
+ * Card-styled popup content for food bank markers using shadcn/ui
  */
 function FoodBankPopupCard({ bank, onSelect }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -111,11 +161,12 @@ function FoodBankPopupCard({ bank, onSelect }) {
     return () => clearTimeout(timer);
   }, []);
 
-  // Build Google Maps directions URL
+  // Build Google Maps directions URL using lat/lng
   const getDirectionsUrl = useCallback(() => {
-    const address = encodeURIComponent(bank.address || '');
-    return `https://www.google.com/maps/dir/?api=1&destination=${address}`;
-  }, [bank.address]);
+    const lat = parseFloat(bank.latitude);
+    const lng = parseFloat(bank.longitude);
+    return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+  }, [bank.latitude, bank.longitude]);
 
   // Format phone for tel: link
   const formatPhoneLink = useCallback((phone) => {
@@ -124,12 +175,11 @@ function FoodBankPopupCard({ bank, onSelect }) {
     return phone.replace(/[^\d+]/g, '');
   }, []);
 
-  const handleCallClick = useCallback((e) => {
-    // Allow default tel: behavior
+  const handleCallClick = useCallback(() => {
     if (onSelect) onSelect(bank);
   }, [bank, onSelect]);
 
-  const handleDirectionsClick = useCallback((e) => {
+  const handleDirectionsClick = useCallback(() => {
     if (onSelect) onSelect(bank);
   }, [bank, onSelect]);
 
@@ -145,115 +195,55 @@ function FoodBankPopupCard({ bank, onSelect }) {
       role="article"
       aria-label={`Food bank: ${bank.name}`}
     >
-      {/* Card Container */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-card overflow-hidden border border-gray-100 dark:border-gray-700">
-        {/* Card Header */}
-        <div className="px-4 pt-4 pb-2">
-          <h3
-            className="font-bold text-lg text-green-primary dark:text-green-leaf-light leading-tight"
+      <Card className="border-0 shadow-none bg-white dark:bg-gray-800">
+        <CardHeader className="pb-2">
+          <CardTitle
+            className="text-green-primary dark:text-green-leaf-light text-lg leading-tight"
             id={`popup-title-${bank.id}`}
           >
             {bank.name}
-          </h3>
-        </div>
+          </CardTitle>
+        </CardHeader>
 
-        {/* Card Body */}
-        <div className="px-4 pb-3">
+        <CardContent className="pb-3">
           {/* Address */}
           {bank.address && (
-            <address className="not-italic text-sm text-gray-600 dark:text-gray-300 mb-3">
+            <address className="not-italic text-sm text-gray-600 dark:text-gray-300">
               <p className="leading-relaxed">{bank.address}</p>
             </address>
           )}
+        </CardContent>
 
-          {/* Hours (optional) */}
-          {bank.hours && (
-            <div className="text-xs text-gray-500 dark:text-gray-400 mb-3 border-t border-gray-100 dark:border-gray-700 pt-2">
-              <span className="font-medium">Hours:</span>
-              <p className="whitespace-pre-line mt-1">{bank.hours}</p>
-            </div>
-          )}
-        </div>
-
-        {/* Card Footer - Action Buttons */}
-        <div className="px-4 pb-4 flex flex-col sm:flex-row gap-2">
+        <CardFooter className="flex flex-col sm:flex-row gap-2 pt-0">
           {/* Call Button */}
           {phoneLink && (
-            <a
+            <Button
               href={`tel:${phoneLink}`}
               onClick={handleCallClick}
-              className="
-                flex-1 inline-flex items-center justify-center gap-2
-                px-4 py-2.5
-                bg-green-primary hover:bg-green-700
-                text-white font-medium text-sm
-                rounded-lg
-                transition-all duration-200
-                hover:shadow-green-glow
-                focus:outline-none focus:ring-2 focus:ring-green-primary focus:ring-offset-2
-                dark:focus:ring-offset-gray-800
-              "
+              variant="green"
+              className="flex-1 bg-green-primary hover:shadow-green-glow"
               aria-label={`Call ${bank.name} at ${bank.phone}`}
             >
-              {/* Phone Icon */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                />
-              </svg>
+              <PhoneIcon className="h-4 w-4" />
               Call
-            </a>
+            </Button>
           )}
 
           {/* Get Directions Button */}
-          <a
+          <Button
             href={getDirectionsUrl()}
             target="_blank"
             rel="noopener noreferrer"
             onClick={handleDirectionsClick}
-            className="
-              flex-1 inline-flex items-center justify-center gap-2
-              px-4 py-2.5
-              bg-orange-primary hover:bg-orange-500
-              text-white font-medium text-sm
-              rounded-lg
-              transition-all duration-200
-              hover:shadow-orange-glow
-              focus:outline-none focus:ring-2 focus:ring-orange-primary focus:ring-offset-2
-              dark:focus:ring-offset-gray-800
-            "
+            variant="orange"
+            className="flex-1 bg-orange-primary hover:shadow-orange-glow"
             aria-label={`Get directions to ${bank.name}`}
           >
-            {/* Directions Icon */}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
-              />
-            </svg>
+            <DirectionsIcon className="h-4 w-4" />
             Get Directions
-          </a>
-        </div>
-      </div>
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   );
 }
@@ -438,7 +428,7 @@ export default function MapComponent({ foodBanks = [], onResourceSelect }) {
           background: #1f2937;
         }
 
-        /* Green tint for markers (optional enhancement) */
+        /* Green tint for markers */
         .leaflet-marker-icon-green {
           filter: hue-rotate(85deg) saturate(1.2);
         }
