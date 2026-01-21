@@ -15,6 +15,18 @@ import {
 
 export async function POST(request) {
   try {
+    // Check if Stripe is configured
+    if (!process.env.STRIPE_SECRET_KEY) {
+      console.error('[Donations API] STRIPE_SECRET_KEY is not configured');
+      return NextResponse.json(
+        {
+          ok: false,
+          error: 'Payment processing is not configured. Please contact support.',
+        },
+        { status: 503 }
+      );
+    }
+
     const body = await request.json();
     const { amount, currency = 'usd', interval = 'one_time', email, name, source } = body;
 
