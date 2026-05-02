@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/foodbanks",
+      "schedule": "0 12 */4 * *"
+    }
+  ]
+}
