@@ -10,6 +10,7 @@ export default function DonatePage() {
   const [isCustom, setIsCustom] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [taxAcknowledged, setTaxAcknowledged] = useState(false);
 
   const presetAmounts = [2500, 5000, 10000, 25000]; // $25, $50, $100, $250
 
@@ -206,12 +207,26 @@ export default function DonatePage() {
               </motion.div>
             )}
 
+            {/* Tax Status Acknowledgment */}
+            <label className="flex items-start gap-3 mb-6 cursor-pointer group">
+              <input
+                type="checkbox"
+                checked={taxAcknowledged}
+                onChange={(e) => setTaxAcknowledged(e.target.checked)}
+                className="mt-1 h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer shrink-0"
+              />
+              <span className="text-sm text-gray-600 group-hover:text-gray-800 transition-colors">
+                I understand that Seed and Spoon Incorporated&apos;s 501(c)(3) status is
+                pending and contributions are not currently tax-deductible.
+              </span>
+            </label>
+
             {/* Donate Button */}
             <button
               onClick={handleDonate}
-              disabled={isLoading}
+              disabled={isLoading || !taxAcknowledged}
               className={`w-full py-6 rounded-xl font-bold text-xl transition-all ${
-                isLoading
+                isLoading || !taxAcknowledged
                   ? 'bg-gray-400 cursor-not-allowed'
                   : 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-xl hover:shadow-2xl hover:scale-105'
               }`}
@@ -291,7 +306,7 @@ export default function DonatePage() {
             </div>
           </motion.div>
 
-          {/* Tax Deductible Notice */}
+          {/* Tax Status Notice */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -299,9 +314,9 @@ export default function DonatePage() {
             className="mt-8 text-center text-sm text-gray-500"
           >
             <p>
-              Seed and Spoon NJ is a 501(c)(3) nonprofit organization.
-              <br />
-              Your donation is tax-deductible to the fullest extent allowed by law.
+              Seed and Spoon Incorporated is a nonprofit organization with 501(c)(3)
+              status pending. Contributions are not currently tax-deductible but may
+              become deductible upon approval.
             </p>
           </motion.div>
         </motion.div>
