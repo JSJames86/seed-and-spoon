@@ -165,7 +165,7 @@ function FoodBankPopupCard({ bank, onSelect }) {
   const getDirectionsUrl = useCallback(() => {
     const lat = parseFloat(bank.latitude);
     const lng = parseFloat(bank.longitude);
-    return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+    return `https://www.openstreetmap.org/directions?to=${lat},${lng}`;
   }, [bank.latitude, bank.longitude]);
 
   // Format phone for tel: link

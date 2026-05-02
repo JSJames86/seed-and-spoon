@@ -157,7 +157,7 @@ export default function CountyDirectory({ filters = {}, onResourceClick }) {
 
   const handleDirectionsClick = (address) => {
     const query = encodeURIComponent(address);
-    window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+    window.open(`https://www.openstreetmap.org/search?query=${query}`, '_blank');
   };
 
   if (loading) {
