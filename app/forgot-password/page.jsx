@@ -74,14 +74,14 @@ export default function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-4 px-6 border border-transparent text-base font-bold rounded-lg text-white bg-primary-soil hover:bg-gradient-green focus:outline-none focus:ring-4 focus:ring-primary-soil/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+              className="group relative w-full flex justify-center py-4 px-6 border border-transparent text-base font-bold rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
             >
               {loading ? 'Sending...' : 'Send reset instructions'}
             </button>
           </div>
 
           <div className="text-center">
-            <Link href="/login" className="text-sm text-primary-soil hover:text-gradient-green">
+            <Link href="/login" className="text-sm text-green-700 hover:text-green-900 font-medium">
               Back to login
             </Link>
           </div>
