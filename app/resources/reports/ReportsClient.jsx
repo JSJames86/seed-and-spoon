@@ -96,6 +96,16 @@ const RESOURCES = [
     tag: 'Academic',
   },
   {
+    category: 'Youth & Food Insecurity',
+    org: 'Urban Institute',
+    title: 'Impossible Choices: Teens and Food Insecurity in America',
+    year: '2019',
+    description:
+      'A landmark Urban Institute study focused specifically on teenagers experiencing food insecurity — the exact population Seed & Spoon serves. Examines how teens cope with hunger, the choices they are forced to make, and the lasting impact on their development and futures.',
+    href: 'https://www.urban.org/sites/default/files/alfresco/publication-pdfs/2000914-Impossible-Choices-Teens-and-Food-Insecurity-in-America.pdf',
+    tag: 'Research',
+  },
+  {
     category: 'Policy & Advocacy',
     org: 'Urban Institute',
     title: 'Food Security and Health Outcomes',
