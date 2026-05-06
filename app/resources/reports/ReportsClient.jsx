@@ -77,6 +77,16 @@ const RESOURCES = [
   },
   {
     category: 'Policy & Advocacy',
+    org: 'IZA Institute of Labor Economics',
+    title: 'Food Insecurity and Long-Run Economic Outcomes',
+    year: '2019',
+    description:
+      'Economic research paper examining how food insecurity in childhood and young adulthood affects long-term labor market outcomes, earnings, and economic mobility. Provides a strong evidence base for the economic case for investing in food security.',
+    href: 'https://docs.iza.org/dp12627.pdf',
+    tag: 'Academic',
+  },
+  {
+    category: 'Policy & Advocacy',
     org: 'Urban Institute',
     title: 'Food Security and Health Outcomes',
     year: '2023',
