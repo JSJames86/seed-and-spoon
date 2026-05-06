@@ -107,6 +107,16 @@ const RESOURCES = [
   },
   {
     category: 'New Jersey',
+    org: 'NJ Economic Development Authority (NJEDA)',
+    title: 'Food Security Programs',
+    year: '2024',
+    description:
+      'Overview of the NJEDA\'s active food security programs, including the Food Desert Relief Act, grants for food retailers in underserved communities, and investments aimed at improving food access across New Jersey.',
+    href: 'https://www.njeda.gov/food-security-programs/',
+    tag: 'Programs',
+  },
+  {
+    category: 'New Jersey',
     org: 'NJ Department of Environmental Protection (NJDEP)',
     title: 'Food Security Product Deck',
     year: '2024',
@@ -148,6 +158,7 @@ const TAG_COLORS = {
   'Policy Brief': 'bg-yellow-100 text-yellow-800',
   'Policy Research': 'bg-yellow-100 text-yellow-800',
   'Academic': 'bg-indigo-100 text-indigo-800',
+  'Programs': 'bg-teal-100 text-teal-800',
 };
 
 function ResourceCard({ resource }) {
