@@ -107,6 +107,16 @@ const RESOURCES = [
   },
   {
     category: 'Youth & Food Insecurity',
+    org: 'International Association for the Evaluation of Educational Achievement (IEA)',
+    title: 'Hunger and the Learning Environment',
+    year: '2024',
+    description:
+      'Research examining the direct relationship between hunger and academic performance, cognitive development, and classroom engagement in children and youth. Makes the case for food security as an educational equity issue.',
+    href: 'https://www.iea.nl/sites/default/files/2024-03/CB22-Hunger-and-Learning-Environment.pdf',
+    tag: 'Academic',
+  },
+  {
+    category: 'Youth & Food Insecurity',
     org: 'Institute for Child Success',
     title: 'Food Insecurity & Early Childhood',
     year: '2024',
