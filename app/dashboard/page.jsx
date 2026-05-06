@@ -4,9 +4,12 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Link from 'next/link';
+import BlogTab from './BlogTab';
+import { supabase } from '@/lib/supabase';
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
+  const [activeTab, setActiveTab] = useState('overview');
   const [donations, setDonations] = useState([]);
   const [recurringDonations, setRecurringDonations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -72,6 +75,8 @@ export default function DashboardPage() {
     });
   };
 
+  const canBlog = profile?.role === 'editor' || profile?.role === 'admin';
+
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-cream py-12 px-4 sm:px-6 lg:px-8">
@@ -85,6 +90,37 @@ export default function DashboardPage() {
               Thank you for being a valued supporter of Seed & Spoon NJ
             </p>
           </div>
+
+          {/* Tab nav */}
+          <div className="flex gap-1 mb-8 border-b border-gray-200">
+            {[
+              { id: 'overview', label: 'Overview' },
+              ...(canBlog ? [{ id: 'blog', label: 'Blog' }] : []),
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`px-5 py-3 text-sm font-semibold border-b-2 transition-colors -mb-px ${
+                  activeTab === tab.id
+                    ? 'border-green-600 text-green-700'
+                    : 'border-transparent text-gray-500 hover:text-gray-800'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Blog tab */}
+          {activeTab === 'blog' && canBlog && (
+            <div className="bg-white rounded-lg shadow p-6">
+              <BlogTab profile={profile} supabase={supabase} />
+            </div>
+          )}
+
+          {/* Overview tab */}
+          {activeTab === 'overview' && (
+          <div>
 
           {/* Profile Summary Card */}
           <div className="bg-white rounded-lg shadow p-6 mb-8">
@@ -228,6 +264,8 @@ export default function DashboardPage() {
               </div>
             )}
           </div>
+          </div>
+          )}
         </div>
       </div>
     </ProtectedRoute>
