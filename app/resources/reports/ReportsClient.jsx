@@ -107,6 +107,16 @@ const RESOURCES = [
   },
   {
     category: 'New Jersey',
+    org: 'NJ Office of Food Security',
+    title: 'Exploring the Six Dimensions of Food Security in New Jersey',
+    year: '2025',
+    description:
+      'A comprehensive 2025 state report examining food security across six dimensions: availability, access, utilization, stability, agency, and sustainability. One of the most thorough analyses of food insecurity in New Jersey to date.',
+    href: 'https://www.nj.gov/foodsecurity/documents/Exploring%20the%20Six%20Dimensions%20of%20Food%20Security%20in%20New%20Jersey_October%202025.pdf',
+    tag: 'State Report',
+  },
+  {
+    category: 'New Jersey',
     org: 'NJ Economic Development Authority (NJEDA)',
     title: 'Food Security Programs',
     year: '2024',
