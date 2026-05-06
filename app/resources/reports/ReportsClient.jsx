@@ -107,6 +107,16 @@ const RESOURCES = [
   },
   {
     category: 'New Jersey',
+    org: 'NJ Economic Development Authority (NJEDA)',
+    title: 'NJ Food Desert Communities Designation Proposal List',
+    year: '2022',
+    description:
+      'Official state proposal listing communities designated as Food Desert Communities across New Jersey. Identifies the underserved areas — including parts of Newark — that qualify for targeted food access investment and intervention.',
+    href: 'https://www.njeda.gov/wp-content/uploads/2022/01/NJ-Food-Desert-Communities-Designation-Proposal-List-January-2022-1.pdf',
+    tag: 'State Report',
+  },
+  {
+    category: 'New Jersey',
     org: 'Rutgers Center for State Health Policy',
     title: 'Food Insecurity in Urban New Jersey',
     year: '2022',
