@@ -97,6 +97,16 @@ const RESOURCES = [
   },
   {
     category: 'Youth & Food Insecurity',
+    org: 'ResearchGate / Academic Journal',
+    title: 'Food Insecurity as a Factor in Felonious or Misdemeanor Juvenile Crimes',
+    year: '2014',
+    description:
+      'Academic study examining the link between food insecurity and juvenile criminal behavior. Finds that hunger is a significant contributing factor to youth crime — making the case that feeding at-risk youth is also a public safety and justice intervention.',
+    href: 'https://www.researchgate.net/publication/265292930_Food_Insecurity_as_a_Factor_in_Felonious_or_Misdemeanor_Juvenile_Crimes',
+    tag: 'Academic',
+  },
+  {
+    category: 'Youth & Food Insecurity',
     org: 'Urban Institute',
     title: 'Impossible Choices: Teens and Food Insecurity in America',
     year: '2019',
