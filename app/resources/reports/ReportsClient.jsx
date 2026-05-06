@@ -107,6 +107,16 @@ const RESOURCES = [
   },
   {
     category: 'New Jersey',
+    org: 'NJ Department of Environmental Protection (NJDEP)',
+    title: 'Food Security Product Deck',
+    year: '2024',
+    description:
+      'A comprehensive presentation from the NJ DEP examining food security across New Jersey, including environmental factors that affect food access, community vulnerability, and state-level strategies to address food insecurity.',
+    href: 'https://dep.nj.gov/wp-content/uploads/cleanaircouncil/food-security-product-deck.-march-2024.pdf',
+    tag: 'State Report',
+  },
+  {
+    category: 'New Jersey',
     org: 'NJ Economic Development Authority (NJEDA)',
     title: 'NJ Food Desert Communities Designation Proposal List',
     year: '2022',
