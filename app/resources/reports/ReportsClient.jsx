@@ -86,6 +86,16 @@ const RESOURCES = [
     tag: 'Research',
   },
   {
+    category: 'National Data',
+    org: 'World Hunger Education Service',
+    title: 'Hunger and Poverty in America 2024',
+    year: '2024',
+    description:
+      'A detailed overview of hunger and poverty across the United States, including statistics on food insecurity rates, demographics most affected, the role of federal programs, and the systemic causes of hunger in one of the wealthiest nations in the world.',
+    href: 'https://www.worldhunger.org/wp-content/uploads/2024/11/Hunger-and-Poverty-in-America-2024.pdf',
+    tag: 'Research',
+  },
+  {
     category: 'Policy & Advocacy',
     org: 'Food Research & Action Center (FRAC)',
     title: 'Hunger & Poverty in America',
