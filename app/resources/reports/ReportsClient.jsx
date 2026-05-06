@@ -76,6 +76,16 @@ const RESOURCES = [
     tag: 'Policy Brief',
   },
   {
+    category: 'Youth & Food Insecurity',
+    org: 'National Institutes of Health (NIH) / PubMed Central',
+    title: 'Food Insecurity and Mental Health Among Youth',
+    year: '2023',
+    description:
+      'Peer-reviewed study published in PMC examining the relationship between food insecurity and mental health outcomes in children and adolescents, including depression, anxiety, and behavioral issues. Highlights the psychological toll of hunger beyond physical health.',
+    href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10282483/',
+    tag: 'Academic',
+  },
+  {
     category: 'Policy & Advocacy',
     org: 'IZA Institute of Labor Economics',
     title: 'Food Insecurity and Long-Run Economic Outcomes',
