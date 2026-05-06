@@ -304,6 +304,60 @@ export default function ReportsClient() {
         </div>
       </section>
 
+      {/* Why it matters */}
+      <section className="bg-white py-14 px-4 border-b border-gray-100">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl font-bold text-gray-900 text-center mb-3">
+            Food is never just food.
+          </h2>
+          <p className="text-center text-gray-600 max-w-2xl mx-auto mb-10">
+            When a young person doesn&apos;t have enough to eat, the effects reach far
+            beyond hunger. The research below documents what we see every day in Newark —
+            and why feeding youth is one of the highest-leverage investments a community can make.
+          </p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                icon: '🤝',
+                title: 'Compassion',
+                body: 'Every young person deserves to eat. Full stop. Food security is a basic human right, and dignity is the foundation of everything we do.',
+              },
+              {
+                icon: '🛡️',
+                title: 'Crime Prevention',
+                body: 'Research shows hungry youth make desperate choices. Consistent access to food reduces the conditions that lead to juvenile crime and incarceration.',
+              },
+              {
+                icon: '👨‍👩‍👧',
+                title: 'Aid to Families',
+                body: 'When a young person is fed, their entire household feels the relief. Food insecurity strains families already stretched to their limit.',
+              },
+              {
+                icon: '📈',
+                title: 'Poverty Reduction',
+                body: 'Hunger traps people in cycles they can\'t escape. Stable nutrition improves educational outcomes, employment, and long-term economic mobility.',
+              },
+              {
+                icon: '🧠',
+                title: 'Mental Health',
+                body: 'Food insecurity is a chronic stressor linked to anxiety, depression, and trauma. Removing hunger removes one of the heaviest burdens young people carry.',
+              },
+              {
+                icon: '🏙️',
+                title: 'Stronger Communities',
+                body: 'Neighborhoods where young people are stable, healthy, and supported become safer, more engaged, and more resilient for everyone.',
+              },
+            ].map((item) => (
+              <div key={item.title} className="bg-gray-50 rounded-xl p-6 border border-gray-100">
+                <span className="text-3xl mb-3 block" aria-hidden="true">{item.icon}</span>
+                <h3 className="font-bold text-gray-900 mb-2">{item.title}</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Filter pills */}
       <section className="bg-white border-b border-gray-200 px-4 py-4">
         <div className="max-w-6xl mx-auto flex flex-wrap gap-2 justify-center">
@@ -342,18 +396,48 @@ export default function ReportsClient() {
       </section>
 
       {/* Suggest a resource */}
-      <section className="bg-green-700 text-white py-16 px-4">
+      <section className="bg-white border-t border-gray-100 py-16 px-4">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-2xl font-bold mb-3">Know a report we should add?</h2>
-          <p className="text-green-100 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">Know a report we should add?</h2>
+          <p className="text-gray-600 mb-6">
             If you&apos;ve come across research on youth hunger, food access, or food
             policy in New Jersey that belongs here, let us know.
           </p>
           <Link
             href="/contact"
-            className="inline-block bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold py-3 px-8 rounded-lg transition"
+            className="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg transition"
           >
             Suggest a Resource
+          </Link>
+        </div>
+      </section>
+
+      {/* Research collaboration */}
+      <section className="bg-green-700 text-white py-16 px-4">
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="text-green-200 uppercase tracking-widest text-sm font-semibold mb-3">
+            Looking Ahead
+          </p>
+          <h2 className="text-3xl font-bold mb-4">Partner With Us on Research</h2>
+          <p className="text-green-100 text-lg leading-relaxed mb-6 max-w-2xl mx-auto">
+            Seed &amp; Spoon NJ is building toward becoming a research partner for
+            universities, public health institutions, and policy organizations studying
+            youth food insecurity in urban New Jersey. Our direct relationships with
+            at-risk youth ages 16–25 in Newark give us on-the-ground access that most
+            research institutions don&apos;t have.
+          </p>
+          <p className="text-green-100 leading-relaxed mb-8 max-w-2xl mx-auto">
+            If you are a researcher, academic institution, or policy organization
+            interested in collaborating on studies related to youth hunger, food access,
+            or community nutrition — we want to hear from you. Future collaborations
+            could include community surveys, longitudinal outcome tracking, and
+            co-authored reports grounded in real data from the communities we serve.
+          </p>
+          <Link
+            href="/contact"
+            className="inline-block bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold py-4 px-8 rounded-lg transition text-lg"
+          >
+            Explore a Research Partnership
           </Link>
         </div>
       </section>
