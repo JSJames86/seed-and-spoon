@@ -97,6 +97,16 @@ const RESOURCES = [
   },
   {
     category: 'Youth & Food Insecurity',
+    org: 'Institute for Child Success',
+    title: 'Food Insecurity & Early Childhood',
+    year: '2024',
+    description:
+      'Research hub examining the impact of food insecurity on early childhood development, school readiness, and long-term outcomes. Covers policy solutions and evidence-based interventions for children and youth.',
+    href: 'https://www.instituteforchildsuccess.org/food-insecurity/',
+    tag: 'Research',
+  },
+  {
+    category: 'Youth & Food Insecurity',
     org: 'Covenant House',
     title: 'Hunger Among Homeless Youth',
     year: '2022',
