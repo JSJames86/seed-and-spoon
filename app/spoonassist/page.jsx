@@ -21,6 +21,8 @@ export default function SpoonAssistPage() {
   const [selectedStores, setSelectedStores] = useState([]);
   const [dietaryFilters, setDietaryFilters] = useState([]);
   const [costData, setCostData] = useState(null);
+  const [summary, setSummary] = useState(null);
+  const [zipCode, setZipCode] = useState('');
   const [loading, setLoading] = useState({
     recipes: false,
     stores: false,
@@ -71,6 +73,7 @@ export default function SpoonAssistPage() {
   };
 
   const handleFindStores = async (zip) => {
+    setZipCode(zip);
     setLoading(prev => ({ ...prev, stores: true }));
     setError(null);
 
@@ -115,6 +118,7 @@ export default function SpoonAssistPage() {
           unit: ing.unit
         })),
         storeIds: selectedStores,
+        zipCode: zipCode,
         dietaryFilters: dietaryFilters
       };
 
@@ -130,6 +134,7 @@ export default function SpoonAssistPage() {
 
       const data = await response.json();
       setCostData(data.costData || data.results || data || []);
+      setSummary(data.summary || null);
     } catch (err) {
       setError('Could not calculate costs. Please try again.');
       console.error('Cost calculation error:', err);
@@ -277,6 +282,31 @@ export default function SpoonAssistPage() {
               <h2 className="text-2xl font-bold text-gray-900">Results</h2>
               <CSVExportButton costData={costData} ingredients={ingredients} />
             </div>
+
+            {/* Summary banner */}
+            {summary && summary.cheapestStore && (
+              <div className="mb-4 p-4 bg-green-50 border border-green-300 rounded-lg flex flex-wrap gap-4 items-center">
+                <div>
+                  <span className="text-sm text-green-700 font-medium">Best overall price:</span>
+                  <span className="ml-2 text-lg font-bold text-green-800">{summary.cheapestStore}</span>
+                  <span className="ml-2 text-green-700">${summary.cheapestTotal.toFixed(2)} total</span>
+                </div>
+                {Object.entries(summary.storeTotals || {})
+                  .sort((a, b) => a[1] - b[1])
+                  .slice(1)
+                  .map(([store, total]) => (
+                    <div key={store} className="text-sm text-gray-600">
+                      {store}: <span className="font-medium">${total.toFixed(2)}</span>
+                      {summary.cheapestTotal > 0 && (
+                        <span className="ml-1 text-gray-400">
+                          (+${(total - summary.cheapestTotal).toFixed(2)})
+                        </span>
+                      )}
+                    </div>
+                  ))}
+              </div>
+            )}
+
             <CostResultsTable costData={costData} />
           </section>
         )}
