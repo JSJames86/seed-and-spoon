@@ -225,6 +225,16 @@ const RESOURCES = [
     href: 'https://cshp.rutgers.edu',
     tag: 'Academic',
   },
+  {
+    category: 'National Data',
+    org: 'CNBC',
+    title: 'Americans Are Taking Out Buy Now, Pay Later Loans to Buy Groceries',
+    year: '2025',
+    description:
+      'Reporting on the growing trend of Americans using Buy Now, Pay Later financing to cover basic grocery purchases — a sign of how far food insecurity has spread into working and middle-class households. Documents the financial stress families face just to put food on the table.',
+    href: 'https://www.cnbc.com/2025/04/26/americans-groceries-buy-now-pay-later-loans.html',
+    tag: 'News',
+  },
 ];
 
 // ─── Components ───────────────────────────────────────────────────────────────
@@ -239,6 +249,7 @@ const TAG_COLORS = {
   'Policy Research': 'bg-yellow-100 text-yellow-800',
   'Academic': 'bg-indigo-100 text-indigo-800',
   'Programs': 'bg-teal-100 text-teal-800',
+  'News': 'bg-red-100 text-red-800',
 };
 
 function ResourceCard({ resource }) {
