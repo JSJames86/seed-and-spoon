@@ -23,10 +23,12 @@ export default function SpoonAssistPage() {
   const [costData, setCostData] = useState(null);
   const [summary, setSummary] = useState(null);
   const [zipCode, setZipCode] = useState('');
+  const [instacartUrl, setInstacartUrl] = useState(null);
   const [loading, setLoading] = useState({
     recipes: false,
     stores: false,
-    calculation: false
+    calculation: false,
+    instacart: false,
   });
   const [error, setError] = useState(null);
 
@@ -140,6 +142,36 @@ export default function SpoonAssistPage() {
       console.error('Cost calculation error:', err);
     } finally {
       setLoading(prev => ({ ...prev, calculation: false }));
+    }
+  };
+
+  const handleShopOnInstacart = async () => {
+    setLoading(prev => ({ ...prev, instacart: true }));
+    setInstacartUrl(null);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/instacart_list/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          recipeTitle: selectedRecipe?.title || 'My Recipe',
+          ingredients: ingredients.map(ing => ({
+            name:     ing.name,
+            quantity: ing.quantity,
+            unit:     ing.unit,
+          })),
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Failed to create shopping list');
+      setInstacartUrl(data.url);
+      window.open(data.url, '_blank', 'noopener,noreferrer');
+    } catch (err) {
+      setError('Could not create Instacart shopping list. Please try again.');
+      console.error('Instacart list error:', err);
+    } finally {
+      setLoading(prev => ({ ...prev, instacart: false }));
     }
   };
 
@@ -308,6 +340,23 @@ export default function SpoonAssistPage() {
             )}
 
             <CostResultsTable costData={costData} />
+
+            {/* Shop on Instacart CTA */}
+            <div className="mt-6 p-5 bg-orange-50 border border-orange-200 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <p className="font-semibold text-orange-900">Ready to shop?</p>
+                <p className="text-sm text-orange-700 mt-0.5">
+                  Send this recipe&apos;s ingredients straight to your Instacart cart — delivery or pickup at local stores.
+                </p>
+              </div>
+              <button
+                onClick={handleShopOnInstacart}
+                disabled={loading.instacart || ingredients.length === 0}
+                className="shrink-0 px-6 py-3 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold rounded-lg transition-colors shadow-md whitespace-nowrap"
+              >
+                {loading.instacart ? 'Creating list…' : 'Shop on Instacart'}
+              </button>
+            </div>
           </section>
         )}
 

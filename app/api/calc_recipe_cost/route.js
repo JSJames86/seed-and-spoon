@@ -35,7 +35,7 @@ export async function POST(request) {
     }
 
     const supabaseClient = getServiceClient();
-    const result = await calculateRecipeCost(cleanIngredients, stores, supabaseClient, zipCode ?? null);
+    const result = await calculateRecipeCost(cleanIngredients, stores, supabaseClient);
 
     return NextResponse.json({
       costData: result.costData,
