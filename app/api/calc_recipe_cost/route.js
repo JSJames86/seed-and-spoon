@@ -1,13 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-import { calculateRecipeCost, getStoreById } from '@/lib/spoonassist/priceEngine';
-
-function getAnonClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !key) return null;
-  return createClient(url, key);
-}
+import { calculateRecipeCost, getStoreById, getServiceClient } from '@/lib/spoonassist/priceEngine';
 
 export async function POST(request) {
   try {
@@ -42,8 +34,8 @@ export async function POST(request) {
       return NextResponse.json({ error: 'No valid ingredients provided' }, { status: 400 });
     }
 
-    const supabaseClient = getAnonClient();
-    const result = await calculateRecipeCost(cleanIngredients, stores, supabaseClient);
+    const supabaseClient = getServiceClient();
+    const result = await calculateRecipeCost(cleanIngredients, stores, supabaseClient, zipCode ?? null);
 
     return NextResponse.json({
       costData: result.costData,
