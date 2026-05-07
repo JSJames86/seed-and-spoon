@@ -1,5 +1,23 @@
 'use client';
 
+const CONFIDENCE_BADGE = {
+  live:      { label: 'Live',      className: 'bg-green-100 text-green-700' },
+  cached:    { label: 'Cached',    className: 'bg-purple-100 text-purple-700' },
+  community: { label: 'Community', className: 'bg-teal-100 text-teal-700' },
+  usda:      { label: 'USDA',      className: 'bg-blue-100 text-blue-700' },
+  estimated: { label: 'Est.',      className: 'bg-gray-100 text-gray-500' },
+  free:      { label: 'Free',      className: 'bg-gray-100 text-gray-400' },
+};
+
+function ConfidenceBadge({ confidence }) {
+  const badge = CONFIDENCE_BADGE[confidence] || CONFIDENCE_BADGE.estimated;
+  return (
+    <span className={`inline-block text-[10px] font-medium px-1 py-0.5 rounded ${badge.className}`}>
+      {badge.label}
+    </span>
+  );
+}
+
 export default function CostResultsTable({ costData }) {
   if (!costData || costData.length === 0) {
     return null;
@@ -82,7 +100,12 @@ export default function CostResultsTable({ costData }) {
                         }`}
                       >
                         {price !== undefined && price !== null ? (
-                          `$${price.toFixed(2)}`
+                          <div className="flex flex-col items-center gap-0.5">
+                            <span>${price.toFixed(2)}</span>
+                            {storePrice?.confidence && (
+                              <ConfidenceBadge confidence={storePrice.confidence} />
+                            )}
+                          </div>
                         ) : (
                           <span className="text-gray-400">N/A</span>
                         )}
@@ -133,6 +156,14 @@ export default function CostResultsTable({ costData }) {
           <strong>Legend:</strong> Prices highlighted in green are the cheapest for each item.
           The total row shows which store offers the best overall price for your entire recipe.
         </p>
+        <div className="mt-2 flex flex-wrap gap-2 text-xs">
+          {Object.entries(CONFIDENCE_BADGE).filter(([k]) => k !== 'free').map(([key, { label, className }]) => (
+            <span key={key} className={`px-1.5 py-0.5 rounded font-medium ${className}`}>
+              {label}
+            </span>
+          ))}
+          <span className="text-blue-600 self-center">— price source confidence</span>
+        </div>
         <p className="text-xs text-blue-600 mt-2">
           Note: Prices are estimates and may vary. Please verify at checkout.
         </p>
