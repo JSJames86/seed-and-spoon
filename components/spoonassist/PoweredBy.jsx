@@ -38,9 +38,10 @@ const PARTNERS = {
     text:    'text-[#FAF1E5]',
     border:  'border-[#003D29]',
     logo: (
-      <svg width="14" height="14" viewBox="0 0 100 130" fill="none" aria-hidden="true">
-        <path d="M50 4 C54.4 4 58 7.6 58 12 L58 36 C66 31 80 31 88 40 C96 49 94 62 84 68 C76 73 64 71 50 62 C36 71 24 73 16 68 C6 62 4 49 12 40 C20 31 34 31 42 36 L42 12 C42 7.6 45.6 4 50 4Z" fill="#0AAD0A"/>
-        <path d="M10 90 A40 40 0 0 0 90 90Z" fill="#FF7009"/>
+      <svg width="14" height="14" viewBox="0 0 100 120" fill="none" aria-hidden="true">
+        <circle cx="50" cy="16" r="14" fill="#0AAD0A"/>
+        <path d="M36 16 L36 38 C24 36 4 42 4 56 C4 66 18 74 50 74 C82 74 96 66 96 56 C96 42 76 36 64 38 L64 16Z" fill="#0AAD0A"/>
+        <path d="M4 88 A46 46 0 0 0 96 88Z" fill="#FF7009"/>
       </svg>
     ),
   },
