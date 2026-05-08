@@ -161,10 +161,11 @@ export default function SpoonAssistPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          recipeTitle:  selectedRecipe?.title || 'My Recipe',
-          imageUrl:     selectedRecipe?.image || null,
-          instructions: selectedRecipe?.instructions || [],
-          ingredients:  ingredients.map(ing => ({
+          recipeTitle:    selectedRecipe?.title || 'My Recipe',
+          imageUrl:       selectedRecipe?.image || null,
+          instructions:   selectedRecipe?.instructions || [],
+          dietaryFilters: dietaryFilters,
+          ingredients:    ingredients.map(ing => ({
             name:     ing.name,
             quantity: ing.quantity,
             unit:     ing.unit,

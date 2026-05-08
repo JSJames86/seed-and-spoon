@@ -93,11 +93,21 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const { ingredients, recipeTitle, imageUrl, instructions } = body;
+  const { ingredients, recipeTitle, imageUrl, instructions, dietaryFilters } = body;
 
   if (!Array.isArray(ingredients) || ingredients.length === 0) {
     return NextResponse.json({ error: 'ingredients array is required' }, { status: 400 });
   }
+
+  // Map app dietary filter IDs to Instacart's health_filters enum
+  const HEALTH_FILTER_MAP = {
+    'gluten-free': 'GLUTEN_FREE',
+    'vegan':       'VEGAN',
+    // 'low-carb' and 'diabetic' have no Instacart equivalent
+  };
+  const healthFilters = (Array.isArray(dietaryFilters) ? dietaryFilters : [])
+    .map(f => HEALTH_FILTER_MAP[f])
+    .filter(Boolean);
 
   const mappedIngredients = ingredients
     .filter(ing => ing?.name?.trim())
@@ -107,9 +117,8 @@ export async function POST(request) {
         quantity: Number(ing.quantity) || 1,
         unit:     normalizeUnit(ing.unit),
       };
-      // Attach health_filters from dietary preferences when provided
-      if (Array.isArray(ing.healthFilters) && ing.healthFilters.length > 0) {
-        mapped.filters = { health_filters: ing.healthFilters };
+      if (healthFilters.length > 0) {
+        mapped.filters = { health_filters: healthFilters };
       }
       return mapped;
     });
