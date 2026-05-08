@@ -156,21 +156,31 @@ export default function SpoonAssistPage() {
     setLoading(prev => ({ ...prev, instacart: true }));
     setInstacartUrl(null);
 
+    // Use the recipe endpoint when a recipe is selected; shopping list endpoint otherwise
+    const isRecipe = !!selectedRecipe;
+    const endpoint = isRecipe
+      ? `${API_BASE_URL}/instacart_list/`
+      : `${API_BASE_URL}/instacart_shopping_list/`;
+
+    const payload = isRecipe
+      ? {
+          recipeTitle:    selectedRecipe.title,
+          imageUrl:       selectedRecipe.image || null,
+          instructions:   selectedRecipe.instructions || [],
+          dietaryFilters: dietaryFilters,
+          ingredients:    ingredients.map(ing => ({ name: ing.name, quantity: ing.quantity, unit: ing.unit })),
+        }
+      : {
+          title:          'My Ingredient List',
+          dietaryFilters: dietaryFilters,
+          ingredients:    ingredients.map(ing => ({ name: ing.name, quantity: ing.quantity, unit: ing.unit })),
+        };
+
     try {
-      const response = await fetch(`${API_BASE_URL}/instacart_list/`, {
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          recipeTitle:    selectedRecipe?.title || 'My Recipe',
-          imageUrl:       selectedRecipe?.image || null,
-          instructions:   selectedRecipe?.instructions || [],
-          dietaryFilters: dietaryFilters,
-          ingredients:    ingredients.map(ing => ({
-            name:     ing.name,
-            quantity: ing.quantity,
-            unit:     ing.unit,
-          })),
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
