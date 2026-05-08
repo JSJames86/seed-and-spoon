@@ -175,12 +175,50 @@ export default function SpoonAssistPage() {
     }
   };
 
+  // Cache helpers — store generated Instacart URLs in localStorage keyed by
+  // recipe ID + ingredient fingerprint so we reuse them until they expire.
+  const CACHE_TTL_MS = 29 * 24 * 60 * 60 * 1000; // 29 days (Instacart expires at 30)
+
+  function instacartCacheKey(recipeId, ings) {
+    const fingerprint = ings.map(i => `${i.name}:${i.quantity}:${i.unit}`).sort().join('|');
+    return `instacart_url_${recipeId}_${fingerprint}`;
+  }
+
+  function readCachedUrl(key) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return null;
+      const { url, expiresAt } = JSON.parse(raw);
+      if (Date.now() > expiresAt) { localStorage.removeItem(key); return null; }
+      return url;
+    } catch { return null; }
+  }
+
+  function writeCachedUrl(key, url) {
+    try {
+      localStorage.setItem(key, JSON.stringify({ url, expiresAt: Date.now() + CACHE_TTL_MS }));
+    } catch { /* storage full or unavailable */ }
+  }
+
   const handleShopOnInstacart = async () => {
     setLoading(prev => ({ ...prev, instacart: true }));
     setInstacartUrl(null);
 
-    // Use the recipe endpoint when a recipe is selected; shopping list endpoint otherwise
     const isRecipe = !!selectedRecipe;
+    const ingList  = ingredients.map(ing => ({ name: ing.name, quantity: ing.quantity, unit: ing.unit }));
+
+    // Check cache for recipe pages (shopping lists have no stable ID to key on)
+    if (isRecipe && selectedRecipe.id != null) {
+      const cacheKey = instacartCacheKey(selectedRecipe.id, ingList);
+      const cached   = readCachedUrl(cacheKey);
+      if (cached) {
+        setInstacartUrl(cached);
+        window.open(cached, '_blank', 'noopener,noreferrer');
+        setLoading(prev => ({ ...prev, instacart: false }));
+        return;
+      }
+    }
+
     const endpoint = isRecipe
       ? `${API_BASE_URL}/instacart_list/`
       : `${API_BASE_URL}/instacart_shopping_list/`;
@@ -193,13 +231,13 @@ export default function SpoonAssistPage() {
           instructions:   selectedRecipe.instructions || [],
           dietaryFilters: dietaryFilters,
           retailerKey:    selectedRetailerKey,
-          ingredients:    ingredients.map(ing => ({ name: ing.name, quantity: ing.quantity, unit: ing.unit })),
+          ingredients:    ingList,
         }
       : {
           title:          'My Ingredient List',
           dietaryFilters: dietaryFilters,
           retailerKey:    selectedRetailerKey,
-          ingredients:    ingredients.map(ing => ({ name: ing.name, quantity: ing.quantity, unit: ing.unit })),
+          ingredients:    ingList,
         };
 
     try {
@@ -211,8 +249,14 @@ export default function SpoonAssistPage() {
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Failed to create shopping list');
+
       setInstacartUrl(data.url);
       window.open(data.url, '_blank', 'noopener,noreferrer');
+
+      // Persist for future clicks on the same recipe + ingredient set
+      if (isRecipe && selectedRecipe.id != null) {
+        writeCachedUrl(instacartCacheKey(selectedRecipe.id, ingList), data.url);
+      }
     } catch (err) {
       setError('Could not create Instacart shopping list. Please try again.');
       console.error('Instacart list error:', err);
