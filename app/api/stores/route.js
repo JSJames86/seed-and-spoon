@@ -10,10 +10,10 @@ export async function GET(request) {
   }
 
   try {
-    const stores = getStoresByZip(zip);
+    const stores = await getStoresByZip(zip);
     return NextResponse.json(
       { stores, zip },
-      { headers: { 'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800' } }
+      { headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' } }
     );
   } catch (err) {
     console.error('[/api/stores] Error:', err.message);
