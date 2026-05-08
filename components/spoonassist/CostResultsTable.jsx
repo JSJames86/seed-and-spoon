@@ -18,6 +18,27 @@ function ConfidenceBadge({ confidence }) {
   );
 }
 
+function Attribution({ costData }) {
+  const counts = { live: 0, cached: 0, community: 0, usda: 0, estimated: 0 };
+  for (const item of costData) {
+    for (const sp of item.storePrices ?? []) {
+      if (sp.confidence in counts) counts[sp.confidence]++;
+    }
+  }
+  const parts = [];
+  if (counts.live > 0)      parts.push(`${counts.live} live from Kroger`);
+  if (counts.cached > 0)    parts.push(`${counts.cached} cached`);
+  if (counts.community > 0) parts.push(`${counts.community} community`);
+  if (counts.usda > 0)      parts.push(`${counts.usda} USDA baseline`);
+  if (counts.estimated > 0) parts.push(`${counts.estimated} estimated`);
+  if (!parts.length) return null;
+  return (
+    <p className="text-xs text-gray-400 mt-2 text-right">
+      Price sources: {parts.join(' · ')}
+    </p>
+  );
+}
+
 export default function CostResultsTable({ costData }) {
   if (!costData || costData.length === 0) {
     return null;
@@ -168,6 +189,7 @@ export default function CostResultsTable({ costData }) {
           Note: Prices are estimates and may vary. Please verify at checkout.
         </p>
       </div>
+      <Attribution costData={costData} />
     </div>
   );
 }
