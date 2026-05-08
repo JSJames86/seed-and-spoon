@@ -10,6 +10,7 @@ import DietaryFilters from '@/components/spoonassist/DietaryFilters';
 import CostResultsTable from '@/components/spoonassist/CostResultsTable';
 import CSVExportButton from '@/components/spoonassist/CSVExportButton';
 import PoweredBy from '@/components/spoonassist/PoweredBy';
+import InstacartCTA from '@/components/spoonassist/InstacartCTA';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
 
@@ -349,20 +350,19 @@ export default function SpoonAssistPage() {
 
             {/* Shop on Instacart CTA — only rendered when key is configured */}
             {features.instacart && (
-              <div className="mt-6 p-5 bg-orange-50 border border-orange-200 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="mt-6 p-5 bg-[#F5FAF7] border border-[#003D29]/20 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                  <p className="font-semibold text-orange-900">Ready to shop?</p>
-                  <p className="text-sm text-orange-700 mt-0.5">
+                  <p className="font-semibold text-gray-900">Ready to shop?</p>
+                  <p className="text-sm text-gray-600 mt-0.5">
                     Send this recipe&apos;s ingredients straight to your Instacart cart — delivery or pickup at local stores.
                   </p>
                 </div>
-                <button
+                <InstacartCTA
                   onClick={handleShopOnInstacart}
-                  disabled={loading.instacart || ingredients.length === 0}
-                  className="shrink-0 px-6 py-3 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold rounded-lg transition-colors shadow-md whitespace-nowrap"
-                >
-                  {loading.instacart ? 'Creating list…' : 'Shop on Instacart'}
-                </button>
+                  loading={loading.instacart}
+                  disabled={ingredients.length === 0}
+                  text="Shop ingredients"
+                />
               </div>
             )}
           </section>
