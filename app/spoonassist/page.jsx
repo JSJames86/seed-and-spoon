@@ -9,6 +9,7 @@ import StoreSelector from '@/components/spoonassist/StoreSelector';
 import DietaryFilters from '@/components/spoonassist/DietaryFilters';
 import CostResultsTable from '@/components/spoonassist/CostResultsTable';
 import CSVExportButton from '@/components/spoonassist/CSVExportButton';
+import PoweredBy from '@/components/spoonassist/PoweredBy';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
 
@@ -23,16 +24,23 @@ export default function SpoonAssistPage() {
   const [costData, setCostData] = useState(null);
   const [summary, setSummary] = useState(null);
   const [zipCode, setZipCode] = useState('');
+  const [instacartUrl, setInstacartUrl] = useState(null);
+  const [features, setFeatures] = useState({ kroger: false, instacart: false });
   const [loading, setLoading] = useState({
     recipes: false,
     stores: false,
-    calculation: false
+    calculation: false,
+    instacart: false,
   });
   const [error, setError] = useState(null);
 
-  // Fetch recipes on mount
+  // Fetch recipes + feature flags on mount
   useEffect(() => {
     fetchRecipes();
+    fetch(`${API_BASE_URL}/features/`)
+      .then(r => r.json())
+      .then(data => setFeatures(data))
+      .catch(() => {});
   }, []);
 
   const fetchRecipes = async () => {
@@ -140,6 +148,36 @@ export default function SpoonAssistPage() {
       console.error('Cost calculation error:', err);
     } finally {
       setLoading(prev => ({ ...prev, calculation: false }));
+    }
+  };
+
+  const handleShopOnInstacart = async () => {
+    setLoading(prev => ({ ...prev, instacart: true }));
+    setInstacartUrl(null);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/instacart_list/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          recipeTitle: selectedRecipe?.title || 'My Recipe',
+          ingredients: ingredients.map(ing => ({
+            name:     ing.name,
+            quantity: ing.quantity,
+            unit:     ing.unit,
+          })),
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Failed to create shopping list');
+      setInstacartUrl(data.url);
+      window.open(data.url, '_blank', 'noopener,noreferrer');
+    } catch (err) {
+      setError('Could not create Instacart shopping list. Please try again.');
+      console.error('Instacart list error:', err);
+    } finally {
+      setLoading(prev => ({ ...prev, instacart: false }));
     }
   };
 
@@ -308,11 +346,44 @@ export default function SpoonAssistPage() {
             )}
 
             <CostResultsTable costData={costData} />
+
+            {/* Shop on Instacart CTA — only rendered when key is configured */}
+            {features.instacart && (
+              <div className="mt-6 p-5 bg-orange-50 border border-orange-200 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                  <p className="font-semibold text-orange-900">Ready to shop?</p>
+                  <p className="text-sm text-orange-700 mt-0.5">
+                    Send this recipe&apos;s ingredients straight to your Instacart cart — delivery or pickup at local stores.
+                  </p>
+                </div>
+                <button
+                  onClick={handleShopOnInstacart}
+                  disabled={loading.instacart || ingredients.length === 0}
+                  className="shrink-0 px-6 py-3 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold rounded-lg transition-colors shadow-md whitespace-nowrap"
+                >
+                  {loading.instacart ? 'Creating list…' : 'Shop on Instacart'}
+                </button>
+              </div>
+            )}
           </section>
         )}
 
+        {/* Data Partners */}
+        <section className="mt-10 pt-8 border-t border-gray-200">
+          <p className="text-xs text-gray-400 uppercase tracking-wide font-semibold mb-3 text-center">
+            Data Partners
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <PoweredBy compact sources={[
+              ...(features.kroger    ? ['kroger']    : []),
+              ...(features.instacart ? ['instacart'] : []),
+              'usda',
+            ]} />
+          </div>
+        </section>
+
         {/* Footer */}
-        <footer className="mt-12 text-center text-sm text-gray-500">
+        <footer className="mt-8 text-center text-sm text-gray-500">
           <p>SpoonAssist is a service by Seed & Spoon</p>
           <p className="mt-1">Helping you save money on healthy, delicious meals</p>
         </footer>
