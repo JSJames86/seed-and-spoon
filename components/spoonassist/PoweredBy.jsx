@@ -32,14 +32,16 @@ const PARTNERS = {
     ),
   },
   instacart: {
-    label:   'Shop on Instacart',
+    label:   'Instacart®',   // ® required by Instacart trademark guidelines
     href:    'https://www.instacart.com',
-    bg:      'bg-[#0AAD0A]',
-    text:    'text-white',
-    border:  'border-[#008800]',
+    bg:      'bg-[#003D29]',
+    text:    'text-[#FAF1E5]',
+    border:  'border-[#003D29]',
     logo: (
-      <svg viewBox="0 0 80 20" className="h-4 w-auto fill-white" aria-hidden="true">
-        <text x="0" y="15" fontFamily="Arial, sans-serif" fontSize="12" fontWeight="bold">Instacart</text>
+      <svg width="14" height="14" viewBox="0 0 100 120" fill="none" aria-hidden="true">
+        <circle cx="50" cy="16" r="14" fill="#0AAD0A"/>
+        <path d="M36 16 L36 38 C24 36 4 42 4 56 C4 66 18 74 50 74 C82 74 96 66 96 56 C96 42 76 36 64 38 L64 16Z" fill="#0AAD0A"/>
+        <path d="M4 88 A46 46 0 0 0 96 88Z" fill="#FF7009"/>
       </svg>
     ),
   },

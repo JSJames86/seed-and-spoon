@@ -70,14 +70,6 @@ function normalizeUnit(raw) {
   return UNIT_MAP[key] ?? key;
 }
 
-function toAbsoluteImageUrl(imagePath) {
-  if (!imagePath) return null;
-  if (imagePath.startsWith('http')) return imagePath;
-  const siteUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL;
-  if (!siteUrl) return null;
-  return `${siteUrl.replace(/\/$/, '')}${imagePath}`;
-}
-
 const HEALTH_FILTER_MAP = {
   'gluten-free': 'GLUTEN_FREE',
   'vegan':       'VEGAN',
@@ -96,15 +88,7 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const {
-    ingredients,
-    recipeTitle,
-    imageUrl,
-    instructions,
-    dietaryFilters,
-    recipeId,
-    retailerKey,
-  } = body;
+  const { ingredients, title, dietaryFilters, retailerKey } = body;
 
   if (!Array.isArray(ingredients) || ingredients.length === 0) {
     return NextResponse.json({ error: 'ingredients array is required' }, { status: 400 });
@@ -114,13 +98,16 @@ export async function POST(request) {
     .map(f => HEALTH_FILTER_MAP[f])
     .filter(Boolean);
 
-  const mappedIngredients = ingredients
+  const lineItems = ingredients
     .filter(ing => ing?.name?.trim())
     .map(ing => {
       const item = {
         name:         ing.name.trim(),
         display_text: [ing.quantity, ing.unit, ing.name].filter(Boolean).join(' ').trim(),
-        measurements: [{ quantity: Number(ing.quantity) || 1, unit: normalizeUnit(ing.unit) }],
+        line_item_measurements: [{
+          quantity: Number(ing.quantity) || 1,
+          unit:     normalizeUnit(ing.unit),
+        }],
       };
       if (healthFilters.length > 0) {
         item.filters = { health_filters: healthFilters };
@@ -128,7 +115,7 @@ export async function POST(request) {
       return item;
     });
 
-  if (mappedIngredients.length === 0) {
+  if (lineItems.length === 0) {
     return NextResponse.json({ error: 'No valid ingredients provided' }, { status: 400 });
   }
 
@@ -139,25 +126,15 @@ export async function POST(request) {
   if (retailerKey) landingConfig.retailer_key = retailerKey;
 
   const payload = {
-    title:       recipeTitle?.trim() || 'My Recipe',
-    ingredients: mappedIngredients,
+    title:     title?.trim() || 'My Shopping List',
+    link_type: 'shopping_list',
+    line_items: lineItems,
     landing_page_configuration: landingConfig,
   };
 
-  const absoluteImage = toAbsoluteImageUrl(imageUrl);
-  if (absoluteImage) payload.image_url = absoluteImage;
-
-  if (Array.isArray(instructions) && instructions.length > 0) {
-    payload.instructions = instructions.map(String);
-  }
-
-  if (recipeId != null) {
-    payload.external_reference_id = String(recipeId);
-  }
-
   let response;
   try {
-    response = await fetch(`${BASE_URL}/idp/v1/products/recipe`, {
+    response = await fetch(`${BASE_URL}/idp/v1/products/products_link`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -168,13 +145,13 @@ export async function POST(request) {
       signal: AbortSignal.timeout(10000),
     });
   } catch (err) {
-    console.error('[/api/instacart_list] fetch error:', err.message);
+    console.error('[/api/instacart_shopping_list] fetch error:', err.message);
     return NextResponse.json({ error: 'Could not reach Instacart' }, { status: 502 });
   }
 
   if (!response.ok) {
     const text = await response.text().catch(() => '');
-    console.error('[/api/instacart_list] Instacart error:', response.status, text);
+    console.error('[/api/instacart_shopping_list] Instacart error:', response.status, text);
     return NextResponse.json(
       { error: `Instacart returned ${response.status}` },
       { status: response.status >= 500 ? 502 : response.status }
@@ -190,8 +167,8 @@ export async function POST(request) {
 
   const rawUrl = json?.products_link_url ?? null;
   if (!rawUrl) {
-    console.error('[/api/instacart_list] unexpected response shape:', JSON.stringify(json));
-    return NextResponse.json({ error: 'No recipe URL in Instacart response' }, { status: 502 });
+    console.error('[/api/instacart_shopping_list] unexpected response shape:', JSON.stringify(json));
+    return NextResponse.json({ error: 'No shopping list URL in Instacart response' }, { status: 502 });
   }
 
   return NextResponse.json({ url: buildAffiliateUrl(rawUrl) });

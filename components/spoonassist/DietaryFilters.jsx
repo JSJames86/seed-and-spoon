@@ -3,7 +3,7 @@
 const DIETARY_OPTIONS = [
   { id: 'gluten-free', label: 'Gluten-Free', color: 'yellow' },
   { id: 'low-carb', label: 'Low-Carb', color: 'blue' },
-  { id: 'diabetic', label: 'Diabetic', color: 'purple' },
+  { id: 'low-sugar', label: 'Low-Sugar', color: 'purple' },
   { id: 'vegan', label: 'Vegan', color: 'green' }
 ];
 
@@ -63,6 +63,9 @@ export default function DietaryFilters({ selectedFilters, onChange }) {
           ).join(', ')}
         </p>
       )}
+      <p className="mt-3 text-xs text-gray-400">
+        Dietary preferences are for reference only and do not constitute medical advice.
+      </p>
     </div>
   );
 }

@@ -10,6 +10,8 @@ import DietaryFilters from '@/components/spoonassist/DietaryFilters';
 import CostResultsTable from '@/components/spoonassist/CostResultsTable';
 import CSVExportButton from '@/components/spoonassist/CSVExportButton';
 import PoweredBy from '@/components/spoonassist/PoweredBy';
+import InstacartCTA from '@/components/spoonassist/InstacartCTA';
+import InstacartRetailerSelector from '@/components/spoonassist/InstacartRetailerSelector';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
 
@@ -25,12 +27,15 @@ export default function SpoonAssistPage() {
   const [summary, setSummary] = useState(null);
   const [zipCode, setZipCode] = useState('');
   const [instacartUrl, setInstacartUrl] = useState(null);
+  const [instacartRetailers, setInstacartRetailers] = useState([]);
+  const [selectedRetailerKey, setSelectedRetailerKey] = useState(null);
   const [features, setFeatures] = useState({ kroger: false, instacart: false });
   const [loading, setLoading] = useState({
     recipes: false,
     stores: false,
     calculation: false,
     instacart: false,
+    instacartRetailers: false,
   });
   const [error, setError] = useState(null);
 
@@ -82,17 +87,23 @@ export default function SpoonAssistPage() {
 
   const handleFindStores = async (zip) => {
     setZipCode(zip);
+    setSelectedRetailerKey(null);
     setLoading(prev => ({ ...prev, stores: true }));
     setError(null);
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/stores/?zip=${zip}`);
-      if (!response.ok) throw new Error('Failed to fetch stores');
+    const fetches = [fetch(`${API_BASE_URL}/stores/?zip=${zip}`)];
+    if (features.instacart) {
+      fetches.push(fetch(`${API_BASE_URL}/instacart_retailers/?zip=${zip}`));
+      setLoading(prev => ({ ...prev, instacartRetailers: true }));
+    }
 
-      const data = await response.json();
+    const [storesRes, retailersRes] = await Promise.allSettled(fetches);
+
+    try {
+      if (storesRes.status === 'rejected' || !storesRes.value.ok) throw new Error('Failed to fetch stores');
+      const data = await storesRes.value.json();
       const storesList = data.stores || data || [];
       setStores(storesList);
-      // Auto-select all stores
       setSelectedStores(storesList.map(s => s.id));
     } catch (err) {
       setError('Could not find stores for this ZIP code.');
@@ -100,6 +111,19 @@ export default function SpoonAssistPage() {
       setStores([]);
     } finally {
       setLoading(prev => ({ ...prev, stores: false }));
+    }
+
+    if (retailersRes) {
+      try {
+        if (retailersRes.status === 'fulfilled' && retailersRes.value.ok) {
+          const data = await retailersRes.value.json();
+          setInstacartRetailers(data.retailers || []);
+        }
+      } catch {
+        setInstacartRetailers([]);
+      } finally {
+        setLoading(prev => ({ ...prev, instacartRetailers: false }));
+      }
     }
   };
 
@@ -151,28 +175,88 @@ export default function SpoonAssistPage() {
     }
   };
 
+  // Cache helpers — store generated Instacart URLs in localStorage keyed by
+  // recipe ID + ingredient fingerprint so we reuse them until they expire.
+  const CACHE_TTL_MS = 29 * 24 * 60 * 60 * 1000; // 29 days (Instacart expires at 30)
+
+  function instacartCacheKey(recipeId, ings) {
+    const fingerprint = ings.map(i => `${i.name}:${i.quantity}:${i.unit}`).sort().join('|');
+    return `instacart_url_${recipeId}_${fingerprint}`;
+  }
+
+  function readCachedUrl(key) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return null;
+      const { url, expiresAt } = JSON.parse(raw);
+      if (Date.now() > expiresAt) { localStorage.removeItem(key); return null; }
+      return url;
+    } catch { return null; }
+  }
+
+  function writeCachedUrl(key, url) {
+    try {
+      localStorage.setItem(key, JSON.stringify({ url, expiresAt: Date.now() + CACHE_TTL_MS }));
+    } catch { /* storage full or unavailable */ }
+  }
+
   const handleShopOnInstacart = async () => {
     setLoading(prev => ({ ...prev, instacart: true }));
     setInstacartUrl(null);
 
+    const isRecipe = !!selectedRecipe;
+    const ingList  = ingredients.map(ing => ({ name: ing.name, quantity: ing.quantity, unit: ing.unit }));
+
+    // Check cache for recipe pages (shopping lists have no stable ID to key on)
+    if (isRecipe && selectedRecipe.id != null) {
+      const cacheKey = instacartCacheKey(selectedRecipe.id, ingList);
+      const cached   = readCachedUrl(cacheKey);
+      if (cached) {
+        setInstacartUrl(cached);
+        window.open(cached, '_blank', 'noopener,noreferrer');
+        setLoading(prev => ({ ...prev, instacart: false }));
+        return;
+      }
+    }
+
+    const endpoint = isRecipe
+      ? `${API_BASE_URL}/instacart_list/`
+      : `${API_BASE_URL}/instacart_shopping_list/`;
+
+    const payload = isRecipe
+      ? {
+          recipeTitle:    selectedRecipe.title,
+          recipeId:       selectedRecipe.id ?? null,
+          imageUrl:       selectedRecipe.image || null,
+          instructions:   selectedRecipe.instructions || [],
+          dietaryFilters: dietaryFilters,
+          retailerKey:    selectedRetailerKey,
+          ingredients:    ingList,
+        }
+      : {
+          title:          'My Ingredient List',
+          dietaryFilters: dietaryFilters,
+          retailerKey:    selectedRetailerKey,
+          ingredients:    ingList,
+        };
+
     try {
-      const response = await fetch(`${API_BASE_URL}/instacart_list/`, {
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          recipeTitle: selectedRecipe?.title || 'My Recipe',
-          ingredients: ingredients.map(ing => ({
-            name:     ing.name,
-            quantity: ing.quantity,
-            unit:     ing.unit,
-          })),
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Failed to create shopping list');
+
       setInstacartUrl(data.url);
       window.open(data.url, '_blank', 'noopener,noreferrer');
+
+      // Persist for future clicks on the same recipe + ingredient set
+      if (isRecipe && selectedRecipe.id != null) {
+        writeCachedUrl(instacartCacheKey(selectedRecipe.id, ingList), data.url);
+      }
     } catch (err) {
       setError('Could not create Instacart shopping list. Please try again.');
       console.error('Instacart list error:', err);
@@ -283,6 +367,14 @@ export default function SpoonAssistPage() {
             onStoreChange={setSelectedStores}
             loading={loading.stores}
           />
+          {features.instacart && (
+            <InstacartRetailerSelector
+              retailers={instacartRetailers}
+              selectedKey={selectedRetailerKey}
+              onChange={setSelectedRetailerKey}
+              loading={loading.instacartRetailers}
+            />
+          )}
         </section>
 
         {/* Section 4: Dietary Filters */}
@@ -303,13 +395,24 @@ export default function SpoonAssistPage() {
                 {ingredients.length} ingredients • {selectedStores.length} stores selected
               </p>
             </div>
-            <button
-              onClick={handleCalculateCost}
-              disabled={loading.calculation || ingredients.length === 0 || selectedStores.length === 0}
-              className="px-8 py-3 bg-green-600 text-white text-lg font-bold rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-lg"
-            >
-              {loading.calculation ? 'Calculating...' : 'Calculate Costs'}
-            </button>
+            {/* CTAs side-by-side per Instacart placement guidelines */}
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                onClick={handleCalculateCost}
+                disabled={loading.calculation || ingredients.length === 0 || selectedStores.length === 0}
+                className="px-8 py-3 bg-green-600 text-white text-lg font-bold rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-lg"
+              >
+                {loading.calculation ? 'Calculating...' : 'Calculate Costs'}
+              </button>
+              {features.instacart && (
+                <InstacartCTA
+                  onClick={handleShopOnInstacart}
+                  loading={loading.instacart}
+                  disabled={ingredients.length === 0}
+                  text="Shop ingredients"
+                />
+              )}
+            </div>
           </div>
         </section>
 
@@ -349,20 +452,19 @@ export default function SpoonAssistPage() {
 
             {/* Shop on Instacart CTA — only rendered when key is configured */}
             {features.instacart && (
-              <div className="mt-6 p-5 bg-orange-50 border border-orange-200 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="mt-6 p-5 bg-[#F5FAF7] border border-[#003D29]/20 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                  <p className="font-semibold text-orange-900">Ready to shop?</p>
-                  <p className="text-sm text-orange-700 mt-0.5">
-                    Send this recipe&apos;s ingredients straight to your Instacart cart — delivery or pickup at local stores.
+                  <p className="font-semibold text-gray-900">Ready to shop?</p>
+                  <p className="text-sm text-gray-600 mt-0.5">
+                    Add this recipe&apos;s ingredients to your cart via the Instacart® service — delivery or pickup at local stores.
                   </p>
                 </div>
-                <button
+                <InstacartCTA
                   onClick={handleShopOnInstacart}
-                  disabled={loading.instacart || ingredients.length === 0}
-                  className="shrink-0 px-6 py-3 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold rounded-lg transition-colors shadow-md whitespace-nowrap"
-                >
-                  {loading.instacart ? 'Creating list…' : 'Shop on Instacart'}
-                </button>
+                  loading={loading.instacart}
+                  disabled={ingredients.length === 0}
+                  text="Shop ingredients"
+                />
               </div>
             )}
           </section>
@@ -384,8 +486,22 @@ export default function SpoonAssistPage() {
 
         {/* Footer */}
         <footer className="mt-8 text-center text-sm text-gray-500">
-          <p>SpoonAssist is a service by Seed & Spoon</p>
+          <p>SpoonAssist is a service by Seed &amp; Spoon</p>
           <p className="mt-1">Helping you save money on healthy, delicious meals</p>
+          {features.instacart && (
+            <p className="mt-4 text-xs text-gray-400 max-w-2xl mx-auto">
+              Instacart® is a registered trademark of Maplebear Inc. d/b/a Instacart.
+              Instacart may not be available in all zip codes.{' '}
+              <a
+                href="https://www.instacart.com/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-gray-600"
+              >
+                See Instacart Terms of Service for more details.
+              </a>
+            </p>
+          )}
         </footer>
       </main>
     </div>
