@@ -101,11 +101,18 @@ export async function POST(request) {
 
   const mappedIngredients = ingredients
     .filter(ing => ing?.name?.trim())
-    .map(ing => ({
-      name:         ing.name.trim(),
-      display_text: [ing.quantity, ing.unit, ing.name].filter(Boolean).join(' ').trim(),
-      measurements: [{ quantity: Number(ing.quantity) || 1, unit: normalizeUnit(ing.unit) }],
-    }));
+    .map(ing => {
+      const mapped = {
+        name:     ing.name.trim(),
+        quantity: Number(ing.quantity) || 1,
+        unit:     normalizeUnit(ing.unit),
+      };
+      // Attach health_filters from dietary preferences when provided
+      if (Array.isArray(ing.healthFilters) && ing.healthFilters.length > 0) {
+        mapped.filters = { health_filters: ing.healthFilters };
+      }
+      return mapped;
+    });
 
   if (mappedIngredients.length === 0) {
     return NextResponse.json({ error: 'No valid ingredients provided' }, { status: 400 });
