@@ -9,6 +9,7 @@ import StoreSelector from '@/components/spoonassist/StoreSelector';
 import DietaryFilters from '@/components/spoonassist/DietaryFilters';
 import CostResultsTable from '@/components/spoonassist/CostResultsTable';
 import CSVExportButton from '@/components/spoonassist/CSVExportButton';
+import PoweredBy from '@/components/spoonassist/PoweredBy';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
 
@@ -367,8 +368,22 @@ export default function SpoonAssistPage() {
           </section>
         )}
 
+        {/* Data Partners */}
+        <section className="mt-10 pt-8 border-t border-gray-200">
+          <p className="text-xs text-gray-400 uppercase tracking-wide font-semibold mb-3 text-center">
+            Data Partners
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <PoweredBy compact sources={[
+              ...(features.kroger    ? ['kroger']    : []),
+              ...(features.instacart ? ['instacart'] : []),
+              'usda',
+            ]} />
+          </div>
+        </section>
+
         {/* Footer */}
-        <footer className="mt-12 text-center text-sm text-gray-500">
+        <footer className="mt-8 text-center text-sm text-gray-500">
           <p>SpoonAssist is a service by Seed & Spoon</p>
           <p className="mt-1">Helping you save money on healthy, delicious meals</p>
         </footer>
