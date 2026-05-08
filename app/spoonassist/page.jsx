@@ -304,13 +304,24 @@ export default function SpoonAssistPage() {
                 {ingredients.length} ingredients • {selectedStores.length} stores selected
               </p>
             </div>
-            <button
-              onClick={handleCalculateCost}
-              disabled={loading.calculation || ingredients.length === 0 || selectedStores.length === 0}
-              className="px-8 py-3 bg-green-600 text-white text-lg font-bold rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-lg"
-            >
-              {loading.calculation ? 'Calculating...' : 'Calculate Costs'}
-            </button>
+            {/* CTAs side-by-side per Instacart placement guidelines */}
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                onClick={handleCalculateCost}
+                disabled={loading.calculation || ingredients.length === 0 || selectedStores.length === 0}
+                className="px-8 py-3 bg-green-600 text-white text-lg font-bold rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-lg"
+              >
+                {loading.calculation ? 'Calculating...' : 'Calculate Costs'}
+              </button>
+              {features.instacart && (
+                <InstacartCTA
+                  onClick={handleShopOnInstacart}
+                  loading={loading.instacart}
+                  disabled={ingredients.length === 0}
+                  text="Shop ingredients"
+                />
+              )}
+            </div>
           </div>
         </section>
 
