@@ -456,7 +456,7 @@ export default function SpoonAssistPage() {
                 <div>
                   <p className="font-semibold text-gray-900">Ready to shop?</p>
                   <p className="text-sm text-gray-600 mt-0.5">
-                    Send this recipe&apos;s ingredients straight to your Instacart cart — delivery or pickup at local stores.
+                    Add this recipe&apos;s ingredients to your cart via the Instacart® service — delivery or pickup at local stores.
                   </p>
                 </div>
                 <InstacartCTA
@@ -486,8 +486,22 @@ export default function SpoonAssistPage() {
 
         {/* Footer */}
         <footer className="mt-8 text-center text-sm text-gray-500">
-          <p>SpoonAssist is a service by Seed & Spoon</p>
+          <p>SpoonAssist is a service by Seed &amp; Spoon</p>
           <p className="mt-1">Helping you save money on healthy, delicious meals</p>
+          {features.instacart && (
+            <p className="mt-4 text-xs text-gray-400 max-w-2xl mx-auto">
+              Instacart® is a registered trademark of Maplebear Inc. d/b/a Instacart.
+              Instacart may not be available in all zip codes.{' '}
+              <a
+                href="https://www.instacart.com/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-gray-600"
+              >
+                See Instacart Terms of Service for more details.
+              </a>
+            </p>
+          )}
         </footer>
       </main>
     </div>

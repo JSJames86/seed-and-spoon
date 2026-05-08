@@ -32,7 +32,7 @@ const PARTNERS = {
     ),
   },
   instacart: {
-    label:   'Instacart',
+    label:   'Instacart®',   // ® required by Instacart trademark guidelines
     href:    'https://www.instacart.com',
     bg:      'bg-[#003D29]',
     text:    'text-[#FAF1E5]',
