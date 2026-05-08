@@ -15,55 +15,53 @@ function buildAffiliateUrl(rawUrl) {
 }
 
 // Maps common recipe shorthand to Instacart's accepted unit strings.
-// Instacart is lenient with many units (oz, lb, g, tsp, cup, each, can, etc.)
-// but rejects "tbsp", "fluid oz", "pkg", and a few other common shorthands.
 const UNIT_MAP = {
-  tbsp:        'tablespoon',
-  tbs:         'tablespoon',
-  t:           'tablespoon',
-  tablespoons: 'tablespoon',
-  teaspoons:   'teaspoon',
-  fl_oz:       'fl oz ounce',
-  'fl.oz':     'fl oz ounce',
-  floz:        'fl oz ounce',
-  'fluid oz':  'fl oz ounce',
-  'fluid ounce':'fl oz ounce',
+  tbsp:          'tablespoon',
+  tbs:           'tablespoon',
+  t:             'tablespoon',
+  tablespoons:   'tablespoon',
+  teaspoons:     'teaspoon',
+  fl_oz:         'fl oz ounce',
+  'fl.oz':       'fl oz ounce',
+  floz:          'fl oz ounce',
+  'fluid oz':    'fl oz ounce',
+  'fluid ounce': 'fl oz ounce',
   'fluid ounces':'fl oz ounce',
-  pkg:         'package',
-  pkgs:        'packages',
-  pkt:         'packet',
-  gal:         'gallon',
-  gals:        'gallon',
-  gallons:     'gallon',
-  milliliters: 'ml',
-  millilitres: 'ml',
-  milliliter:  'ml',
-  millilitre:  'ml',
-  mls:         'ml',
-  liters:      'liter',
-  litres:      'liter',
-  litre:       'liter',
-  kilograms:   'kilogram',
-  kilos:       'kilogram',
-  kilo:        'kilogram',
-  kgs:         'kilogram',
-  grams:       'gram',
-  ounces:      'ounce',
-  pounds:      'pound',
-  pints:       'pint',
-  pts:         'pint',
-  quarts:      'quart',
-  qts:         'quart',
-  bunches:     'bunch',
-  cans:        'can',
-  heads:       'head',
-  packages:    'package',
-  lrg:         'large',
-  lge:         'large',
-  lg:          'large',
-  med:         'medium',
-  md:          'medium',
-  sm:          'small',
+  pkg:           'package',
+  pkgs:          'packages',
+  pkt:           'packet',
+  gal:           'gallon',
+  gals:          'gallon',
+  gallons:       'gallon',
+  milliliters:   'ml',
+  millilitres:   'ml',
+  milliliter:    'ml',
+  millilitre:    'ml',
+  mls:           'ml',
+  liters:        'liter',
+  litres:        'liter',
+  litre:         'liter',
+  kilograms:     'kilogram',
+  kilos:         'kilogram',
+  kilo:          'kilogram',
+  kgs:           'kilogram',
+  grams:         'gram',
+  ounces:        'ounce',
+  pounds:        'pound',
+  pints:         'pint',
+  pts:           'pint',
+  quarts:        'quart',
+  qts:           'quart',
+  bunches:       'bunch',
+  cans:          'can',
+  heads:         'head',
+  packages:      'package',
+  lrg:           'large',
+  lge:           'large',
+  lg:            'large',
+  med:           'medium',
+  md:            'medium',
+  sm:            'small',
 };
 
 function normalizeUnit(raw) {
@@ -80,6 +78,11 @@ function toAbsoluteImageUrl(imagePath) {
   return `${siteUrl.replace(/\/$/, '')}${imagePath}`;
 }
 
+const HEALTH_FILTER_MAP = {
+  'gluten-free': 'GLUTEN_FREE',
+  'vegan':       'VEGAN',
+};
+
 export async function POST(request) {
   const apiKey = process.env.INSTACART_API_KEY;
   if (!apiKey) {
@@ -93,18 +96,19 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const { ingredients, recipeTitle, imageUrl, instructions, dietaryFilters } = body;
+  const {
+    ingredients,
+    recipeTitle,
+    imageUrl,
+    instructions,
+    dietaryFilters,
+    recipeId,
+  } = body;
 
   if (!Array.isArray(ingredients) || ingredients.length === 0) {
     return NextResponse.json({ error: 'ingredients array is required' }, { status: 400 });
   }
 
-  // Map app dietary filter IDs to Instacart's health_filters enum
-  const HEALTH_FILTER_MAP = {
-    'gluten-free': 'GLUTEN_FREE',
-    'vegan':       'VEGAN',
-    // 'low-carb' and 'diabetic' have no Instacart equivalent
-  };
   const healthFilters = (Array.isArray(dietaryFilters) ? dietaryFilters : [])
     .map(f => HEALTH_FILTER_MAP[f])
     .filter(Boolean);
@@ -112,15 +116,15 @@ export async function POST(request) {
   const mappedIngredients = ingredients
     .filter(ing => ing?.name?.trim())
     .map(ing => {
-      const mapped = {
-        name:     ing.name.trim(),
-        quantity: Number(ing.quantity) || 1,
-        unit:     normalizeUnit(ing.unit),
+      const item = {
+        name:         ing.name.trim(),
+        display_text: [ing.quantity, ing.unit, ing.name].filter(Boolean).join(' ').trim(),
+        measurements: [{ quantity: Number(ing.quantity) || 1, unit: normalizeUnit(ing.unit) }],
       };
       if (healthFilters.length > 0) {
-        mapped.filters = { health_filters: healthFilters };
+        item.filters = { health_filters: healthFilters };
       }
-      return mapped;
+      return item;
     });
 
   if (mappedIngredients.length === 0) {
@@ -128,9 +132,8 @@ export async function POST(request) {
   }
 
   const payload = {
-    title:        recipeTitle?.trim() || 'My Recipe',
-    link_type:    'recipe',
-    ingredients:  mappedIngredients,
+    title:       recipeTitle?.trim() || 'My Recipe',
+    ingredients: mappedIngredients,
     landing_page_configuration: {
       partner_linkback_url: LINKBACK_URL,
       enable_pantry_items:  true,
@@ -142,6 +145,10 @@ export async function POST(request) {
 
   if (Array.isArray(instructions) && instructions.length > 0) {
     payload.instructions = instructions.map(String);
+  }
+
+  if (recipeId != null) {
+    payload.external_reference_id = String(recipeId);
   }
 
   let response;

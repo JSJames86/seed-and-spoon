@@ -165,6 +165,7 @@ export default function SpoonAssistPage() {
     const payload = isRecipe
       ? {
           recipeTitle:    selectedRecipe.title,
+          recipeId:       selectedRecipe.id ?? null,
           imageUrl:       selectedRecipe.image || null,
           instructions:   selectedRecipe.instructions || [],
           dietaryFilters: dietaryFilters,
