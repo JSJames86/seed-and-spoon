@@ -103,6 +103,7 @@ export async function POST(request) {
     instructions,
     dietaryFilters,
     recipeId,
+    retailerKey,
   } = body;
 
   if (!Array.isArray(ingredients) || ingredients.length === 0) {
@@ -131,13 +132,16 @@ export async function POST(request) {
     return NextResponse.json({ error: 'No valid ingredients provided' }, { status: 400 });
   }
 
+  const landingConfig = {
+    partner_linkback_url: LINKBACK_URL,
+    enable_pantry_items:  true,
+  };
+  if (retailerKey) landingConfig.retailer_key = retailerKey;
+
   const payload = {
     title:       recipeTitle?.trim() || 'My Recipe',
     ingredients: mappedIngredients,
-    landing_page_configuration: {
-      partner_linkback_url: LINKBACK_URL,
-      enable_pantry_items:  true,
-    },
+    landing_page_configuration: landingConfig,
   };
 
   const absoluteImage = toAbsoluteImageUrl(imageUrl);

@@ -11,6 +11,7 @@ import CostResultsTable from '@/components/spoonassist/CostResultsTable';
 import CSVExportButton from '@/components/spoonassist/CSVExportButton';
 import PoweredBy from '@/components/spoonassist/PoweredBy';
 import InstacartCTA from '@/components/spoonassist/InstacartCTA';
+import InstacartRetailerSelector from '@/components/spoonassist/InstacartRetailerSelector';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
 
@@ -26,12 +27,15 @@ export default function SpoonAssistPage() {
   const [summary, setSummary] = useState(null);
   const [zipCode, setZipCode] = useState('');
   const [instacartUrl, setInstacartUrl] = useState(null);
+  const [instacartRetailers, setInstacartRetailers] = useState([]);
+  const [selectedRetailerKey, setSelectedRetailerKey] = useState(null);
   const [features, setFeatures] = useState({ kroger: false, instacart: false });
   const [loading, setLoading] = useState({
     recipes: false,
     stores: false,
     calculation: false,
     instacart: false,
+    instacartRetailers: false,
   });
   const [error, setError] = useState(null);
 
@@ -83,17 +87,23 @@ export default function SpoonAssistPage() {
 
   const handleFindStores = async (zip) => {
     setZipCode(zip);
+    setSelectedRetailerKey(null);
     setLoading(prev => ({ ...prev, stores: true }));
     setError(null);
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/stores/?zip=${zip}`);
-      if (!response.ok) throw new Error('Failed to fetch stores');
+    const fetches = [fetch(`${API_BASE_URL}/stores/?zip=${zip}`)];
+    if (features.instacart) {
+      fetches.push(fetch(`${API_BASE_URL}/instacart_retailers/?zip=${zip}`));
+      setLoading(prev => ({ ...prev, instacartRetailers: true }));
+    }
 
-      const data = await response.json();
+    const [storesRes, retailersRes] = await Promise.allSettled(fetches);
+
+    try {
+      if (storesRes.status === 'rejected' || !storesRes.value.ok) throw new Error('Failed to fetch stores');
+      const data = await storesRes.value.json();
       const storesList = data.stores || data || [];
       setStores(storesList);
-      // Auto-select all stores
       setSelectedStores(storesList.map(s => s.id));
     } catch (err) {
       setError('Could not find stores for this ZIP code.');
@@ -101,6 +111,19 @@ export default function SpoonAssistPage() {
       setStores([]);
     } finally {
       setLoading(prev => ({ ...prev, stores: false }));
+    }
+
+    if (retailersRes) {
+      try {
+        if (retailersRes.status === 'fulfilled' && retailersRes.value.ok) {
+          const data = await retailersRes.value.json();
+          setInstacartRetailers(data.retailers || []);
+        }
+      } catch {
+        setInstacartRetailers([]);
+      } finally {
+        setLoading(prev => ({ ...prev, instacartRetailers: false }));
+      }
     }
   };
 
@@ -169,11 +192,13 @@ export default function SpoonAssistPage() {
           imageUrl:       selectedRecipe.image || null,
           instructions:   selectedRecipe.instructions || [],
           dietaryFilters: dietaryFilters,
+          retailerKey:    selectedRetailerKey,
           ingredients:    ingredients.map(ing => ({ name: ing.name, quantity: ing.quantity, unit: ing.unit })),
         }
       : {
           title:          'My Ingredient List',
           dietaryFilters: dietaryFilters,
+          retailerKey:    selectedRetailerKey,
           ingredients:    ingredients.map(ing => ({ name: ing.name, quantity: ing.quantity, unit: ing.unit })),
         };
 
@@ -298,6 +323,14 @@ export default function SpoonAssistPage() {
             onStoreChange={setSelectedStores}
             loading={loading.stores}
           />
+          {features.instacart && (
+            <InstacartRetailerSelector
+              retailers={instacartRetailers}
+              selectedKey={selectedRetailerKey}
+              onChange={setSelectedRetailerKey}
+              loading={loading.instacartRetailers}
+            />
+          )}
         </section>
 
         {/* Section 4: Dietary Filters */}

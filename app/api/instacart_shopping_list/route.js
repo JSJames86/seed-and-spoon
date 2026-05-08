@@ -88,7 +88,7 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const { ingredients, title, dietaryFilters } = body;
+  const { ingredients, title, dietaryFilters, retailerKey } = body;
 
   if (!Array.isArray(ingredients) || ingredients.length === 0) {
     return NextResponse.json({ error: 'ingredients array is required' }, { status: 400 });
@@ -119,14 +119,17 @@ export async function POST(request) {
     return NextResponse.json({ error: 'No valid ingredients provided' }, { status: 400 });
   }
 
+  const landingConfig = {
+    partner_linkback_url: LINKBACK_URL,
+    enable_pantry_items:  true,
+  };
+  if (retailerKey) landingConfig.retailer_key = retailerKey;
+
   const payload = {
     title:     title?.trim() || 'My Shopping List',
     link_type: 'shopping_list',
     line_items: lineItems,
-    landing_page_configuration: {
-      partner_linkback_url: LINKBACK_URL,
-      enable_pantry_items:  true,
-    },
+    landing_page_configuration: landingConfig,
   };
 
   let response;
