@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const BASE_URL = process.env.NODE_ENV === 'production'
-  ? 'https://connect.instacart.com'
-  : 'https://connect.dev.instacart.tools';
+const BASE_URL = process.env.INSTACART_BASE_URL || 'https://connect.dev.instacart.tools';
 
 export async function GET(request) {
   const apiKey = process.env.INSTACART_API_KEY;
