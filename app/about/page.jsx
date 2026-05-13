@@ -383,6 +383,9 @@ export default function AboutPage() {
         {/* FAQ Section */}
         <FAQSection />
 
+        {/* Transparency & Credentials Section */}
+        <CredentialsSection />
+
         {/* Call to Action Section */}
         <CTASection />
       </main>
@@ -730,6 +733,52 @@ function FAQSection() {
 
         <div className="max-w-4xl mx-auto">
           <FAQAccordion questions={CONTENT.faq.questions} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CredentialsSection() {
+  const badges = [
+    'UEI: JZQRPU1GRRM6',
+    'CAGE: 207U1',
+    'SAM.gov Active',
+    'Woman-Owned',
+    '501(c)(3) Pending',
+    'NJ Registered Nonprofit',
+  ];
+
+  return (
+    <section className="py-16 bg-white">
+      <div className="container mx-auto px-6 max-w-4xl">
+        <div className="mt-16 pt-12 border-t border-gray-100">
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Transparency &amp; Federal Credentials
+          </h2>
+          <p className="text-gray-500 text-sm mb-6 max-w-xl">
+            Seed &amp; Spoon is registered with SAM.gov and eligible for federal awards and grants.
+            We&apos;re committed to full organizational transparency.
+          </p>
+
+          <div className="flex flex-wrap gap-3 mb-6">
+            {badges.map((badge) => (
+              <span
+                key={badge}
+                className="text-xs bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full font-medium"
+              >
+                {badge}
+              </span>
+            ))}
+          </div>
+
+          <a
+            href="/documents/capability-statement.pdf"
+            download
+            className="inline-flex items-center gap-2 text-sm text-[#2d5a27] font-semibold hover:underline"
+          >
+            ↓ Download Full Capability Statement
+          </a>
         </div>
       </div>
     </section>
