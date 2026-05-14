@@ -45,6 +45,7 @@ export function useConsent() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    let timer;
     try {
       const stored = localStorage.getItem(CONSENT_STORAGE_KEY);
       if (stored) {
@@ -59,17 +60,19 @@ export function useConsent() {
           // Apply consent settings
           applyConsentSettings(parsed.preferences);
         } else {
-          // Version mismatch - show banner again
-          setShowBanner(true);
+          // Version mismatch - delay banner so hero LCP is captured first
+          timer = setTimeout(() => setShowBanner(true), 3000);
         }
       } else {
-        // No stored consent - show banner
-        setShowBanner(true);
+        // No stored consent - delay banner so hero LCP is captured first
+        timer = setTimeout(() => setShowBanner(true), 3000);
       }
     } catch (error) {
       console.error('Error loading consent preferences:', error);
-      setShowBanner(true);
+      timer = setTimeout(() => setShowBanner(true), 3000);
     }
+
+    return () => clearTimeout(timer);
   }, []);
 
   // Apply consent settings (enable/disable cookies, analytics, etc.)
