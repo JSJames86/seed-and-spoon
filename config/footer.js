@@ -53,6 +53,7 @@ export const columns = [
       { label: "Team & Board", href: "/about/team" },
       { label: "Careers", href: "/careers" },
       { label: "Press & Media Kit", href: "/press" },
+      { label: "Capability Statement", href: "/capability-statement" },
       { label: "Contact", href: "/contact" },
     ],
   },
