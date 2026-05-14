@@ -24,12 +24,8 @@ export const metadata = {
 import Header from "@/components/Header";  // Capital H, exact match
 import Hero from "@/components/Hero";
 import WhyThisMatters from "@/components/WhyThisMatters";
-import dynamic from "next/dynamic";
+import StoryScroll from "@/components/StoryScroll";
 import SpoonAssistFeature from "@/components/SpoonAssistFeature";
-
-// GSAP (~40 KB) is only needed when the user scrolls; lazy-load the whole
-// component so it's excluded from the initial page bundle.
-const StoryScroll = dynamic(() => import("@/components/StoryScroll"));
 
 export default function Home() {
   return (

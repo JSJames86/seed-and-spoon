@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useLayoutEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -60,7 +60,7 @@ export default function StoryScroll() {
   useRevealOnScroll(storyHeaderRef, { duration: 0.8 });
   useRevealOnScroll(manifestoRef, { duration: 0.8 });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Check for reduced motion preference
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
