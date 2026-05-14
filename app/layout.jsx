@@ -7,6 +7,7 @@ import CookieBanner from "@/components/CookieBanner";
 import CookieSettingsModal from "@/components/CookieSettingsModal";
 import AnalyticsLoader from "@/components/AnalyticsLoader";
 import Providers from "@/components/Providers";
+import { SubscribePopupTrigger } from "@/components/email/SubscribeModal";
 import { Libre_Franklin, Roboto_Slab, Crimson_Text } from 'next/font/google';
 
 const libreFranklin = Libre_Franklin({
@@ -84,6 +85,9 @@ export default function RootLayout({ children }) {
 
           {/* Analytics - Loads only after consent */}
           <AnalyticsLoader />
+
+          {/* Email subscription popup */}
+          <SubscribePopupTrigger />
         </Providers>
       </body>
     </html>
