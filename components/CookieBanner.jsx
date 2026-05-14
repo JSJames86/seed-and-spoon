@@ -11,12 +11,6 @@ export default function CookieBanner() {
 
   return (
     <>
-      {/* Backdrop overlay for focus */}
-      <div
-        className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 transition-opacity duration-300"
-        aria-hidden="true"
-      />
-
       {/* Cookie Banner */}
       <div
         role="dialog"
