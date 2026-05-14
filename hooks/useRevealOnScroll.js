@@ -1,42 +1,79 @@
 "use client";
 
 import { useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-export function useRevealOnScroll(ref, options = {}) {
-  const { y = 24, duration = 0.7, delay = 0 } = options;
+// Register ScrollTrigger plugin (only runs in browser)
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
+/**
+ * Custom hook for revealing elements on scroll with GSAP
+ *
+ * @param {React.RefObject} ref - Reference to the element to animate
+ * @param {Object} options - Animation options
+ * @param {number} options.y - Initial Y offset (default: 24)
+ * @param {number} options.duration - Animation duration in seconds (default: 0.7)
+ * @param {string} options.ease - GSAP easing function (default: "power2.out")
+ * @param {string} options.start - ScrollTrigger start position (default: "top 80%")
+ * @param {number} options.delay - Animation delay in seconds (default: 0)
+ */
+export function useRevealOnScroll(
+  ref,
+  options = {}
+) {
+  const {
+    y = 24,
+    duration = 0.7,
+    ease = "power2.out",
+    start = "top 80%",
+    delay = 0,
+  } = options;
 
   useEffect(() => {
     const element = ref.current;
     if (!element) return;
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
 
-    Object.assign(element.style, {
-      opacity: "0",
-      transform: `translateY(${y}px)`,
-      transition: `opacity ${duration}s ease, transform ${duration}s ease`,
-      transitionDelay: `${delay}s`,
-    });
+    // If user prefers reduced motion, just set final state
+    if (prefersReducedMotion) {
+      gsap.set(element, { opacity: 1, y: 0 });
+      return;
+    }
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          element.style.opacity = "1";
-          element.style.transform = "translateY(0)";
-          observer.unobserve(element);
-        }
+    // Animate the element
+    const animation = gsap.fromTo(
+      element,
+      {
+        opacity: 0,
+        y: y,
       },
-      { threshold: 0.15 }
+      {
+        opacity: 1,
+        y: 0,
+        duration: duration,
+        ease: ease,
+        delay: delay,
+        scrollTrigger: {
+          trigger: element,
+          start: start,
+          toggleActions: "play none none reverse",
+        },
+      }
     );
 
-    observer.observe(element);
-
+    // Cleanup function
     return () => {
-      observer.disconnect();
-      element.style.opacity = "";
-      element.style.transform = "";
-      element.style.transition = "";
-      element.style.transitionDelay = "";
+      if (animation.scrollTrigger) {
+        animation.scrollTrigger.kill();
+      }
+      animation.kill();
     };
-  }, [ref, y, duration, delay]);
+  }, [ref, y, duration, ease, start, delay]);
 }
