@@ -7,6 +7,7 @@
     "build": "bun --bun next build",
     "start": "bun --bun next start",
     "lint": "bun --bun next lint",
+    "postbuild": "next-sitemap",
     "import:resources": "bun run scripts/import-resources.js"
   },
   "dependencies": {
@@ -25,6 +26,7 @@
     "leaflet": "^1.9.4",
     "nanoid": "^5.1.6",
     "next": "^15.5.7",
+    "next-sitemap": "^4.2.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.1",
