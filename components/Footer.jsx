@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import FooterVisual from "./FooterVisual";
 import { InstagramIcon, TikTokIcon, ThreadsIcon, XIcon, FacebookIcon } from "./icons";
 import { org, cta, columns, socials } from "@/config/footer";
 import CapabilityStatementViewer from "./CapabilityStatementViewer";
+import { SubscribeFooter } from "./email/SubscribeFooter";
 
 // Icon mapping for socials
 const iconMap = {
@@ -17,19 +17,6 @@ const iconMap = {
 };
 
 export default function Footer() {
-  const [email, setEmail] = useState("");
-  const [subscribeStatus, setSubscribeStatus] = useState("");
-
-  const handleSubscribe = async (e) => {
-    e.preventDefault();
-    if (!email) return;
-
-    // TODO: Integrate with newsletter service (Mailchimp, ConvertKit, etc.)
-    setSubscribeStatus("Subscribed! Thank you.");
-    setEmail("");
-    setTimeout(() => setSubscribeStatus(""), 3000);
-  };
-
   const currentYear = new Date().getFullYear();
 
   return (
@@ -41,34 +28,7 @@ export default function Footer() {
       <div className="border-t border-neutral-100 bg-[var(--cream)] py-8 md:py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Newsletter Form */}
-          <div className="max-w-xl mx-auto text-center mb-6">
-            <p className="footer-heading mb-2">STAY CONNECTED</p>
-            <h2 className="heading-h3 text-[var(--charcoal)] mb-2">
-              Get <span className="text-[var(--green-primary)]">Updates</span>
-            </h2>
-            <p className="body-sm text-slate-600 mb-6">
-              Fresh food resources, volunteer opportunities, and impact stories—straight to your inbox.
-            </p>
-            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                required
-                className="form-input flex-1 px-5 py-3.5 rounded-full border-2 border-[var(--cream)] focus:outline-none text-sm transition-all duration-300 focus:border-[var(--green-primary)] focus:shadow-[0_0_0_3px_rgba(79,175,59,0.1)]"
-              />
-              <button
-                type="submit"
-                className="btn-primary px-8 py-3.5 bg-[var(--green-primary)] text-white rounded-full font-semibold body-sm hover:bg-[var(--leaf-mid)] hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--green-primary)] focus-visible:ring-offset-2 transition-all duration-300 shadow-green-glow hover:shadow-green-glow-lg"
-              >
-                Subscribe
-              </button>
-            </form>
-            {subscribeStatus && (
-              <p className="mt-3 body-sm font-bold text-[var(--green-primary)]">{subscribeStatus}</p>
-            )}
-          </div>
+          <SubscribeFooter />
 
           {/* CTA Chips */}
           <div className="flex flex-wrap justify-center gap-2 max-w-3xl mx-auto">
