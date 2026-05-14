@@ -48,7 +48,7 @@ function StatCard({ label, mainStat, percentage, description, delay = 0 }) {
       className="rounded-3xl bg-white shadow-sm border border-slate-100 p-5 md:p-6 hover:shadow-md transition-shadow duration-300"
     >
       {/* Label */}
-      <p className="label-xs text-[var(--green-primary)] mb-3">{label}</p>
+      <p className="label-xs text-[var(--dark-forest)] mb-3">{label}</p>
 
       {/* Main Stat */}
       <p className="heading-h3 text-[var(--charcoal)] mb-2">{mainStat}</p>

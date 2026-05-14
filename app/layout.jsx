@@ -39,7 +39,7 @@ export const metadata = {
     title: "Seed & Spoon NJ | Neighbors Feeding Neighbors",
     description:
       "From surplus rescue and pantry partners to prepared meals and skills workshops, Seed & Spoon NJ is building a community-powered food safety net in Essex County.",
-    url: "https://seedandspoonnj.org", // update to your live domain if different
+    url: "https://seedandspoon.org",
     images: ["/og-image.jpg"],
     type: "website",
   },
