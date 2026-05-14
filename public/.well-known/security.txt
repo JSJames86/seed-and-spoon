@@ -1,4 +1,0 @@
-Contact: mailto:hello@seedandspoon.org
-Expires: 2027-05-14T00:00:00.000Z
-Preferred-Languages: en
-Canonical: https://seedandspoon.org/.well-known/security.txt
