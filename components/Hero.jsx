@@ -4,6 +4,8 @@ import Button from "./Button";
 export default function Hero() {
   return (
     <section className="relative w-full overflow-hidden bg-[#F8F6F0]">
+      {/* Sentinel observed by Header to detect when hero is in view */}
+      <div id="hero-sentinel" className="absolute bottom-0 h-px w-full pointer-events-none" />
       {/* Background Image Layer */}
       <div className="absolute inset-0">
         <Image
