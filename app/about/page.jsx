@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import FAQAccordion from './FAQAccordion';
+import CapabilityStatementViewer from '@/components/CapabilityStatementViewer';
 
 // ============================================================================
 // EDITABLE CONTENT OBJECT
@@ -752,16 +753,16 @@ function CredentialsSection() {
   return (
     <section className="py-16 bg-white">
       <div className="container mx-auto px-6 max-w-4xl">
-        <div className="mt-16 pt-12 border-t border-gray-100">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            Transparency &amp; Federal Credentials
+        <div className="mt-16 pt-12 border-t border-gray-200">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Work With Us
           </h2>
-          <p className="text-gray-500 text-sm mb-6 max-w-xl">
-            Seed &amp; Spoon is registered with SAM.gov and eligible for federal awards and grants.
-            We&apos;re committed to full organizational transparency.
+          <p className="text-gray-600 mb-4">
+            Interested in partnering, funding, or contracting with Seed &amp; Spoon?
+            Download our official capability statement.
           </p>
 
-          <div className="flex flex-wrap gap-3 mb-6">
+          <div className="flex flex-wrap gap-3 mb-8">
             {badges.map((badge) => (
               <span
                 key={badge}
@@ -772,13 +773,7 @@ function CredentialsSection() {
             ))}
           </div>
 
-          <a
-            href="/documents/capability-statement.pdf"
-            download
-            className="inline-flex items-center gap-2 text-sm text-[#2d5a27] font-semibold hover:underline"
-          >
-            ↓ Download Full Capability Statement
-          </a>
+          <CapabilityStatementViewer />
         </div>
       </div>
     </section>

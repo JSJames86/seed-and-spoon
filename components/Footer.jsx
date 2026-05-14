@@ -5,6 +5,7 @@ import Link from "next/link";
 import FooterVisual from "./FooterVisual";
 import { InstagramIcon, TikTokIcon, ThreadsIcon, XIcon, FacebookIcon } from "./icons";
 import { org, cta, columns, socials } from "@/config/footer";
+import CapabilityStatementViewer from "./CapabilityStatementViewer";
 
 // Icon mapping for socials
 const iconMap = {
@@ -87,6 +88,11 @@ export default function Footer() {
                 )}
               </Link>
             ))}
+          </div>
+
+          {/* Capability Statement download */}
+          <div className="flex justify-center mt-4">
+            <CapabilityStatementViewer compact={true} />
           </div>
         </div>
       </div>
