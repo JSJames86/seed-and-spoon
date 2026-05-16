@@ -10,8 +10,8 @@ import CapabilityStatementViewer from '@/components/CapabilityStatementViewer';
 const CONTENT = {
   // SEO & Metadata
   meta: {
-    title: 'About Us - Seed & Spoon NJ | Fighting Food Insecurity in New Jersey',
-    description: 'Learn how Seed & Spoon NJ rescues surplus food and transforms it into dignified, nutritious meals for New Jersey families facing food insecurity.',
+    title: 'Our Mission',
+    description: 'Seed and Spoon exists to eliminate youth hunger in Newark and Essex County through sustainable, community-powered food programs.',
     ogImage: '/assets/logo-transparent.png',
   },
 

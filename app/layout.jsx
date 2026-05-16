@@ -32,15 +32,16 @@ const crimsonText = Crimson_Text({
 });
 
 export const metadata = {
-  title: "Seed & Spoon NJ | Neighbors Feeding Neighbors in Essex County",
+  title: {
+    default: "Seed and Spoon | Fighting Youth Hunger in Newark, NJ",
+    template: "%s | Seed and Spoon",
+  },
   description:
-    "Seed & Spoon NJ rescues surplus food, partners with community pantries, cooks prepared meals, and leads food & financial skills workshops to build long-term food security in Essex County.",
+    "Seed and Spoon is a Newark, NJ nonprofit providing community meal donations, monthly meal boxes, and youth gardening programs to families in Essex County.",
+  metadataBase: new URL("https://seedandspoon.org"),
   openGraph: {
-    title: "Seed & Spoon NJ | Neighbors Feeding Neighbors",
-    description:
-      "From surplus rescue and pantry partners to prepared meals and skills workshops, Seed & Spoon NJ is building a community-powered food safety net in Essex County.",
-    url: "https://seedandspoon.org",
-    images: ["/og-image.jpg"],
+    siteName: "Seed and Spoon",
+    locale: "en_US",
     type: "website",
   },
   twitter: {
@@ -49,6 +50,11 @@ export const metadata = {
     description:
       "Fighting food waste, feeding families, and teaching long-term food stability across Essex County.",
     images: ["/og-image.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
   },
   icons: {
     icon: "/favicon.ico",
@@ -63,10 +69,33 @@ export const viewport = {
   viewportFit: "cover", // Enable safe-area-inset support for iOS
 };
 
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "NonprofitOrganization",
+  name: "Seed and Spoon",
+  url: "https://seedandspoon.org",
+  logo: "https://seedandspoon.org/logo.png",
+  description:
+    "A Newark, NJ nonprofit reducing youth hunger through community meal donations, monthly meal box subscriptions, and youth gardening programs serving Essex County.",
+  areaServed: "Essex County, NJ",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Newark",
+    addressRegion: "NJ",
+    addressCountry: "US",
+  },
+  knowsAbout: ["food insecurity", "youth hunger", "community meal programs", "urban gardening"],
+  sameAs: [],
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="scroll-smooth">
       <body className={`${libreFranklin.variable} ${robotoSlab.variable} ${crimsonText.variable} font-sans min-h-screen antialiased transition-colors duration-300`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
         <Providers>
           <a
             href="#main"
