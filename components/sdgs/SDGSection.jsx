@@ -1,25 +1,15 @@
 "use client";
 
-import { useRef } from "react";
-import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
 import SDGCard from "./SDGCard";
 import { PRIMARY_SDGS, SECONDARY_SDGS } from "./sdgData";
 
 export default function SDGSection() {
-  const headingRef = useRef(null);
-  const gridRef = useRef(null);
-  const secondaryRef = useRef(null);
-
-  useRevealOnScroll(headingRef, { duration: 0.6 });
-  useRevealOnScroll(gridRef, { duration: 0.7, y: 30, delay: 0.1 });
-  useRevealOnScroll(secondaryRef, { duration: 0.6, y: 20, delay: 0.2 });
-
   return (
     <section className="bg-[var(--cream)] py-16 md:py-24" aria-labelledby="sdg-heading">
       <div className="max-w-5xl mx-auto px-4 md:px-6">
 
         {/* Header */}
-        <div ref={headingRef} className="text-center mb-12">
+        <div className="text-center mb-12">
           <p className="label-xs text-[var(--dark-forest)] mb-3">
             GLOBAL IMPACT FRAMEWORK
           </p>
@@ -36,17 +26,14 @@ export default function SDGSection() {
         </div>
 
         {/* Primary SDG Cards */}
-        <div
-          ref={gridRef}
-          className="grid gap-5 sm:grid-cols-3"
-        >
+        <div className="grid gap-5 sm:grid-cols-3">
           {PRIMARY_SDGS.map((goal) => (
             <SDGCard key={goal.number} goal={goal} />
           ))}
         </div>
 
-        {/* Secondary SDGs — compact row */}
-        <div ref={secondaryRef} className="mt-8">
+        {/* Secondary SDGs */}
+        <div className="mt-8">
           <p className="label-xs text-slate-500 text-center mb-4">
             ALSO SUPPORTING
           </p>
