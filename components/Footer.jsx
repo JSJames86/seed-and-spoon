@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import FooterVisual from "./FooterVisual";
 import { InstagramIcon, TikTokIcon, ThreadsIcon, XIcon, FacebookIcon } from "./icons";
 import { org, cta, columns, socials } from "@/config/footer";
 import CapabilityStatementViewer from "./CapabilityStatementViewer";
 import { SubscribeFooter } from "./email/SubscribeFooter";
+import { FOOTER_SDGS } from "./sdgs/sdgData";
 
 // Icon mapping for socials
 const iconMap = {
@@ -111,6 +113,33 @@ export default function Footer() {
                 </a>
               );
             })}
+          </div>
+
+          {/* UN SDG Badges */}
+          <div className="flex flex-col items-center gap-2 mb-6">
+            <p className="text-xs text-slate-400 uppercase tracking-wide">
+              Independently aligned with UN Sustainable Development Goals
+            </p>
+            <div className="flex items-center gap-3">
+              {FOOTER_SDGS.map((goal) => (
+                <a
+                  key={goal.number}
+                  href={goal.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`SDG ${goal.number}: ${goal.name}`}
+                  className="opacity-70 hover:opacity-100 transition-opacity duration-200"
+                >
+                  <Image
+                    src={`/images/sdg/sdg-${goal.slug}.png`}
+                    alt={`SDG ${goal.number}: ${goal.name}`}
+                    width={40}
+                    height={40}
+                    className="rounded"
+                  />
+                </a>
+              ))}
+            </div>
           </div>
 
           {/* Legal Row 1 */}
