@@ -32,8 +32,6 @@ export function SubscribeForm({
   const [status, setStatus] = useState<Status>('idle')
   const [errorMessage, setErrorMessage] = useState('')
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? ''
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!form.email) return
@@ -42,7 +40,7 @@ export function SubscribeForm({
     setErrorMessage('')
 
     try {
-      const res = await fetch(`${backendUrl}/api/email/subscribe`, {
+      const res = await fetch('/api/email/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
