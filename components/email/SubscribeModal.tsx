@@ -66,14 +66,22 @@ export function SubscribePopupTrigger({ delayMs = 8000 }: { delayMs?: number }) 
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    if (localStorage.getItem(DISMISSED_KEY)) return
+    try {
+      if (localStorage.getItem(DISMISSED_KEY)) return
+    } catch {
+      return // localStorage unavailable (iOS private browsing)
+    }
     const timer = setTimeout(() => setOpen(true), delayMs)
     return () => clearTimeout(timer)
   }, [delayMs])
 
   function handleClose() {
     setOpen(false)
-    localStorage.setItem(DISMISSED_KEY, '1')
+    try {
+      localStorage.setItem(DISMISSED_KEY, '1')
+    } catch {
+      // localStorage unavailable — popup just won't stay dismissed
+    }
   }
 
   return <SubscribeModal open={open} onClose={handleClose} />
