@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useLayoutEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -60,59 +60,28 @@ export default function StoryScroll() {
   useRevealOnScroll(storyHeaderRef, { duration: 0.8 });
   useRevealOnScroll(manifestoRef, { duration: 0.8 });
 
-  useLayoutEffect(() => {
-    // Check for reduced motion preference
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+  useEffect(() => {
+    if (typeof window === "undefined") return;
 
-    // Skip animations if user prefers reduced motion
-    if (prefersReducedMotion) {
-      return;
-    }
+    try {
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
 
-    // Get all story panels within the container
-    const panels = gsap.utils.toArray(".story-panel", containerRef.current);
-    const triggers = [];
+      if (prefersReducedMotion) return;
 
-    panels.forEach((panel) => {
-      // Find the image element within this panel
-      const image = panel.querySelector(".story-image");
+      const panels = gsap.utils.toArray(".story-panel", containerRef.current);
+      const triggers = [];
 
-      // Animate the panel: fade and slide up
-      const panelTween = gsap.fromTo(
-        panel,
-        {
-          opacity: 0,
-          y: 40,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: panel,
-            start: "top 75%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      );
+      panels.forEach((panel) => {
+        const image = panel.querySelector(".story-image");
 
-      // Store the trigger for cleanup
-      if (panelTween.scrollTrigger) {
-        triggers.push(panelTween.scrollTrigger);
-      }
-
-      // Animate the image: subtle scale effect
-      if (image) {
-        const imageTween = gsap.fromTo(
-          image,
+        const panelTween = gsap.fromTo(
+          panel,
+          { opacity: 0, y: 40 },
           {
-            scale: 0.96,
-          },
-          {
-            scale: 1,
+            opacity: 1,
+            y: 0,
             duration: 0.8,
             ease: "power2.out",
             scrollTrigger: {
@@ -123,20 +92,34 @@ export default function StoryScroll() {
           }
         );
 
-        // Store the trigger for cleanup
-        if (imageTween.scrollTrigger) {
-          triggers.push(imageTween.scrollTrigger);
-        }
-      }
-    });
+        if (panelTween.scrollTrigger) triggers.push(panelTween.scrollTrigger);
 
-    // Cleanup function
-    return () => {
-      // Kill all stored triggers
-      triggers.forEach((trigger) => trigger.kill());
-      // Kill any remaining tweens on the panels
-      gsap.killTweensOf(panels);
-    };
+        if (image) {
+          const imageTween = gsap.fromTo(
+            image,
+            { scale: 0.96 },
+            {
+              scale: 1,
+              duration: 0.8,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: panel,
+                start: "top 75%",
+                toggleActions: "play none none reverse",
+              },
+            }
+          );
+          if (imageTween.scrollTrigger) triggers.push(imageTween.scrollTrigger);
+        }
+      });
+
+      return () => {
+        triggers.forEach((trigger) => trigger.kill());
+        gsap.killTweensOf(panels);
+      };
+    } catch (e) {
+      // GSAP failed silently — animations degrade gracefully
+    }
   }, []);
 
   return (

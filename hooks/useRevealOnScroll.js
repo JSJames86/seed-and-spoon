@@ -33,47 +33,46 @@ export function useRevealOnScroll(
   } = options;
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const element = ref.current;
     if (!element) return;
 
-    // Check for reduced motion preference
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+    try {
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
 
-    // If user prefers reduced motion, just set final state
-    if (prefersReducedMotion) {
-      gsap.set(element, { opacity: 1, y: 0 });
-      return;
+      if (prefersReducedMotion) {
+        gsap.set(element, { opacity: 1, y: 0 });
+        return;
+      }
+
+      const animation = gsap.fromTo(
+        element,
+        { opacity: 0, y: y },
+        {
+          opacity: 1,
+          y: 0,
+          duration: duration,
+          ease: ease,
+          delay: delay,
+          scrollTrigger: {
+            trigger: element,
+            start: start,
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+
+      return () => {
+        if (animation.scrollTrigger) {
+          animation.scrollTrigger.kill();
+        }
+        animation.kill();
+      };
+    } catch (e) {
+      // GSAP failed silently — element stays visible
+      if (element) element.style.opacity = "1";
     }
-
-    // Animate the element
-    const animation = gsap.fromTo(
-      element,
-      {
-        opacity: 0,
-        y: y,
-      },
-      {
-        opacity: 1,
-        y: 0,
-        duration: duration,
-        ease: ease,
-        delay: delay,
-        scrollTrigger: {
-          trigger: element,
-          start: start,
-          toggleActions: "play none none reverse",
-        },
-      }
-    );
-
-    // Cleanup function
-    return () => {
-      if (animation.scrollTrigger) {
-        animation.scrollTrigger.kill();
-      }
-      animation.kill();
-    };
   }, [ref, y, duration, ease, start, delay]);
 }
