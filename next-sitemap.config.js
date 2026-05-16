@@ -1,7 +1,7 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
   siteUrl: 'https://seedandspoon.org',
-  generateRobotsTxt: false, // robots.txt is managed manually in public/
+  generateRobotsTxt: true,
   changefreq: 'weekly',
   priority: 0.7,
   sitemapSize: 5000,
