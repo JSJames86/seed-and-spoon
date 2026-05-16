@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import FooterVisual from "./FooterVisual";
 import { InstagramIcon, TikTokIcon, ThreadsIcon, XIcon, FacebookIcon } from "./icons";
 import { org, cta, columns, socials } from "@/config/footer";
@@ -130,7 +129,8 @@ export default function Footer() {
                   aria-label={`SDG ${goal.number}: ${goal.name}`}
                   className="opacity-70 hover:opacity-100 transition-opacity duration-200"
                 >
-                  <Image
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                     src={`/images/sdg/sdg-${goal.slug}.png`}
                     alt={`SDG ${goal.number}: ${goal.name}`}
                     width={40}
