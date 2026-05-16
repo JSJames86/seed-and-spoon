@@ -26,6 +26,7 @@ import Hero from "@/components/Hero";
 import WhyThisMatters from "@/components/WhyThisMatters";
 import StoryScroll from "@/components/StoryScroll";
 import SpoonAssistFeature from "@/components/SpoonAssistFeature";
+import SDGSection from "@/components/sdgs/SDGSection";
 
 export default function Home() {
   return (
@@ -43,6 +44,9 @@ export default function Home() {
 
       {/* WHY THIS WORK MATTERS */}
       <WhyThisMatters />
+
+      {/* ALIGNED WITH GLOBAL GOALS */}
+      <SDGSection />
     </>
   );
 }
