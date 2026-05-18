@@ -17,6 +17,7 @@ import { onConsent, hasConsent, logAnalytics } from '@/lib/consent';
  * - TikTok Pixel (optional)
  * - Snapchat Pixel (optional)
  * - Pinterest Tag (optional)
+ * - Metricool (optional)
  *
  * Environment Variables Required:
  * - NEXT_PUBLIC_PLAUSIBLE_DOMAIN (default: seedandspoon.org)
@@ -25,6 +26,7 @@ import { onConsent, hasConsent, logAnalytics } from '@/lib/consent';
  * - NEXT_PUBLIC_TIKTOK_PIXEL_ID (optional)
  * - NEXT_PUBLIC_SNAP_PIXEL_ID (optional)
  * - NEXT_PUBLIC_PINTEREST_TAG_ID (optional)
+ * - NEXT_PUBLIC_METRICOOL_HASH (optional)
  */
 export default function AnalyticsLoader() {
   // Track which analytics have been loaded to prevent duplicates
@@ -35,6 +37,7 @@ export default function AnalyticsLoader() {
     tiktok: false,
     snap: false,
     pinterest: false,
+    metricool: false,
   });
 
   // Prevent hydration mismatch by only loading client-side
@@ -58,6 +61,11 @@ export default function AnalyticsLoader() {
       if (consent.analytics && !loadedAnalytics.ga4) {
         logAnalytics('GA4', 'consent_granted', 'Loading Google Analytics 4');
         setLoadedAnalytics((prev) => ({ ...prev, ga4: true }));
+      }
+
+      if (consent.analytics && !loadedAnalytics.metricool) {
+        logAnalytics('Metricool', 'consent_granted', 'Loading Metricool Tracker');
+        setLoadedAnalytics((prev) => ({ ...prev, metricool: true }));
       }
 
       // Marketing category - includes Meta, TikTok, Snap, Pinterest
@@ -95,6 +103,7 @@ export default function AnalyticsLoader() {
   const tiktokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID;
   const snapPixelId = process.env.NEXT_PUBLIC_SNAP_PIXEL_ID;
   const pinterestTagId = process.env.NEXT_PUBLIC_PINTEREST_TAG_ID;
+  const metricoolHash = process.env.NEXT_PUBLIC_METRICOOL_HASH;
 
   return (
     <>
@@ -272,6 +281,24 @@ export default function AnalyticsLoader() {
             />
           </noscript>
         </>
+      )}
+
+      {/* ========================================
+          METRICOOL (Optional)
+          Category: analytics
+          ======================================== */}
+      {loadedAnalytics.metricool && metricoolHash && (
+        <Script
+          id="metricool"
+          strategy="afterInteractive"
+          onLoad={() => {
+            logAnalytics('Metricool', 'loaded', metricoolHash);
+          }}
+        >
+          {`
+            function loadScript(a){var b=document.getElementsByTagName("head")[0],c=document.createElement("script");c.type="text/javascript",c.src="https://tracker.metricool.com/resources/be.js",c.onreadystatechange=a,c.onload=a,b.appendChild(c)}loadScript(function(){beTracker.t({hash:"${metricoolHash}"})});
+          `}
+        </Script>
       )}
     </>
   );
