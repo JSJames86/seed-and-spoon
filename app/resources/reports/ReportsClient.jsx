@@ -362,7 +362,7 @@ export default function ReportsClient() {
             </div>
 
             <a
-              href="/documents/SeedAndSpoon_ModernizingHungerRelief_2026.pdf"
+              href="/documents/SeedAndSpoon%20ModernizingHungerRelief%202026.pdf"
               download
               className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-bold py-3 px-6 rounded-lg transition-colors"
             >
