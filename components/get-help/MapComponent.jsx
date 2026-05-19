@@ -18,6 +18,28 @@
 
 import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+
+// Emits viewport bounds to the parent after every pan/zoom so data can be
+// fetched for only the visible area — keeps payloads lean on mobile.
+function BoundsLoader({ onBoundsChange }) {
+  const map = useMap();
+
+  useEffect(() => {
+    const emit = () => {
+      const b = map.getBounds();
+      onBoundsChange({
+        north: b.getNorth(),
+        south: b.getSouth(),
+        east:  b.getEast(),
+        west:  b.getWest(),
+      });
+    };
+    map.on('moveend', emit);
+    return () => map.off('moveend', emit);
+  }, [map, onBoundsChange]);
+
+  return null;
+}
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -315,7 +337,7 @@ function MapLoadingOverlay({ isVisible }) {
  * @param {Array} props.foodBanks - Array of food bank objects from Supabase
  * @param {Function} props.onResourceSelect - Callback when a food bank is selected
  */
-export default function MapComponent({ foodBanks = [], onResourceSelect }) {
+export default function MapComponent({ foodBanks = [], onResourceSelect, onBoundsChange }) {
   const [mapReady, setMapReady] = useState(false);
   const [markersLoading, setMarkersLoading] = useState(true);
   const mapContainerRef = useRef(null);
@@ -390,6 +412,9 @@ export default function MapComponent({ foodBanks = [], onResourceSelect }) {
 
           {/* Fit bounds to show all markers */}
           <FitBoundsToMarkers foodBanks={validFoodBanks} />
+
+          {/* Emit viewport bounds on pan/zoom for low-bandwidth data loading */}
+          {onBoundsChange && <BoundsLoader onBoundsChange={onBoundsChange} />}
 
           {/* Food Bank Markers */}
           {validFoodBanks.map((bank) => (
