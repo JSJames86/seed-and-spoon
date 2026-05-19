@@ -13,6 +13,7 @@ import ReferralIntakeForm from '@/components/get-help/ReferralIntakeForm';
 import ResourceMap from '@/components/get-help/ResourceMap';
 import CountyDirectory from '@/components/get-help/CountyDirectory';
 import ProviderSubmissionModal from '@/components/get-help/ProviderSubmissionModal';
+import PriceCompare from '@/components/spoonassist/PriceCompare';
 
 export default function GetHelpPage() {
   const [activeForm, setActiveForm] = useState('client'); // 'client' | 'referral'
@@ -190,12 +191,17 @@ export default function GetHelpPage() {
               />
             </div>
 
-            {/* Directory (smaller on desktop) */}
-            <div className="lg:col-span-2 order-1 lg:order-2">
+            {/* Directory + inline price comparison (smaller on desktop) */}
+            <div className="lg:col-span-2 order-1 lg:order-2 flex flex-col gap-6">
               <CountyDirectory
                 filters={mapFilters}
                 onResourceClick={handleResourceSelect}
               />
+
+              {/* SpoonAssist price comparison widget */}
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-5 border border-gray-100 dark:border-gray-700">
+                <PriceCompare />
+              </div>
             </div>
           </div>
         </div>

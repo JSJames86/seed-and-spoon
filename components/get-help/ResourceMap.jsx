@@ -7,7 +7,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import dynamic from 'next/dynamic';
 
 // Dynamically import the map component with SSR disabled
@@ -38,9 +38,39 @@ export default function ResourceMap({
   const [error, setError] = useState(null);
   const [isMounted, setIsMounted] = useState(false);
 
+  // AbortController ref for cancelling in-flight viewport fetches
+  const viewportFetchRef = useRef(null);
+
   // Ensure component is mounted (client-side only)
   useEffect(() => {
     setIsMounted(true);
+  }, []);
+
+  // Refresh visible markers whenever the user pans or zooms the map.
+  // Cancels any pending request to avoid stale results racing.
+  const handleBoundsChange = useCallback(async ({ north, south, east, west }) => {
+    if (viewportFetchRef.current) viewportFetchRef.current.abort();
+    const controller = new AbortController();
+    viewportFetchRef.current = controller;
+
+    try {
+      const params = new URLSearchParams({
+        north: north.toFixed(6),
+        south: south.toFixed(6),
+        east:  east.toFixed(6),
+        west:  west.toFixed(6),
+      });
+      const res = await fetch(`/api/resources?${params}`, { signal: controller.signal });
+      if (!res.ok) return;
+      const data = await res.json();
+      const banks = (Array.isArray(data) ? data : []).filter(
+        b => b.latitude && b.longitude &&
+             !isNaN(parseFloat(b.latitude)) && !isNaN(parseFloat(b.longitude))
+      );
+      setFoodBanks(banks);
+    } catch (err) {
+      if (err.name !== 'AbortError') console.error('[ResourceMap] viewport fetch error:', err);
+    }
   }, []);
 
   // Fetch food banks from Supabase via local API
@@ -166,6 +196,7 @@ export default function ResourceMap({
       <DynamicMap
         foodBanks={foodBanks}
         onResourceSelect={onResourceSelect}
+        onBoundsChange={handleBoundsChange}
       />
     </div>
   );
