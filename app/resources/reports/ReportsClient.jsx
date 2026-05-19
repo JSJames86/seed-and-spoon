@@ -308,10 +308,70 @@ export default function ReportsClient() {
             Research &amp; Reports
           </h1>
           <p className="text-green-100 text-lg max-w-2xl mx-auto">
-            Data and research on youth hunger, food insecurity, and community nutrition
-            in Newark and across New Jersey. We curate these resources to ground our
-            work in evidence and keep our community informed.
+            Seed &amp; Spoon publishes independent research on food access, nutrition
+            infrastructure, and community food systems to advance evidence-based solutions
+            to hunger in Newark and beyond.
           </p>
+        </div>
+      </section>
+
+      {/* Featured White Paper */}
+      <section className="bg-white py-14 px-4 border-b border-gray-100">
+        <div className="max-w-4xl mx-auto">
+          <p className="text-green-700 uppercase tracking-widest text-xs font-bold mb-6 text-center">
+            Our Research
+          </p>
+          <div className="bg-green-50 border border-green-200 rounded-2xl p-8 sm:p-10">
+            <div className="flex flex-wrap items-center gap-3 mb-6">
+              <span className="bg-green-700 text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wide">
+                White Paper — 2026
+              </span>
+              <span className="text-sm text-gray-500">Seed &amp; Spoon</span>
+            </div>
+
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 leading-snug">
+              Modernizing Hunger Relief: Technology, Infrastructure, and the Future of Youth Food Security
+            </h2>
+
+            <p className="text-gray-700 leading-relaxed mb-6">
+              Youth food insecurity in the United States is not a scarcity problem. It is an
+              infrastructure problem rooted in fragmented systems of access, distribution,
+              nutrition, and resilience. This paper introduces a systems-based framework,
+              examines structural failures in current food assistance systems, and makes the
+              case for technology-enabled community food infrastructure as a scalable solution.
+            </p>
+
+            <div className="mb-8">
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">
+                Key Findings
+              </h3>
+              <ul className="space-y-2.5">
+                {[
+                  '14.1 million children lived in food-insecure households in 2024',
+                  'The 2025 SNAP cuts represent the largest reduction in program history — $187 billion over 10 years',
+                  'Proven logistics technology deployed in commercial supply chains has never been systematically applied to community food systems',
+                ].map((finding) => (
+                  <li key={finding} className="flex items-start gap-2.5 text-gray-700 text-sm leading-relaxed">
+                    <svg className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                    </svg>
+                    {finding}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <a
+              href="/documents/SeedAndSpoon_ModernizingHungerRelief_2026.pdf"
+              download
+              className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+            >
+              <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Download PDF
+            </a>
+          </div>
         </div>
       </section>
 
