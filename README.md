@@ -2,6 +2,14 @@
 
 Building food sovereignty in Essex County—one family, one meal, one skill at a time.
 
+## Research & Publications
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20299779.svg)](https://doi.org/10.5281/zenodo.20299779)
+
+**Modernizing Hunger Relief: Technology, Infrastructure, and the Future of Youth Food Security**
+Janelle Glanville, Seed and Spoon, Incorporated (2026)
+[Read on Zenodo](https://zenodo.org/records/20299779) · [seedandspoon.org/research](https://seedandspoon.org/research)
+
 ## 🚀 Quick Start
 
 ### Prerequisites

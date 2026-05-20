@@ -329,9 +329,23 @@ export default function ReportsClient() {
               <span className="text-sm text-gray-500">Seed &amp; Spoon</span>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 leading-snug">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 leading-snug">
               Modernizing Hunger Relief: Technology, Infrastructure, and the Future of Youth Food Security
             </h2>
+
+            <div className="mb-4">
+              <a
+                href="https://doi.org/10.5281/zenodo.20299779"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src="https://zenodo.org/badge/DOI/10.5281/zenodo.20299779.svg"
+                  alt="DOI"
+                  className="h-5"
+                />
+              </a>
+            </div>
 
             <p className="text-gray-700 leading-relaxed mb-6">
               Youth food insecurity in the United States is not a scarcity problem. It is an
@@ -361,16 +375,26 @@ export default function ReportsClient() {
               </ul>
             </div>
 
-            <a
-              href="/documents/SeedAndSpoon%20ModernizingHungerRelief%202026.pdf"
-              download
-              className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-bold py-3 px-6 rounded-lg transition-colors"
-            >
-              <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              Download PDF
-            </a>
+            <div className="flex flex-wrap items-center gap-4">
+              <a
+                href="/documents/SeedAndSpoon%20ModernizingHungerRelief%202026.pdf"
+                download
+                className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+              >
+                <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Download PDF
+              </a>
+              <a
+                href="https://zenodo.org/records/20299779"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-semibold text-green-700 hover:text-green-900 transition-colors"
+              >
+                View on Zenodo ↗
+              </a>
+            </div>
           </div>
         </div>
       </section>

@@ -30,5 +30,37 @@ export const metadata = {
 };
 
 export default function ReportsPage() {
-  return <ReportsClient />;
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ScholarlyArticle',
+    name: 'Modernizing Hunger Relief: Technology, Infrastructure, and the Future of Youth Food Security',
+    author: {
+      '@type': 'Person',
+      name: 'Janelle Glanville',
+      affiliation: {
+        '@type': 'Organization',
+        name: 'Seed and Spoon, Incorporated',
+      },
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Seed and Spoon',
+      url: 'https://seedandspoon.org',
+    },
+    datePublished: '2026',
+    identifier: 'https://doi.org/10.5281/zenodo.20299779',
+    url: 'https://seedandspoon.org/research',
+    license: 'https://creativecommons.org/licenses/by-nc-nd/4.0/',
+    keywords: 'youth food insecurity, food systems, SNAP, community food infrastructure, Newark',
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ReportsClient />
+    </>
+  );
 }
