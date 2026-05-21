@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { captureEvent } from '@/analytics/posthog';
+import { EVENTS } from '@/analytics/events';
 import RecipeDropdown from '@/components/spoonassist/RecipeDropdown';
 import RecipeTextInput from '@/components/spoonassist/RecipeTextInput';
 import IngredientTable from '@/components/spoonassist/IngredientTable';
@@ -41,6 +43,7 @@ export default function SpoonAssistPage() {
 
   // Fetch recipes + feature flags on mount
   useEffect(() => {
+    captureEvent(EVENTS.SPOONASSIST_SESSION_STARTED, { user_type: 'anonymous' });
     fetchRecipes();
     fetch(`${API_BASE_URL}/features/`)
       .then(r => r.json())
@@ -141,6 +144,13 @@ export default function SpoonAssistPage() {
     setLoading(prev => ({ ...prev, calculation: true }));
     setError(null);
 
+    captureEvent(EVENTS.SPOONASSIST_QUERY_SUBMITTED, {
+      query_type: 'cost_calculation',
+      user_type: 'anonymous',
+    });
+
+    const queryStart = Date.now();
+
     try {
       // Prepare request payload
       const payload = {
@@ -167,9 +177,18 @@ export default function SpoonAssistPage() {
       const data = await response.json();
       setCostData(data.costData || data.results || data || []);
       setSummary(data.summary || null);
+
+      captureEvent(EVENTS.SPOONASSIST_RESPONSE_RECEIVED, {
+        latency_ms: Date.now() - queryStart,
+        query_type: 'cost_calculation',
+      });
     } catch (err) {
       setError('Could not calculate costs. Please try again.');
       console.error('Cost calculation error:', err);
+      captureEvent(EVENTS.SPOONASSIST_ERROR, {
+        error_type: 'cost_calculation_failed',
+        query_type: 'cost_calculation',
+      });
     } finally {
       setLoading(prev => ({ ...prev, calculation: false }));
     }
@@ -201,6 +220,11 @@ export default function SpoonAssistPage() {
   }
 
   const handleShopOnInstacart = async () => {
+    captureEvent(EVENTS.SPOONASSIST_RECOMMENDATION_ACCEPTED, {
+      recommendation_type: 'instacart_shop',
+      confidence_score: 1,
+    });
+
     setLoading(prev => ({ ...prev, instacart: true }));
     setInstacartUrl(null);
 
@@ -260,6 +284,10 @@ export default function SpoonAssistPage() {
     } catch (err) {
       setError('Could not create Instacart shopping list. Please try again.');
       console.error('Instacart list error:', err);
+      captureEvent(EVENTS.SPOONASSIST_ERROR, {
+        error_type: 'instacart_list_failed',
+        query_type: 'instacart_shop',
+      });
     } finally {
       setLoading(prev => ({ ...prev, instacart: false }));
     }

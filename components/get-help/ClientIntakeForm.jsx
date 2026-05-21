@@ -1,15 +1,11 @@
-/**
- * Client Intake Form
- *
- * Application form for individuals seeking food assistance
- */
-
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FormField from './FormField';
 import FormSection from './FormSection';
 import Alert from './Alert';
+import { captureEvent } from '@/analytics/posthog';
+import { EVENTS } from '@/analytics/events';
 
 const ALLERGY_OPTIONS = [
   { value: 'peanuts', label: 'Peanuts' },
@@ -67,6 +63,13 @@ export default function ClientIntakeForm({ onSuccess, onScrollToMap }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null); // 'success' | 'error'
   const [submitMessage, setSubmitMessage] = useState('');
+
+  useEffect(() => {
+    captureEvent(EVENTS.FAMILY_APPLICATION_STARTED, {
+      zip_code: '',
+      household_size: 1,
+    });
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -161,6 +164,12 @@ export default function ClientIntakeForm({ onSuccess, onScrollToMap }) {
       if (!response.ok) {
         throw new Error(data.message || 'Failed to submit application');
       }
+
+      captureEvent(EVENTS.FAMILY_APPLICATION_SUBMITTED, {
+        zip_code: formData.address.zip,
+        household_size: formData.householdSize,
+        application_id: data.id,
+      });
 
       setSubmitStatus('success');
       setSubmitMessage(`Thank you! We've received your application and will contact you within 48 hours at ${formData.applicant.phone}.`);

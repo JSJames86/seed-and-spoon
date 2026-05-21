@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { captureEvent } from '@/analytics/posthog';
+import { EVENTS } from '@/analytics/events';
 
 export default function DonatePage() {
   const [interval, setInterval] = useState('one_time');
@@ -13,6 +15,13 @@ export default function DonatePage() {
   const [taxAcknowledged, setTaxAcknowledged] = useState(false);
 
   const presetAmounts = [2500, 5000, 10000, 25000]; // $25, $50, $100, $250
+
+  useEffect(() => {
+    captureEvent(EVENTS.DONATION_PAGE_VIEWED, {
+      source: new URLSearchParams(window.location.search).get('source') || 'direct',
+      referrer: document.referrer || '',
+    });
+  }, []);
 
   const handleAmountClick = (amount) => {
     setSelectedAmount(amount);
@@ -53,6 +62,12 @@ export default function DonatePage() {
     }
 
     setIsLoading(true);
+
+    captureEvent(EVENTS.DONOR_STARTED_CHECKOUT, {
+      tier: isCustom ? 'custom' : `preset_${finalAmount / 100}`,
+      amount: finalAmount / 100,
+      frequency: interval === 'month' ? 'monthly' : 'one_time',
+    });
 
     try {
       const response = await fetch('/api/donations/checkout', {
