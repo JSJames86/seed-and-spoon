@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Script from 'next/script';
 import { onConsent, hasConsent, logAnalytics } from '@/lib/consent';
+import { initPostHog } from '@/analytics/posthog';
 
 /**
  * AnalyticsLoader Component
@@ -38,6 +39,7 @@ export default function AnalyticsLoader() {
     snap: false,
     pinterest: false,
     metricool: false,
+    posthog: false,
   });
 
   // Prevent hydration mismatch by only loading client-side
@@ -52,7 +54,13 @@ export default function AnalyticsLoader() {
     if (!isMounted) return;
 
     const cleanup = onConsent((consent) => {
-      // Analytics category - includes Plausible and GA4
+      // Analytics category - includes PostHog, Plausible, GA4, and Metricool
+      if (consent.analytics && !loadedAnalytics.posthog) {
+        logAnalytics('PostHog', 'consent_granted', 'Initializing PostHog Analytics');
+        initPostHog();
+        setLoadedAnalytics((prev) => ({ ...prev, posthog: true }));
+      }
+
       if (consent.analytics && !loadedAnalytics.plausible) {
         logAnalytics('Plausible', 'consent_granted', 'Loading Plausible Analytics');
         setLoadedAnalytics((prev) => ({ ...prev, plausible: true }));

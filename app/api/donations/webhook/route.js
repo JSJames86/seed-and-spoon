@@ -10,6 +10,8 @@
 
 import { NextResponse } from 'next/server';
 import { verifyWebhookSignature } from '@/lib/stripe-helpers';
+import { captureServerEvent } from '@/lib/posthog-server';
+import { EVENTS } from '@/analytics/events';
 
 export async function POST(request) {
   const signature = request.headers.get('stripe-signature');
@@ -39,12 +41,28 @@ export async function POST(request) {
       case 'checkout.session.completed': {
         const session = event.data.object;
         const { interval, source, donorName } = session.metadata || {};
-        const email = session.customer_details?.email;
+        const customerId = session.customer;
         const amount = session.amount_total;
+        const isMonthly = interval === 'month';
 
         console.log(
-          `[Stripe Webhook] Donation completed — amount: ${amount}, interval: ${interval}, email: ${email}, source: ${source}, name: ${donorName}`
+          `[Stripe Webhook] Donation completed — amount: ${amount}, interval: ${interval}, source: ${source}, name: ${donorName}`
         );
+
+        await captureServerEvent(customerId || event.id, EVENTS.DONATION_COMPLETED, {
+          amount: amount / 100,
+          frequency: isMonthly ? 'monthly' : 'one_time',
+          tier: session.metadata?.tier || null,
+          donor_id: customerId,
+        });
+
+        if (isMonthly) {
+          await captureServerEvent(customerId || event.id, EVENTS.MONTHLY_SUBSCRIPTION_STARTED, {
+            amount: amount / 100,
+            donor_id: customerId,
+          });
+        }
+
         // TODO: record donation in your database here
         break;
       }
@@ -53,10 +71,9 @@ export async function POST(request) {
         const invoice = event.data.object;
         const subscriptionId = invoice.subscription;
         const amount = invoice.amount_paid;
-        const email = invoice.customer_email;
 
         console.log(
-          `[Stripe Webhook] Recurring payment succeeded — subscription: ${subscriptionId}, amount: ${amount}, email: ${email}`
+          `[Stripe Webhook] Recurring payment succeeded — subscription: ${subscriptionId}, amount: ${amount}`
         );
         // TODO: record recurring payment in your database here
         break;
@@ -65,20 +82,36 @@ export async function POST(request) {
       case 'invoice.payment_failed': {
         const invoice = event.data.object;
         const subscriptionId = invoice.subscription;
-        const email = invoice.customer_email;
+        const customerId = invoice.customer;
+        const lastError = invoice.last_finalization_error;
 
         console.warn(
-          `[Stripe Webhook] Recurring payment failed — subscription: ${subscriptionId}, email: ${email}`
+          `[Stripe Webhook] Recurring payment failed — subscription: ${subscriptionId}`
         );
+
+        await captureServerEvent(customerId || event.id, EVENTS.DONATION_FAILED, {
+          error_code: lastError?.code || 'payment_failed',
+          tier: null,
+          amount: (invoice.amount_due || 0) / 100,
+        });
+
         // TODO: notify donor or update subscription status here
         break;
       }
 
       case 'customer.subscription.deleted': {
         const subscription = event.data.object;
+        const customerId = subscription.customer;
+
         console.log(
           `[Stripe Webhook] Subscription cancelled — id: ${subscription.id}, status: ${subscription.status}`
         );
+
+        await captureServerEvent(customerId || event.id, EVENTS.MONTHLY_SUBSCRIPTION_CANCELLED, {
+          donor_id: customerId,
+          reason: subscription.cancellation_details?.reason || null,
+        });
+
         // TODO: update subscription status in your database here
         break;
       }
