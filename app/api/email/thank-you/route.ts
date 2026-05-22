@@ -2,8 +2,6 @@ import { Resend } from 'resend';
 
 export const runtime = 'edge';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(request: Request) {
   const token = request.headers.get('x-service-token');
   if (!token || token !== process.env.ADMIN_SERVICE_TOKEN) {
@@ -23,6 +21,7 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Missing required fields' }, { status: 422 });
   }
 
+  const resend = new Resend(process.env.RESEND_API_KEY);
   const displayName = name || 'Friend';
   const formattedAmount = (amount / 100).toFixed(2);
 
