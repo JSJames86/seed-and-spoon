@@ -2,13 +2,17 @@ import { Resend } from 'resend';
 
 export const runtime = 'edge';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(request: Request) {
   const token = request.headers.get('x-service-token');
   if (!token || token !== process.env.ADMIN_SERVICE_TOKEN) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
+
+  if (!process.env.RESEND_API_KEY) {
+    return Response.json({ error: 'Email service not configured' }, { status: 503 });
+  }
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
   let body: { name?: string; email?: string; amount?: number };
   try {
