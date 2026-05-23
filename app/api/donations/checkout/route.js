@@ -9,9 +9,9 @@ import {
   createOneTimeCheckoutSession,
   createMonthlyCheckoutSession,
   generateIdempotencyKey,
-  isValidDonationAmount,
   getDonationUrls,
 } from '@/lib/stripe-helpers';
+import { donationCheckoutSchema, validateRequest } from '@/lib/validation';
 
 export async function POST(request) {
   try {
@@ -28,18 +28,16 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { amount, currency = 'usd', interval = 'one_time', email, name, source } = body;
+    const validation = validateRequest(body, donationCheckoutSchema);
 
-    // Validate amount
-    if (!isValidDonationAmount(amount)) {
+    if (!validation.success) {
       return NextResponse.json(
-        {
-          ok: false,
-          error: 'Invalid donation amount. Minimum donation is $1.00',
-        },
+        { ok: false, error: 'Invalid request', errors: validation.errors },
         { status: 400 }
       );
     }
+
+    const { amount, currency, interval, email, name, source } = validation.data;
 
     // Get URLs
     const { successUrl, cancelUrl } = getDonationUrls();

@@ -6,7 +6,7 @@ import { captureEvent } from '@/analytics/posthog';
 import { EVENTS } from '@/analytics/events';
 
 export default function DonatePage() {
-  const [interval, setInterval] = useState('one_time');
+  const [frequency, setFrequency] = useState('one_time');
   const [selectedAmount, setSelectedAmount] = useState(5000); // Default $50
   const [customAmount, setCustomAmount] = useState('');
   const [isCustom, setIsCustom] = useState(false);
@@ -66,7 +66,7 @@ export default function DonatePage() {
     captureEvent(EVENTS.DONOR_STARTED_CHECKOUT, {
       tier: isCustom ? 'custom' : `preset_${finalAmount / 100}`,
       amount: finalAmount / 100,
-      frequency: interval === 'month' ? 'monthly' : 'one_time',
+      frequency: frequency === 'month' ? 'monthly' : 'one_time',
     });
 
     try {
@@ -78,7 +78,7 @@ export default function DonatePage() {
         body: JSON.stringify({
           amount: finalAmount,
           currency: 'usd',
-          interval,
+          interval: frequency,
           source: 'donate_page',
         }),
       });
@@ -122,9 +122,9 @@ export default function DonatePage() {
             {/* Interval Toggle */}
             <div className="flex gap-4 mb-8">
               <button
-                onClick={() => setInterval('one_time')}
+                onClick={() => setFrequency('one_time')}
                 className={`flex-1 py-4 px-6 rounded-xl font-semibold transition-all ${
-                  interval === 'one_time'
+                  frequency === 'one_time'
                     ? 'bg-green-600 text-white shadow-lg scale-105'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
@@ -132,9 +132,9 @@ export default function DonatePage() {
                 One-Time
               </button>
               <button
-                onClick={() => setInterval('month')}
+                onClick={() => setFrequency('month')}
                 className={`flex-1 py-4 px-6 rounded-xl font-semibold transition-all ${
-                  interval === 'month'
+                  frequency === 'month'
                     ? 'bg-orange-500 text-white shadow-lg scale-105'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
@@ -143,7 +143,7 @@ export default function DonatePage() {
               </button>
             </div>
 
-            {interval === 'month' && (
+            {frequency === 'month' && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
@@ -277,7 +277,7 @@ export default function DonatePage() {
                     : selectedAmount
                     ? `$${selectedAmount / 100}`
                     : ''
-                }${interval === 'month' ? '/month' : ''}`
+                }${frequency === 'month' ? '/month' : ''}`
               )}
             </button>
 
