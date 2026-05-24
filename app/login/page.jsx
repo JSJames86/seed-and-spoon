@@ -67,7 +67,7 @@ export default function LoginPage() {
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Or{' '}
-            <Link href="/signup" className="font-medium text-primary-soil hover:text-gradient-green">
+            <Link href="/signup" className="font-medium text-[var(--green-primary)] hover:text-[var(--leaf-mid)]">
               create a new account
             </Link>
           </p>
@@ -167,7 +167,7 @@ export default function LoginPage() {
 
           <div className="flex items-center justify-between">
             <div className="text-sm">
-              <Link href="/forgot-password" className="font-medium text-primary-soil hover:text-gradient-green">
+              <Link href="/forgot-password" className="font-medium text-[var(--green-primary)] hover:text-[var(--leaf-mid)]">
                 Forgot your password?
               </Link>
             </div>
@@ -177,7 +177,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-4 px-6 border border-transparent text-base font-bold rounded-lg text-white bg-primary-soil hover:bg-gradient-green focus:outline-none focus:ring-4 focus:ring-primary-soil/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+              className="group relative w-full flex justify-center py-4 px-6 border border-transparent text-base font-bold rounded-lg text-white bg-[var(--green-primary)] hover:bg-[var(--leaf-mid)] focus:outline-none focus:ring-4 focus:ring-[var(--green-primary)]/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
