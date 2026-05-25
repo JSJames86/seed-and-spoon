@@ -34,6 +34,7 @@ export async function GET(request, { params }) {
         status: session.payment_status,
         interval,
         customerEmail: session.customer_details?.email || null,
+        customerName: session.customer_details?.name || null,
       },
     });
   } catch (error) {

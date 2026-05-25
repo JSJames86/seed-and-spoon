@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useRef, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -120,6 +120,7 @@ function ThankYouContent() {
   const [donation, setDonation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const emailSentRef = useRef(false);
 
   useEffect(() => {
     if (!sessionId) {
@@ -134,12 +135,27 @@ function ThankYouContent() {
       .then((result) => {
         if (result.ok) {
           setDonation(result.data);
+
+          // Fire donor thank-you email once — non-blocking
+          if (!emailSentRef.current && result.data.customerEmail) {
+            emailSentRef.current = true;
+            fetch('/api/email/donate', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name: result.data.customerName || undefined,
+                email: result.data.customerEmail,
+                amount: result.data.amount / 100,
+                recurring: result.data.interval === 'month',
+              }),
+            }).catch(() => {});
+          }
         } else {
           setError(result.error || 'Failed to load donation details');
         }
         setLoading(false);
       })
-      .catch((err) => {
+      .catch(() => {
         setError('Failed to load donation details');
         setLoading(false);
       });

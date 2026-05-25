@@ -96,6 +96,19 @@ export default function ContactClient() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Submission failed');
+
+      // Fire team notification email — non-blocking
+      fetch('/api/email/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          message: form.message,
+          subject: form.researchArea ? `Research Partnership: ${form.researchArea}` : undefined,
+        }),
+      }).catch(() => {});
+
       setStatus('success');
     } catch (err) {
       setErrorMsg(err.message);

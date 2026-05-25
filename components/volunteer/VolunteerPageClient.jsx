@@ -294,24 +294,21 @@ export default function VolunteerPage() {
     setSubmitError(null);
 
     try {
-      // Prepare submission data (exclude resume file for now, handle separately if needed)
-      const submissionData = {
-        formType: 'volunteer',
-        ...formData,
-        resume: formData.resume ? 'Uploaded' : null, // TODO: Handle file upload separately
-      };
-
-      const response = await fetch('/api/submissions', {
+      const response = await fetch('/api/email/volunteer', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submissionData),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.fullName,
+          email: formData.email,
+          phone: formData.phone || undefined,
+          availability: formData.availability || undefined,
+          interests: formData.roles.length > 0 ? formData.roles.join(', ') : undefined,
+        }),
       });
 
       const result = await response.json();
 
-      if (!result.ok) {
+      if (!result.success) {
         throw new Error(result.error || 'Failed to submit application');
       }
 
