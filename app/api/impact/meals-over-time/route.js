@@ -18,7 +18,7 @@ const STATIC_MONTHS = [
 export const revalidate = 3600;
 
 export async function GET() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!url || !key || url.includes('placeholder') || url.includes('your_supabase')) {
