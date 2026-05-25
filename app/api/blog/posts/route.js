@@ -75,22 +75,22 @@ export async function POST(request) {
     const sessionClient = await getSessionClient();
     if (!sessionClient) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { data: { user } } = await sessionClient.auth.getUser();
-    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    const { data: { claims } } = await sessionClient.auth.getClaims();
+    if (!claims) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const serviceClient = getServiceClient();
     const { data: profile } = await serviceClient
       .from('profiles')
       .select('role, first_name, last_name')
-      .eq('id', user.id)
+      .eq('id', claims.sub)
       .single();
 
     if (!profile || !['editor', 'admin'].includes(profile.role)) {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    authorId = user.id;
-    authorName = [profile.first_name, profile.last_name].filter(Boolean).join(' ') || user.email;
+    authorId = claims.sub;
+    authorName = [profile.first_name, profile.last_name].filter(Boolean).join(' ') || claims.email;
   }
 
   let body;

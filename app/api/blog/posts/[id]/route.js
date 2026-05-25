@@ -24,18 +24,18 @@ async function getAuthorizedUser(request) {
     cookies: { getAll: () => cookieStore.getAll(), setAll: () => {} },
   });
 
-  const { data: { user } } = await sessionClient.auth.getUser();
-  if (!user) return null;
+  const { data: { claims } } = await sessionClient.auth.getClaims();
+  if (!claims) return null;
 
   const service = getServiceClient();
   const { data: profile } = await service
     .from('profiles')
     .select('role, first_name, last_name')
-    .eq('id', user.id)
+    .eq('id', claims.sub)
     .single();
 
   if (!profile || !['editor', 'admin'].includes(profile.role)) return null;
-  return { ...profile, id: user.id };
+  return { ...profile, id: claims.sub };
 }
 
 // GET /api/blog/posts/[id] — get single post (for editor)
