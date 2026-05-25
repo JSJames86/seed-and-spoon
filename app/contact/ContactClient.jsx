@@ -98,7 +98,7 @@ export default function ContactClient() {
       if (!res.ok) throw new Error(data.error || 'Submission failed');
 
       // Fire team notification email — non-blocking
-      fetch('https://seed-and-spoon-backend.vercel.app/api/email/contact', {
+      fetch('/api/email/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
