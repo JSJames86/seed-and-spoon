@@ -302,7 +302,7 @@ export default function VolunteerPage() {
           email: formData.email,
           phone: formData.phone || undefined,
           availability: formData.availability || undefined,
-          interests: formData.roles.length > 0 ? formData.roles.join(', ') : undefined,
+          interests: formData.roles.length > 0 ? formData.roles : undefined,
         }),
       });
 

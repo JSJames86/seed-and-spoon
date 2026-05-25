@@ -105,7 +105,7 @@ export default function ContactClient() {
           name: form.name,
           email: form.email,
           message: form.message,
-          subject: form.researchArea ? `Research Partnership: ${form.researchArea}` : undefined,
+          subject: form.researchArea ? `Research Partnership: ${form.researchArea}` : 'Research Partnership Inquiry',
         }),
       }).catch(() => {});
 

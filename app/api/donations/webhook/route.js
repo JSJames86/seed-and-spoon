@@ -63,7 +63,31 @@ export async function POST(request) {
           });
         }
 
-        // TODO: record donation in your database here
+        const donorEmail = session.customer_details?.email;
+        const resolvedName = session.customer_details?.name || donorName || 'Friend';
+        if (donorEmail) {
+          try {
+            await fetch('https://seed-and-spoon-backend.vercel.app/api/email/donate', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name: resolvedName,
+                email: donorEmail,
+                amount: String(amount / 100),
+                donationType: isMonthly ? 'monthly' : 'one-time',
+                date: new Date(session.created * 1000).toLocaleDateString('en-US', {
+                  timeZone: 'America/New_York',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                }),
+                transactionId: session.id,
+              }),
+            });
+          } catch (emailErr) {
+            console.error('[Stripe Webhook] Failed to send receipt email:', emailErr);
+          }
+        }
         break;
       }
 
