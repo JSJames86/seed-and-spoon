@@ -74,9 +74,11 @@ export async function POST(request: Request) {
   }
 
   // Send welcome email — best effort, don't fail the subscription if this errors
-  sendWelcomeEmail(email, firstName).catch((err) =>
-    console.error('Welcome email error:', err)
-  );
+  try {
+    await sendWelcomeEmail(email, firstName);
+  } catch (err) {
+    console.error('Welcome email error:', err);
+  }
 
   return Response.json({ success: true }, { status: 200 });
 }
