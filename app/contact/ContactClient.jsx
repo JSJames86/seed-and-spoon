@@ -98,14 +98,14 @@ export default function ContactClient() {
       if (!res.ok) throw new Error(data.error || 'Submission failed');
 
       // Fire team notification email — non-blocking
-      fetch('/api/email/contact', {
+      fetch('https://seed-and-spoon-backend.vercel.app/api/email/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: form.name,
           email: form.email,
           message: form.message,
-          subject: form.researchArea ? `Research Partnership: ${form.researchArea}` : undefined,
+          subject: form.researchArea ? `Research Partnership: ${form.researchArea}` : 'Research Partnership Inquiry',
         }),
       }).catch(() => {});
 

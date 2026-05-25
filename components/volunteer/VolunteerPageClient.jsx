@@ -294,7 +294,7 @@ export default function VolunteerPage() {
     setSubmitError(null);
 
     try {
-      const response = await fetch('/api/email/volunteer', {
+      const response = await fetch('https://seed-and-spoon-backend.vercel.app/api/email/volunteer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -302,7 +302,7 @@ export default function VolunteerPage() {
           email: formData.email,
           phone: formData.phone || undefined,
           availability: formData.availability || undefined,
-          interests: formData.roles.length > 0 ? formData.roles.join(', ') : undefined,
+          interests: formData.roles.length > 0 ? formData.roles : undefined,
         }),
       });
 
