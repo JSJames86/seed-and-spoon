@@ -124,7 +124,10 @@ export function AuthProvider({ children }) {
       };
     } catch (error) {
       console.error('Registration error:', error);
-      return { success: false, error: error.message };
+      const msg = error.message === 'The string did not match the expected pattern'
+        ? 'Password must include uppercase, lowercase, a number, and a special character.'
+        : error.message;
+      return { success: false, error: msg };
     }
   };
 

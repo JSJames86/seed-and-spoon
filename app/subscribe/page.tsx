@@ -27,7 +27,7 @@ export default function SubscribePage() {
           <p className="text-gray-500 text-sm mb-6">
             No spam. One email per month. Unsubscribe anytime.
           </p>
-          <SubscribeForm source="subscribe-page" />
+          <SubscribeForm source="subscribe_page" />
         </div>
       </section>
 

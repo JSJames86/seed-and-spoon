@@ -277,7 +277,7 @@ export default function SignupPage() {
                 onChange={handleChange}
               />
               <p className="mt-1 text-xs text-gray-500">
-                Must be at least 8 characters
+                At least 8 characters with uppercase, lowercase, number, and special character
               </p>
             </div>
 
