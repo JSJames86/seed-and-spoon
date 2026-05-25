@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { Resend } from 'resend';
 
 export const runtime = 'edge';
 
@@ -10,6 +11,27 @@ function getSupabase() {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return null;
   return createClient(url, key);
+}
+
+async function sendWelcomeEmail(email: string, firstName: string | null) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return;
+
+  const resend = new Resend(apiKey);
+  const name = firstName || 'Friend';
+
+  await resend.emails.send({
+    from: 'Janelle | Seed & Spoon <hello@seedandspoon.org>',
+    to: email,
+    subject: 'Welcome to the Seed & Spoon community 🌱',
+    html: `
+      <p>Hi ${name},</p>
+      <p>Thank you for joining the Seed & Spoon community! We're so glad you're here.</p>
+      <p>Every month we'll share updates on our mission to end food insecurity in Newark, NJ — including stories from the families we serve, volunteer opportunities, and ways you can help.</p>
+      <p>In the meantime, feel free to explore our work at <a href="https://seedandspoon.org">seedandspoon.org</a>.</p>
+      <p>With gratitude,<br/>Janelle<br/>Founder, Seed & Spoon</p>
+    `,
+  });
 }
 
 export async function POST(request: Request) {
@@ -50,6 +72,11 @@ export async function POST(request: Request) {
     console.error('Subscriber upsert error:', error.message);
     return Response.json({ error: 'Could not save your subscription. Please try again.' }, { status: 500 });
   }
+
+  // Send welcome email — best effort, don't fail the subscription if this errors
+  sendWelcomeEmail(email, firstName).catch((err) =>
+    console.error('Welcome email error:', err)
+  );
 
   return Response.json({ success: true }, { status: 200 });
 }
