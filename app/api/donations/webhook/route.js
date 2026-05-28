@@ -91,6 +91,39 @@ export async function POST(request) {
         break;
       }
 
+      case 'payment_intent.succeeded': {
+        const intent = event.data.object;
+        if (intent.invoice) break; // skip subscription renewals
+
+        const { interval, donor_name } = intent.metadata || {};
+        const amount = intent.amount;
+        const isMonthly = interval === 'month';
+        const donorEmail = intent.receipt_email;
+        const resolvedName = intent.shipping?.name || donor_name || 'Friend';
+
+        if (donorEmail) {
+          try {
+            await fetch('https://seed-and-spoon-backend.vercel.app/api/email/donate', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name: resolvedName,
+                email: donorEmail,
+                amount: String(amount / 100),
+                donationType: isMonthly ? 'monthly' : 'one-time',
+                date: new Date(intent.created * 1000).toLocaleDateString('en-US', {
+                  timeZone: 'America/New_York', year: 'numeric', month: 'long', day: 'numeric',
+                }),
+                transactionId: intent.id,
+              }),
+            });
+          } catch (e) {
+            console.error('[Stripe Webhook] Receipt email failed:', e);
+          }
+        }
+        break;
+      }
+
       case 'invoice.payment_succeeded': {
         const invoice = event.data.object;
         const subscriptionId = invoice.subscription;
