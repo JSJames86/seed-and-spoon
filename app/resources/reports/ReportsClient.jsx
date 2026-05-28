@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import NJFoodSecurityPlanCard from '@/components/NJFoodSecurityPlanCard';
 
 // ─── Resource data ────────────────────────────────────────────────────────────
 // Update href values with direct report URLs as you find them.
@@ -396,6 +397,13 @@ export default function ReportsClient() {
               </a>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* NJ Food Security Strategic Plan */}
+      <section className="bg-white py-14 px-4 border-b border-gray-100">
+        <div className="max-w-4xl mx-auto">
+          <NJFoodSecurityPlanCard />
         </div>
       </section>
 
