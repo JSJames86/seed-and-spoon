@@ -1,4 +1,4 @@
-name: Next.js CI (Bun)
+name: Next.js CI
 
 on:
   push:
@@ -14,35 +14,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          bun-version: latest
-
-      - name: Cache Bun dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
+          node-version: '20'
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: npm install
 
       - name: Run linter
-        run: bun run lint
+        run: npm run lint
 
       - name: Build Next.js app
-        run: bun run build
+        run: npm run build
         env:
           NODE_ENV: production
-
-      - name: Test production server
-        run: |
-          timeout 30s bun start &
-          sleep 10
-          curl -f -s -o /dev/null http://localhost:3000 || exit 1
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

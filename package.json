@@ -3,14 +3,15 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
-    "dev": "bun --bun next dev",
-    "build": "bun --bun next build",
-    "start": "bun --bun next start",
-    "lint": "bun --bun next lint",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
     "postbuild": "next-sitemap",
-    "import:resources": "bun run scripts/import-resources.js"
+    "import:resources": "node scripts/import-resources.js"
   },
   "dependencies": {
+    "@react-email/components": "^0.0.32",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.39.0",
     "@tiptap/extension-image": "^3.22.5",

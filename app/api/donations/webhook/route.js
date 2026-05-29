@@ -3,15 +3,93 @@
  *
  * Receives and processes Stripe webhook events.
  * The raw body must NOT be parsed — Stripe uses it to verify the signature.
- *
- * Update the webhook URL in your Stripe Dashboard to:
- *   https://seed-and-spoon-backend.vercel.app/api/donations/webhook
  */
 
 import { NextResponse } from 'next/server';
 import { verifyWebhookSignature } from '@/lib/stripe-helpers';
 import { captureServerEvent } from '@/lib/posthog-server';
 import { EVENTS } from '@/analytics/events';
+import { createClient } from '@supabase/supabase-js';
+import { sendEmail } from '@/lib/email-service';
+import { renderDonationReceiptEmail, renderDonationInternalEmail } from '@/emails/templates/donation';
+
+function getServiceSupabase() {
+  const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
+}
+
+async function recordDonation({ donorEmail, donorName, amountCents, isMonthly, transactionId, stripePaymentIntentId }) {
+  try {
+    const supabase = getServiceSupabase();
+    if (!supabase) {
+      console.warn('[Stripe Webhook] Skipping DB record — service role key not configured');
+      return;
+    }
+    await supabase.from('donations').insert({
+      donor_email: donorEmail || null,
+      donor_name: donorName,
+      amount: amountCents / 100,
+      donation_type: isMonthly ? 'monthly' : 'one_time',
+      transaction_id: transactionId,
+      stripe_payment_intent_id: stripePaymentIntentId || null,
+      payment_method: 'stripe',
+      status: 'completed',
+    });
+  } catch (err) {
+    console.error('[Stripe Webhook] Failed to record donation (non-fatal):', err);
+  }
+}
+
+async function sendDonationEmails({ name, email, amountCents, isMonthly, transactionId, createdAt }) {
+  const STAFF_EMAIL = process.env.STAFF_EMAIL || 'team@seedandspoon.org';
+  const amountDollars = amountCents / 100;
+  const donationType = isMonthly ? 'monthly' : 'one-time';
+  const dateStr = new Date(createdAt * 1000).toLocaleDateString('en-US', {
+    timeZone: 'America/New_York',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  try {
+    const receiptHtml = await renderDonationReceiptEmail({
+      firstName: name,
+      amount: amountDollars,
+      donationType,
+      date: dateStr,
+      transactionId,
+    });
+    await sendEmail({
+      to: email,
+      subject: 'Thank you for your donation to Seed & Spoon!',
+      html: receiptHtml,
+      emailType: 'donation_receipt',
+    });
+  } catch (e) {
+    console.error('[Stripe Webhook] Donor receipt failed:', e);
+  }
+
+  try {
+    const internalHtml = await renderDonationInternalEmail({
+      name,
+      email,
+      amount: amountDollars,
+      donationType,
+      date: dateStr,
+      transactionId,
+    });
+    await sendEmail({
+      to: STAFF_EMAIL,
+      subject: `New ${donationType} donation: $${amountDollars.toFixed(2)} from ${name}`,
+      html: internalHtml,
+      emailType: 'donation_internal',
+    });
+  } catch (e) {
+    console.error(`[Stripe Webhook] Staff alert failed (STAFF_EMAIL=${STAFF_EMAIL}):`, e);
+  }
+}
 
 export async function POST(request) {
   const signature = request.headers.get('stripe-signature');
@@ -65,28 +143,25 @@ export async function POST(request) {
 
         const donorEmail = session.customer_details?.email;
         const resolvedName = session.customer_details?.name || donorName || 'Friend';
+
+        await recordDonation({
+          donorEmail,
+          donorName: resolvedName,
+          amountCents: amount,
+          isMonthly,
+          transactionId: session.id,
+          stripePaymentIntentId: session.payment_intent || null,
+        });
+
         if (donorEmail) {
-          try {
-            await fetch('https://seed-and-spoon-backend.vercel.app/api/email/donate', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                name: resolvedName,
-                email: donorEmail,
-                amount: String(amount / 100),
-                donationType: isMonthly ? 'monthly' : 'one-time',
-                date: new Date(session.created * 1000).toLocaleDateString('en-US', {
-                  timeZone: 'America/New_York',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                }),
-                transactionId: session.id,
-              }),
-            });
-          } catch (emailErr) {
-            console.error('[Stripe Webhook] Failed to send receipt email:', emailErr);
-          }
+          await sendDonationEmails({
+            name: resolvedName,
+            email: donorEmail,
+            amountCents: amount,
+            isMonthly,
+            transactionId: session.id,
+            createdAt: session.created,
+          });
         }
         break;
       }
@@ -101,25 +176,24 @@ export async function POST(request) {
         const donorEmail = intent.receipt_email;
         const resolvedName = intent.shipping?.name || donor_name || 'Friend';
 
+        await recordDonation({
+          donorEmail,
+          donorName: resolvedName,
+          amountCents: amount,
+          isMonthly,
+          transactionId: intent.id,
+          stripePaymentIntentId: intent.id,
+        });
+
         if (donorEmail) {
-          try {
-            await fetch('https://seed-and-spoon-backend.vercel.app/api/email/donate', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                name: resolvedName,
-                email: donorEmail,
-                amount: String(amount / 100),
-                donationType: isMonthly ? 'monthly' : 'one-time',
-                date: new Date(intent.created * 1000).toLocaleDateString('en-US', {
-                  timeZone: 'America/New_York', year: 'numeric', month: 'long', day: 'numeric',
-                }),
-                transactionId: intent.id,
-              }),
-            });
-          } catch (e) {
-            console.error('[Stripe Webhook] Receipt email failed:', e);
-          }
+          await sendDonationEmails({
+            name: resolvedName,
+            email: donorEmail,
+            amountCents: amount,
+            isMonthly,
+            transactionId: intent.id,
+            createdAt: intent.created,
+          });
         }
         break;
       }
@@ -132,7 +206,6 @@ export async function POST(request) {
         console.log(
           `[Stripe Webhook] Recurring payment succeeded — subscription: ${subscriptionId}, amount: ${amount}`
         );
-        // TODO: record recurring payment in your database here
         break;
       }
 
@@ -151,8 +224,6 @@ export async function POST(request) {
           tier: null,
           amount: (invoice.amount_due || 0) / 100,
         });
-
-        // TODO: notify donor or update subscription status here
         break;
       }
 
@@ -168,18 +239,14 @@ export async function POST(request) {
           donor_id: customerId,
           reason: subscription.cancellation_details?.reason || null,
         });
-
-        // TODO: update subscription status in your database here
         break;
       }
 
       default:
-        // Unhandled event type — acknowledge receipt so Stripe stops retrying
         break;
     }
   } catch (error) {
     console.error(`[Stripe Webhook] Error processing event ${event.type}:`, error);
-    // Return 500 so Stripe retries the event
     return NextResponse.json({ error: 'Internal error processing webhook' }, { status: 500 });
   }
 
