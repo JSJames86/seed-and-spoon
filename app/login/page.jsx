@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -22,7 +23,21 @@ export default function LoginPage() {
     const result = await login(email, password);
 
     if (result.success) {
-      router.push('/dashboard');
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+          router.push(profile?.role === 'admin' ? '/admin' : '/dashboard');
+        } else {
+          router.push('/dashboard');
+        }
+      } catch {
+        router.push('/dashboard');
+      }
     } else {
       setError(result.error);
     }
@@ -40,8 +55,7 @@ export default function LoginPage() {
       setError(result.error || 'Failed to sign in with Google');
       setOauthLoading(false);
     }
-    // Note: On success, Supabase will redirect to the OAuth provider
-    // and then back to our app, so we don't need to handle success here
+    // On success, Supabase redirects to the OAuth provider and back
   };
 
   const handleFacebookSignIn = async () => {
@@ -54,8 +68,7 @@ export default function LoginPage() {
       setError(result.error || 'Failed to sign in with Facebook');
       setOauthLoading(false);
     }
-    // Note: On success, Supabase will redirect to the OAuth provider
-    // and then back to our app, so we don't need to handle success here
+    // On success, Supabase redirects to the OAuth provider and back
   };
 
   return (
