@@ -295,6 +295,11 @@ export default function Header() {
             <div className={`flex items-center gap-3 lg:gap-4 border-l pl-3 lg:pl-4 ${isScrolled ? "border-charcoal/30" : "border-white/30"}`}>
               {user ? (
                 <>
+                  {user?.email === 'janelle.shanise@gmail.com' && (
+                    <Link href="/admin" className={getNavLinkClass(isScrolled)}>
+                      Admin
+                    </Link>
+                  )}
                   <Link href="/dashboard" className={getNavLinkClass(isScrolled)}>
                     Dashboard
                   </Link>
@@ -430,6 +435,15 @@ export default function Header() {
               <div className="border-t border-white/30 pt-6 space-y-4">
                 {user ? (
                   <>
+                    {user?.email === 'janelle.shanise@gmail.com' && (
+                      <Link
+                        href="/admin"
+                        onClick={closeMenu}
+                        className="block text-center body-md font-bold text-white hover:text-[var(--leaf-light)] text-2xl py-3"
+                      >
+                        Admin
+                      </Link>
+                    )}
                     <Link
                       href="/dashboard"
                       onClick={closeMenu}
