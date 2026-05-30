@@ -61,14 +61,12 @@ export function AuthProvider({ children }) {
     return () => subscription?.unsubscribe();
   }, []);
 
+  // login() just authenticates — no profile fetch here to avoid hanging
   const login = async (email, password) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-      // Fetch profile immediately so redirect logic has the role
-      const userProfile = await fetchProfile(data.user.id);
-      setProfile(userProfile);
-      return { success: true, role: userProfile?.role || 'user' };
+      return { success: true };
     } catch (error) {
       return { success: false, error: error.message };
     }
@@ -123,7 +121,7 @@ export function AuthProvider({ children }) {
         redirectTo: `${window.location.origin}/reset-password`,
       });
       if (error) throw error;
-      return { success: true, message: 'Password reset email sent. Please check your inbox.' };
+      return { success: true, message: 'Password reset email sent.' };
     } catch (error) {
       return { success: false, error: error.message };
     }
