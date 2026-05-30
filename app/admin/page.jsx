@@ -3,17 +3,9 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@supabase/supabase-js'
 import SendReceiptsButton from './SendReceiptsButton'
 
 const ADMIN_EMAIL = 'janelle.shanise@gmail.com'
-
-function serviceClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  )
-}
 
 export default function AdminPage() {
   const { user, profile, loading: authLoading } = useAuth()
@@ -23,48 +15,30 @@ export default function AdminPage() {
   const [emailLogs, setEmailLogs] = useState([])
   const [dataLoading, setDataLoading] = useState(true)
 
-  // Determine access: allow if known admin email OR profile says admin
   const isAdmin = user?.email === ADMIN_EMAIL || profile?.role === 'admin'
 
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push('/login'); return }
-    // If we have user but profile is still loading, wait up to 3s then check email
-    if (!profile && !authLoading) {
-      const timer = setTimeout(() => {
-        if (user.email !== ADMIN_EMAIL) router.push('/dashboard')
-      }, 3000)
-      return () => clearTimeout(timer)
-    }
-    if (profile && profile.role !== 'admin' && user.email !== ADMIN_EMAIL) {
-      router.push('/dashboard')
-      return
-    }
-    fetchData()
-  }, [authLoading, user, profile]) // eslint-disable-line
-
-  // Also fetch data once we confirm admin via email even before profile loads
-  useEffect(() => {
-    if (user?.email === ADMIN_EMAIL && dataLoading) {
-      fetchData()
-    }
-  }, [user]) // eslint-disable-line
+    if (!isAdmin && profile !== null) { router.push('/dashboard'); return }
+    if (isAdmin) fetchData()
+  }, [authLoading, user, profile, isAdmin]) // eslint-disable-line
 
   const fetchData = async () => {
-    const supabase = serviceClient()
-    const [d, v, e] = await Promise.all([
-      supabase.from('donations').select('id, donor_name, donor_email, amount, donation_type, status, donated_at').order('donated_at', { ascending: false }).limit(20),
-      supabase.from('volunteer_applications').select('id, name, email, interests, availability, status, created_at').order('created_at', { ascending: false }).limit(20),
-      supabase.from('email_logs').select('id, recipient_email, subject, email_type, status, sent_at, error_message').order('sent_at', { ascending: false }).limit(20),
-    ])
-    setDonations(d.data ?? [])
-    setVolunteers(v.data ?? [])
-    setEmailLogs(e.data ?? [])
-    setDataLoading(false)
+    try {
+      const res = await fetch('/api/admin/data')
+      const json = await res.json()
+      setDonations(json.donations ?? [])
+      setVolunteers(json.volunteers ?? [])
+      setEmailLogs(json.emailLogs ?? [])
+    } catch (err) {
+      console.error('Failed to load admin data:', err)
+    } finally {
+      setDataLoading(false)
+    }
   }
 
-  // Show spinner only briefly — if user email matches, render immediately
-  if (authLoading || (!user && !authLoading)) {
+  if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-cream">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-soil" />
@@ -72,8 +46,7 @@ export default function AdminPage() {
     )
   }
 
-  if (!user) return null
-  if (!isAdmin && profile) return null
+  if (!user || (!isAdmin && profile !== null)) return null
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
