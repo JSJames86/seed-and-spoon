@@ -3,7 +3,11 @@ import { createServerClient } from '@supabase/ssr'
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
-  const response = NextResponse.next()
+
+  // Build a mutable response so we can forward any cookie updates Supabase sets
+  let response = NextResponse.next({
+    request: { headers: request.headers },
+  })
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,35 +18,36 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
+          cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
-            response.cookies.set(name, value, options)
+          )
+          response = NextResponse.next({
+            request: { headers: request.headers },
           })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          )
         },
       },
     }
   )
 
+  // Always call getUser() — this refreshes the session if needed
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Unauthenticated — redirect to login for protected routes
   if (!user) {
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('next', pathname)
     return NextResponse.redirect(loginUrl)
   }
 
-  // Admin route — verify role via service client
+  // Admin route — check role
   if (pathname.startsWith('/admin')) {
-    const serviceSupabase = createServerClient(
+    const { createClient } = await import('@supabase/supabase-js')
+    const serviceSupabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      {
-        cookies: {
-          getAll() { return [] },
-          setAll() {},
-        },
-      }
+      { auth: { autoRefreshToken: false, persistSession: false } }
     )
 
     const { data: profile } = await serviceSupabase
