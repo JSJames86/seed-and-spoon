@@ -6,7 +6,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import Link from 'next/link';
 
 export default function ProfilePage() {
-  const { user, profile, updateProfile, changePassword } = useAuth();
+  const { user, profile, changePassword } = useAuth();
 
   const [profileData, setProfileData] = useState({
     username: '',
@@ -44,11 +44,17 @@ export default function ProfilePage() {
     setProfileError('');
     setProfileMessage('');
     setProfileLoading(true);
-    const result = await updateProfile(profileData);
-    if (result.success) {
+    try {
+      const res = await fetch('/api/profile/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user?.id, ...profileData }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to update');
       setProfileMessage('Profile updated successfully!');
-    } else {
-      setProfileError(result.error || 'Failed to update profile');
+    } catch (err) {
+      setProfileError(err.message || 'Failed to update profile');
     }
     setProfileLoading(false);
   };
