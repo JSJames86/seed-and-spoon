@@ -11,7 +11,7 @@ function LoginForm() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState(false);
-  const { login, profile, signInWithGoogle, signInWithFacebook } = useAuth();
+  const { login, signInWithGoogle, signInWithFacebook } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get('next');
@@ -24,22 +24,18 @@ function LoginForm() {
     const result = await login(email, password);
 
     if (result.success) {
-      // Give AuthContext time to fetch the profile after login
-      await new Promise(resolve => setTimeout(resolve, 800));
-
-      if (next && next.startsWith('/')) {
-        router.push(next);
-      } else if (result.role === 'admin') {
+      // Role-based redirect takes priority — admin always goes to /admin
+      if (result.role === 'admin') {
         router.push('/admin');
+      } else if (next && next.startsWith('/') && !next.startsWith('/admin')) {
+        router.push(next);
       } else {
-        // Use the profile from AuthContext if available, fallback to dashboard
         router.push('/dashboard');
       }
     } else {
       setError(result.error);
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const handleGoogleSignIn = async () => {
