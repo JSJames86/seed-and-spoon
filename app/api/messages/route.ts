@@ -1,0 +1,43 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
+
+function serviceClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { autoRefreshToken: false, persistSession: false } }
+  )
+}
+
+export async function GET(request: NextRequest) {
+  const channelId = request.nextUrl.searchParams.get('channel_id')
+  if (!channelId) return NextResponse.json({ error: 'channel_id required' }, { status: 400 })
+
+  const supabase = serviceClient()
+  const { data, error } = await supabase
+    .from('messages')
+    .select('*')
+    .eq('channel_id', channelId)
+    .order('created_at', { ascending: true })
+    .limit(100)
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ messages: data ?? [] })
+}
+
+export async function POST(request: NextRequest) {
+  const { channel_id, sender_id, username, content } = await request.json()
+  if (!channel_id || !sender_id || !content) {
+    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+  }
+
+  const supabase = serviceClient()
+  const { data, error } = await supabase
+    .from('messages')
+    .insert({ channel_id, sender_id, username, content })
+    .select()
+    .single()
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ message: data })
+}
