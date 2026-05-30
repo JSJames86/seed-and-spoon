@@ -2,7 +2,7 @@
 
 import { useState, Suspense } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 const ADMIN_EMAIL = 'janelle.shanise@gmail.com';
@@ -14,7 +14,6 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState(false);
   const { login, signInWithGoogle, signInWithFacebook } = useAuth();
-  const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get('next');
 
@@ -26,13 +25,13 @@ function LoginForm() {
     const result = await login(email, password);
 
     if (result.success) {
-      // Admin email always goes to /admin
+      // Use window.location for a hard redirect — avoids Next.js router stall
       if (email.toLowerCase() === ADMIN_EMAIL) {
-        router.push('/admin');
+        window.location.href = '/admin';
       } else if (next && next.startsWith('/')) {
-        router.push(next);
+        window.location.href = next;
       } else {
-        router.push('/dashboard');
+        window.location.href = '/dashboard';
       }
     } else {
       setError(result.error);
