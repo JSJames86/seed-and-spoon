@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import SendReceiptsButton from './SendReceiptsButton'
 
+const ADMIN_EMAIL = 'janelle.shanise@gmail.com'
+
 function serviceClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -21,12 +23,32 @@ export default function AdminPage() {
   const [emailLogs, setEmailLogs] = useState([])
   const [dataLoading, setDataLoading] = useState(true)
 
+  // Determine access: allow if known admin email OR profile says admin
+  const isAdmin = user?.email === ADMIN_EMAIL || profile?.role === 'admin'
+
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push('/login'); return }
-    if (profile && profile.role !== 'admin') { router.push('/dashboard'); return }
-    if (profile?.role === 'admin') fetchData()
+    // If we have user but profile is still loading, wait up to 3s then check email
+    if (!profile && !authLoading) {
+      const timer = setTimeout(() => {
+        if (user.email !== ADMIN_EMAIL) router.push('/dashboard')
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+    if (profile && profile.role !== 'admin' && user.email !== ADMIN_EMAIL) {
+      router.push('/dashboard')
+      return
+    }
+    fetchData()
   }, [authLoading, user, profile]) // eslint-disable-line
+
+  // Also fetch data once we confirm admin via email even before profile loads
+  useEffect(() => {
+    if (user?.email === ADMIN_EMAIL && dataLoading) {
+      fetchData()
+    }
+  }, [user]) // eslint-disable-line
 
   const fetchData = async () => {
     const supabase = serviceClient()
@@ -41,7 +63,8 @@ export default function AdminPage() {
     setDataLoading(false)
   }
 
-  if (authLoading || (user && !profile)) {
+  // Show spinner only briefly — if user email matches, render immediately
+  if (authLoading || (!user && !authLoading)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-cream">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-soil" />
@@ -49,7 +72,8 @@ export default function AdminPage() {
     )
   }
 
-  if (!user || profile?.role !== 'admin') return null
+  if (!user) return null
+  if (!isAdmin && profile) return null
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
@@ -139,19 +163,15 @@ function Section({ title, children }) {
     </section>
   )
 }
-
 function Th({ children }) {
   return <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase tracking-wide">{children}</th>
 }
-
 function Td({ children, className = '' }) {
   return <td className={`px-4 py-3 text-gray-700 ${className}`}>{children}</td>
 }
-
 function EmptyRow({ cols }) {
   return <tr><td colSpan={cols} className="px-4 py-8 text-center text-gray-400 italic text-sm">No records yet</td></tr>
 }
-
 function Loading() {
   return <div className="p-8 text-center text-gray-400 text-sm">Loading...</div>
 }
