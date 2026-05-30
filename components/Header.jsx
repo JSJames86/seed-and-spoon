@@ -300,6 +300,9 @@ export default function Header() {
                       Admin
                     </Link>
                   )}
+                  <Link href="/messages" className={getNavLinkClass(isScrolled)}>
+                    Messages
+                  </Link>
                   <Link href="/dashboard" className={getNavLinkClass(isScrolled)}>
                     Dashboard
                   </Link>
@@ -444,6 +447,13 @@ export default function Header() {
                         Admin
                       </Link>
                     )}
+                    <Link
+                      href="/messages"
+                      onClick={closeMenu}
+                      className="block text-center body-md font-bold text-white hover:text-[var(--leaf-light)] text-2xl py-3"
+                    >
+                      Messages
+                    </Link>
                     <Link
                       href="/dashboard"
                       onClick={closeMenu}
