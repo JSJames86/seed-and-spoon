@@ -14,54 +14,47 @@ export function AuthProvider({ children }) {
 
   const fetchProfile = async (userId) => {
     try {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single();
-      if (error && error.code !== 'PGRST116') return null;
-      return data;
+      return data || null;
     } catch {
       return null;
     }
   };
 
   useEffect(() => {
-    const getInitialSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          setUser(session.user);
-          const userProfile = await fetchProfile(session.user.id);
-          setProfile(userProfile);
-        }
-      } catch (error) {
-        console.error('Error in getInitialSession:', error);
-      } finally {
+    // Get session immediately — don't wait for profile to set loading=false
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser(session.user);
+        setLoading(false);
+        // Fetch profile in background — don't block render
+        fetchProfile(session.user.id).then(setProfile);
+      } else {
         setLoading(false);
       }
-    };
-
-    getInitialSession();
+    });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         if (session?.user) {
           setUser(session.user);
-          const userProfile = await fetchProfile(session.user.id);
-          setProfile(userProfile);
+          setLoading(false);
+          fetchProfile(session.user.id).then(setProfile);
         } else {
           setUser(null);
           setProfile(null);
+          setLoading(false);
         }
-        setLoading(false);
       }
     );
 
     return () => subscription?.unsubscribe();
   }, []);
 
-  // login() just authenticates — no profile fetch here to avoid hanging
   const login = async (email, password) => {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -73,28 +66,21 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
-    try {
-      await supabase.auth.signOut();
-    } catch (error) {
-      console.error('Logout error:', error);
-    } finally {
-      setUser(null);
-      setProfile(null);
-      router.push('/');
-    }
+    await supabase.auth.signOut().catch(console.error);
+    setUser(null);
+    setProfile(null);
+    router.push('/');
   };
 
   const updateProfile = async (profileData) => {
     try {
       if (!user) throw new Error('No user logged in');
       const { error } = await supabase.from('profiles').upsert({
-        id: user.id,
-        ...profileData,
-        updated_at: new Date().toISOString(),
+        id: user.id, ...profileData, updated_at: new Date().toISOString(),
       });
       if (error) throw error;
-      const updatedProfile = await fetchProfile(user.id);
-      setProfile(updatedProfile);
+      const updated = await fetchProfile(user.id);
+      setProfile(updated);
       return { success: true };
     } catch (error) {
       return { success: false, error: error.message };
@@ -103,13 +89,11 @@ export function AuthProvider({ children }) {
 
   const changePassword = async (oldPassword, newPassword) => {
     try {
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: user?.email, password: oldPassword,
-      });
-      if (signInError) throw new Error('Current password is incorrect');
+      const { error: e } = await supabase.auth.signInWithPassword({ email: user?.email, password: oldPassword });
+      if (e) throw new Error('Current password is incorrect');
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) throw error;
-      return { success: true, message: 'Password updated successfully' };
+      return { success: true };
     } catch (error) {
       return { success: false, error: error.message };
     }
@@ -131,7 +115,7 @@ export function AuthProvider({ children }) {
     try {
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) throw error;
-      return { success: true, message: 'Password has been reset successfully' };
+      return { success: true };
     } catch (error) {
       return { success: false, error: error.message };
     }
@@ -140,8 +124,7 @@ export function AuthProvider({ children }) {
   const signInWithGoogle = async () => {
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: `${window.location.origin}/` },
+        provider: 'google', options: { redirectTo: `${window.location.origin}/` },
       });
       if (error) throw error;
       return { success: true, data };
@@ -153,8 +136,7 @@ export function AuthProvider({ children }) {
   const signInWithFacebook = async () => {
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'facebook',
-        options: { redirectTo: `${window.location.origin}/` },
+        provider: 'facebook', options: { redirectTo: `${window.location.origin}/` },
       });
       if (error) throw error;
       return { success: true, data };
@@ -163,15 +145,16 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const value = {
-    user, profile, loading,
-    isAuthenticated: !!user,
-    login, logout, updateProfile, changePassword,
-    requestPasswordReset, resetPassword,
-    signInWithGoogle, signInWithFacebook,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{
+      user, profile, loading, isAuthenticated: !!user,
+      login, logout, updateProfile, changePassword,
+      requestPasswordReset, resetPassword,
+      signInWithGoogle, signInWithFacebook,
+    }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {
