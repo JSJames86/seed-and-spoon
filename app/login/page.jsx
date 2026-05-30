@@ -5,6 +5,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
+const ADMIN_EMAIL = 'janelle.shanise@gmail.com';
+
 function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,19 +26,13 @@ function LoginForm() {
     const result = await login(email, password);
 
     if (result.success) {
-      // Ask the server for the role — bypasses RLS timing issues
-      try {
-        const res = await fetch('/api/auth/role')
-        const { role } = await res.json()
-        if (role === 'admin') {
-          router.push('/admin')
-        } else if (next && next.startsWith('/')) {
-          router.push(next)
-        } else {
-          router.push('/dashboard')
-        }
-      } catch {
-        router.push('/dashboard')
+      // Admin email always goes to /admin
+      if (email.toLowerCase() === ADMIN_EMAIL) {
+        router.push('/admin');
+      } else if (next && next.startsWith('/')) {
+        router.push(next);
+      } else {
+        router.push('/dashboard');
       }
     } else {
       setError(result.error);
