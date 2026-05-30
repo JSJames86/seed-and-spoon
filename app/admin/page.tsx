@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { createServerClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
 import type { ReactNode } from 'react'
+import SendReceiptsButton from './SendReceiptsButton'
 
 function getServiceClient() {
   const url = (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL)!
@@ -72,6 +73,11 @@ export default async function AdminPage() {
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-charcoal mb-1">Admin Dashboard</h1>
+
+      <div className="mb-8 p-4 bg-white rounded-lg border border-gray-200">
+        <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3">Actions</h2>
+        <SendReceiptsButton />
+      </div>
       <p className="text-sm text-gray-500 mb-10">Signed in as {user.email}</p>
 
       <Section title="Recent Donations">
