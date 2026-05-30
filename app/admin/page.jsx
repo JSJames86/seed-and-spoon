@@ -16,7 +16,7 @@ const GRANT_STAGES = [
   { id: 'closed', label: 'Closed', color: 'bg-red-100 text-red-700' },
 ]
 
-const TABS = ['Overview', 'Grants', 'Donors', 'Volunteers']
+const TABS = ['Overview', 'Grants', 'Donors', 'Volunteers', 'Users']
 
 export default function AdminPage() {
   const { user, profile, loading: authLoading } = useAuth()
@@ -27,6 +27,11 @@ export default function AdminPage() {
   const [grants, setGrants] = useState([])
   const [dataLoading, setDataLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [users, setUsers] = useState([])
+  const [invites, setInvites] = useState([])
+  const [newInvite, setNewInvite] = useState({ email: '', role: 'volunteer' })
+  const [inviting, setInviting] = useState(false)
+  const [inviteMsg, setInviteMsg] = useState('')
   const [showGrantForm, setShowGrantForm] = useState(false)
   const [newGrant, setNewGrant] = useState({ title: '', funder: '', amount: '', stage: 'prospect', due_date: '', notes: '' })
 
@@ -41,15 +46,21 @@ export default function AdminPage() {
 
   const fetchData = async () => {
     try {
-      const [adminRes, grantsRes] = await Promise.all([
+      const [adminRes, grantsRes, usersRes, invitesRes] = await Promise.all([
         fetch('/api/admin/data'),
         fetch('/api/admin/grants'),
+        fetch('/api/admin/users'),
+        fetch('/api/admin/invites'),
       ])
       const adminData = await adminRes.json()
       const grantsData = await grantsRes.json()
+      const usersData = await usersRes.json()
+      const invitesData = await invitesRes.json()
       setDonations(adminData.donations ?? [])
       setVolunteers(adminData.volunteers ?? [])
       setGrants(grantsData.grants ?? [])
+      setUsers(usersData.users ?? [])
+      setInvites(invitesData.invites ?? [])
     } catch (err) {
       console.error('Failed to load admin data:', err)
     } finally {
@@ -94,6 +105,44 @@ export default function AdminPage() {
   const uniqueDonors = new Set(donations.map(d => d.donor_email)).size
   const activeVolunteers = volunteers.filter(v => v.status === 'approved' || v.status === 'active').length
   const awardedGrants = grants.filter(g => g.stage === 'awarded').reduce((sum, g) => sum + Number(g.amount || 0), 0)
+
+  const sendInvite = async (e) => {
+    e.preventDefault()
+    setInviting(true)
+    setInviteMsg('')
+    const res = await fetch('/api/admin/invites', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newInvite),
+    })
+    const data = await res.json()
+    if (res.ok) {
+      setInviteMsg(`Invite sent to ${newInvite.email}!`)
+      setNewInvite({ email: '', role: 'volunteer' })
+      setInvites(prev => [data.invite, ...prev])
+    } else {
+      setInviteMsg(data.error || 'Failed to send invite')
+    }
+    setInviting(false)
+  }
+
+  const updateUserRole = async (userId, role) => {
+    await fetch('/api/admin/users', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, role }),
+    })
+    setUsers(prev => prev.map(u => u.id === userId ? { ...u, role } : u))
+  }
+
+  const revokeInvite = async (id) => {
+    await fetch('/api/admin/invites', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    })
+    setInvites(prev => prev.filter(i => i.id !== id))
+  }
 
   const filteredDonors = donations.filter(d =>
     !search || d.donor_name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -339,6 +388,97 @@ export default function AdminPage() {
                 )}
               </div>
             )}
+          </div>
+        )}
+
+      </div>
+        {/* USERS TAB */}
+        {activeTab === 'Users' && (
+          <div className="space-y-6">
+
+            {/* Send Invite */}
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <h2 className="font-semibold text-charcoal mb-3">Send Invite</h2>
+              <form onSubmit={sendInvite} className="flex flex-wrap gap-3 items-end">
+                <div className="flex-1 min-w-48">
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Email</label>
+                  <input required type="email"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="email@example.com"
+                    value={newInvite.email}
+                    onChange={e => setNewInvite({...newInvite, email: e.target.value})} />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Role</label>
+                  <select className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                    value={newInvite.role} onChange={e => setNewInvite({...newInvite, role: e.target.value})}>
+                    <option value="donor">Donor</option>
+                    <option value="volunteer">Volunteer</option>
+                    <option value="staff">Staff</option>
+                  </select>
+                </div>
+                <button type="submit" disabled={inviting}
+                  className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 disabled:opacity-50 transition-all">
+                  {inviting ? 'Sending...' : 'Send Invite'}
+                </button>
+              </form>
+              {inviteMsg && <p className={`text-sm mt-3 font-medium ${inviteMsg.includes('sent') ? 'text-green-700' : 'text-red-600'}`}>{inviteMsg}</p>}
+            </div>
+
+            {/* Pending Invites */}
+            {invites.filter(i => !i.used_at).length > 0 && (
+              <div className="bg-white rounded-xl border border-gray-200 p-5">
+                <h2 className="font-semibold text-charcoal mb-3">Pending Invites</h2>
+                <div className="space-y-2">
+                  {invites.filter(i => !i.used_at).map(invite => (
+                    <div key={invite.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                      <div>
+                        <p className="text-sm font-medium text-charcoal">{invite.email}</p>
+                        <p className="text-xs text-gray-400 capitalize">{invite.role} · Expires {new Date(invite.expires_at).toLocaleDateString()}</p>
+                      </div>
+                      <button onClick={() => revokeInvite(invite.id)}
+                        className="px-3 py-1 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg transition-all">
+                        Revoke
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* All Users */}
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div className="px-5 py-4 border-b border-gray-100">
+                <h2 className="font-semibold text-charcoal">All Users <span className="text-gray-400 font-normal text-sm">({users.length})</span></h2>
+              </div>
+              {dataLoading ? <Loading /> : (
+                <div className="divide-y divide-gray-100">
+                  {users.map(u => (
+                    <div key={u.id} className="px-5 py-3 flex items-center justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-charcoal truncate">
+                          {u.profile?.first_name ? `${u.profile.first_name} ${u.profile.last_name || ''}`.trim() : u.email}
+                        </p>
+                        <p className="text-xs text-gray-400 truncate">{u.email}</p>
+                        {u.last_sign_in && <p className="text-xs text-gray-300">Last seen {new Date(u.last_sign_in).toLocaleDateString()}</p>}
+                      </div>
+                      <select
+                        className="px-2 py-1 border border-gray-200 rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-green-500"
+                        value={u.role}
+                        onChange={e => updateUserRole(u.id, e.target.value)}>
+                        <option value="donor">Donor</option>
+                        <option value="volunteer">Volunteer</option>
+                        <option value="staff">Staff</option>
+                        <option value="admin">Admin</option>
+                        <option value="suspended">Suspended</option>
+                      </select>
+                    </div>
+                  ))}
+                  {users.length === 0 && <div className="px-5 py-8 text-center text-gray-400 text-sm">No users yet</div>}
+                </div>
+              )}
+            </div>
+
           </div>
         )}
 
