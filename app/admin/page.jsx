@@ -7,13 +7,28 @@ import SendReceiptsButton from './SendReceiptsButton'
 
 const ADMIN_EMAIL = 'janelle.shanise@gmail.com'
 
+const GRANT_STAGES = [
+  { id: 'prospect', label: 'Prospect', color: 'bg-gray-100 text-gray-700' },
+  { id: 'loi', label: 'LOI', color: 'bg-blue-100 text-blue-700' },
+  { id: 'submitted', label: 'Submitted', color: 'bg-yellow-100 text-yellow-700' },
+  { id: 'awarded', label: 'Awarded', color: 'bg-green-100 text-green-700' },
+  { id: 'reporting', label: 'Reporting', color: 'bg-purple-100 text-purple-700' },
+  { id: 'closed', label: 'Closed', color: 'bg-red-100 text-red-700' },
+]
+
+const TABS = ['Overview', 'Grants', 'Donors', 'Volunteers']
+
 export default function AdminPage() {
   const { user, profile, loading: authLoading } = useAuth()
   const router = useRouter()
+  const [activeTab, setActiveTab] = useState('Overview')
   const [donations, setDonations] = useState([])
   const [volunteers, setVolunteers] = useState([])
-  const [emailLogs, setEmailLogs] = useState([])
+  const [grants, setGrants] = useState([])
   const [dataLoading, setDataLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const [showGrantForm, setShowGrantForm] = useState(false)
+  const [newGrant, setNewGrant] = useState({ title: '', funder: '', amount: '', stage: 'prospect', due_date: '', notes: '' })
 
   const isAdmin = user?.email === ADMIN_EMAIL || profile?.role === 'admin'
 
@@ -26,17 +41,64 @@ export default function AdminPage() {
 
   const fetchData = async () => {
     try {
-      const res = await fetch('/api/admin/data')
-      const json = await res.json()
-      setDonations(json.donations ?? [])
-      setVolunteers(json.volunteers ?? [])
-      setEmailLogs(json.emailLogs ?? [])
+      const [adminRes, grantsRes] = await Promise.all([
+        fetch('/api/admin/data'),
+        fetch('/api/admin/grants'),
+      ])
+      const adminData = await adminRes.json()
+      const grantsData = await grantsRes.json()
+      setDonations(adminData.donations ?? [])
+      setVolunteers(adminData.volunteers ?? [])
+      setGrants(grantsData.grants ?? [])
     } catch (err) {
       console.error('Failed to load admin data:', err)
     } finally {
       setDataLoading(false)
     }
   }
+
+  const updateVolunteerStatus = async (id, status) => {
+    await fetch('/api/admin/volunteers', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, status }),
+    })
+    setVolunteers(prev => prev.map(v => v.id === id ? { ...v, status } : v))
+  }
+
+  const moveGrant = async (id, stage) => {
+    await fetch('/api/admin/grants', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, stage }),
+    })
+    setGrants(prev => prev.map(g => g.id === id ? { ...g, stage } : g))
+  }
+
+  const addGrant = async (e) => {
+    e.preventDefault()
+    const res = await fetch('/api/admin/grants', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newGrant),
+    })
+    const data = await res.json()
+    if (data.grant) {
+      setGrants(prev => [data.grant, ...prev])
+      setShowGrantForm(false)
+      setNewGrant({ title: '', funder: '', amount: '', stage: 'prospect', due_date: '', notes: '' })
+    }
+  }
+
+  const totalRaised = donations.reduce((sum, d) => sum + Number(d.amount), 0)
+  const uniqueDonors = new Set(donations.map(d => d.donor_email)).size
+  const activeVolunteers = volunteers.filter(v => v.status === 'approved' || v.status === 'active').length
+  const awardedGrants = grants.filter(g => g.stage === 'awarded').reduce((sum, g) => sum + Number(g.amount || 0), 0)
+
+  const filteredDonors = donations.filter(d =>
+    !search || d.donor_name?.toLowerCase().includes(search.toLowerCase()) ||
+    d.donor_email?.toLowerCase().includes(search.toLowerCase())
+  )
 
   if (authLoading) {
     return (
@@ -48,103 +110,280 @@ export default function AdminPage() {
 
   if (!user || (!isAdmin && profile !== null)) return null
 
-  return (
-    <main className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-charcoal mb-1">Admin Dashboard</h1>
-      <p className="text-sm text-gray-500 mb-8">Signed in as {user.email}</p>
+  const inputClass = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500'
 
-      <div className="mb-8 p-4 bg-white rounded-lg border border-gray-200">
-        <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3">Actions</h2>
-        <SendReceiptsButton />
+  return (
+    <main className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200 px-4 py-4">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold text-charcoal">Admin CRM</h1>
+            <p className="text-xs text-gray-400">{user.email}</p>
+          </div>
+          <SendReceiptsButton />
+        </div>
       </div>
 
-      <Section title="Recent Donations">
-        {dataLoading ? <Loading /> : (
-          <table className="w-full text-sm">
-            <thead><tr className="bg-gray-50 border-b border-gray-200">
-              <Th>Donor</Th><Th>Email</Th><Th>Amount</Th><Th>Type</Th><Th>Status</Th><Th>Date</Th>
-            </tr></thead>
-            <tbody>
-              {donations.map(d => (
-                <tr key={d.id} className="border-b border-gray-100">
-                  <Td>{d.donor_name ?? '—'}</Td>
-                  <Td>{d.donor_email ?? '—'}</Td>
-                  <Td>${Number(d.amount).toFixed(2)}</Td>
-                  <Td>{d.donation_type}</Td>
-                  <Td>{d.status}</Td>
-                  <Td>{d.donated_at ? new Date(d.donated_at).toLocaleDateString() : '—'}</Td>
-                </tr>
-              ))}
-              {!donations.length && <EmptyRow cols={6} />}
-            </tbody>
-          </table>
-        )}
-      </Section>
+      {/* Tabs */}
+      <div className="bg-white border-b border-gray-200 px-4">
+        <div className="max-w-6xl mx-auto flex gap-1">
+          {TABS.map(tab => (
+            <button key={tab} onClick={() => setActiveTab(tab)}
+              className={`px-4 py-3 text-sm font-semibold border-b-2 transition-colors -mb-px ${
+                activeTab === tab
+                  ? 'border-green-600 text-green-700'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}>
+              {tab}
+            </button>
+          ))}
+        </div>
+      </div>
 
-      <Section title="Recent Volunteer Applications">
-        {dataLoading ? <Loading /> : (
-          <table className="w-full text-sm">
-            <thead><tr className="bg-gray-50 border-b border-gray-200">
-              <Th>Name</Th><Th>Email</Th><Th>Interests</Th><Th>Availability</Th><Th>Date</Th>
-            </tr></thead>
-            <tbody>
-              {volunteers.map(v => (
-                <tr key={v.id} className="border-b border-gray-100">
-                  <Td>{v.name ?? '—'}</Td>
-                  <Td>{v.email ?? '—'}</Td>
-                  <Td>{Array.isArray(v.interests) ? v.interests.join(', ') : (v.interests ?? '—')}</Td>
-                  <Td>{v.availability ?? '—'}</Td>
-                  <Td>{v.created_at ? new Date(v.created_at).toLocaleDateString() : '—'}</Td>
-                </tr>
-              ))}
-              {!volunteers.length && <EmptyRow cols={5} />}
-            </tbody>
-          </table>
-        )}
-      </Section>
+      <div className="max-w-6xl mx-auto px-4 py-6">
 
-      <Section title="Recent Email Activity">
-        {dataLoading ? <Loading /> : (
-          <table className="w-full text-sm">
-            <thead><tr className="bg-gray-50 border-b border-gray-200">
-              <Th>To</Th><Th>Subject</Th><Th>Type</Th><Th>Status</Th><Th>Sent At</Th>
-            </tr></thead>
-            <tbody>
-              {emailLogs.map(e => (
-                <tr key={e.id} className="border-b border-gray-100">
-                  <Td>{e.recipient_email}</Td>
-                  <Td>{e.subject}</Td>
-                  <Td>{e.email_type}</Td>
-                  <Td className={e.status === 'failed' ? 'text-red-600 font-medium' : 'text-green-700'}>{e.status}</Td>
-                  <Td>{e.sent_at ? new Date(e.sent_at).toLocaleDateString() : '—'}</Td>
-                </tr>
-              ))}
-              {!emailLogs.length && <EmptyRow cols={5} />}
-            </tbody>
-          </table>
+        {/* OVERVIEW TAB */}
+        {activeTab === 'Overview' && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <StatCard label="Total Raised" value={`$${totalRaised.toLocaleString()}`} color="green" />
+              <StatCard label="Unique Donors" value={uniqueDonors} color="blue" />
+              <StatCard label="Active Volunteers" value={activeVolunteers} color="purple" />
+              <StatCard label="Grants Awarded" value={`$${awardedGrants.toLocaleString()}`} color="yellow" />
+            </div>
+
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <h2 className="font-semibold text-charcoal mb-3">Recent Donations</h2>
+              {dataLoading ? <Loading /> : (
+                <div className="divide-y divide-gray-100">
+                  {donations.slice(0, 5).map(d => (
+                    <div key={d.id} className="py-3 flex justify-between items-center">
+                      <div>
+                        <p className="text-sm font-medium text-charcoal">{d.donor_name ?? '—'}</p>
+                        <p className="text-xs text-gray-400">{d.donor_email}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-bold text-green-700">${Number(d.amount).toFixed(2)}</p>
+                        <p className="text-xs text-gray-400">{d.donated_at ? new Date(d.donated_at).toLocaleDateString() : '—'}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <h2 className="font-semibold text-charcoal mb-3">Recent Email Activity</h2>
+              {dataLoading ? <Loading /> : (
+                <div className="divide-y divide-gray-100">
+                  {donations.slice(0, 3).map((_, i) => <div key={i} />)}
+                </div>
+              )}
+            </div>
+          </div>
         )}
-      </Section>
+
+        {/* GRANTS TAB */}
+        {activeTab === 'Grants' && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-charcoal">Grant Pipeline</h2>
+              <button onClick={() => setShowGrantForm(!showGrantForm)}
+                className="px-3 py-1.5 bg-green-700 text-white text-sm font-medium rounded-lg hover:bg-green-800 transition-all">
+                + Add Grant
+              </button>
+            </div>
+
+            {showGrantForm && (
+              <form onSubmit={addGrant} className="bg-white rounded-xl border border-gray-200 p-5 space-y-3">
+                <h3 className="font-semibold text-sm text-charcoal">New Grant Opportunity</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <input required className={inputClass} placeholder="Grant title" value={newGrant.title}
+                    onChange={e => setNewGrant({...newGrant, title: e.target.value})} />
+                  <input required className={inputClass} placeholder="Funder / Organization" value={newGrant.funder}
+                    onChange={e => setNewGrant({...newGrant, funder: e.target.value})} />
+                  <input className={inputClass} placeholder="Amount ($)" type="number" value={newGrant.amount}
+                    onChange={e => setNewGrant({...newGrant, amount: e.target.value})} />
+                  <input className={inputClass} type="date" value={newGrant.due_date}
+                    onChange={e => setNewGrant({...newGrant, due_date: e.target.value})} />
+                </div>
+                <select className={inputClass} value={newGrant.stage}
+                  onChange={e => setNewGrant({...newGrant, stage: e.target.value})}>
+                  {GRANT_STAGES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
+                </select>
+                <textarea className={inputClass} rows={2} placeholder="Notes..." value={newGrant.notes}
+                  onChange={e => setNewGrant({...newGrant, notes: e.target.value})} />
+                <div className="flex gap-2">
+                  <button type="submit" className="px-4 py-2 bg-green-700 text-white text-sm font-medium rounded-lg hover:bg-green-800">Save</button>
+                  <button type="button" onClick={() => setShowGrantForm(false)} className="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200">Cancel</button>
+                </div>
+              </form>
+            )}
+
+            {dataLoading ? <Loading /> : (
+              <div className="space-y-3">
+                {GRANT_STAGES.map(stage => {
+                  const stageGrants = grants.filter(g => g.stage === stage.id)
+                  if (stageGrants.length === 0) return null
+                  return (
+                    <div key={stage.id} className="bg-white rounded-xl border border-gray-200 p-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${stage.color}`}>{stage.label}</span>
+                        <span className="text-xs text-gray-400">{stageGrants.length} grant{stageGrants.length !== 1 ? 's' : ''}</span>
+                      </div>
+                      <div className="space-y-3">
+                        {stageGrants.map(grant => (
+                          <div key={grant.id} className="border border-gray-100 rounded-lg p-3">
+                            <div className="flex justify-between items-start mb-1">
+                              <p className="text-sm font-semibold text-charcoal">{grant.title}</p>
+                              {grant.amount && <p className="text-sm font-bold text-green-700">${Number(grant.amount).toLocaleString()}</p>}
+                            </div>
+                            <p className="text-xs text-gray-500 mb-2">{grant.funder}</p>
+                            {grant.due_date && (
+                              <p className="text-xs text-gray-400 mb-2">Due: {new Date(grant.due_date).toLocaleDateString()}</p>
+                            )}
+                            {grant.notes && <p className="text-xs text-gray-400 mb-2 italic">{grant.notes}</p>}
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {GRANT_STAGES.filter(s => s.id !== stage.id).map(s => (
+                                <button key={s.id} onClick={() => moveGrant(grant.id, s.id)}
+                                  className={`px-2 py-0.5 rounded text-xs font-medium ${s.color} opacity-70 hover:opacity-100 transition-opacity`}>
+                                  → {s.label}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                })}
+                {grants.length === 0 && (
+                  <div className="text-center py-12 text-gray-400 text-sm">No grants yet — add your first opportunity above</div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* DONORS TAB */}
+        {activeTab === 'Donors' && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <input className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                placeholder="Search donors..." value={search} onChange={e => setSearch(e.target.value)} />
+              <span className="text-xs text-gray-400 whitespace-nowrap">{filteredDonors.length} records</span>
+            </div>
+            {dataLoading ? <Loading /> : (
+              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <table className="w-full text-sm">
+                  <thead><tr className="bg-gray-50 border-b border-gray-200">
+                    <Th>Donor</Th><Th>Email</Th><Th>Amount</Th><Th>Type</Th><Th>Status</Th><Th>Date</Th>
+                  </tr></thead>
+                  <tbody>
+                    {filteredDonors.map(d => (
+                      <tr key={d.id} className="border-b border-gray-100 hover:bg-gray-50">
+                        <Td>{d.donor_name ?? '—'}</Td>
+                        <Td>{d.donor_email ?? '—'}</Td>
+                        <Td className="font-medium text-green-700">${Number(d.amount).toFixed(2)}</Td>
+                        <Td>{d.donation_type}</Td>
+                        <Td><StatusBadge status={d.status} /></Td>
+                        <Td>{d.donated_at ? new Date(d.donated_at).toLocaleDateString() : '—'}</Td>
+                      </tr>
+                    ))}
+                    {filteredDonors.length === 0 && <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-400 text-sm italic">No records found</td></tr>}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* VOLUNTEERS TAB */}
+        {activeTab === 'Volunteers' && (
+          <div className="space-y-4">
+            <h2 className="font-semibold text-charcoal">Volunteer Applications</h2>
+            {dataLoading ? <Loading /> : (
+              <div className="space-y-3">
+                {volunteers.map(v => (
+                  <div key={v.id} className="bg-white rounded-xl border border-gray-200 p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <p className="font-semibold text-sm text-charcoal">{v.name ?? '—'}</p>
+                        <p className="text-xs text-gray-400">{v.email}</p>
+                      </div>
+                      <StatusBadge status={v.status ?? 'pending'} />
+                    </div>
+                    <p className="text-xs text-gray-500 mb-1">
+                      <span className="font-medium">Interests:</span> {Array.isArray(v.interests) ? v.interests.join(', ') : (v.interests ?? '—')}
+                    </p>
+                    <p className="text-xs text-gray-500 mb-3">
+                      <span className="font-medium">Availability:</span> {v.availability ?? '—'}
+                    </p>
+                    <div className="flex gap-2">
+                      {['pending', 'approved', 'active', 'declined'].map(s => (
+                        <button key={s} onClick={() => updateVolunteerStatus(v.id, s)}
+                          className={`px-2.5 py-1 rounded text-xs font-medium transition-all ${
+                            v.status === s
+                              ? 'bg-green-700 text-white'
+                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          }`}>
+                          {s.charAt(0).toUpperCase() + s.slice(1)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                {volunteers.length === 0 && (
+                  <div className="text-center py-12 text-gray-400 text-sm">No volunteer applications yet</div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+      </div>
     </main>
   )
 }
 
-function Section({ title, children }) {
+function StatCard({ label, value, color }) {
+  const colors = {
+    green: 'bg-green-50 text-green-700 border-green-100',
+    blue: 'bg-blue-50 text-blue-700 border-blue-100',
+    purple: 'bg-purple-50 text-purple-700 border-purple-100',
+    yellow: 'bg-yellow-50 text-yellow-700 border-yellow-100',
+  }
   return (
-    <section className="mb-12">
-      <h2 className="text-xl font-semibold text-charcoal mb-4">{title}</h2>
-      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">{children}</div>
-    </section>
+    <div className={`rounded-xl border p-4 ${colors[color]}`}>
+      <p className="text-xs font-medium opacity-70 uppercase tracking-wide mb-1">{label}</p>
+      <p className="text-2xl font-bold">{value}</p>
+    </div>
   )
 }
+
+function StatusBadge({ status }) {
+  const colors = {
+    completed: 'bg-green-100 text-green-700',
+    pending: 'bg-yellow-100 text-yellow-700',
+    approved: 'bg-blue-100 text-blue-700',
+    active: 'bg-green-100 text-green-700',
+    declined: 'bg-red-100 text-red-700',
+    failed: 'bg-red-100 text-red-700',
+  }
+  return (
+    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${colors[status] ?? 'bg-gray-100 text-gray-600'}`}>
+      {status ?? 'pending'}
+    </span>
+  )
+}
+
 function Th({ children }) {
-  return <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase tracking-wide">{children}</th>
+  return <th className="text-left px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">{children}</th>
 }
 function Td({ children, className = '' }) {
-  return <td className={`px-4 py-3 text-gray-700 ${className}`}>{children}</td>
-}
-function EmptyRow({ cols }) {
-  return <tr><td colSpan={cols} className="px-4 py-8 text-center text-gray-400 italic text-sm">No records yet</td></tr>
+  return <td className={`px-4 py-3 text-gray-700 text-sm ${className}`}>{children}</td>
 }
 function Loading() {
-  return <div className="p-8 text-center text-gray-400 text-sm">Loading...</div>
+  return <div className="py-8 text-center text-gray-400 text-sm">Loading...</div>
 }
