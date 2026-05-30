@@ -72,30 +72,34 @@ export default function MessagesPage() {
   }
 
   const fetchMessages = async (channelId) => {
-    const { data } = await supabase
-      .from('messages')
-      .select('*')
-      .eq('channel_id', channelId)
-      .order('created_at', { ascending: true })
-      .limit(100)
-    setMessages(data || [])
+    const res = await fetch(`/api/messages?channel_id=${channelId}`)
+    const json = await res.json()
+    setMessages(json.messages || [])
   }
 
   const sendMessage = async (e) => {
     e.preventDefault()
     if (!input.trim() || !activeChannel || sending) return
     setSending(true)
+
     const username = profile?.first_name
       ? `${profile.first_name} ${profile.last_name || ''}`.trim()
       : (profile?.username || user?.email?.split('@')[0] || 'Unknown')
 
-    await supabase.from('messages').insert({
-      channel_id: activeChannel.id,
-      sender_id: user.id,
-      username,
-      content: input.trim(),
+    const res = await fetch('/api/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        channel_id: activeChannel.id,
+        sender_id: user.id,
+        username,
+        content: input.trim(),
+      }),
     })
-    setInput('')
+
+    if (res.ok) {
+      setInput('')
+    }
     setSending(false)
     inputRef.current?.focus()
   }
@@ -125,7 +129,7 @@ export default function MessagesPage() {
           </div>
           <div className="px-3 py-3 border-t border-gray-700">
             <div className="flex items-center gap-2">
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white ${avatarColor(user?.email || 'U')}`}>
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0 ${avatarColor(user?.email || 'U')}`}>
                 {initials(profile?.first_name ? `${profile.first_name} ${profile.last_name || ''}` : (user?.email || 'U'))}
               </div>
               <div className="flex-1 min-w-0">
@@ -140,7 +144,6 @@ export default function MessagesPage() {
 
         {/* Main chat area */}
         <div className="flex-1 flex flex-col min-w-0">
-          {/* Channel header */}
           <div className="px-4 py-3 border-b border-gray-700 bg-gray-800 flex items-center gap-2">
             <span className="text-gray-400 font-bold text-lg">#</span>
             <span className="font-semibold text-white">{activeChannel?.name}</span>
@@ -149,7 +152,6 @@ export default function MessagesPage() {
             )}
           </div>
 
-          {/* Messages */}
           <div className="flex-1 overflow-y-auto px-4 py-4 space-y-1 bg-gray-800">
             {messages.length === 0 && (
               <div className="text-center py-16">
@@ -165,16 +167,16 @@ export default function MessagesPage() {
 
               if (isGrouped) {
                 return (
-                  <div key={msg.id} className="pl-10 group hover:bg-gray-750 rounded px-2 -mx-2">
+                  <div key={msg.id} className="pl-10 px-2 -mx-2">
                     <p className="text-gray-200 text-sm">{msg.content}</p>
                   </div>
                 )
               }
 
               return (
-                <div key={msg.id} className="flex gap-3 pt-3 group hover:bg-gray-750 rounded px-2 -mx-2">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0 ${avatarColor(msg.username)}`}>
-                    {initials(msg.username)}
+                <div key={msg.id} className="flex gap-3 pt-3 px-2 -mx-2">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0 ${avatarColor(msg.username || 'U')}`}>
+                    {initials(msg.username || 'U')}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-baseline gap-2">
@@ -189,7 +191,6 @@ export default function MessagesPage() {
             <div ref={bottomRef} />
           </div>
 
-          {/* Input */}
           <div className="px-4 py-3 bg-gray-800 border-t border-gray-700">
             <form onSubmit={sendMessage} className="flex gap-2">
               <input ref={inputRef}
@@ -200,7 +201,7 @@ export default function MessagesPage() {
               />
               <button type="submit" disabled={!input.trim() || sending}
                 className="px-4 py-2.5 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-40 transition-all">
-                Send
+                {sending ? '...' : 'Send'}
               </button>
             </form>
           </div>
