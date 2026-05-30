@@ -6,7 +6,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import Link from 'next/link';
 
 export default function ProfilePage() {
-  const { user, profile, changePassword } = useAuth();
+  const { user, profile, changePassword, refreshProfile } = useAuth();
 
   const [profileData, setProfileData] = useState({
     username: '',
@@ -53,6 +53,7 @@ export default function ProfilePage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to update');
       setProfileMessage('Profile updated successfully!');
+      if (refreshProfile) refreshProfile();
     } catch (err) {
       setProfileError(err.message || 'Failed to update profile');
     }
