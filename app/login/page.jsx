@@ -4,7 +4,6 @@ import { useState, Suspense } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
 
 function LoginForm() {
   const [email, setEmail] = useState('');
@@ -12,43 +11,34 @@ function LoginForm() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState(false);
-  const { login, signInWithGoogle, signInWithFacebook } = useAuth();
+  const { login, profile, signInWithGoogle, signInWithFacebook } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get('next');
-
-  const redirectAfterLogin = async () => {
-    if (next && next.startsWith('/')) {
-      router.push(next);
-      return;
-    }
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single();
-        router.push(profile?.role === 'admin' ? '/admin' : '/dashboard');
-      } else {
-        router.push('/dashboard');
-      }
-    } catch {
-      router.push('/dashboard');
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+
     const result = await login(email, password);
+
     if (result.success) {
-      await redirectAfterLogin();
+      // Give AuthContext time to fetch the profile after login
+      await new Promise(resolve => setTimeout(resolve, 800));
+
+      if (next && next.startsWith('/')) {
+        router.push(next);
+      } else if (result.role === 'admin') {
+        router.push('/admin');
+      } else {
+        // Use the profile from AuthContext if available, fallback to dashboard
+        router.push('/dashboard');
+      }
     } else {
       setError(result.error);
     }
+
     setLoading(false);
   };
 
