@@ -55,6 +55,12 @@ export function AuthProvider({ children }) {
     return () => subscription?.unsubscribe();
   }, []);
 
+  const refreshProfile = async () => {
+    if (!user) return;
+    const updated = await fetchProfile(user.id);
+    setProfile(updated);
+  };
+
   const login = async (email, password) => {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -148,7 +154,7 @@ export function AuthProvider({ children }) {
   return (
     <AuthContext.Provider value={{
       user, profile, loading, isAuthenticated: !!user,
-      login, logout, updateProfile, changePassword,
+      login, logout, updateProfile, changePassword, refreshProfile,
       requestPasswordReset, resetPassword,
       signInWithGoogle, signInWithFacebook,
     }}>
