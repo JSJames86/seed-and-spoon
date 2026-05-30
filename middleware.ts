@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
+import { createClient } from '@supabase/supabase-js'
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Build a mutable response so we can forward any cookie updates Supabase sets
   let response = NextResponse.next({
     request: { headers: request.headers },
   })
@@ -32,38 +32,37 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // Always call getUser() — this refreshes the session if needed
   const { data: { user } } = await supabase.auth.getUser()
 
+  // Only /admin needs server-side protection
+  // /dashboard uses client-side ProtectedRoute
   if (!user) {
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('next', pathname)
     return NextResponse.redirect(loginUrl)
   }
 
-  // Admin route — check role
-  if (pathname.startsWith('/admin')) {
-    const { createClient } = await import('@supabase/supabase-js')
-    const serviceSupabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      { auth: { autoRefreshToken: false, persistSession: false } }
-    )
+  // Verify admin role for /admin routes
+  const serviceSupabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { autoRefreshToken: false, persistSession: false } }
+  )
 
-    const { data: profile } = await serviceSupabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
+  const { data: profile } = await serviceSupabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
 
-    if (profile?.role !== 'admin') {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
-    }
+  if (profile?.role !== 'admin') {
+    return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
   return response
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/dashboard/:path*'],
+  // Only protect /admin — /dashboard is guarded client-side by ProtectedRoute
+  matcher: ['/admin/:path*'],
 }
