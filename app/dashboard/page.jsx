@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
 
 const MEALS_PER_DOLLAR = 3; // $1 = ~3 meals
 const SUGGESTED_AMOUNTS = [10, 25, 50, 100];
@@ -25,14 +24,10 @@ export default function DashboardPage() {
 
   const fetchDonations = async () => {
     try {
-      const { data, error: dbError } = await supabase
-        .from('donations')
-        .select('id, donor_name, amount, donation_type, status, donated_at')
-        .eq('donor_email', user.email)
-        .order('donated_at', { ascending: false })
-        .limit(20);
-      if (dbError) throw dbError;
-      setDonations(data || []);
+      const res = await fetch(`/api/donor/donations?email=${encodeURIComponent(user.email)}`);
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Failed to load');
+      setDonations(json.donations || []);
     } catch (err) {
       setError('Failed to load donation history');
     } finally {
