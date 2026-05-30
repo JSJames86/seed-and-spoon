@@ -9,6 +9,7 @@ export default function ProfilePage() {
   const { user, profile, updateProfile, changePassword } = useAuth();
 
   const [profileData, setProfileData] = useState({
+    username: '',
     first_name: '',
     last_name: '',
     phone: '',
@@ -27,10 +28,10 @@ export default function ProfilePage() {
   const [profileLoading, setProfileLoading] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
 
-  // Populate form from profile once loaded
   useEffect(() => {
     if (profile) {
       setProfileData({
+        username: profile.username || '',
         first_name: profile.first_name || '',
         last_name: profile.last_name || '',
         phone: profile.phone || '',
@@ -113,6 +114,19 @@ export default function ProfilePage() {
             )}
 
             <form onSubmit={handleProfileSubmit} className="space-y-4">
+
+              <div>
+                <label htmlFor="username" className={labelClass}>Username</label>
+                <input
+                  id="username" name="username" type="text"
+                  className={inputClass}
+                  placeholder="e.g. janelle_spoon"
+                  value={profileData.username}
+                  onChange={(e) => setProfileData({ ...profileData, username: e.target.value })}
+                />
+                <p className="mt-1 text-xs text-gray-400">This is how you appear across the platform</p>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="first_name" className={labelClass}>First Name</label>
