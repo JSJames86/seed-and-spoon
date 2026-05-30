@@ -18,7 +18,8 @@ type Volunteer = { id: string; name: string | null; email: string | null; intere
 type EmailLog = { id: string; recipient_email: string; subject: string; email_type: string; status: string; sent_at: string | null; error_message: string | null }
 
 export default function AdminPage() {
-  const { user, profile, loading: authLoading } = useAuth()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { user, profile, loading: authLoading } = useAuth() as any
   const router = useRouter()
   const [donations, setDonations] = useState<Donation[]>([])
   const [volunteers, setVolunteers] = useState<Volunteer[]>([])
@@ -30,6 +31,7 @@ export default function AdminPage() {
     if (!user) { router.push('/login'); return }
     if (profile && profile.role !== 'admin') { router.push('/dashboard'); return }
     if (profile?.role === 'admin') fetchData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading, user, profile])
 
   const fetchData = async () => {
