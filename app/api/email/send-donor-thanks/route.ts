@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { render } from '@react-email/components'
 import { createClient } from '@supabase/supabase-js'
-import { renderDonorThankYouEmail } from '@/lib/template-registry'
+import DonorThankYouEmail from '@/emails/templates/donor-thank-you'
+import React from 'react'
 
 function serviceClient() {
   return createClient(
@@ -19,7 +21,7 @@ export async function POST() {
   const resend = new Resend(process.env.RESEND_API_KEY)
   const supabase = serviceClient()
 
-  // Get all unique donors with $25+ donations who haven't been thanked
+  // Get all unique donors with $25+ donations
   const { data: donors, error } = await supabase
     .from('donations')
     .select('donor_email, donor_name, amount')
@@ -45,7 +47,7 @@ export async function POST() {
     unique.map(async (donor) => {
       const firstName = donor.donor_name?.split(' ')[0] || 'Friend'
       try {
-        const html = await renderDonorThankYouEmail({ firstName })
+        const html = await render(React.createElement(DonorThankYouEmail, { firstName }))
         const { error: sendError } = await resend.emails.send({
           from: 'Janelle | Seed & Spoon <hello@seedandspoon.org>',
           to: donor.donor_email,
