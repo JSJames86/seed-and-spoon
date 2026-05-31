@@ -100,12 +100,19 @@ export default function AdminDocumentsPage() {
       const res = await fetch(`/api/documents/url?path=${encodeURIComponent(doc.file_path)}`)
       const data = await res.json()
       if (data.url) {
-        window.open(data.url, '_blank')
+        // Use anchor click to avoid Safari popup blocking async window.open
+        const a = document.createElement('a')
+        a.href = data.url
+        a.target = '_blank'
+        a.rel = 'noopener noreferrer'
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
       } else {
-        alert('Could not generate download link. Try again.')
+        alert('Could not generate link: ' + (data.error || 'unknown error'))
       }
     } catch (err) {
-      alert('Failed to open document.')
+      alert('Failed to open document: ' + err.message)
     }
     setOpeningId(null)
   }
