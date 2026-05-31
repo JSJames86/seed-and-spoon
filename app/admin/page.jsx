@@ -16,7 +16,7 @@ const GRANT_STAGES = [
   { id: 'closed', label: 'Closed', color: 'bg-red-100 text-red-700' },
 ]
 
-const TABS = ['Overview', 'Grants', 'Donors', 'Volunteers', 'Users']
+const TABS = ['Overview', 'Grants', 'Donors', 'Volunteers', 'Users', 'Documents']
 
 export default function AdminPage() {
   const { user, profile, loading: authLoading } = useAuth()
@@ -32,6 +32,10 @@ export default function AdminPage() {
   const [showGrantForm, setShowGrantForm] = useState(false)
   const [newGrant, setNewGrant] = useState({ title: '', funder: '', amount: '', stage: 'prospect', due_date: '', notes: '' })
   const [newInvite, setNewInvite] = useState({ email: '', role: 'volunteer' })
+  const [adminDocs, setAdminDocs] = useState([])
+  const [uploading, setUploading] = useState(false)
+  const [uploadMsg, setUploadMsg] = useState('')
+  const [newDoc, setNewDoc] = useState({ title: '', description: '', category: 'governance', access_level: 'staff' })
   const [inviting, setInviting] = useState(false)
   const [inviteMsg, setInviteMsg] = useState('')
 
@@ -46,21 +50,24 @@ export default function AdminPage() {
 
   const fetchData = async () => {
     try {
-      const [adminRes, grantsRes, usersRes, invitesRes] = await Promise.all([
+      const [adminRes, grantsRes, usersRes, invitesRes, docsRes] = await Promise.all([
         fetch('/api/admin/data'),
         fetch('/api/admin/grants'),
         fetch('/api/admin/users'),
         fetch('/api/admin/invites'),
+        fetch('/api/documents'),
       ])
       const adminData = await adminRes.json()
       const grantsData = await grantsRes.json()
       const usersData = await usersRes.json()
       const invitesData = await invitesRes.json()
+      const docsData = await docsRes.json()
       setDonations(adminData.donations ?? [])
       setVolunteers(adminData.volunteers ?? [])
       setGrants(grantsData.grants ?? [])
       setUsers(usersData.users ?? [])
       setInvites(invitesData.invites ?? [])
+      setAdminDocs(docsData.documents ?? [])
     } catch (err) {
       console.error('Failed to load admin data:', err)
     } finally {
@@ -137,6 +144,47 @@ export default function AdminPage() {
       body: JSON.stringify({ id }),
     })
     setInvites(prev => prev.filter(i => i.id !== id))
+  }
+
+  const uploadDocument = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    setUploadMsg('')
+    const fd = new FormData()
+    fd.append('file', file)
+    fd.append('title', newDoc.title || file.name)
+    fd.append('description', newDoc.description)
+    fd.append('category', newDoc.category)
+    fd.append('access_level', newDoc.access_level)
+    fd.append('uploaded_by', user?.id || '')
+    const res = await fetch('/api/documents/upload', { method: 'POST', body: fd })
+    const data = await res.json()
+    if (res.ok) {
+      setUploadMsg('Document uploaded successfully!')
+      setAdminDocs(prev => [data.document, ...prev])
+      setNewDoc({ title: '', description: '', category: 'governance', access_level: 'staff' })
+    } else {
+      setUploadMsg(data.error || 'Upload failed')
+    }
+    setUploading(false)
+    e.target.value = ''
+  }
+
+  const deleteDocument = async (doc) => {
+    if (!confirm(`Delete "${doc.title}"?`)) return
+    await fetch('/api/documents', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: doc.id, file_path: doc.file_path }),
+    })
+    setAdminDocs(prev => prev.filter(d => d.id !== doc.id))
+  }
+
+  const openDocumentAdmin = async (doc) => {
+    const res = await fetch(`/api/documents/url?path=${encodeURIComponent(doc.file_path)}`)
+    const data = await res.json()
+    if (data.url) window.open(data.url, '_blank')
   }
 
   const totalRaised = donations.reduce((sum, d) => sum + Number(d.amount), 0)
@@ -455,6 +503,91 @@ export default function AdminPage() {
                   {users.length === 0 && (
                     <div className="px-5 py-8 text-center text-gray-400 text-sm">No users yet</div>
                   )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+      </div>
+        {/* DOCUMENTS */}
+        {activeTab === 'Documents' && (
+          <div className="space-y-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <h2 className="font-semibold text-charcoal mb-4">Upload Document</h2>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Title</label>
+                  <input className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="Document title (optional)"
+                    value={newDoc.title}
+                    onChange={e => setNewDoc({...newDoc, title: e.target.value})} />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Category</label>
+                  <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                    value={newDoc.category} onChange={e => setNewDoc({...newDoc, category: e.target.value})}>
+                    <option value="governance">Governance</option>
+                    <option value="founding">Founding Documents</option>
+                    <option value="sops">SOPs</option>
+                    <option value="templates">Templates</option>
+                    <option value="financial">Financial</option>
+                    <option value="general">General</option>
+                  </select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Description</label>
+                  <input className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="Brief description (optional)"
+                    value={newDoc.description}
+                    onChange={e => setNewDoc({...newDoc, description: e.target.value})} />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Access Level</label>
+                  <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                    value={newDoc.access_level} onChange={e => setNewDoc({...newDoc, access_level: e.target.value})}>
+                    <option value="volunteer">Volunteer+</option>
+                    <option value="staff">Staff+</option>
+                    <option value="board">Board only</option>
+                    <option value="admin">Admin only</option>
+                  </select>
+                </div>
+              </div>
+              <label className={`flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 hover:bg-green-50 transition-all ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                <input type="file" className="hidden" accept=".pdf,.doc,.docx" onChange={uploadDocument} disabled={uploading} />
+                <span className="text-2xl">📎</span>
+                <span className="text-sm font-medium text-gray-600">{uploading ? 'Uploading...' : 'Click to upload PDF or Word doc'}</span>
+              </label>
+              {uploadMsg && <p className={`text-sm mt-2 font-medium ${uploadMsg.includes('success') ? 'text-green-700' : 'text-red-600'}`}>{uploadMsg}</p>}
+            </div>
+
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div className="px-5 py-4 border-b border-gray-100">
+                <h2 className="font-semibold text-charcoal">All Documents <span className="text-gray-400 font-normal text-sm">({adminDocs.length})</span></h2>
+              </div>
+              {dataLoading ? <Loading /> : (
+                <div className="divide-y divide-gray-100">
+                  {adminDocs.map(doc => (
+                    <div key={doc.id} className="px-5 py-3 flex items-center justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-charcoal truncate">{doc.title}</p>
+                        <p className="text-xs text-gray-400 capitalize">{doc.category} · {doc.access_level} · {new Date(doc.created_at).toLocaleDateString()}</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <button onClick={() => openDocumentAdmin(doc)}
+                          className="px-3 py-1 text-xs font-medium text-green-700 hover:bg-green-50 rounded-lg transition-all">
+                          Open
+                        </button>
+                        <button onClick={() => deleteDocument(doc)}
+                          className="px-3 py-1 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg transition-all">
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  {adminDocs.length === 0 && <div className="px-5 py-8 text-center text-gray-400 text-sm">No documents uploaded yet</div>}
                 </div>
               )}
             </div>
