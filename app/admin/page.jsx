@@ -509,7 +509,6 @@ export default function AdminPage() {
           </div>
         )}
 
-      </div>
         {/* DOCUMENTS */}
         {activeTab === 'Documents' && (
           <div className="space-y-6">
