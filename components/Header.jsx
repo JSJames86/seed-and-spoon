@@ -303,6 +303,9 @@ export default function Header() {
                   <Link href="/messages" className={getNavLinkClass(isScrolled)}>
                     Messages
                   </Link>
+                  <Link href="/documents" className={getNavLinkClass(isScrolled)}>
+                    Documents
+                  </Link>
                   <Link href="/dashboard" className={getNavLinkClass(isScrolled)}>
                     Dashboard
                   </Link>
