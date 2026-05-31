@@ -18,7 +18,7 @@ const dmSansFont = DM_Sans({
 export const metadata = {
   title: 'Meal Kit Menu',
   description:
-    'The full Seed & Spoon meal kit menu — cooked, frozen, and ready to reheat. Premium kits for paying subscribers; the same meals, fully subsidized, for families in need. Newark, NJ.',
+    'The full Seed & Spoon meal kit menu — cooked, frozen, and ready to reheat. Premium meal kits for paying subscribers; the same meals, fully subsidized, for families in need. Newark, NJ.',
 };
 
 const CSS = `
@@ -220,7 +220,7 @@ const CSS = `
   margin: 0;
 }
 .m-kit-ingredients li::before {
-  content: '\2014 ';
+  content: '— ';
   color: var(--m-green-light);
 }
 .m-kit-card.gold .m-kit-ingredients li::before { color: var(--m-gold); }
@@ -295,7 +295,7 @@ const CSS = `
   margin: 0;
 }
 .m-list-block ul li::before {
-  content: '\00B7 ';
+  content: '· ';
   color: var(--m-gold);
   font-weight: 700;
 }
@@ -341,7 +341,7 @@ const CSS = `
   overflow: hidden;
 }
 .m-mission-box::after {
-  content: '\201C';
+  content: '“';
   position: absolute;
   right: 30px;
   top: -20px;
@@ -531,7 +531,7 @@ function DinnerEntreesSection() {
         <KitCard
           name="Sofrito Baked Chicken"
           ingredients={['Bone-in chicken pieces','Sofrito base','Sazón, adobo seasoning','Olives, bay leaf']}
-          note="Essential for Newark’s community"
+          note="Essential for Newark's community"
         />
         <KitCard
           name="Chimichurri Steak"
@@ -822,7 +822,7 @@ function SoulSidesSection() {
           ingredients={['Fresh mustard greens','Smoked turkey','Garlic, onion, chicken broth','Pinch of sugar to balance bitterness']} />
         <KitCard variant="brown" name="Turnip Greens"
           ingredients={['Turnip greens + turnip pieces','Smoked turkey','Onion, garlic, hot sauce option','Long simmer, pot liquor included']}
-          note="Pot liquor packet sealed in — don’t waste it" />
+          note="Pot liquor packet sealed in — don't waste it" />
         <KitCard variant="gold" name="Candied Yams"
           ingredients={['Sweet potatoes, thick cut','Brown sugar, butter','Cinnamon, nutmeg, vanilla','Marshmallow top option']}
           note="Holiday staple — available year round" />
