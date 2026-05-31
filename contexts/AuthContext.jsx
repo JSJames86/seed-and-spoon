@@ -14,12 +14,9 @@ export function AuthProvider({ children }) {
 
   const fetchProfile = async (userId) => {
     try {
-      const { data } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-      return data || null;
+      const res = await fetch(`/api/profile?userId=${userId}`);
+      const data = await res.json();
+      return data.profile || null;
     } catch {
       return null;
     }
