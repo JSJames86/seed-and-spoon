@@ -25,15 +25,15 @@ export default function AdminPage() {
   const [donations, setDonations] = useState([])
   const [volunteers, setVolunteers] = useState([])
   const [grants, setGrants] = useState([])
-  const [dataLoading, setDataLoading] = useState(true)
-  const [search, setSearch] = useState('')
   const [users, setUsers] = useState([])
   const [invites, setInvites] = useState([])
+  const [dataLoading, setDataLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const [showGrantForm, setShowGrantForm] = useState(false)
+  const [newGrant, setNewGrant] = useState({ title: '', funder: '', amount: '', stage: 'prospect', due_date: '', notes: '' })
   const [newInvite, setNewInvite] = useState({ email: '', role: 'volunteer' })
   const [inviting, setInviting] = useState(false)
   const [inviteMsg, setInviteMsg] = useState('')
-  const [showGrantForm, setShowGrantForm] = useState(false)
-  const [newGrant, setNewGrant] = useState({ title: '', funder: '', amount: '', stage: 'prospect', due_date: '', notes: '' })
 
   const isAdmin = user?.email === ADMIN_EMAIL || profile?.role === 'admin'
 
@@ -101,11 +101,6 @@ export default function AdminPage() {
     }
   }
 
-  const totalRaised = donations.reduce((sum, d) => sum + Number(d.amount), 0)
-  const uniqueDonors = new Set(donations.map(d => d.donor_email)).size
-  const activeVolunteers = volunteers.filter(v => v.status === 'approved' || v.status === 'active').length
-  const awardedGrants = grants.filter(g => g.stage === 'awarded').reduce((sum, g) => sum + Number(g.amount || 0), 0)
-
   const sendInvite = async (e) => {
     e.preventDefault()
     setInviting(true)
@@ -144,6 +139,10 @@ export default function AdminPage() {
     setInvites(prev => prev.filter(i => i.id !== id))
   }
 
+  const totalRaised = donations.reduce((sum, d) => sum + Number(d.amount), 0)
+  const uniqueDonors = new Set(donations.map(d => d.donor_email)).size
+  const activeVolunteers = volunteers.filter(v => v.status === 'approved' || v.status === 'active').length
+  const awardedGrants = grants.filter(g => g.stage === 'awarded').reduce((sum, g) => sum + Number(g.amount || 0), 0)
   const filteredDonors = donations.filter(d =>
     !search || d.donor_name?.toLowerCase().includes(search.toLowerCase()) ||
     d.donor_email?.toLowerCase().includes(search.toLowerCase())
@@ -163,7 +162,6 @@ export default function AdminPage() {
 
   return (
     <main className="min-h-screen bg-gray-50">
-      {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div>
@@ -174,15 +172,12 @@ export default function AdminPage() {
         </div>
       </div>
 
-      {/* Tabs */}
       <div className="bg-white border-b border-gray-200 px-4">
-        <div className="max-w-6xl mx-auto flex gap-1">
+        <div className="max-w-6xl mx-auto flex gap-1 overflow-x-auto">
           {TABS.map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
-              className={`px-4 py-3 text-sm font-semibold border-b-2 transition-colors -mb-px ${
-                activeTab === tab
-                  ? 'border-green-600 text-green-700'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              className={`px-4 py-3 text-sm font-semibold border-b-2 transition-colors -mb-px whitespace-nowrap ${
+                activeTab === tab ? 'border-green-600 text-green-700' : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}>
               {tab}
             </button>
@@ -192,7 +187,7 @@ export default function AdminPage() {
 
       <div className="max-w-6xl mx-auto px-4 py-6">
 
-        {/* OVERVIEW TAB */}
+        {/* OVERVIEW */}
         {activeTab === 'Overview' && (
           <div className="space-y-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -201,7 +196,6 @@ export default function AdminPage() {
               <StatCard label="Active Volunteers" value={activeVolunteers} color="purple" />
               <StatCard label="Grants Awarded" value={`$${awardedGrants.toLocaleString()}`} color="yellow" />
             </div>
-
             <div className="bg-white rounded-xl border border-gray-200 p-5">
               <h2 className="font-semibold text-charcoal mb-3">Recent Donations</h2>
               {dataLoading ? <Loading /> : (
@@ -221,19 +215,10 @@ export default function AdminPage() {
                 </div>
               )}
             </div>
-
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <h2 className="font-semibold text-charcoal mb-3">Recent Email Activity</h2>
-              {dataLoading ? <Loading /> : (
-                <div className="divide-y divide-gray-100">
-                  {donations.slice(0, 3).map((_, i) => <div key={i} />)}
-                </div>
-              )}
-            </div>
           </div>
         )}
 
-        {/* GRANTS TAB */}
+        {/* GRANTS */}
         {activeTab === 'Grants' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -243,14 +228,13 @@ export default function AdminPage() {
                 + Add Grant
               </button>
             </div>
-
             {showGrantForm && (
               <form onSubmit={addGrant} className="bg-white rounded-xl border border-gray-200 p-5 space-y-3">
                 <h3 className="font-semibold text-sm text-charcoal">New Grant Opportunity</h3>
                 <div className="grid grid-cols-2 gap-3">
                   <input required className={inputClass} placeholder="Grant title" value={newGrant.title}
                     onChange={e => setNewGrant({...newGrant, title: e.target.value})} />
-                  <input required className={inputClass} placeholder="Funder / Organization" value={newGrant.funder}
+                  <input required className={inputClass} placeholder="Funder" value={newGrant.funder}
                     onChange={e => setNewGrant({...newGrant, funder: e.target.value})} />
                   <input className={inputClass} placeholder="Amount ($)" type="number" value={newGrant.amount}
                     onChange={e => setNewGrant({...newGrant, amount: e.target.value})} />
@@ -269,7 +253,6 @@ export default function AdminPage() {
                 </div>
               </form>
             )}
-
             {dataLoading ? <Loading /> : (
               <div className="space-y-3">
                 {GRANT_STAGES.map(stage => {
@@ -288,10 +271,8 @@ export default function AdminPage() {
                               <p className="text-sm font-semibold text-charcoal">{grant.title}</p>
                               {grant.amount && <p className="text-sm font-bold text-green-700">${Number(grant.amount).toLocaleString()}</p>}
                             </div>
-                            <p className="text-xs text-gray-500 mb-2">{grant.funder}</p>
-                            {grant.due_date && (
-                              <p className="text-xs text-gray-400 mb-2">Due: {new Date(grant.due_date).toLocaleDateString()}</p>
-                            )}
+                            <p className="text-xs text-gray-500 mb-1">{grant.funder}</p>
+                            {grant.due_date && <p className="text-xs text-gray-400 mb-1">Due: {new Date(grant.due_date).toLocaleDateString()}</p>}
                             {grant.notes && <p className="text-xs text-gray-400 mb-2 italic">{grant.notes}</p>}
                             <div className="flex flex-wrap gap-1 mt-2">
                               {GRANT_STAGES.filter(s => s.id !== stage.id).map(s => (
@@ -307,15 +288,13 @@ export default function AdminPage() {
                     </div>
                   )
                 })}
-                {grants.length === 0 && (
-                  <div className="text-center py-12 text-gray-400 text-sm">No grants yet — add your first opportunity above</div>
-                )}
+                {grants.length === 0 && <div className="text-center py-12 text-gray-400 text-sm">No grants yet</div>}
               </div>
             )}
           </div>
         )}
 
-        {/* DONORS TAB */}
+        {/* DONORS */}
         {activeTab === 'Donors' && (
           <div className="space-y-4">
             <div className="flex items-center gap-3">
@@ -348,7 +327,7 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* VOLUNTEERS TAB */}
+        {/* VOLUNTEERS */}
         {activeTab === 'Volunteers' && (
           <div className="space-y-4">
             <h2 className="font-semibold text-charcoal">Volunteer Applications</h2>
@@ -373,9 +352,7 @@ export default function AdminPage() {
                       {['pending', 'approved', 'active', 'declined'].map(s => (
                         <button key={s} onClick={() => updateVolunteerStatus(v.id, s)}
                           className={`px-2.5 py-1 rounded text-xs font-medium transition-all ${
-                            v.status === s
-                              ? 'bg-green-700 text-white'
-                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            v.status === s ? 'bg-green-700 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                           }`}>
                           {s.charAt(0).toUpperCase() + s.slice(1)}
                         </button>
@@ -383,20 +360,15 @@ export default function AdminPage() {
                     </div>
                   </div>
                 ))}
-                {volunteers.length === 0 && (
-                  <div className="text-center py-12 text-gray-400 text-sm">No volunteer applications yet</div>
-                )}
+                {volunteers.length === 0 && <div className="text-center py-12 text-gray-400 text-sm">No volunteer applications yet</div>}
               </div>
             )}
           </div>
         )}
 
-      </div>
-        {/* USERS TAB */}
+        {/* USERS */}
         {activeTab === 'Users' && (
           <div className="space-y-6">
-
-            {/* Send Invite */}
             <div className="bg-white rounded-xl border border-gray-200 p-5">
               <h2 className="font-semibold text-charcoal mb-3">Send Invite</h2>
               <form onSubmit={sendInvite} className="flex flex-wrap gap-3 items-end">
@@ -422,10 +394,13 @@ export default function AdminPage() {
                   {inviting ? 'Sending...' : 'Send Invite'}
                 </button>
               </form>
-              {inviteMsg && <p className={`text-sm mt-3 font-medium ${inviteMsg.includes('sent') ? 'text-green-700' : 'text-red-600'}`}>{inviteMsg}</p>}
+              {inviteMsg && (
+                <p className={`text-sm mt-3 font-medium ${inviteMsg.includes('sent') ? 'text-green-700' : 'text-red-600'}`}>
+                  {inviteMsg}
+                </p>
+              )}
             </div>
 
-            {/* Pending Invites */}
             {invites.filter(i => !i.used_at).length > 0 && (
               <div className="bg-white rounded-xl border border-gray-200 p-5">
                 <h2 className="font-semibold text-charcoal mb-3">Pending Invites</h2>
@@ -446,10 +421,11 @@ export default function AdminPage() {
               </div>
             )}
 
-            {/* All Users */}
             <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-100">
-                <h2 className="font-semibold text-charcoal">All Users <span className="text-gray-400 font-normal text-sm">({users.length})</span></h2>
+                <h2 className="font-semibold text-charcoal">
+                  All Users <span className="text-gray-400 font-normal text-sm">({users.length})</span>
+                </h2>
               </div>
               {dataLoading ? <Loading /> : (
                 <div className="divide-y divide-gray-100">
@@ -460,7 +436,9 @@ export default function AdminPage() {
                           {u.profile?.first_name ? `${u.profile.first_name} ${u.profile.last_name || ''}`.trim() : u.email}
                         </p>
                         <p className="text-xs text-gray-400 truncate">{u.email}</p>
-                        {u.last_sign_in && <p className="text-xs text-gray-300">Last seen {new Date(u.last_sign_in).toLocaleDateString()}</p>}
+                        {u.last_sign_in && (
+                          <p className="text-xs text-gray-300">Last seen {new Date(u.last_sign_in).toLocaleDateString()}</p>
+                        )}
                       </div>
                       <select
                         className="px-2 py-1 border border-gray-200 rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -474,11 +452,12 @@ export default function AdminPage() {
                       </select>
                     </div>
                   ))}
-                  {users.length === 0 && <div className="px-5 py-8 text-center text-gray-400 text-sm">No users yet</div>}
+                  {users.length === 0 && (
+                    <div className="px-5 py-8 text-center text-gray-400 text-sm">No users yet</div>
+                  )}
                 </div>
               )}
             </div>
-
           </div>
         )}
 
@@ -521,9 +500,11 @@ function StatusBadge({ status }) {
 function Th({ children }) {
   return <th className="text-left px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wide">{children}</th>
 }
+
 function Td({ children, className = '' }) {
   return <td className={`px-4 py-3 text-gray-700 text-sm ${className}`}>{children}</td>
 }
+
 function Loading() {
   return <div className="py-8 text-center text-gray-400 text-sm">Loading...</div>
 }
