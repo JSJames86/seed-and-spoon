@@ -38,6 +38,9 @@ export default function AdminDocumentsPage() {
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
   const [msg, setMsg] = useState('')
+  const [editingId, setEditingId] = useState(null)
+  const [editForm, setEditForm] = useState({})
+  const [openingId, setOpeningId] = useState(null)
   const [form, setForm] = useState({
     title: '', description: '', category: 'governance', access_level: 'staff'
   })
@@ -52,9 +55,13 @@ export default function AdminDocumentsPage() {
   }, [authLoading, user, profile, isAdmin]) // eslint-disable-line
 
   const fetchDocs = async () => {
-    const res = await fetch('/api/documents')
-    const data = await res.json()
-    setDocs(data.documents || [])
+    try {
+      const res = await fetch('/api/documents')
+      const data = await res.json()
+      setDocs(data.documents || [])
+    } catch (err) {
+      console.error('Failed to load docs:', err)
+    }
     setLoading(false)
   }
 
@@ -70,33 +77,73 @@ export default function AdminDocumentsPage() {
     fd.append('category', form.category)
     fd.append('access_level', form.access_level)
     fd.append('uploaded_by', user?.id || '')
-    const res = await fetch('/api/documents/upload', { method: 'POST', body: fd })
-    const data = await res.json()
-    if (res.ok) {
-      setMsg('✅ Uploaded successfully!')
-      setDocs(prev => [data.document, ...prev])
-      setForm({ title: '', description: '', category: 'governance', access_level: 'staff' })
-      if (fileRef.current) fileRef.current.value = ''
-    } else {
-      setMsg(`❌ ${data.error || 'Upload failed'}`)
+    try {
+      const res = await fetch('/api/documents/upload', { method: 'POST', body: fd })
+      const data = await res.json()
+      if (res.ok) {
+        setMsg('✅ Uploaded successfully!')
+        setDocs(prev => [data.document, ...prev])
+        setForm({ title: '', description: '', category: 'governance', access_level: 'staff' })
+        if (fileRef.current) fileRef.current.value = ''
+      } else {
+        setMsg(`❌ ${data.error || 'Upload failed'}`)
+      }
+    } catch (err) {
+      setMsg(`❌ Upload failed: ${err.message}`)
     }
     setUploading(false)
   }
 
-  const handleDelete = async (doc) => {
-    if (!confirm(`Delete "${doc.title}"?`)) return
-    await fetch('/api/documents', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: doc.id, file_path: doc.file_path }),
-    })
-    setDocs(prev => prev.filter(d => d.id !== doc.id))
+  const handleOpen = async (doc) => {
+    setOpeningId(doc.id)
+    try {
+      const res = await fetch(`/api/documents/url?path=${encodeURIComponent(doc.file_path)}`)
+      const data = await res.json()
+      if (data.url) {
+        window.open(data.url, '_blank')
+      } else {
+        alert('Could not generate download link. Try again.')
+      }
+    } catch (err) {
+      alert('Failed to open document.')
+    }
+    setOpeningId(null)
   }
 
-  const handleOpen = async (doc) => {
-    const res = await fetch(`/api/documents/url?path=${encodeURIComponent(doc.file_path)}`)
-    const data = await res.json()
-    if (data.url) window.open(data.url, '_blank')
+  const handleDelete = async (doc) => {
+    if (!confirm(`Delete "${doc.title}"?`)) return
+    try {
+      await fetch('/api/documents', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: doc.id, file_path: doc.file_path }),
+      })
+      setDocs(prev => prev.filter(d => d.id !== doc.id))
+    } catch (err) {
+      alert('Delete failed.')
+    }
+  }
+
+  const startEdit = (doc) => {
+    setEditingId(doc.id)
+    setEditForm({ title: doc.title, description: doc.description || '', category: doc.category, access_level: doc.access_level })
+  }
+
+  const saveEdit = async (doc) => {
+    try {
+      const res = await fetch('/api/documents', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: doc.id, ...editForm }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setDocs(prev => prev.map(d => d.id === doc.id ? data.document : d))
+        setEditingId(null)
+      }
+    } catch (err) {
+      alert('Save failed.')
+    }
   }
 
   if (authLoading || (!user && !authLoading)) {
@@ -119,6 +166,7 @@ export default function AdminDocumentsPage() {
             ← Admin CRM
           </Link>
           <h1 className="text-xl font-bold text-charcoal">Document Library</h1>
+          <span className="text-xs text-gray-400 ml-auto">{docs.length} documents</span>
         </div>
       </div>
 
@@ -174,10 +222,8 @@ export default function AdminDocumentsPage() {
 
         {/* Documents List */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-            <h2 className="font-semibold text-charcoal">
-              All Documents <span className="text-gray-400 font-normal text-sm">({docs.length})</span>
-            </h2>
+          <div className="px-6 py-4 border-b border-gray-100">
+            <h2 className="font-semibold text-charcoal">All Documents</h2>
           </div>
 
           {loading ? (
@@ -190,35 +236,73 @@ export default function AdminDocumentsPage() {
           ) : (
             <div className="divide-y divide-gray-100">
               {docs.map(doc => (
-                <div key={doc.id} className="px-6 py-4 flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <span className="text-2xl flex-shrink-0">
-                      {doc.mime_type?.includes('pdf') ? '📕' : '📄'}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="font-medium text-sm text-charcoal truncate">{doc.title}</p>
-                      {doc.description && <p className="text-xs text-gray-400 truncate">{doc.description}</p>}
-                      <p className="text-xs text-gray-300 capitalize">
-                        {doc.category} · {doc.access_level} · {formatSize(doc.file_size)} · {new Date(doc.created_at).toLocaleDateString()}
-                      </p>
+                <div key={doc.id} className="px-6 py-4">
+                  {editingId === doc.id ? (
+                    /* Edit mode */
+                    <div className="space-y-2">
+                      <input className={inputClass} value={editForm.title}
+                        onChange={e => setEditForm({...editForm, title: e.target.value})}
+                        placeholder="Title" />
+                      <input className={inputClass} value={editForm.description}
+                        onChange={e => setEditForm({...editForm, description: e.target.value})}
+                        placeholder="Description (optional)" />
+                      <div className="grid grid-cols-2 gap-2">
+                        <select className={inputClass} value={editForm.category}
+                          onChange={e => setEditForm({...editForm, category: e.target.value})}>
+                          {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                        </select>
+                        <select className={inputClass} value={editForm.access_level}
+                          onChange={e => setEditForm({...editForm, access_level: e.target.value})}>
+                          {ACCESS_LEVELS.map(a => <option key={a.value} value={a.value}>{a.label}</option>)}
+                        </select>
+                      </div>
+                      <div className="flex gap-2 pt-1">
+                        <button onClick={() => saveEdit(doc)}
+                          className="px-4 py-1.5 bg-green-700 text-white text-xs font-semibold rounded-lg hover:bg-green-800 transition-all">
+                          Save
+                        </button>
+                        <button onClick={() => setEditingId(null)}
+                          className="px-4 py-1.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-200 transition-all">
+                          Cancel
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex gap-2 flex-shrink-0">
-                    <button onClick={() => handleOpen(doc)}
-                      className="px-3 py-1.5 bg-green-700 text-white text-xs font-semibold rounded-lg hover:bg-green-800 transition-all">
-                      Open
-                    </button>
-                    <button onClick={() => handleDelete(doc)}
-                      className="px-3 py-1.5 text-red-600 text-xs font-semibold rounded-lg hover:bg-red-50 transition-all border border-red-200">
-                      Delete
-                    </button>
-                  </div>
+                  ) : (
+                    /* View mode */
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <span className="text-2xl flex-shrink-0">
+                          {doc.mime_type?.includes('pdf') ? '📕' : '📄'}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="font-medium text-sm text-charcoal truncate">{doc.title}</p>
+                          {doc.description && <p className="text-xs text-gray-400 truncate">{doc.description}</p>}
+                          <p className="text-xs text-gray-300 capitalize">
+                            {doc.category} · {doc.access_level} · {formatSize(doc.file_size)} · {new Date(doc.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2 flex-shrink-0">
+                        <button onClick={() => handleOpen(doc)} disabled={openingId === doc.id}
+                          className="px-3 py-1.5 bg-green-700 text-white text-xs font-semibold rounded-lg hover:bg-green-800 disabled:opacity-50 transition-all">
+                          {openingId === doc.id ? '...' : 'Open'}
+                        </button>
+                        <button onClick={() => startEdit(doc)}
+                          className="px-3 py-1.5 text-blue-600 text-xs font-semibold rounded-lg hover:bg-blue-50 transition-all border border-blue-200">
+                          Edit
+                        </button>
+                        <button onClick={() => handleDelete(doc)}
+                          className="px-3 py-1.5 text-red-600 text-xs font-semibold rounded-lg hover:bg-red-50 transition-all border border-red-200">
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
           )}
         </div>
-
       </div>
     </div>
   )
