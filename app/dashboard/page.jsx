@@ -52,7 +52,7 @@ export default function DashboardPage() {
     .reduce((sum, d) => sum + Number(d.amount), 0);
 
   const mealsProvided = Math.round(totalGiven * MEALS_PER_DOLLAR);
-  const firstName = profile?.first_name || user?.email?.split('@')[0] || 'Friend';
+  const firstName = profile?.first_name || (profile === null ? (user?.email?.split('@')[0] || 'Friend') : '...');
   const canBlog = profile?.role === 'editor' || profile?.role === 'admin';
 
   const fmt = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
