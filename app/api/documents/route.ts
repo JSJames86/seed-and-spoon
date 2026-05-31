@@ -31,12 +31,24 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({ document: data })
 }
 
+export async function PATCH(request: NextRequest) {
+  const { id, title, description, category, access_level } = await request.json()
+  if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
+  const supabase = serviceClient()
+  const { data, error } = await supabase
+    .from('documents')
+    .update({ title, description, category, access_level, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single()
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ document: data })
+}
+
 export async function DELETE(request: NextRequest) {
   const { id, file_path } = await request.json()
   const supabase = serviceClient()
-  // Delete from storage
   await supabase.storage.from('internal-docs').remove([file_path])
-  // Delete from DB
   const { error } = await supabase.from('documents').delete().eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ success: true })
