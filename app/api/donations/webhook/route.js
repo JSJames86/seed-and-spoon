@@ -94,17 +94,11 @@ async function sendDonationEmails({ name, email, amountCents, isMonthly, transac
 
 async function notifyAdmin(type, title, body, href) {
   try {
-    const { createClient } = require('@supabase/supabase-js')
-    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, { auth: { autoRefreshToken: false, persistSession: false } })
-    const { data: { users } } = await supabase.auth.admin.listUsers()
-    const admin = users?.find(u => u.email === 'janelle.shanise@gmail.com')
-    if (admin) {
-      await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/notifications`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: admin.id, type, title, body, href })
-      })
-    }
+    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/notifications`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: '836fc70f-1fd5-4d61-9250-a806cb92593d', type, title, body, href })
+    })
   } catch {}
 }
 
