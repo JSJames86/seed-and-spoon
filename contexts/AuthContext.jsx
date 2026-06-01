@@ -189,7 +189,7 @@ export function AuthProvider({ children }) {
   return (
     <AuthContext.Provider value={{
       user, profile, loading, isAuthenticated: !!user,
-      login, logout, updateProfile, changePassword, refreshProfile,
+      login, logout, register, updateProfile, changePassword, refreshProfile,
       requestPasswordReset, resetPassword,
       signInWithGoogle, signInWithFacebook,
     }}>
