@@ -94,27 +94,19 @@ export default function AdminDocumentsPage() {
     setUploading(false)
   }
 
-  const handleOpen = async (doc) => {
-    setOpeningId(doc.id)
-    try {
-      const res = await fetch(`/api/documents/url?path=${encodeURIComponent(doc.file_path)}`)
-      const data = await res.json()
-      if (data.url) {
-        // Use anchor click to avoid Safari popup blocking async window.open
-        const a = document.createElement('a')
-        a.href = data.url
-        a.target = '_blank'
-        a.rel = 'noopener noreferrer'
-        document.body.appendChild(a)
-        a.click()
-        document.body.removeChild(a)
-      } else {
-        alert('Could not generate link: ' + (data.error || 'unknown error'))
-      }
-    } catch (err) {
-      alert('Failed to open document: ' + err.message)
-    }
-    setOpeningId(null)
+  const SUPABASE_URL = 'https://clsepfwqnphjjmnosqff.supabase.co'
+
+  const handleOpen = (doc) => {
+    // Build signed URL synchronously using Supabase public URL
+    // Documents are in a private bucket — use the download endpoint directly
+    const url = `${SUPABASE_URL}/storage/v1/object/authenticated/internal-docs/${doc.file_path}`
+    const a = document.createElement('a')
+    a.href = `/api/documents/url?path=${encodeURIComponent(doc.file_path)}`
+    a.target = '_blank'
+    a.rel = 'noopener noreferrer'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
   }
 
   const handleDelete = async (doc) => {
