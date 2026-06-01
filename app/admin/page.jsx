@@ -245,16 +245,28 @@ export default function AdminPage() {
               <StatCard label="Active Volunteers" value={activeVolunteers} color="purple" />
               <StatCard label="Grants Awarded" value={`$${awardedGrants.toLocaleString()}`} color="yellow" />
             </div>
-            <Link href="/admin/documents" className="block bg-white rounded-xl border border-gray-200 p-5 hover:border-green-400 hover:shadow-sm transition-all group">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Document Library</p>
-                  <p className="font-semibold text-charcoal">Upload & manage internal documents →</p>
-                  <p className="text-xs text-gray-400 mt-1">SOPs, governance policies, founding documents</p>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Link href="/admin/documents" className="block bg-white rounded-xl border border-gray-200 p-5 hover:border-green-400 hover:shadow-sm transition-all">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Document Library</p>
+                    <p className="font-semibold text-charcoal">Upload & manage internal docs →</p>
+                    <p className="text-xs text-gray-400 mt-1">SOPs, governance policies, founding documents</p>
+                  </div>
+                  <span className="text-3xl">📁</span>
                 </div>
-                <span className="text-3xl">📁</span>
-              </div>
-            </Link>
+              </Link>
+              <Link href="/admin/channels" className="block bg-white rounded-xl border border-gray-200 p-5 hover:border-green-400 hover:shadow-sm transition-all">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Channel Manager</p>
+                    <p className="font-semibold text-charcoal">Manage channels & intros →</p>
+                    <p className="text-xs text-gray-400 mt-1">Create channels, edit intro messages</p>
+                  </div>
+                  <span className="text-3xl">💬</span>
+                </div>
+              </Link>
+            </div>
 
             <div className="bg-white rounded-xl border border-gray-200 p-5">
               <h2 className="font-semibold text-charcoal mb-3">Recent Donations</h2>
