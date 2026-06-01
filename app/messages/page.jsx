@@ -234,7 +234,7 @@ export default function MessagesPage() {
           </div>
 
           {/* Messages area with watermark */}
-          <div className="flex-1 overflow-y-auto px-4 py-4 relative" style={{ background: '#fafcf8' }}>
+          <div className="flex-1 overflow-y-auto px-4 py-4 relative" style={{ background: '#fafcf8' }} onClick={() => { setHoveredId(null); setEmojiPickerId(null) }}>
             {/* Watermark logo */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ opacity: 0.04 }}>
               <img src="/logo-full.webp" alt="" className="w-96 object-contain" />
