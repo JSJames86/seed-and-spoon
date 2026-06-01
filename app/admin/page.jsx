@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import SendReceiptsButton from './SendReceiptsButton'
+import NotificationBell from '@/components/NotificationBell'
 
 const ADMIN_EMAIL = 'janelle.shanise@gmail.com'
 
@@ -225,6 +226,7 @@ export default function AdminPage() {
             <span>🔍</span>
             <span>Search everything...</span>
           </Link>
+          <NotificationBell />
           <SendReceiptsButton />
         </div>
       </div>
