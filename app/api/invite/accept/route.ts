@@ -11,10 +11,8 @@ function serviceClient() {
 
 export async function POST(request: NextRequest) {
   const { token, email, password, firstName, lastName, role } = await request.json()
-
   const supabase = serviceClient()
 
-  // Validate token again
   const { data: invite, error: inviteError } = await supabase
     .from('invites')
     .select('*')
@@ -25,11 +23,8 @@ export async function POST(request: NextRequest) {
   if (invite.used_at) return NextResponse.json({ error: 'Invite already used' }, { status: 400 })
   if (new Date(invite.expires_at) < new Date()) return NextResponse.json({ error: 'Invite expired' }, { status: 400 })
 
-  // Create the user
   const { data: { user }, error: createError } = await supabase.auth.admin.createUser({
-    email,
-    password,
-    email_confirm: true,
+    email, password, email_confirm: true,
   })
 
   if (createError) return NextResponse.json({ error: createError.message }, { status: 500 })
@@ -42,6 +37,25 @@ export async function POST(request: NextRequest) {
     role,
     updated_at: new Date().toISOString(),
   })
+
+  // Add to #general always
+  const { data: general } = await supabase
+    .from('channels')
+    .select('id')
+    .eq('name', 'general')
+    .single()
+
+  if (general) {
+    await supabase.from('channel_members').upsert({ channel_id: general.id, member_id: user!.id })
+  }
+
+  // Add to assigned channel if set
+  if (invite.default_channel_id && invite.default_channel_id !== general?.id) {
+    await supabase.from('channel_members').upsert({
+      channel_id: invite.default_channel_id,
+      member_id: user!.id,
+    })
+  }
 
   // Mark invite as used
   await supabase.from('invites').update({ used_at: new Date().toISOString() }).eq('id', invite.id)
