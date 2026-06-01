@@ -75,5 +75,23 @@ export async function POST(request: NextRequest) {
     })
   } catch {}
 
+  // Notify admin
+  try {
+    const { data: { users } } = await supabase.auth.admin.listUsers()
+    const admin = users?.find((u: { email?: string }) => u.email === 'janelle.shanise@gmail.com')
+    if (admin) {
+      await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/notifications`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: admin.id,
+          type: 'invite.accepted',
+          title: `${firstName} ${lastName} joined the platform`,
+          body: `Role: ${role}`,
+          href: '/admin?tab=Users'
+        })
+      })
+    }
+  } catch {}
   return NextResponse.json({ success: true })
 }
