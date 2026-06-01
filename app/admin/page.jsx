@@ -32,7 +32,8 @@ export default function AdminPage() {
   const [search, setSearch] = useState('')
   const [showGrantForm, setShowGrantForm] = useState(false)
   const [newGrant, setNewGrant] = useState({ title: '', funder: '', amount: '', stage: 'prospect', due_date: '', notes: '' })
-  const [newInvite, setNewInvite] = useState({ email: '', role: 'volunteer' })
+  const [newInvite, setNewInvite] = useState({ email: '', role: 'volunteer', default_channel_id: '' })
+  const [adminChannels, setAdminChannels] = useState([])
   const [adminDocs, setAdminDocs] = useState([])
   const [uploading, setUploading] = useState(false)
   const [uploadMsg, setUploadMsg] = useState('')
@@ -51,12 +52,13 @@ export default function AdminPage() {
 
   const fetchData = async () => {
     try {
-      const [adminRes, grantsRes, usersRes, invitesRes, docsRes] = await Promise.all([
+      const [adminRes, grantsRes, usersRes, invitesRes, docsRes, channelsRes] = await Promise.all([
         fetch('/api/admin/data'),
         fetch('/api/admin/grants'),
         fetch('/api/admin/users'),
         fetch('/api/admin/invites'),
         fetch('/api/documents'),
+        fetch('/api/messages/channels'),
       ])
       const adminData = await adminRes.json()
       const grantsData = await grantsRes.json()
@@ -69,6 +71,7 @@ export default function AdminPage() {
       setUsers(usersData.users ?? [])
       setInvites(invitesData.invites ?? [])
       setAdminDocs(docsData.documents ?? [])
+      setAdminChannels((await channelsRes.json()).channels ?? [])
     } catch (err) {
       console.error('Failed to load admin data:', err)
     } finally {
@@ -459,6 +462,16 @@ export default function AdminPage() {
                     <option value="donor">Donor</option>
                     <option value="volunteer">Volunteer</option>
                     <option value="staff">Staff</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Assign to Channel</label>
+                  <select className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                    value={newInvite.default_channel_id} onChange={e => setNewInvite({...newInvite, default_channel_id: e.target.value})}>
+                    <option value="">General only</option>
+                    {adminChannels.map(ch => (
+                      <option key={ch.id} value={ch.id}>#{ch.name}</option>
+                    ))}
                   </select>
                 </div>
                 <button type="submit" disabled={inviting}
