@@ -191,33 +191,33 @@ export default function MessagesPage() {
 
   return (
     <ProtectedRoute>
-      <div className="flex bg-gray-900 text-white overflow-hidden" style={{ height: 'calc(100vh - 60px)' }}>
+      <div className="flex overflow-hidden"  style={{background: "#1a2e1a"}} style={{ height: 'calc(100vh - 60px)' }}>
 
         {/* Sidebar */}
-        <div className="w-52 bg-gray-900 border-r border-gray-700 flex flex-col flex-shrink-0">
-          <div className="px-3 py-4 border-b border-gray-700">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Seed & Spoon</p>
+        <div className="w-52 flex flex-col flex-shrink-0" style={{background: "#132213", borderRight: "1px solid #2d5a27"}}>
+          <div className="px-3 py-4" style={{borderBottom: "1px solid #2d5a27"}}>
+            <p className="text-xs font-bold uppercase tracking-widest" style={{color: "#4FAF3B"}}>Seed & Spoon</p>
           </div>
           <div className="flex-1 overflow-y-auto py-2">
-            <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1">Channels</p>
+            <p className="px-3 text-xs font-semibold uppercase tracking-widest mb-1" style={{color: "#4FAF3B88"}}>Channels</p>
             {loading ? (
               <p className="px-3 text-xs text-gray-500">Loading...</p>
             ) : channels.map(ch => (
               <button key={ch.id} onClick={() => setActiveChannel(ch)}
-                className={`w-full text-left px-3 py-1.5 text-sm transition-colors ${
-                  activeChannel?.id === ch.id ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
+                style={{background: activeChannel?.id === ch.id ? '#2d5a27' : 'transparent'}} className={`w-full text-left px-3 py-1.5 text-sm transition-colors rounded mx-1 ${
+                  activeChannel?.id === ch.id ? 'text-white font-semibold' : 'text-gray-400 hover:text-gray-100'
                 }`}>
                 # {ch.name}
               </button>
             ))}
           </div>
-          <div className="px-3 py-3 border-t border-gray-700 flex items-center gap-2">
+          <div className="px-3 py-3 flex items-center gap-2" style={{borderTop: "1px solid #2d5a27"}}>
             <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${avatarColor(displayName)}`}>
               {initials(displayName)}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs font-medium text-white truncate">{displayName}</p>
-              <p className="text-xs text-green-400">● online</p>
+              <p className="text-xs" style={{color: "#4FAF3B"}}>● online</p>
             </div>
           </div>
         </div>
@@ -225,26 +225,26 @@ export default function MessagesPage() {
         {/* Main chat */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* Header */}
-          <div className="px-4 py-3 border-b border-gray-700 bg-gray-800 flex items-center gap-2">
-            <span className="text-gray-400 font-bold">#</span>
+          <div className="px-4 py-3 flex items-center gap-2" style={{borderBottom: "1px solid #2d5a27", background: "#1e331e"}}>
+            <span className="font-bold" style={{color: "#4FAF3B"}}>#</span>
             <span className="font-semibold text-white">{activeChannel?.name}</span>
             {activeChannel?.description && (
-              <span className="text-gray-400 text-xs hidden sm:block">— {activeChannel.description}</span>
+              <span className="text-xs hidden sm:block" style={{color: "#4FAF3B99"}}>— {activeChannel.description}</span>
             )}
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto px-4 py-4 bg-gray-800" onClick={() => { setHoveredId(null); setEmojiPickerId(null) }}>
+          <div className="flex-1 overflow-y-auto px-4 py-4" style={{background: "#1a2e1a"}} onClick={() => { setHoveredId(null); setEmojiPickerId(null) }}>
 
             {/* Channel intro card */}
             {activeChannel?.intro && (
-              <div className="mb-6 bg-gray-700/40 border border-gray-600/50 rounded-xl p-4">
+              <div className="mb-6 rounded-xl p-4" style={{background: "#E86A1D22", border: "1px solid #E86A1D55"}}>
                 <div className="flex items-center gap-2 mb-3">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${avatarColor(activeChannel.intro_author || 'Janelle')}`}>
                     {initials(activeChannel.intro_author || 'Janelle')}
                   </div>
                   <div>
-                    <span className="font-semibold text-white text-sm">{activeChannel.intro_author || 'Janelle'}</span>
+                    <span className="font-semibold text-sm" style={{color: "#4FAF3B"}}>{activeChannel.intro_author || 'Janelle'}</span>
                     <span className="text-xs text-gray-400 ml-2">· Channel intro</span>
                   </div>
                 </div>
@@ -257,7 +257,7 @@ export default function MessagesPage() {
             {/* Pinned messages */}
             {pinnedMessages.length > 0 && (
               <div className="mb-4 p-3 bg-yellow-900/30 border border-yellow-700/50 rounded-lg">
-                <p className="text-xs font-semibold text-yellow-400 mb-2">📌 Pinned</p>
+                <p className="text-xs font-semibold mb-2" style={{color: "#E86A1D"}}>📌 Pinned</p>
                 {pinnedMessages.map(msg => (
                   <div key={msg.id} className="text-sm text-gray-200 py-0.5">
                     <span className="font-semibold text-white mr-2">{msg.username}</span>
@@ -290,25 +290,25 @@ export default function MessagesPage() {
 
                   {/* Action bar — shows on tap */}
                   {hoveredId === msg.id && (
-                    <div className="absolute right-2 -top-3 flex items-center gap-1 bg-gray-700 border border-gray-600 rounded-lg px-1.5 py-1 z-10 shadow-lg"
+                    <div className="absolute right-2 -top-3 flex items-center gap-1 rounded-lg px-1.5 py-1 z-10 shadow-lg" style={{background: "#1e331e", border: "1px solid #2d5a27"}}
                       onClick={e => e.stopPropagation()}>
                       <button onClick={() => setEmojiPickerId(emojiPickerId === msg.id ? null : msg.id)}
-                        className="text-gray-400 hover:text-white text-sm px-1" title="React">
+                        className="text-sm px-1 opacity-70 hover:opacity-100" title="React">
                         😀
                       </button>
                       {isOwn && (
                         <button onClick={() => { setEditingId(msg.id); setEditText(msg.content); setHoveredId(null) }}
-                          className="text-gray-400 hover:text-white text-xs px-1" title="Edit">
+                          className="text-xs px-1 opacity-70 hover:opacity-100" title="Edit">
                           ✏️
                         </button>
                       )}
                       <button onClick={() => togglePin(msg)}
-                        className="text-gray-400 hover:text-yellow-400 text-xs px-1" title={msg.is_pinned ? 'Unpin' : 'Pin'}>
+                        className="text-xs px-1 opacity-70 hover:opacity-100" title={msg.is_pinned ? 'Unpin' : 'Pin'}>
                         📌
                       </button>
                       {isOwn && (
                         <button onClick={() => deleteMessage(msg.id)}
-                          className="text-gray-400 hover:text-red-400 text-xs px-1" title="Delete">
+                          className="text-xs px-1 opacity-70 hover:opacity-100" title="Delete">
                           🗑️
                         </button>
                       )}
@@ -317,7 +317,7 @@ export default function MessagesPage() {
 
                   {/* Emoji picker */}
                   {emojiPickerId === msg.id && (
-                    <div className="absolute right-2 top-6 flex items-center gap-1 bg-gray-700 border border-gray-600 rounded-xl px-2 py-1.5 z-20 shadow-xl"
+                    <div className="absolute right-2 top-6 flex items-center gap-1 rounded-xl px-2 py-1.5 z-20 shadow-xl" style={{background: "#1e331e", border: "1px solid #2d5a27"}}
                       onClick={e => e.stopPropagation()}>
                       {QUICK_EMOJIS.map(emoji => (
                         <button key={emoji} onClick={() => addReaction(msg.id, emoji)}
@@ -333,7 +333,7 @@ export default function MessagesPage() {
                       {editingId === msg.id ? (
                         <EditBox value={editText} onChange={setEditText} onSave={() => saveEdit(msg)} onCancel={() => setEditingId(null)} />
                       ) : (
-                        <p className="text-gray-200 text-sm">{msg.content}{msg.edited_at && <span className="text-gray-500 text-xs ml-1">(edited)</span>}</p>
+                        <p className="text-gray-100 text-sm">{msg.content}{msg.edited_at && <span className="text-xs ml-1" style={{color: "#4FAF3B66"}}>(edited)</span>}</p>
                       )}
                     </div>
                   ) : (
@@ -343,13 +343,13 @@ export default function MessagesPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-baseline gap-2">
-                          <span className="font-semibold text-white text-sm">{msg.username}</span>
-                          <span className="text-xs text-gray-500">{fmtTime(msg.created_at)}</span>
+                          <span className="font-semibold text-sm" style={{color: "#4FAF3B"}}>{msg.username}</span>
+                          <span className="text-xs" style={{color: "#4FAF3B66"}}>{fmtTime(msg.created_at)}</span>
                         </div>
                         {editingId === msg.id ? (
                           <EditBox value={editText} onChange={setEditText} onSave={() => saveEdit(msg)} onCancel={() => setEditingId(null)} />
                         ) : (
-                          <p className="text-gray-200 text-sm mt-0.5">{msg.content}{msg.edited_at && <span className="text-gray-500 text-xs ml-1">(edited)</span>}</p>
+                          <p className="text-gray-200 text-sm mt-0.5">{msg.content}{msg.edited_at && <span className="text-xs ml-1" style={{color: "#4FAF3B66"}}>(edited)</span>}</p>
                         )}
                       </div>
                     </div>
@@ -363,8 +363,8 @@ export default function MessagesPage() {
                           onClick={() => addReaction(msg.id, emoji)}
                           className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border transition-all ${
                             users.includes(displayName)
-                              ? 'bg-blue-600/30 border-blue-500/50 text-blue-200'
-                              : 'bg-gray-700/50 border-gray-600 text-gray-300 hover:bg-gray-700'
+                              ? 'text-white'" style={{background: '#2d5a2780', border: '1px solid #4FAF3B'}}  className2="
+                              : 'text-gray-300'" style={{background: '#0f1f0f', border: '1px solid #2d5a27'}} className2="
                           }`}>
                           <span>{emoji}</span>
                           <span className="font-medium">{users.length}</span>
@@ -379,17 +379,17 @@ export default function MessagesPage() {
           </div>
 
           {/* Input */}
-          <div className="px-4 py-3 bg-gray-800 border-t border-gray-700">
+          <div className="px-4 py-3" style={{background: "#1e331e", borderTop: "1px solid #2d5a27"}}>
             <form onSubmit={sendMessage} className="flex gap-2">
               <input ref={inputRef}
-                className="flex-1 bg-gray-700 text-white placeholder-gray-400 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="flex-1 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2" style={{background: "#0f1f0f", border: "1px solid #2d5a27", outline: "none"}} onFocus={e => e.target.style.borderColor='#4FAF3B'} onBlur={e => e.target.style.borderColor='#2d5a27'}
                 placeholder={activeChannel ? `Message #${activeChannel.name}` : 'Loading...'}
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 disabled={!activeChannel}
               />
               <button type="submit" disabled={!input.trim() || sending || !activeChannel}
-                className="px-4 py-2.5 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700 disabled:opacity-40 transition-all">
+                className="px-4 py-2.5 text-white rounded-lg text-sm font-semibold disabled:opacity-40 transition-all" style={{background: "#2d5a27"}}>
                 {sending ? '...' : 'Send'}
               </button>
             </form>
@@ -405,15 +405,15 @@ function EditBox({ value, onChange, onSave, onCancel }) {
     <div className="mt-1">
       <input
         autoFocus
-        className="w-full bg-gray-700 text-white rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+        className="w-full text-white rounded px-3 py-1.5 text-sm focus:outline-none" style={{background: "#0f1f0f", border: "1px solid #4FAF3B"}}
         value={value}
         onChange={e => onChange(e.target.value)}
         onKeyDown={e => { if (e.key === 'Enter') onSave(); if (e.key === 'Escape') onCancel() }}
       />
       <div className="flex gap-2 mt-1">
-        <button onClick={onSave} className="text-xs text-green-400 hover:text-green-300">Save</button>
-        <button onClick={onCancel} className="text-xs text-gray-400 hover:text-gray-300">Cancel</button>
-        <span className="text-xs text-gray-500">Enter to save · Esc to cancel</span>
+        <button onClick={onSave} className="text-xs hover:opacity-80" style={{color: "#4FAF3B"}}>Save</button>
+        <button onClick={onCancel} className="text-xs opacity-60 hover:opacity-80 text-white">Cancel</button>
+        <span className="text-xs" style={{color: "#4FAF3B66"}}>Enter to save · Esc to cancel</span>
       </div>
     </div>
   )
