@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import SendReceiptsButton from './SendReceiptsButton'
 import NotificationBell from '@/components/NotificationBell'
+import { useDemo } from '@/contexts/DemoContext'
 
 const ADMIN_EMAIL = 'janelle.shanise@gmail.com'
 
@@ -43,6 +44,7 @@ export default function AdminPage() {
   const [inviteMsg, setInviteMsg] = useState('')
 
   const isAdmin = user?.email === ADMIN_EMAIL || profile?.role === 'admin'
+  const { setDemo } = useDemo()
 
   useEffect(() => {
     if (authLoading) return
@@ -227,6 +229,10 @@ export default function AdminPage() {
             <span>Search everything...</span>
           </Link>
           <NotificationBell />
+          <button onClick={() => { setDemo(true); window.location.href = '/admin/demo' }}
+            className="px-3 py-1.5 text-xs font-semibold border border-orange-300 text-orange-600 rounded-lg hover:bg-orange-50 transition-all">
+            🎭 Demo
+          </button>
           <SendReceiptsButton />
         </div>
       </div>
