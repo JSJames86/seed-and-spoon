@@ -58,6 +58,18 @@ export async function POST() {
           results.push({ email: donor.donor_email, success: false, error: sendError.message })
         } else {
           results.push({ email: donor.donor_email, success: true })
+          // Log to activity timeline
+          await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/activity`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              event_type: 'email.sent',
+              record_type: 'donor',
+              record_label: donor.donor_name || donor.donor_email,
+              actor_name: 'System',
+              metadata: { subject: 'Thank you for your donation', type: 'donor_thank_you', email: donor.donor_email }
+            })
+          }).catch(() => {})
         }
       } catch (err) {
         results.push({ email: donor.donor_email, success: false, error: String(err) })
