@@ -215,11 +215,16 @@ export default function AdminPage() {
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="bg-white border-b border-gray-200 px-4 py-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div>
+        <div className="max-w-6xl mx-auto flex items-center gap-3">
+          <div className="flex-shrink-0">
             <h1 className="text-xl font-bold text-charcoal">Admin CRM</h1>
             <p className="text-xs text-gray-400">{user.email}</p>
           </div>
+          <Link href="/admin/search"
+            className="flex-1 flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-400 hover:border-green-400 hover:bg-white transition-all max-w-sm">
+            <span>🔍</span>
+            <span>Search everything...</span>
+          </Link>
           <SendReceiptsButton />
         </div>
       </div>
