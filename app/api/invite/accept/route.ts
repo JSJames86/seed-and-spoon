@@ -14,10 +14,7 @@ export async function POST(request: NextRequest) {
   const supabase = serviceClient()
 
   const { data: invite, error: inviteError } = await supabase
-    .from('invites')
-    .select('*')
-    .eq('token', token)
-    .single()
+    .from('invites').select('*').eq('token', token).single()
 
   if (inviteError || !invite) return NextResponse.json({ error: 'Invalid invite' }, { status: 400 })
   if (invite.used_at) return NextResponse.json({ error: 'Invite already used' }, { status: 400 })
@@ -26,68 +23,37 @@ export async function POST(request: NextRequest) {
   const { data: { user }, error: createError } = await supabase.auth.admin.createUser({
     email, password, email_confirm: true,
   })
-
   if (createError) return NextResponse.json({ error: createError.message }, { status: 500 })
 
-  // Create profile with role
   await supabase.from('profiles').upsert({
-    id: user!.id,
-    first_name: firstName,
-    last_name: lastName,
-    role,
-    updated_at: new Date().toISOString(),
+    id: user!.id, first_name: firstName, last_name: lastName,
+    role, updated_at: new Date().toISOString(),
   })
 
-  // Add to #general always
-  const { data: general } = await supabase
-    .from('channels')
-    .select('id')
-    .eq('name', 'general')
-    .single()
-
-  if (general) {
-    await supabase.from('channel_members').upsert({ channel_id: general.id, member_id: user!.id })
-  }
-
-  // Add to assigned channel if set
+  const { data: general } = await supabase.from('channels').select('id').eq('name', 'general').single()
+  if (general) await supabase.from('channel_members').upsert({ channel_id: general.id, member_id: user!.id })
   if (invite.default_channel_id && invite.default_channel_id !== general?.id) {
-    await supabase.from('channel_members').upsert({
-      channel_id: invite.default_channel_id,
-      member_id: user!.id,
-    })
+    await supabase.from('channel_members').upsert({ channel_id: invite.default_channel_id, member_id: user!.id })
   }
 
-  // Mark invite as used
   await supabase.from('invites').update({ used_at: new Date().toISOString() }).eq('id', invite.id)
 
-  // Log to activity timeline
-  try {
-    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/activity`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        event_type: 'invite.accepted',
-        record_type: 'user',
-        record_label: `${firstName} ${lastName}`.trim(),
-        actor_name: `${firstName} ${lastName}`.trim(),
-        metadata: { email, role }
-      })
-    })
-  } catch {}
+  // Log activity
+  await supabase.from('activity_logs').insert({
+    event_type: 'invite.accepted', record_type: 'user',
+    record_label: `${firstName} ${lastName}`.trim(),
+    actor_name: `${firstName} ${lastName}`.trim(),
+    metadata: { email, role }
+  })
 
-  // Notify admin
-  try {
-    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/notifications`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        user_id: '836fc70f-1fd5-4d61-9250-a806cb92593d',
-        type: 'invite.accepted',
-        title: `${firstName} ${lastName} joined the platform`,
-        body: `Role: ${role}`,
-        href: '/admin'
-      })
-    })
-  } catch {}
+  // Notify admin directly
+  await supabase.from('notifications').insert({
+    user_id: '836fc70f-1fd5-4d61-9250-a806cb92593d',
+    type: 'invite.accepted',
+    title: `${firstName} ${lastName} joined the platform`,
+    body: `Role: ${role}`,
+    href: '/admin'
+  })
+
   return NextResponse.json({ success: true })
 }
