@@ -43,5 +43,21 @@ export async function POST(request: NextRequest) {
   }).select().single()
 
   if (dbError) return NextResponse.json({ error: dbError.message }, { status: 500 })
+
+  // Log to activity timeline
+  try {
+    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/activity`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event_type: 'document.uploaded',
+        record_type: 'user',
+        record_label: title || file.name,
+        actor_name: 'Admin',
+        metadata: { category, file_name: file.name, file_size: file.size, access_level }
+      })
+    })
+  } catch {}
+
   return NextResponse.json({ document: doc })
 }
