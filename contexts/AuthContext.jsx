@@ -52,6 +52,44 @@ export function AuthProvider({ children }) {
     return () => subscription?.unsubscribe();
   }, []);
 
+  const register = async (formData) => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            first_name: formData.first_name,
+            last_name: formData.last_name,
+            username: formData.username,
+            phone: formData.phone,
+          }
+        }
+      })
+      if (error) return { success: false, error: error.message }
+      if (data.user && !data.session) {
+        return { success: true, needsEmailVerification: true, message: 'Check your email to confirm your account.' }
+      }
+      // Save profile
+      if (data.user) {
+        await fetch('/api/profile/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: data.user.id,
+            first_name: formData.first_name,
+            last_name: formData.last_name,
+            username: formData.username,
+            phone: formData.phone,
+          })
+        })
+      }
+      return { success: true }
+    } catch (err) {
+      return { success: false, error: err.message }
+    }
+  }
+
   const refreshProfile = async () => {
     if (!user) return;
     const updated = await fetchProfile(user.id);
