@@ -40,7 +40,6 @@ export default function AdminDocumentsPage() {
   const [msg, setMsg] = useState('')
   const [editingId, setEditingId] = useState(null)
   const [editForm, setEditForm] = useState({})
-  const [openingId, setOpeningId] = useState(null)
   const [form, setForm] = useState({
     title: '', description: '', category: 'governance', access_level: 'staff'
   })
@@ -92,21 +91,6 @@ export default function AdminDocumentsPage() {
       setMsg(`❌ Upload failed: ${err.message}`)
     }
     setUploading(false)
-  }
-
-  const SUPABASE_URL = 'https://clsepfwqnphjjmnosqff.supabase.co'
-
-  const handleOpen = (doc) => {
-    // Build signed URL synchronously using Supabase public URL
-    // Documents are in a private bucket — use the download endpoint directly
-    const url = `${SUPABASE_URL}/storage/v1/object/authenticated/internal-docs/${doc.file_path}`
-    const a = document.createElement('a')
-    a.href = `/api/documents/url?path=${encodeURIComponent(doc.file_path)}`
-    a.target = '_blank'
-    a.rel = 'noopener noreferrer'
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
   }
 
   const handleDelete = async (doc) => {
@@ -176,7 +160,7 @@ export default function AdminDocumentsPage() {
           <h2 className="font-semibold text-charcoal mb-4">Upload Document</h2>
           <div className="grid grid-cols-2 gap-3 mb-3">
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Title <span className="text-gray-400">(optional)</span></label>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Title</label>
               <input className={inputClass} placeholder="e.g. Conflict of Interest Policy"
                 value={form.title} onChange={e => setForm({...form, title: e.target.value})} />
             </div>
@@ -188,7 +172,7 @@ export default function AdminDocumentsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Description <span className="text-gray-400">(optional)</span></label>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Description</label>
               <input className={inputClass} placeholder="Brief description"
                 value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
             </div>
@@ -237,14 +221,13 @@ export default function AdminDocumentsPage() {
               {docs.map(doc => (
                 <div key={doc.id} className="px-6 py-4">
                   {editingId === doc.id ? (
-                    /* Edit mode */
                     <div className="space-y-2">
                       <input className={inputClass} value={editForm.title}
                         onChange={e => setEditForm({...editForm, title: e.target.value})}
                         placeholder="Title" />
                       <input className={inputClass} value={editForm.description}
                         onChange={e => setEditForm({...editForm, description: e.target.value})}
-                        placeholder="Description (optional)" />
+                        placeholder="Description" />
                       <div className="grid grid-cols-2 gap-2">
                         <select className={inputClass} value={editForm.category}
                           onChange={e => setEditForm({...editForm, category: e.target.value})}>
@@ -257,17 +240,16 @@ export default function AdminDocumentsPage() {
                       </div>
                       <div className="flex gap-2 pt-1">
                         <button onClick={() => saveEdit(doc)}
-                          className="px-4 py-1.5 bg-green-700 text-white text-xs font-semibold rounded-lg hover:bg-green-800 transition-all">
+                          className="px-4 py-1.5 bg-green-700 text-white text-xs font-semibold rounded-lg hover:bg-green-800">
                           Save
                         </button>
                         <button onClick={() => setEditingId(null)}
-                          className="px-4 py-1.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-200 transition-all">
+                          className="px-4 py-1.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-200">
                           Cancel
                         </button>
                       </div>
                     </div>
                   ) : (
-                    /* View mode */
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         <span className="text-2xl flex-shrink-0">
@@ -282,10 +264,15 @@ export default function AdminDocumentsPage() {
                         </div>
                       </div>
                       <div className="flex gap-2 flex-shrink-0">
-                        <button onClick={() => handleOpen(doc)} disabled={openingId === doc.id}
-                          className="px-3 py-1.5 bg-green-700 text-white text-xs font-semibold rounded-lg hover:bg-green-800 disabled:opacity-50 transition-all">
-                          {openingId === doc.id ? '...' : 'Open'}
-                        </button>
+                        {/* Plain anchor tag — no JS, works on Safari */}
+                        <a
+                          href={`/api/documents/url?path=${encodeURIComponent(doc.file_path)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-3 py-1.5 bg-green-700 text-white text-xs font-semibold rounded-lg hover:bg-green-800 transition-all"
+                        >
+                          Open
+                        </a>
                         <button onClick={() => startEdit(doc)}
                           className="px-3 py-1.5 text-blue-600 text-xs font-semibold rounded-lg hover:bg-blue-50 transition-all border border-blue-200">
                           Edit
