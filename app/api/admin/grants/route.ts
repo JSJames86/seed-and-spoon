@@ -45,6 +45,23 @@ export async function PATCH(request: NextRequest) {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   if (updates.stage && data) {
     const eventType = updates.stage === 'awarded' ? 'grant.awarded' : 'grant.stage_changed'
+    if (updates.stage === 'awarded') {
+      try {
+        const { data: { users } } = await supabase.auth.admin.listUsers()
+        const admin = users?.find((u: { email?: string }) => u.email === 'janelle.shanise@gmail.com')
+        if (admin) {
+          await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/notifications`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              user_id: admin.id, type: 'grant.awarded',
+              title: `🏆 Grant awarded: ${data.title}`,
+              body: `$${Number(data.amount || 0).toLocaleString()} from ${data.funder}`,
+              href: '/admin?tab=Grants'
+            })
+          })
+        }
+      } catch {}
+    }
     await logActivity(eventType, data.title, { stage: updates.stage, funder: data.funder, amount: data.amount })
   }
   return NextResponse.json({ grant: data })
