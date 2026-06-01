@@ -248,7 +248,17 @@ export default function AdminPage() {
               <StatCard label="Active Volunteers" value={activeVolunteers} color="purple" />
               <StatCard label="Grants Awarded" value={`$${awardedGrants.toLocaleString()}`} color="yellow" />
             </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <Link href="/admin/tasks" className="block bg-white rounded-xl border border-gray-200 p-5 hover:border-green-400 hover:shadow-sm transition-all">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Tasks & Follow-ups</p>
+                    <p className="font-semibold text-charcoal">Manage tasks & deadlines →</p>
+                    <p className="text-xs text-gray-400 mt-1">Track follow-ups, assign work, set due dates</p>
+                  </div>
+                  <span className="text-3xl">📌</span>
+                </div>
+              </Link>
               <Link href="/admin/timeline" className="block bg-white rounded-xl border border-gray-200 p-5 hover:border-green-400 hover:shadow-sm transition-all">
                 <div className="flex items-center justify-between">
                   <div>
