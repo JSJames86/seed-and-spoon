@@ -285,11 +285,10 @@ export default function MessagesPage() {
 
               return (
                 <div key={msg.id}
-                  className="relative group"
-                  onMouseEnter={() => setHoveredId(msg.id)}
-                  onMouseLeave={() => { if (emojiPickerId !== msg.id) setHoveredId(null) }}>
+                  className="relative"
+                  onClick={(e) => { e.stopPropagation(); setHoveredId(hoveredId === msg.id ? null : msg.id); setEmojiPickerId(null) }}>
 
-                  {/* Action bar — shows on hover */}
+                  {/* Action bar — shows on tap */}
                   {hoveredId === msg.id && (
                     <div className="absolute right-2 -top-3 flex items-center gap-1 bg-gray-700 border border-gray-600 rounded-lg px-1.5 py-1 z-10 shadow-lg"
                       onClick={e => e.stopPropagation()}>
