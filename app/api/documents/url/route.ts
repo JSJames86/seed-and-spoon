@@ -12,10 +12,16 @@ function serviceClient() {
 export async function GET(request: NextRequest) {
   const filePath = request.nextUrl.searchParams.get('path')
   if (!filePath) return NextResponse.json({ error: 'path required' }, { status: 400 })
+
   const supabase = serviceClient()
   const { data, error } = await supabase.storage
     .from('internal-docs')
-    .createSignedUrl(filePath, 300) // 5 minute expiry
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ url: data.signedUrl })
+    .createSignedUrl(filePath, 300)
+
+  if (error || !data?.signedUrl) {
+    return NextResponse.json({ error: error?.message || 'Failed to generate URL' }, { status: 500 })
+  }
+
+  // Redirect directly to the signed URL — no JS needed on the client
+  return NextResponse.redirect(data.signedUrl)
 }
