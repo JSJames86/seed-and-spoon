@@ -17,5 +17,23 @@ export async function PATCH(request: NextRequest) {
     .update({ status })
     .eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  // Log to activity timeline
+  if (status === 'approved' || status === 'active') {
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/activity`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event_type: 'volunteer.approved',
+          record_type: 'volunteer',
+          record_label: data?.name || data?.email || 'Volunteer',
+          actor_name: 'Admin',
+          metadata: { status, email: data?.email }
+        })
+      })
+    } catch {}
+  }
+
   return NextResponse.json({ success: true })
 }
