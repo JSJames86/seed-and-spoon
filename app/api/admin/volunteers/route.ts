@@ -12,13 +12,16 @@ function serviceClient() {
 export async function PATCH(request: NextRequest) {
   const { id, status } = await request.json()
   const supabase = serviceClient()
-  const { error } = await supabase
+
+  const { data, error } = await supabase
     .from('volunteer_applications')
     .update({ status })
     .eq('id', id)
+    .select('name, email')
+    .single()
+
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  // Log to activity timeline
   if (status === 'approved' || status === 'active') {
     try {
       await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/activity`, {
