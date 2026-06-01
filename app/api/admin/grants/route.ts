@@ -9,15 +9,17 @@ function serviceClient() {
   )
 }
 
-async function logActivity(event_type: string, record_label: string, metadata: Record<string, unknown>) {
+
+async function notifyAdmin(type: string, title: string, body: string, href: string) {
   try {
-    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/activity`, {
+    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/notifications`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ event_type, record_type: 'grant', record_label, actor_name: 'Admin', metadata }),
+      body: JSON.stringify({ user_id: '836fc70f-1fd5-4d61-9250-a806cb92593d', type, title, body, href })
     })
   } catch {}
 }
+
 
 export async function GET() {
   const supabase = serviceClient()
@@ -32,7 +34,11 @@ export async function POST(request: NextRequest) {
   const supabase = serviceClient()
   const { data, error } = await supabase.from('grants').insert(body).select().single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  await logActivity('grant.created', data.title, { funder: data.funder, amount: data.amount })
+  await notifyAdmin('grant.created', `Grant added: ${data.title}`, `${data.funder}`, '/admin')
+  await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/activity`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ event_type: 'grant.created', record_type: 'grant', record_label: data.title, actor_name: 'Admin', metadata: { funder: data.funder, amount: data.amount } })
+  }).catch(() => {})
   return NextResponse.json({ grant: data })
 }
 
@@ -43,26 +49,20 @@ export async function PATCH(request: NextRequest) {
     .from('grants').update({ ...updates, updated_at: new Date().toISOString() })
     .eq('id', id).select().single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
   if (updates.stage && data) {
     const eventType = updates.stage === 'awarded' ? 'grant.awarded' : 'grant.stage_changed'
+    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/activity`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ event_type: eventType, record_type: 'grant', record_id: id, record_label: data.title, actor_name: 'Admin', metadata: { stage: updates.stage, funder: data.funder, amount: data.amount } })
+    }).catch(() => {})
+
     if (updates.stage === 'awarded') {
-      try {
-        const { data: { users } } = await supabase.auth.admin.listUsers()
-        const admin = users?.find((u: { email?: string }) => u.email === 'janelle.shanise@gmail.com')
-        if (admin) {
-          await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/notifications`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              user_id: admin.id, type: 'grant.awarded',
-              title: `🏆 Grant awarded: ${data.title}`,
-              body: `$${Number(data.amount || 0).toLocaleString()} from ${data.funder}`,
-              href: '/admin?tab=Grants'
-            })
-          })
-        }
-      } catch {}
+      await notifyAdmin('grant.awarded', `🏆 Grant awarded: ${data.title}`, `$${Number(data.amount || 0).toLocaleString()} from ${data.funder}`, '/admin')
+    } else {
+      await notifyAdmin('grant.stage_changed', `Grant updated: ${data.title}`, `Moved to ${updates.stage}`, '/admin')
     }
-    await logActivity(eventType, data.title, { stage: updates.stage, funder: data.funder, amount: data.amount })
   }
+
   return NextResponse.json({ grant: data })
 }
