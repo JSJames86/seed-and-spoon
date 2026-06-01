@@ -60,5 +60,20 @@ export async function POST(request: NextRequest) {
   // Mark invite as used
   await supabase.from('invites').update({ used_at: new Date().toISOString() }).eq('id', invite.id)
 
+  // Log to activity timeline
+  try {
+    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/activity`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event_type: 'invite.accepted',
+        record_type: 'user',
+        record_label: `${firstName} ${lastName}`.trim(),
+        actor_name: `${firstName} ${lastName}`.trim(),
+        metadata: { email, role }
+      })
+    })
+  } catch {}
+
   return NextResponse.json({ success: true })
 }
