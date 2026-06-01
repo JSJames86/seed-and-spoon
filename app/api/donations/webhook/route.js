@@ -91,6 +91,23 @@ async function sendDonationEmails({ name, email, amountCents, isMonthly, transac
   }
 }
 
+
+async function notifyAdmin(type, title, body, href) {
+  try {
+    const { createClient } = require('@supabase/supabase-js')
+    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, { auth: { autoRefreshToken: false, persistSession: false } })
+    const { data: { users } } = await supabase.auth.admin.listUsers()
+    const admin = users?.find(u => u.email === 'janelle.shanise@gmail.com')
+    if (admin) {
+      await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/notifications`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: admin.id, type, title, body, href })
+      })
+    }
+  } catch {}
+}
+
 export async function POST(request) {
   const signature = request.headers.get('stripe-signature');
 
@@ -167,6 +184,14 @@ export async function POST(request) {
       }
 
       case 'payment_intent.succeeded': {
+        // Notify admin
+        const pi = event.data.object
+        await notifyAdmin(
+          'donation.received',
+          `New donation received`,
+          `$${(pi.amount / 100).toFixed(2)} via Stripe`,
+          '/admin?tab=Donors'
+        )
         const intent = event.data.object;
         if (intent.invoice) break; // skip subscription renewals
 
