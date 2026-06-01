@@ -13,7 +13,7 @@ export async function GET() {
   const supabase = serviceClient()
   const { data, error } = await supabase
     .from('channels')
-    .select('id, name, description')
+    .select('id, name, description, intro, intro_author')
     .order('created_at')
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ channels: data ?? [] })
