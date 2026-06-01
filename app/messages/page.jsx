@@ -5,7 +5,10 @@ import { useAuth } from '@/contexts/AuthContext'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { supabase } from '@/lib/supabase'
 
-const HASH_COLORS = ['bg-green-600', 'bg-blue-600', 'bg-purple-600', 'bg-orange-500', 'bg-pink-600', 'bg-teal-600']
+const HASH_COLORS = [
+  'bg-[#2d5a27]', 'bg-[#4FAF3B]', 'bg-[#E86A1D]',
+  'bg-teal-600', 'bg-blue-600', 'bg-purple-600'
+]
 const QUICK_EMOJIS = ['👍', '❤️', '😂', '🙏', '🔥', '✅']
 
 function avatarColor(name) {
@@ -33,7 +36,7 @@ export default function MessagesPage() {
   const [channels, setChannels] = useState([])
   const [activeChannel, setActiveChannel] = useState(null)
   const [messages, setMessages] = useState([])
-  const [reactions, setReactions] = useState({}) // { messageId: [{emoji, users}] }
+  const [reactions, setReactions] = useState({})
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -65,12 +68,10 @@ export default function MessagesPage() {
     setMessages([])
     setReactions({})
 
-    // Fetch messages
     fetch(`/api/messages?channel_id=${activeChannel.id}`)
       .then(r => r.json())
       .then(data => setMessages(data.messages || []))
 
-    // Fetch reactions
     fetch(`/api/messages/reactions?channel_id=${activeChannel.id}`)
       .then(r => r.json())
       .then(data => {
@@ -83,30 +84,19 @@ export default function MessagesPage() {
         setReactions(grouped)
       })
 
-    // Subscribe to new messages
     const msgSub = supabase
       .channel(`msg:${activeChannel.id}`)
-      .on('postgres_changes', {
-        event: '*', schema: 'public', table: 'messages',
-        filter: `channel_id=eq.${activeChannel.id}`,
-      }, (payload) => {
-        if (payload.eventType === 'INSERT') {
-          setMessages(prev => [...prev, payload.new])
-        } else if (payload.eventType === 'UPDATE') {
-          setMessages(prev => prev.map(m => m.id === payload.new.id ? payload.new : m))
-        } else if (payload.eventType === 'DELETE') {
-          setMessages(prev => prev.filter(m => m.id !== payload.old.id))
-        }
-      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'messages', filter: `channel_id=eq.${activeChannel.id}` },
+        (payload) => {
+          if (payload.eventType === 'INSERT') setMessages(prev => [...prev, payload.new])
+          else if (payload.eventType === 'UPDATE') setMessages(prev => prev.map(m => m.id === payload.new.id ? payload.new : m))
+          else if (payload.eventType === 'DELETE') setMessages(prev => prev.filter(m => m.id !== payload.old.id))
+        })
       .subscribe()
 
-    // Subscribe to reactions
     const reactSub = supabase
       .channel(`react:${activeChannel.id}`)
-      .on('postgres_changes', {
-        event: '*', schema: 'public', table: 'message_reactions',
-      }, () => {
-        // Refetch reactions on any change
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'message_reactions' }, () => {
         fetch(`/api/messages/reactions?channel_id=${activeChannel.id}`)
           .then(r => r.json())
           .then(data => {
@@ -121,15 +111,10 @@ export default function MessagesPage() {
       })
       .subscribe()
 
-    return () => {
-      supabase.removeChannel(msgSub)
-      supabase.removeChannel(reactSub)
-    }
+    return () => { supabase.removeChannel(msgSub); supabase.removeChannel(reactSub) }
   }, [activeChannel])
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
 
   const sendMessage = async (e) => {
     e.preventDefault()
@@ -138,12 +123,7 @@ export default function MessagesPage() {
     await fetch('/api/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        channel_id: activeChannel.id,
-        sender_id: user.id,
-        username: displayName,
-        content: input.trim(),
-      }),
+      body: JSON.stringify({ channel_id: activeChannel.id, sender_id: user.id, username: displayName, content: input.trim() }),
     })
     setInput('')
     setSending(false)
@@ -191,205 +171,213 @@ export default function MessagesPage() {
 
   return (
     <ProtectedRoute>
-      <div className="flex overflow-hidden"  style={{background: "#1a2e1a"}} style={{ height: 'calc(100vh - 60px)' }}>
-
-        {/* Sidebar */}
-        <div className="w-52 flex flex-col flex-shrink-0" style={{background: "#132213", borderRight: "1px solid #2d5a27"}}>
-          <div className="px-3 py-4" style={{borderBottom: "1px solid #2d5a27"}}>
-            <p className="text-xs font-bold uppercase tracking-widest" style={{color: "#4FAF3B"}}>Seed & Spoon</p>
+      <div
+        className="flex overflow-hidden"
+        style={{ height: 'calc(100vh - 60px)' }}
+        onClick={() => { setHoveredId(null); setEmojiPickerId(null) }}
+      >
+        {/* Sidebar — light cream with green accents */}
+        <div className="w-52 flex flex-col flex-shrink-0 border-r"
+          style={{ background: '#f5f7f0', borderColor: '#d4e8cc' }}>
+          
+          {/* Logo + org name */}
+          <div className="px-3 py-4 flex items-center gap-2 border-b" style={{ borderColor: '#d4e8cc' }}>
+            <img src="/logo-compact.webp" alt="Seed & Spoon" className="w-6 h-6 object-contain" />
+            <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#2d5a27' }}>
+              Seed & Spoon
+            </p>
           </div>
+
+          {/* Channel list */}
           <div className="flex-1 overflow-y-auto py-2">
-            <p className="px-3 text-xs font-semibold uppercase tracking-widest mb-1" style={{color: "#4FAF3B88"}}>Channels</p>
+            <p className="px-3 text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#2d5a2788' }}>
+              Channels
+            </p>
             {loading ? (
-              <p className="px-3 text-xs text-gray-500">Loading...</p>
+              <p className="px-3 text-xs text-gray-400">Loading...</p>
             ) : channels.map(ch => (
               <button key={ch.id} onClick={() => setActiveChannel(ch)}
-                style={{background: activeChannel?.id === ch.id ? '#2d5a27' : 'transparent'}} className={`w-full text-left px-3 py-1.5 text-sm transition-colors rounded mx-1 ${
-                  activeChannel?.id === ch.id ? 'text-white font-semibold' : 'text-gray-400 hover:text-gray-100'
-                }`}>
+                className="w-full text-left px-3 py-1.5 text-sm rounded-lg mx-1 transition-all"
+                style={{
+                  width: 'calc(100% - 8px)',
+                  background: activeChannel?.id === ch.id ? '#2d5a27' : 'transparent',
+                  color: activeChannel?.id === ch.id ? 'white' : '#3a5c35',
+                  fontWeight: activeChannel?.id === ch.id ? 600 : 400,
+                }}>
                 # {ch.name}
               </button>
             ))}
           </div>
-          <div className="px-3 py-3 flex items-center gap-2" style={{borderTop: "1px solid #2d5a27"}}>
-            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${avatarColor(displayName)}`}>
+
+          {/* Current user */}
+          <div className="px-3 py-3 flex items-center gap-2 border-t" style={{ borderColor: '#d4e8cc' }}>
+            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0 ${avatarColor(displayName)}`}>
               {initials(displayName)}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-white truncate">{displayName}</p>
-              <p className="text-xs" style={{color: "#4FAF3B"}}>● online</p>
+              <p className="text-xs font-semibold truncate" style={{ color: '#2d5a27' }}>{displayName}</p>
+              <p className="text-xs" style={{ color: '#4FAF3B' }}>● online</p>
             </div>
           </div>
         </div>
 
         {/* Main chat */}
         <div className="flex-1 flex flex-col min-w-0">
-          {/* Header */}
-          <div className="px-4 py-3 flex items-center gap-2" style={{borderBottom: "1px solid #2d5a27", background: "#1e331e"}}>
-            <span className="font-bold" style={{color: "#4FAF3B"}}>#</span>
-            <span className="font-semibold text-white">{activeChannel?.name}</span>
+          
+          {/* Channel header */}
+          <div className="px-4 py-3 flex items-center gap-2 border-b" style={{ background: '#ffffff', borderColor: '#d4e8cc' }}>
+            <span className="font-bold" style={{ color: '#4FAF3B' }}>#</span>
+            <span className="font-semibold text-gray-800">{activeChannel?.name}</span>
             {activeChannel?.description && (
-              <span className="text-xs hidden sm:block" style={{color: "#4FAF3B99"}}>— {activeChannel.description}</span>
+              <span className="text-xs text-gray-400 hidden sm:block">— {activeChannel.description}</span>
             )}
           </div>
 
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto px-4 py-4" style={{background: "#1a2e1a"}} onClick={() => { setHoveredId(null); setEmojiPickerId(null) }}>
+          {/* Messages area with watermark */}
+          <div className="flex-1 overflow-y-auto px-4 py-4 relative" style={{ background: '#fafcf8' }}>
+            {/* Watermark logo */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ opacity: 0.04 }}>
+              <img src="/logo-full.webp" alt="" className="w-96 object-contain" />
+            </div>
 
-            {/* Channel intro card */}
-            {activeChannel?.intro && (
-              <div className="mb-6 rounded-xl p-4" style={{background: "#E86A1D22", border: "1px solid #E86A1D55"}}>
-                <div className="flex items-center gap-2 mb-3">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${avatarColor(activeChannel.intro_author || 'Janelle')}`}>
-                    {initials(activeChannel.intro_author || 'Janelle')}
+            <div className="relative z-10">
+              {/* Channel intro */}
+              {activeChannel?.intro && (
+                <div className="mb-6 p-4 rounded-xl border" style={{ background: '#f0f7ec', borderColor: '#c8e6bc' }}>
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0 ${avatarColor(activeChannel.intro_author || 'Janelle')}`}>
+                      {initials(activeChannel.intro_author || 'Janelle')}
+                    </div>
+                    <div>
+                      <span className="font-semibold text-sm" style={{ color: '#2d5a27' }}>{activeChannel.intro_author || 'Janelle'}</span>
+                      <span className="text-xs text-gray-400 ml-2">· Channel intro</span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="font-semibold text-sm" style={{color: "#4FAF3B"}}>{activeChannel.intro_author || 'Janelle'}</span>
-                    <span className="text-xs text-gray-400 ml-2">· Channel intro</span>
-                  </div>
+                  <p className="text-sm text-gray-700 whitespace-pre-line leading-relaxed">{activeChannel.intro}</p>
                 </div>
-                <div className="text-gray-200 text-sm whitespace-pre-line leading-relaxed">
-                  {activeChannel.intro}
+              )}
+
+              {/* Pinned messages */}
+              {pinnedMessages.length > 0 && (
+                <div className="mb-4 p-3 rounded-xl border" style={{ background: '#fff8f0', borderColor: '#f0c89a' }}>
+                  <p className="text-xs font-semibold mb-2" style={{ color: '#E86A1D' }}>📌 Pinned</p>
+                  {pinnedMessages.map(msg => (
+                    <div key={msg.id} className="text-sm text-gray-700 py-0.5">
+                      <span className="font-semibold mr-2" style={{ color: '#2d5a27' }}>{msg.username}</span>
+                      {msg.content}
+                      <button onClick={() => togglePin(msg)} className="ml-2 text-xs hover:underline" style={{ color: '#E86A1D' }}>unpin</button>
+                    </div>
+                  ))}
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Pinned messages */}
-            {pinnedMessages.length > 0 && (
-              <div className="mb-4 p-3 bg-yellow-900/30 border border-yellow-700/50 rounded-lg">
-                <p className="text-xs font-semibold mb-2" style={{color: "#E86A1D"}}>📌 Pinned</p>
-                {pinnedMessages.map(msg => (
-                  <div key={msg.id} className="text-sm text-gray-200 py-0.5">
-                    <span className="font-semibold text-white mr-2">{msg.username}</span>
-                    {msg.content}
-                    <button onClick={() => togglePin(msg)} className="ml-2 text-xs text-yellow-500 hover:text-yellow-300">unpin</button>
-                  </div>
-                ))}
-              </div>
-            )}
+              {regularMessages.length === 0 && pinnedMessages.length === 0 && activeChannel && (
+                <div className="text-center py-16">
+                  <p className="text-3xl mb-2">#</p>
+                  <p className="font-bold text-gray-700">Welcome to #{activeChannel.name}!</p>
+                  {activeChannel.description && <p className="text-sm text-gray-400 mt-1">{activeChannel.description}</p>}
+                </div>
+              )}
 
-            {regularMessages.length === 0 && pinnedMessages.length === 0 && activeChannel && (
-              <div className="text-center py-16">
-                <p className="text-3xl mb-2">#</p>
-                <p className="text-white font-bold">Welcome to #{activeChannel.name}!</p>
-                {activeChannel.description && <p className="text-gray-400 text-sm mt-1">{activeChannel.description}</p>}
-              </div>
-            )}
+              {regularMessages.map((msg, i) => {
+                const prev = regularMessages[i - 1]
+                const grouped = prev && prev.username === msg.username && new Date(msg.created_at) - new Date(prev.created_at) < 300000
+                const isOwn = msg.sender_id === user?.id
+                const msgReactions = reactions[msg.id] || {}
 
-            {regularMessages.map((msg, i) => {
-              const prev = regularMessages[i - 1]
-              const grouped = prev && prev.username === msg.username &&
-                new Date(msg.created_at) - new Date(prev.created_at) < 300000
-              const isOwn = msg.sender_id === user?.id
-              const msgReactions = reactions[msg.id] || {}
+                return (
+                  <div key={msg.id} className="relative"
+                    onClick={(e) => { e.stopPropagation(); setHoveredId(hoveredId === msg.id ? null : msg.id); setEmojiPickerId(null) }}>
 
-              return (
-                <div key={msg.id}
-                  className="relative"
-                  onClick={(e) => { e.stopPropagation(); setHoveredId(hoveredId === msg.id ? null : msg.id); setEmojiPickerId(null) }}>
-
-                  {/* Action bar — shows on tap */}
-                  {hoveredId === msg.id && (
-                    <div className="absolute right-2 -top-3 flex items-center gap-1 rounded-lg px-1.5 py-1 z-10 shadow-lg" style={{background: "#1e331e", border: "1px solid #2d5a27"}}
-                      onClick={e => e.stopPropagation()}>
-                      <button onClick={() => setEmojiPickerId(emojiPickerId === msg.id ? null : msg.id)}
-                        className="text-sm px-1 opacity-70 hover:opacity-100" title="React">
-                        😀
-                      </button>
-                      {isOwn && (
-                        <button onClick={() => { setEditingId(msg.id); setEditText(msg.content); setHoveredId(null) }}
-                          className="text-xs px-1 opacity-70 hover:opacity-100" title="Edit">
-                          ✏️
-                        </button>
-                      )}
-                      <button onClick={() => togglePin(msg)}
-                        className="text-xs px-1 opacity-70 hover:opacity-100" title={msg.is_pinned ? 'Unpin' : 'Pin'}>
-                        📌
-                      </button>
-                      {isOwn && (
-                        <button onClick={() => deleteMessage(msg.id)}
-                          className="text-xs px-1 opacity-70 hover:opacity-100" title="Delete">
-                          🗑️
-                        </button>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Emoji picker */}
-                  {emojiPickerId === msg.id && (
-                    <div className="absolute right-2 top-6 flex items-center gap-1 rounded-xl px-2 py-1.5 z-20 shadow-xl" style={{background: "#1e331e", border: "1px solid #2d5a27"}}
-                      onClick={e => e.stopPropagation()}>
-                      {QUICK_EMOJIS.map(emoji => (
-                        <button key={emoji} onClick={() => addReaction(msg.id, emoji)}
-                          className="text-xl hover:scale-125 transition-transform px-0.5">
-                          {emoji}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {grouped ? (
-                    <div className="pl-10 px-1 pb-0.5">
-                      {editingId === msg.id ? (
-                        <EditBox value={editText} onChange={setEditText} onSave={() => saveEdit(msg)} onCancel={() => setEditingId(null)} />
-                      ) : (
-                        <p className="text-gray-100 text-sm">{msg.content}{msg.edited_at && <span className="text-xs ml-1" style={{color: "#4FAF3B66"}}>(edited)</span>}</p>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="flex gap-3 pt-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${avatarColor(msg.username)}`}>
-                        {initials(msg.username)}
+                    {/* Action bar */}
+                    {hoveredId === msg.id && (
+                      <div className="absolute right-2 -top-3 flex items-center gap-1 rounded-lg px-1.5 py-1 z-10 shadow-md border"
+                        style={{ background: '#ffffff', borderColor: '#d4e8cc' }}
+                        onClick={e => e.stopPropagation()}>
+                        <button onClick={() => setEmojiPickerId(emojiPickerId === msg.id ? null : msg.id)} className="text-sm px-1 hover:scale-110 transition-transform" title="React">😀</button>
+                        {isOwn && <button onClick={() => { setEditingId(msg.id); setEditText(msg.content); setHoveredId(null) }} className="text-xs px-1 hover:scale-110 transition-transform" title="Edit">✏️</button>}
+                        <button onClick={() => togglePin(msg)} className="text-xs px-1 hover:scale-110 transition-transform" title={msg.is_pinned ? 'Unpin' : 'Pin'}>📌</button>
+                        {isOwn && <button onClick={() => deleteMessage(msg.id)} className="text-xs px-1 hover:scale-110 transition-transform" title="Delete">🗑️</button>}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-baseline gap-2">
-                          <span className="font-semibold text-sm" style={{color: "#4FAF3B"}}>{msg.username}</span>
-                          <span className="text-xs" style={{color: "#4FAF3B66"}}>{fmtTime(msg.created_at)}</span>
-                        </div>
+                    )}
+
+                    {/* Emoji picker */}
+                    {emojiPickerId === msg.id && (
+                      <div className="absolute right-2 top-6 flex items-center gap-1 rounded-xl px-2 py-1.5 z-20 shadow-xl border"
+                        style={{ background: '#ffffff', borderColor: '#d4e8cc' }}
+                        onClick={e => e.stopPropagation()}>
+                        {QUICK_EMOJIS.map(emoji => (
+                          <button key={emoji} onClick={() => addReaction(msg.id, emoji)} className="text-xl hover:scale-125 transition-transform px-0.5">{emoji}</button>
+                        ))}
+                      </div>
+                    )}
+
+                    {grouped ? (
+                      <div className="pl-10 pb-0.5">
                         {editingId === msg.id ? (
                           <EditBox value={editText} onChange={setEditText} onSave={() => saveEdit(msg)} onCancel={() => setEditingId(null)} />
                         ) : (
-                          <p className="text-gray-200 text-sm mt-0.5">{msg.content}{msg.edited_at && <span className="text-xs ml-1" style={{color: "#4FAF3B66"}}>(edited)</span>}</p>
+                          <p className="text-sm text-gray-700">{msg.content}{msg.edited_at && <span className="text-xs text-gray-400 ml-1">(edited)</span>}</p>
                         )}
                       </div>
-                    </div>
-                  )}
+                    ) : (
+                      <div className="flex gap-3 pt-3">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0 ${avatarColor(msg.username)}`}>
+                          {initials(msg.username)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-baseline gap-2">
+                            <span className="font-semibold text-sm" style={{ color: '#2d5a27' }}>{msg.username}</span>
+                            <span className="text-xs text-gray-400">{fmtTime(msg.created_at)}</span>
+                          </div>
+                          {editingId === msg.id ? (
+                            <EditBox value={editText} onChange={setEditText} onSave={() => saveEdit(msg)} onCancel={() => setEditingId(null)} />
+                          ) : (
+                            <p className="text-sm text-gray-700 mt-0.5">{msg.content}{msg.edited_at && <span className="text-xs text-gray-400 ml-1">(edited)</span>}</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
 
-                  {/* Reactions */}
-                  {Object.keys(msgReactions).length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-1 pl-10">
-                      {Object.entries(msgReactions).map(([emoji, users]) => (
-                        <button key={emoji}
-                          onClick={() => addReaction(msg.id, emoji)}
-                          className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border transition-all ${
-                            users.includes(displayName)
-                              ? 'text-white'" style={{background: '#2d5a2780', border: '1px solid #4FAF3B'}}  className2="
-                              : 'text-gray-300'" style={{background: '#0f1f0f', border: '1px solid #2d5a27'}} className2="
-                          }`}>
-                          <span>{emoji}</span>
-                          <span className="font-medium">{users.length}</span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )
-            })}
-            <div ref={bottomRef} />
+                    {/* Reactions */}
+                    {Object.keys(msgReactions).length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1 pl-10">
+                        {Object.entries(msgReactions).map(([emoji, users]) => (
+                          <button key={emoji}
+                            onClick={() => addReaction(msg.id, emoji)}
+                            className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border transition-all"
+                            style={{
+                              background: users.includes(displayName) ? '#e8f5e2' : '#f5f7f0',
+                              borderColor: users.includes(displayName) ? '#4FAF3B' : '#d4e8cc',
+                              color: '#2d5a27',
+                            }}>
+                            <span>{emoji}</span>
+                            <span className="font-medium">{users.length}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+              <div ref={bottomRef} />
+            </div>
           </div>
 
           {/* Input */}
-          <div className="px-4 py-3" style={{background: "#1e331e", borderTop: "1px solid #2d5a27"}}>
+          <div className="px-4 py-3 border-t" style={{ background: '#ffffff', borderColor: '#d4e8cc' }}>
             <form onSubmit={sendMessage} className="flex gap-2">
               <input ref={inputRef}
-                className="flex-1 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2" style={{background: "#0f1f0f", border: "1px solid #2d5a27", outline: "none"}} onFocus={e => e.target.style.borderColor='#4FAF3B'} onBlur={e => e.target.style.borderColor='#2d5a27'}
+                className="flex-1 rounded-lg px-4 py-2.5 text-sm focus:outline-none"
+                style={{ background: '#f5f7f0', border: '1px solid #d4e8cc', color: '#1a2e1a' }}
                 placeholder={activeChannel ? `Message #${activeChannel.name}` : 'Loading...'}
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 disabled={!activeChannel}
               />
               <button type="submit" disabled={!input.trim() || sending || !activeChannel}
-                className="px-4 py-2.5 text-white rounded-lg text-sm font-semibold disabled:opacity-40 transition-all" style={{background: "#2d5a27"}}>
+                className="px-4 py-2.5 text-white rounded-lg text-sm font-semibold transition-all disabled:opacity-40"
+                style={{ background: '#2d5a27' }}>
                 {sending ? '...' : 'Send'}
               </button>
             </form>
@@ -403,17 +391,17 @@ export default function MessagesPage() {
 function EditBox({ value, onChange, onSave, onCancel }) {
   return (
     <div className="mt-1">
-      <input
-        autoFocus
-        className="w-full text-white rounded px-3 py-1.5 text-sm focus:outline-none" style={{background: "#0f1f0f", border: "1px solid #4FAF3B"}}
+      <input autoFocus
+        className="w-full rounded px-3 py-1.5 text-sm focus:outline-none"
+        style={{ background: '#f5f7f0', border: '1px solid #4FAF3B' }}
         value={value}
         onChange={e => onChange(e.target.value)}
         onKeyDown={e => { if (e.key === 'Enter') onSave(); if (e.key === 'Escape') onCancel() }}
       />
       <div className="flex gap-2 mt-1">
-        <button onClick={onSave} className="text-xs hover:opacity-80" style={{color: "#4FAF3B"}}>Save</button>
-        <button onClick={onCancel} className="text-xs opacity-60 hover:opacity-80 text-white">Cancel</button>
-        <span className="text-xs" style={{color: "#4FAF3B66"}}>Enter to save · Esc to cancel</span>
+        <button onClick={onSave} className="text-xs font-semibold" style={{ color: '#2d5a27' }}>Save</button>
+        <button onClick={onCancel} className="text-xs text-gray-400">Cancel</button>
+        <span className="text-xs text-gray-300">Enter to save · Esc to cancel</span>
       </div>
     </div>
   )
