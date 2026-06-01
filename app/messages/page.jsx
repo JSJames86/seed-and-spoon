@@ -236,6 +236,24 @@ export default function MessagesPage() {
           {/* Messages */}
           <div className="flex-1 overflow-y-auto px-4 py-4 bg-gray-800" onClick={() => { setHoveredId(null); setEmojiPickerId(null) }}>
 
+            {/* Channel intro card */}
+            {activeChannel?.intro && (
+              <div className="mb-6 bg-gray-700/40 border border-gray-600/50 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${avatarColor(activeChannel.intro_author || 'Janelle')}`}>
+                    {initials(activeChannel.intro_author || 'Janelle')}
+                  </div>
+                  <div>
+                    <span className="font-semibold text-white text-sm">{activeChannel.intro_author || 'Janelle'}</span>
+                    <span className="text-xs text-gray-400 ml-2">· Channel intro</span>
+                  </div>
+                </div>
+                <div className="text-gray-200 text-sm whitespace-pre-line leading-relaxed">
+                  {activeChannel.intro}
+                </div>
+              </div>
+            )}
+
             {/* Pinned messages */}
             {pinnedMessages.length > 0 && (
               <div className="mb-4 p-3 bg-yellow-900/30 border border-yellow-700/50 rounded-lg">
