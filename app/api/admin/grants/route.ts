@@ -24,6 +24,21 @@ export async function POST(request: NextRequest) {
   const supabase = serviceClient()
   const { data, error } = await supabase.from('grants').insert(body).select().single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  // Log stage change to activity timeline
+  if (updates.stage && data) {
+    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/activity`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event_type: updates.stage === 'awarded' ? 'grant.awarded' : 'grant.stage_changed',
+        record_type: 'grant',
+        record_id: id,
+        record_label: data.title,
+        actor_name: 'Admin',
+        metadata: { stage: updates.stage, funder: data.funder, amount: data.amount }
+      })
+    }).catch(() => {})
+  }
   return NextResponse.json({ grant: data })
 }
 
@@ -34,5 +49,20 @@ export async function PATCH(request: NextRequest) {
     .from('grants').update({ ...updates, updated_at: new Date().toISOString() })
     .eq('id', id).select().single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  // Log stage change to activity timeline
+  if (updates.stage && data) {
+    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/activity`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event_type: updates.stage === 'awarded' ? 'grant.awarded' : 'grant.stage_changed',
+        record_type: 'grant',
+        record_id: id,
+        record_label: data.title,
+        actor_name: 'Admin',
+        metadata: { stage: updates.stage, funder: data.funder, amount: data.amount }
+      })
+    }).catch(() => {})
+  }
   return NextResponse.json({ grant: data })
 }
