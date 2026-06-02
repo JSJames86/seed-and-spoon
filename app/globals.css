@@ -232,7 +232,7 @@
   }
 
   .card-dark .card-title {
-    @apply text-[var(--leaf-light)];
+    @apply text-[var(--dark-forest)];
   }
 
   /* ===========================
@@ -253,7 +253,7 @@
   }
 
   .tag-dark {
-    @apply text-[var(--leaf-light)];
+    @apply text-[var(--dark-forest)];
     background: rgba(166, 212, 122, 0.2);
     border: 1px solid rgba(166, 212, 122, 0.3);
     backdrop-filter: blur(10px);
@@ -294,7 +294,7 @@
 
   /* Dark theme forms */
   .form-dark .form-label {
-    @apply text-[var(--leaf-light)];
+    @apply text-[var(--dark-forest)];
   }
 
   .form-dark .form-input {
@@ -337,7 +337,7 @@
   }
 
   .footer-title .highlight {
-    @apply text-[var(--leaf-light)];
+    @apply text-[var(--dark-forest)];
   }
 
   .footer-info-item {
@@ -402,7 +402,7 @@
      =========================== */
   .text-orange { color: var(--orange-primary); }
   .text-green { color: var(--green-primary); }
-  .text-leaf { color: var(--leaf-light); }
+  .text-leaf { color: var(--dark-forest); }
 
   .bg-dark-forest { background: var(--dark-forest); }
   .bg-cream { background: var(--cream); }
