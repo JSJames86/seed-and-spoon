@@ -32,7 +32,7 @@ export default function SpoonAssistFeature() {
               New Tool
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Introducing <span className="text-green-600">SpoonAssist</span>
+              Introducing <span className="text-green-800">SpoonAssist</span>
             </h2>
             <p className="text-lg text-gray-700 mb-6">
               Compare grocery prices across local stores for any recipe. Create smart shopping lists
