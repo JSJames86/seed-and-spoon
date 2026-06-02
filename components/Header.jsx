@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import Button from "./Button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -144,17 +143,12 @@ export default function Header() {
       >
         <div className="max-w-7xl mx-auto h-full flex items-center justify-between px-4 sm:px-6">
           <Link href="/" className="flex-shrink-0 bg-transparent">
-            <Image
+            <img
               src={isScrolled ? logoScrolled : logoDefault}
               alt="Seed & Spoon NJ"
-              width={160}
-              height={80}
-              priority
               style={{
                 background: "transparent",
                 mixBlendMode: "normal",
-                width: "auto",
-                height: "auto",
               }}
               className={`
                 h-12 sm:h-14 md:h-16 lg:h-20
