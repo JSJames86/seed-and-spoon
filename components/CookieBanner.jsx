@@ -37,7 +37,7 @@ export default function CookieBanner() {
                 You can manage your preferences or reject non-essential cookies.{' '}
                 <Link
                   href="/legal/privacy"
-                  className="text-green-600 hover:text-green-700 underline font-medium"
+                  className="text-green-800 hover:text-green-900 underline font-medium"
                 >
                   Learn more in our Privacy Policy
                 </Link>
@@ -85,14 +85,14 @@ export default function CookieBanner() {
               information about our data practices, please review our{' '}
               <Link
                 href="/legal/privacy"
-                className="text-green-600 hover:text-green-700 underline"
+                className="text-green-800 hover:text-green-900 underline"
               >
                 Privacy Policy
               </Link>
               {' '}and{' '}
               <Link
                 href="/legal/terms"
-                className="text-green-600 hover:text-green-700 underline"
+                className="text-green-800 hover:text-green-900 underline"
               >
                 Terms & Conditions
               </Link>
