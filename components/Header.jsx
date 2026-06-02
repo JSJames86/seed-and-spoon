@@ -390,49 +390,49 @@ export default function Header() {
               <Link
                 href="/"
                 onClick={closeMenu}
-                className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+                className="body-md font-bold text-white hover:text-[var(--leaf-mid)] text-3xl"
               >
                 Home
               </Link>
               <Link
                 href="/about"
                 onClick={closeMenu}
-                className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+                className="body-md font-bold text-white hover:text-[var(--leaf-mid)] text-3xl"
               >
                 About
               </Link>
               <Link
                 href="/causes"
                 onClick={closeMenu}
-                className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+                className="body-md font-bold text-white hover:text-[var(--leaf-mid)] text-3xl"
               >
                 Causes
               </Link>
               <Link
                 href="/campaigns"
                 onClick={closeMenu}
-                className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+                className="body-md font-bold text-white hover:text-[var(--leaf-mid)] text-3xl"
               >
                 Campaigns
               </Link>
               <Link
                 href="/get-help"
                 onClick={closeMenu}
-                className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+                className="body-md font-bold text-white hover:text-[var(--leaf-mid)] text-3xl"
               >
                 Get Help
               </Link>
               <Link
                 href="/spoonassist"
                 onClick={closeMenu}
-                className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+                className="body-md font-bold text-white hover:text-[var(--leaf-mid)] text-3xl"
               >
                 SpoonAssist
               </Link>
               <Link
                 href="/volunteer"
                 onClick={closeMenu}
-                className="body-md font-bold text-white hover:text-[var(--leaf-light)] text-3xl"
+                className="body-md font-bold text-white hover:text-[var(--leaf-mid)] text-3xl"
               >
                 Volunteer
               </Link>
@@ -445,7 +445,7 @@ export default function Header() {
                       <Link
                         href="/admin"
                         onClick={closeMenu}
-                        className="block text-center body-md font-bold text-white hover:text-[var(--leaf-light)] text-2xl py-3"
+                        className="block text-center body-md font-bold text-white hover:text-[var(--leaf-mid)] text-2xl py-3"
                       >
                         Admin
                       </Link>
@@ -453,14 +453,14 @@ export default function Header() {
                     <Link
                       href="/messages"
                       onClick={closeMenu}
-                      className="block text-center body-md font-bold text-white hover:text-[var(--leaf-light)] text-2xl py-3"
+                      className="block text-center body-md font-bold text-white hover:text-[var(--leaf-mid)] text-2xl py-3"
                     >
                       Messages
                     </Link>
                     <Link
                       href="/dashboard"
                       onClick={closeMenu}
-                      className="block text-center body-md font-bold text-white hover:text-[var(--leaf-light)] text-2xl py-3"
+                      className="block text-center body-md font-bold text-white hover:text-[var(--leaf-mid)] text-2xl py-3"
                     >
                       Dashboard
                     </Link>
@@ -469,7 +469,7 @@ export default function Header() {
                         logout();
                         closeMenu();
                       }}
-                      className="w-full text-center body-md font-bold text-white hover:text-[var(--leaf-light)] text-2xl py-3"
+                      className="w-full text-center body-md font-bold text-white hover:text-[var(--leaf-mid)] text-2xl py-3"
                     >
                       Logout
                     </button>
