@@ -18,7 +18,7 @@ export default function HeroContent() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
-            className={word === "see" ? "text-green-600" : ""}
+            className={word === "see" ? "text-green-800" : ""}
           >
             {word}{" "}
           </motion.span>
@@ -54,7 +54,7 @@ export default function HeroContent() {
         </a>
         <a
           href="/volunteer"
-          className="rounded-lg border-2 border-green-600 px-10 py-4 font-bold text-green-600 text-lg transition-all hover:bg-green-600 hover:text-white hover:scale-105 shadow-xl"
+          className="rounded-lg border-2 border-green-800 px-10 py-4 font-bold text-green-800 text-lg transition-all hover:bg-green-600 hover:text-white hover:scale-105 shadow-xl"
         >
           Volunteer
         </a>
