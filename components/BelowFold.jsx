@@ -2,10 +2,12 @@
 
 import dynamic from "next/dynamic";
 
-const StoryScroll = dynamic(() => import("@/components/StoryScroll"), { ssr: false });
-const SpoonAssistFeature = dynamic(() => import("@/components/SpoonAssistFeature"), { ssr: false });
-const WhyThisMatters = dynamic(() => import("@/components/WhyThisMatters"), { ssr: false });
-const SDGSection = dynamic(() => import("@/components/sdgs/SDGSection"), { ssr: false });
+// dynamic() without ssr:false — keeps SSR intact but splits the JS bundle
+// so GSAP and heavy components don't block the critical path
+const StoryScroll = dynamic(() => import("@/components/StoryScroll"));
+const SpoonAssistFeature = dynamic(() => import("@/components/SpoonAssistFeature"));
+const WhyThisMatters = dynamic(() => import("@/components/WhyThisMatters"));
+const SDGSection = dynamic(() => import("@/components/sdgs/SDGSection"));
 
 export default function BelowFold() {
   return (
