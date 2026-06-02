@@ -1,5 +1,19 @@
 {
   "installCommand": "npm install",
+  "headers": [
+    {
+      "source": "/sitemap.xml",
+      "headers": [
+        { "key": "Content-Type", "value": "text/xml; charset=utf-8" }
+      ]
+    },
+    {
+      "source": "/sitemap-:index.xml",
+      "headers": [
+        { "key": "Content-Type", "value": "text/xml; charset=utf-8" }
+      ]
+    }
+  ],
   "crons": [
     {
       "path": "/api/foodbanks",
