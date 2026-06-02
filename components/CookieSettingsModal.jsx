@@ -167,14 +167,14 @@ export default function CookieSettingsModal() {
               For more information about how we use cookies and protect your data, please read our{' '}
               <Link
                 href="/privacy-policy"
-                className="text-green-600 hover:text-green-700 underline font-medium"
+                className="text-green-800 hover:text-green-900 underline font-medium"
               >
                 Privacy Policy
               </Link>
               {' '}and{' '}
               <Link
                 href="/terms"
-                className="text-green-600 hover:text-green-700 underline font-medium"
+                className="text-green-800 hover:text-green-900 underline font-medium"
               >
                 Terms & Conditions
               </Link>
@@ -193,7 +193,7 @@ export default function CookieSettingsModal() {
           </button>
           <button
             onClick={acceptAll}
-            className="flex-1 px-6 py-3 border-2 border-green-600 text-green-600 font-semibold rounded-lg hover:bg-green-50 hover:border-green-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+            className="flex-1 px-6 py-3 border-2 border-green-800 text-green-800 font-semibold rounded-lg hover:bg-green-50 hover:border-green-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
           >
             Accept All
           </button>
