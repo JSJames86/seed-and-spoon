@@ -60,6 +60,10 @@ export const metadata = {
     icon: "/favicon.ico",
     apple: "/apple-touch-icon.png",
   },
+  other: {
+    // Preload hero image to improve LCP on homepage
+    "link-preload-hero": "<link rel=\"preload\" as=\"image\" href=\"/media/hero/hero-bg.jpg\" fetchpriority=\"high\">",
+  },
 };
 
 // iOS safe area and viewport configuration
