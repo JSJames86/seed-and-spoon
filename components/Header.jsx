@@ -247,6 +247,10 @@ export default function Header() {
               SpoonAssist
             </Link>
 
+            <Link href="/impact" className={getNavLinkClass(isScrolled)}>
+              Impact
+            </Link>
+
             <Button variant="secondary" href="/donate">
               Donate
             </Button>
@@ -428,6 +432,13 @@ export default function Header() {
                 className="body-md font-bold text-white hover:text-[var(--leaf-mid)] text-3xl"
               >
                 SpoonAssist
+              </Link>
+              <Link
+                href="/impact"
+                onClick={closeMenu}
+                className="body-md font-bold text-white hover:text-[var(--leaf-mid)] text-3xl"
+              >
+                Impact
               </Link>
               <Link
                 href="/volunteer"
