@@ -26,6 +26,28 @@ const nextConfig = {
   },
   async headers() {
     return [
+      // Sitemap files must be served as text/xml so browsers and Google
+      // Search Console parse them as XML rather than rendering plain text.
+      // The global X-Content-Type-Options: nosniff rule below enforces strict
+      // MIME handling, so the Content-Type must be set explicitly here first.
+      {
+        source: "/sitemap.xml",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "text/xml; charset=utf-8",
+          },
+        ],
+      },
+      {
+        source: "/sitemap-:index(\\d+).xml",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "text/xml; charset=utf-8",
+          },
+        ],
+      },
       // Security headers for all routes
       {
         source: "/(.*)",
