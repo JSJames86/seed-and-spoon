@@ -13,9 +13,9 @@ const variantClasses = {
   dark:
     'bg-[var(--dark-forest)] text-[var(--white)] hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dark-forest)]',
   outline:
-    'bg-transparent text-[var(--green-primary)] border-2 border-[var(--green-primary)] hover:bg-[rgba(79,175,59,0.1)] hover:border-[var(--leaf-mid)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--green-primary)]',
+    'bg-transparent text-[var(--dark-forest)] border-2 border-[var(--green-primary)] hover:bg-[rgba(79,175,59,0.1)] hover:border-[var(--leaf-mid)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--green-primary)]',
   ghost:
-    'bg-transparent text-[var(--green-primary)] border-2 border-[var(--green-primary)] px-[30px] py-3 hover:bg-[rgba(79,175,59,0.1)] hover:border-[var(--leaf-mid)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--green-primary)]',
+    'bg-transparent text-[var(--dark-forest)] border-2 border-[var(--green-primary)] px-[30px] py-3 hover:bg-[rgba(79,175,59,0.1)] hover:border-[var(--leaf-mid)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--green-primary)]',
 };
 
 // Add inline style for accent gradient button
