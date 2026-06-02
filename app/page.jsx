@@ -1,14 +1,7 @@
 // app/page.jsx
-import dynamic from "next/dynamic";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
-
-// Lazy load below-the-fold components so GSAP + heavy sections
-// do not block initial paint or LCP
-const StoryScroll = dynamic(() => import("@/components/StoryScroll"), { ssr: false });
-const SpoonAssistFeature = dynamic(() => import("@/components/SpoonAssistFeature"), { ssr: false });
-const WhyThisMatters = dynamic(() => import("@/components/WhyThisMatters"), { ssr: false });
-const SDGSection = dynamic(() => import("@/components/sdgs/SDGSection"), { ssr: false });
+import BelowFold from "@/components/BelowFold";
 
 export const metadata = {
   title: "Seed & Spoon | Nourishing Essex County with dignity",
@@ -35,16 +28,8 @@ export default function Home() {
   return (
     <>
       <Header />
-
-      {/* HERO — eager loaded, above the fold */}
       <Hero />
-
-      {/* Below-the-fold — lazy loaded to protect LCP */}
-      <StoryScroll />
-      <SpoonAssistFeature />
-      <WhyThisMatters />
-      <SDGSection />
+      <BelowFold />
     </>
   );
 }
-
