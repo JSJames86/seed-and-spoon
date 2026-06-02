@@ -32,8 +32,8 @@ export default function Header() {
     }`;
   };
 
-  const logoDefault = "/assets/new-logos/logo-full.svg";
-  const logoScrolled = "/assets/new-logos/logo-compact.svg";
+  const logoDefault = "/assets/new-logos/logo-full.png";
+  const logoScrolled = "/assets/new-logos/logo-compact.png";
 
   // Force transparency on load and ensure sentinel exists
   useEffect(() => {
