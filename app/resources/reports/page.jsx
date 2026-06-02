@@ -8,7 +8,7 @@ export const metadata = {
     title: 'Modernizing Hunger Relief — A White Paper by Seed & Spoon',
     description:
       '14.1 million children in food-insecure households. This paper argues hunger is an infrastructure problem — and technology already exists to fix it.',
-    url: 'https://seedandspoon.org/research',
+    url: 'https://seedandspoon.org/resources/reports',
     siteName: 'Seed & Spoon',
     type: 'website',
   },
@@ -49,7 +49,7 @@ export default function ReportsPage() {
     },
     datePublished: '2026',
     identifier: 'https://doi.org/10.5281/zenodo.20299779',
-    url: 'https://seedandspoon.org/research',
+    url: 'https://seedandspoon.org/resources/reports',
     license: 'https://creativecommons.org/licenses/by-nc-nd/4.0/',
     keywords: 'youth food insecurity, food systems, SNAP, community food infrastructure, Newark',
   };
@@ -64,3 +64,4 @@ export default function ReportsPage() {
     </>
   );
 }
+
