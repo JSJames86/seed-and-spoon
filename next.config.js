@@ -5,6 +5,25 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
     domains: [],
   },
+  async redirects() {
+    return [
+      {
+        source: '/partners/corporate',
+        destination: '/causes/pantry-partners',
+        permanent: true,
+      },
+      {
+        source: '/reports/seed-spoon-impact-2024.pdf',
+        destination: '/resources/reports',
+        permanent: true,
+      },
+      {
+        source: '/reports',
+        destination: '/resources/reports',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       // Security headers for all routes
