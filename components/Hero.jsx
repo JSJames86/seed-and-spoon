@@ -14,7 +14,9 @@ export default function Hero() {
           fill
           className="object-cover"
           priority
-          sizes="100vw"
+          fetchPriority="high"
+          quality={85}
+          sizes="(max-width: 768px) 100vw, 100vw"
         />
       </div>
 
@@ -51,3 +53,4 @@ export default function Hero() {
     </section>
   );
 }
+
