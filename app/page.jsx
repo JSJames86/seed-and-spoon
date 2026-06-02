@@ -1,4 +1,14 @@
 // app/page.jsx
+import dynamic from "next/dynamic";
+import Header from "@/components/Header";
+import Hero from "@/components/Hero";
+
+// Lazy load below-the-fold components so GSAP + heavy sections
+// do not block initial paint or LCP
+const StoryScroll = dynamic(() => import("@/components/StoryScroll"), { ssr: false });
+const SpoonAssistFeature = dynamic(() => import("@/components/SpoonAssistFeature"), { ssr: false });
+const WhyThisMatters = dynamic(() => import("@/components/WhyThisMatters"), { ssr: false });
+const SDGSection = dynamic(() => import("@/components/sdgs/SDGSection"), { ssr: false });
 
 export const metadata = {
   title: "Seed & Spoon | Nourishing Essex County with dignity",
@@ -21,32 +31,20 @@ export const metadata = {
   },
 };
 
-import Header from "@/components/Header";  // Capital H, exact match
-import Hero from "@/components/Hero";
-import WhyThisMatters from "@/components/WhyThisMatters";
-import StoryScroll from "@/components/StoryScroll";
-import SpoonAssistFeature from "@/components/SpoonAssistFeature";
-import SDGSection from "@/components/sdgs/SDGSection";
-
 export default function Home() {
   return (
     <>
       <Header />
 
-      {/* HERO */}
+      {/* HERO — eager loaded, above the fold */}
       <Hero />
 
-      {/* STORY SCROLL SECTION */}
+      {/* Below-the-fold — lazy loaded to protect LCP */}
       <StoryScroll />
-
-      {/* SPOONASSIST FEATURE */}
       <SpoonAssistFeature />
-
-      {/* WHY THIS WORK MATTERS */}
       <WhyThisMatters />
-
-      {/* ALIGNED WITH GLOBAL GOALS */}
       <SDGSection />
     </>
   );
 }
+
