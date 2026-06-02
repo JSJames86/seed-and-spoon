@@ -33,8 +33,8 @@ export default function Header() {
     }`;
   };
 
-  const logoDefault = "/assets/new-logos/logo-full.webp";
-  const logoScrolled = "/assets/new-logos/logo-compact.webp";
+  const logoDefault = "/assets/new-logos/logo-full.jpeg";
+  const logoScrolled = "/assets/new-logos/logo-compact.jpeg";
 
   // Force transparency on load and ensure sentinel exists
   useEffect(() => {
