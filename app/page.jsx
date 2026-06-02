@@ -1,5 +1,4 @@
 // app/page.jsx
-import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import BelowFold from "@/components/BelowFold";
 
@@ -27,7 +26,6 @@ export const metadata = {
 export default function Home() {
   return (
     <>
-      <Header />
       <Hero />
       <BelowFold />
     </>
