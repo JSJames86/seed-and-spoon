@@ -89,7 +89,7 @@ export default function StayConnected() {
             <p className="text-gray-600 dark:text-gray-400 mb-2">Have questions? Reach out to us:</p>
             <a
               href="mailto:seedandspoonnj@gmail.com"
-              className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-semibold text-lg transition-colors focus-visible:underline"
+              className="text-green-800 dark:text-green-300 hover:text-green-900 dark:hover:text-green-300 font-semibold text-lg transition-colors focus-visible:underline"
             >
               seedandspoonnj@gmail.com
             </a>
