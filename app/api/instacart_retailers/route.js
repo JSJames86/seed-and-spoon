@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getInstacartBaseUrl, requireInstacartApiKey } from '@/lib/spoonassist/instacart';
+import { getInstacartBaseUrl, requireInstacartApiKey, parseInstacartError } from '@/lib/spoonassist/instacart';
 
 export async function GET(request) {
   const { apiKey, errorResponse } = requireInstacartApiKey();
@@ -31,7 +31,7 @@ export async function GET(request) {
 
   if (!response.ok) {
     const text = await response.text().catch(() => '');
-    console.error('[/api/instacart_retailers] Instacart error:', response.status, text);
+    console.error('[/api/instacart_retailers] Instacart error:', response.status, parseInstacartError(response.status, text));
     return NextResponse.json({ retailers: [] });
   }
 

@@ -209,6 +209,13 @@ export default function PrivacyPage() {
           <p className="text-base text-black/70 leading-relaxed mb-4">
             We may use third-party form and survey platforms to collect feedback, applications, and registrations. Information submitted through these forms is subject to both our policy and the provider's privacy practices.
           </p>
+
+          <h3 className="text-lg font-semibold text-black mt-6 mb-2">
+            SpoonAssist Price Comparison &amp; Instacart®
+          </h3>
+          <p className="text-base text-black/70 leading-relaxed mb-4">
+            Our SpoonAssist tool helps you compare grocery prices and shop for recipe ingredients online. When you enter a ZIP code to find nearby stores and prices, we send that ZIP code to Kroger's API and Google's Places API to locate participating grocery stores in your area. When you choose to shop a recipe or shopping list via the Instacart® service, we send the recipe's ingredients, quantities, title, and image, along with your selected retailer and ZIP code, to the Instacart Developer Platform to generate your shopping list on Instacart's website. We do not share your name, contact information, or account details with these services through SpoonAssist.
+          </p>
         </section>
 
         <section>

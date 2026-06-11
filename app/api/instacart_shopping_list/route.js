@@ -3,6 +3,7 @@ import {
   getInstacartBaseUrl,
   requireInstacartApiKey,
   buildAffiliateUrl,
+  parseInstacartError,
   LINKBACK_URL,
   mapHealthFilters,
   buildLineItem,
@@ -69,7 +70,7 @@ export async function POST(request) {
     const text = await response.text().catch(() => '');
     console.error('[/api/instacart_shopping_list] Instacart error:', response.status, text);
     return NextResponse.json(
-      { error: `Instacart returned ${response.status}` },
+      { error: parseInstacartError(response.status, text) },
       { status: response.status >= 500 ? 502 : response.status }
     );
   }
