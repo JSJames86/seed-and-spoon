@@ -3,10 +3,10 @@
 import PoweredBy from './PoweredBy';
 
 const CONFIDENCE_BADGE = {
-  live:      { label: 'Live',      className: 'bg-green-100 text-green-700' },
-  cached:    { label: 'Cached',    className: 'bg-purple-100 text-purple-700' },
-  community: { label: 'Community', className: 'bg-teal-100 text-teal-700' },
-  usda:      { label: 'USDA',      className: 'bg-blue-100 text-blue-700' },
+  live:      { label: 'Live',      className: 'bg-forest-dark/10 text-forest-dark' },
+  cached:    { label: 'Cached',    className: 'bg-gray-100 text-gray-600' },
+  community: { label: 'Community', className: 'bg-gray-100 text-gray-600' },
+  usda:      { label: 'USDA',      className: 'bg-gray-100 text-gray-600' },
   estimated: { label: 'Est.',      className: 'bg-gray-100 text-gray-500' },
   free:      { label: 'Free',      className: 'bg-gray-100 text-gray-400' },
 };
@@ -17,6 +17,14 @@ function ConfidenceBadge({ confidence }) {
     <span className={`inline-block text-[10px] font-medium px-1 py-0.5 rounded ${badge.className}`}>
       {badge.label}
     </span>
+  );
+}
+
+function ChevronIcon({ className = '' }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={className} aria-hidden="true">
+      <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clipRule="evenodd" />
+    </svg>
   );
 }
 
@@ -66,118 +74,176 @@ export default function CostResultsTable({ costData }) {
     });
   };
 
+  // Sort stores cheapest-first so both the mobile cards and the desktop grid
+  // lead with the best overall deal.
+  const sortedStoreNames = [...storeNames].sort((a, b) => storeTotals[a] - storeTotals[b]);
+
   return (
     <div className="w-full">
-      <h3 className="text-lg font-semibold text-gray-800 mb-3">Price Comparison Results</h3>
+      <h3 className="text-lg font-semibold text-gray-900 mb-3">Price Comparison Results</h3>
 
-      <div className="overflow-x-auto border border-gray-300 rounded-lg shadow-sm">
+      {/* Mobile: stacked store cards, cheapest first */}
+      <div className="md:hidden flex flex-col gap-3">
+        {sortedStoreNames.map(storeName => {
+          const total = storeTotals[storeName];
+          const isCheapest = cheapestStore.store === storeName;
+
+          return (
+            <details key={storeName} open={isCheapest} className="group border border-gray-200 rounded-lg bg-white overflow-hidden">
+              <summary className="flex items-center justify-between gap-3 px-4 py-3 cursor-pointer list-none">
+                <div className="flex items-center gap-2 min-w-0">
+                  {isCheapest && (
+                    <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-white bg-forest-dark px-1.5 py-0.5 rounded">
+                      Best
+                    </span>
+                  )}
+                  <span className="font-semibold text-gray-900 truncate">{storeName}</span>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className={`text-lg font-bold ${isCheapest ? 'text-forest-dark' : 'text-gray-900'}`}>
+                    ${total.toFixed(2)}
+                  </span>
+                  <ChevronIcon className="h-4 w-4 text-gray-400 transition-transform group-open:rotate-180" />
+                </div>
+              </summary>
+              <div className="border-t border-gray-100 divide-y divide-gray-100">
+                {costData.map((item, idx) => {
+                  const storePrice = item.storePrices?.find(sp => sp.storeName === storeName);
+                  const cheapest = getCheapestForIngredient(item.storePrices);
+                  const isItemCheapest = !!(cheapest && storePrice && cheapest.storeName === storeName);
+
+                  return (
+                    <div key={idx} className="flex items-center justify-between gap-3 px-4 py-2 text-sm">
+                      <div className="min-w-0">
+                        <div className="text-gray-700 truncate">{item.ingredient}</div>
+                        <div className="text-xs text-gray-400">{item.quantity} {item.unit}</div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        {storePrice?.confidence && <ConfidenceBadge confidence={storePrice.confidence} />}
+                        {storePrice ? (
+                          <span className={isItemCheapest ? 'font-semibold text-forest-dark' : 'text-gray-700'}>
+                            ${storePrice.price.toFixed(2)}
+                          </span>
+                        ) : (
+                          <span className="text-gray-300">N/A</span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </details>
+          );
+        })}
+      </div>
+
+      {/* Desktop: ingredient x store comparison grid */}
+      <div className="hidden md:block overflow-x-auto border border-gray-200 rounded-lg">
         <table className="w-full text-sm">
-          <thead className="bg-gray-100">
+          <thead className="bg-gray-50">
             <tr>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700 sticky left-0 bg-gray-100">
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 sticky left-0 bg-gray-50">
                 Ingredient
               </th>
-              {storeNames.map(storeName => (
-                <th key={storeName} className="px-4 py-3 text-center font-semibold text-gray-700 min-w-[120px]">
+              {sortedStoreNames.map(storeName => (
+                <th key={storeName} className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-gray-500 min-w-[120px]">
                   {storeName}
                 </th>
               ))}
-              <th className="px-4 py-3 text-center font-semibold text-gray-700 bg-green-100 min-w-[120px]">
-                Cheapest
+              <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-forest-dark bg-forest-dark/5 min-w-[120px]">
+                Best Price
               </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-100">
             {costData.map((item, idx) => {
               const cheapest = getCheapestForIngredient(item.storePrices);
 
               return (
-                <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                  <td className="px-4 py-3 font-medium text-gray-900 sticky left-0 bg-inherit">
+                <tr key={idx}>
+                  <td className="px-4 py-3 font-medium text-gray-900 sticky left-0 bg-white">
                     {item.ingredient}
-                    <div className="text-xs text-gray-500">
-                      {item.quantity} {item.unit}
-                    </div>
+                    <div className="text-xs text-gray-400">{item.quantity} {item.unit}</div>
                   </td>
 
-                  {storeNames.map(storeName => {
+                  {sortedStoreNames.map(storeName => {
                     const storePrice = item.storePrices?.find(sp => sp.storeName === storeName);
-                    const price = storePrice?.price;
                     const isCheapest = cheapest && storePrice && cheapest.storeName === storeName;
 
                     return (
                       <td
                         key={storeName}
-                        className={`px-4 py-3 text-center ${
-                          isCheapest ? 'bg-green-50 font-semibold text-green-700' : ''
-                        }`}
+                        className={`px-4 py-3 text-center ${isCheapest ? 'bg-forest-dark/5' : ''}`}
                       >
-                        {price !== undefined && price !== null ? (
+                        {storePrice ? (
                           <div className="flex flex-col items-center gap-0.5">
-                            <span>${price.toFixed(2)}</span>
-                            {storePrice?.confidence && (
-                              <ConfidenceBadge confidence={storePrice.confidence} />
-                            )}
+                            <span className={isCheapest ? 'font-semibold text-forest-dark' : 'text-gray-700'}>
+                              ${storePrice.price.toFixed(2)}
+                            </span>
+                            {storePrice.confidence && <ConfidenceBadge confidence={storePrice.confidence} />}
                           </div>
                         ) : (
-                          <span className="text-gray-400">N/A</span>
+                          <span className="text-gray-300">N/A</span>
                         )}
                       </td>
                     );
                   })}
 
-                  <td className="px-4 py-3 text-center bg-green-50 font-semibold text-green-700">
-                    {cheapest ? `$${cheapest.price.toFixed(2)}` : <span className="text-gray-400">N/A</span>}
-                    {cheapest && (
-                      <div className="text-xs text-gray-600">{cheapest.storeName}</div>
+                  <td className="px-4 py-3 text-center bg-forest-dark/5">
+                    {cheapest ? (
+                      <>
+                        <span className="font-semibold text-forest-dark">${cheapest.price.toFixed(2)}</span>
+                        <div className="text-xs text-gray-500">{cheapest.storeName}</div>
+                      </>
+                    ) : (
+                      <span className="text-gray-300">N/A</span>
                     )}
                   </td>
                 </tr>
               );
             })}
-
-            {/* Totals Row */}
-            <tr className="bg-gray-200 font-bold border-t-2 border-gray-400">
-              <td className="px-4 py-3 text-gray-900 sticky left-0 bg-gray-200">
-                TOTAL
+          </tbody>
+          <tfoot>
+            <tr className="border-t-2 border-gray-200 bg-gray-50 font-bold">
+              <td className="px-4 py-3 text-gray-900 sticky left-0 bg-gray-50">
+                Total
               </td>
-              {storeNames.map(storeName => {
+              {sortedStoreNames.map(storeName => {
                 const total = storeTotals[storeName];
                 const isCheapest = cheapestStore.store === storeName;
 
                 return (
                   <td
                     key={storeName}
-                    className={`px-4 py-3 text-center ${
-                      isCheapest ? 'bg-green-200 text-green-800' : 'text-gray-900'
-                    }`}
+                    className={`px-4 py-3 text-center ${isCheapest ? 'bg-forest-dark text-white' : 'text-gray-900'}`}
                   >
                     ${total.toFixed(2)}
                   </td>
                 );
               })}
-              <td className="px-4 py-3 text-center bg-green-200 text-green-800">
+              <td className="px-4 py-3 text-center bg-forest-dark text-white">
                 ${cheapestStore.total.toFixed(2)}
               </td>
             </tr>
-          </tbody>
+          </tfoot>
         </table>
       </div>
 
-      <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <p className="text-sm text-blue-800">
-          <strong>Legend:</strong> Prices highlighted in green are the cheapest for each item.
-          The total row shows which store offers the best overall price for your entire recipe.
+      <div className="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+        <p className="text-sm text-gray-600">
+          Prices highlighted in <span className="font-semibold text-forest-dark">green</span> are the
+          cheapest for each item, and the Total row shows which store offers the best overall price for
+          your recipe.
         </p>
-        <div className="mt-2 flex flex-wrap gap-2 text-xs">
+        <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
           {Object.entries(CONFIDENCE_BADGE).filter(([k]) => k !== 'free').map(([key, { label, className }]) => (
             <span key={key} className={`px-1.5 py-0.5 rounded font-medium ${className}`}>
               {label}
             </span>
           ))}
-          <span className="text-blue-600 self-center">— price source confidence</span>
+          <span className="text-gray-400">— price source confidence</span>
         </div>
-        <p className="text-xs text-blue-600 mt-2">
+        <p className="text-xs text-gray-400 mt-2">
           Note: Prices are estimates and may vary. Please verify at checkout.
         </p>
       </div>

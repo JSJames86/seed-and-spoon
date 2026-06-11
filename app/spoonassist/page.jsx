@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { captureEvent } from '@/analytics/posthog';
 import { EVENTS } from '@/analytics/events';
@@ -311,6 +312,17 @@ export default function SpoonAssistPage() {
     }
   };
 
+  // Progressive disclosure: reveal later steps only once the prior step has
+  // produced something to act on, instead of showing the whole flow at once.
+  const hasIngredients = ingredients.length > 0;
+  const hasStores = stores.length > 0;
+
+  const revealAnimation = {
+    initial: { opacity: 0, y: 16 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.4, ease: 'easeOut' },
+  };
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -388,131 +400,141 @@ export default function SpoonAssistPage() {
         </section>
 
         {/* Section 2: Ingredients Table */}
-        <section className="mb-8 p-6 bg-white rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Step 2: Review & Edit Ingredients</h2>
-          <IngredientTable ingredients={ingredients} onChange={setIngredients} />
-        </section>
+        {hasIngredients && (
+          <motion.section {...revealAnimation} className="mb-8 p-6 bg-white rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Step 2: Review & Edit Ingredients</h2>
+            <IngredientTable ingredients={ingredients} onChange={setIngredients} />
+          </motion.section>
+        )}
 
         {/* Section 3: Store Selection */}
-        <section className="mb-8 p-6 bg-white rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Step 3: Select Stores</h2>
-          <StoreSelector
-            onFindStores={handleFindStores}
-            stores={stores}
-            selectedStores={selectedStores}
-            onStoreChange={setSelectedStores}
-            loading={loading.stores}
-          />
-          {features.instacart && (
-            <InstacartRetailerSelector
-              retailers={instacartRetailers}
-              selectedKey={selectedRetailerKey}
-              onChange={setSelectedRetailerKey}
-              loading={loading.instacartRetailers}
+        {hasIngredients && (
+          <motion.section {...revealAnimation} className="mb-8 p-6 bg-white rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Step 3: Select Stores</h2>
+            <StoreSelector
+              onFindStores={handleFindStores}
+              stores={stores}
+              selectedStores={selectedStores}
+              onStoreChange={setSelectedStores}
+              loading={loading.stores}
             />
-          )}
-          {storeError && (
-            <InlineError message={storeError} onDismiss={() => setStoreError(null)} />
-          )}
-        </section>
+            {features.instacart && (
+              <InstacartRetailerSelector
+                retailers={instacartRetailers}
+                selectedKey={selectedRetailerKey}
+                onChange={setSelectedRetailerKey}
+                loading={loading.instacartRetailers}
+              />
+            )}
+            {storeError && (
+              <InlineError message={storeError} onDismiss={() => setStoreError(null)} />
+            )}
+          </motion.section>
+        )}
 
         {/* Section 4: Dietary Filters */}
-        <section className="mb-8 p-6 bg-white rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Step 4: Dietary Preferences (Optional)</h2>
-          <DietaryFilters
-            selectedFilters={dietaryFilters}
-            onChange={setDietaryFilters}
-          />
-        </section>
+        {hasIngredients && (
+          <motion.section {...revealAnimation} className="mb-8 p-6 bg-white rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Step 4: Dietary Preferences (Optional)</h2>
+            <DietaryFilters
+              selectedFilters={dietaryFilters}
+              onChange={setDietaryFilters}
+            />
+          </motion.section>
+        )}
 
-        {/* Section 5: Calculate Button */}
-        <section className="mb-8 p-6 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg shadow-md border-2 border-green-300">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">Step 5: Get Price Comparison</h2>
-              <p className="text-gray-700 mt-1">
-                {ingredients.length} ingredients • {selectedStores.length} stores selected
-              </p>
-            </div>
-            {/* CTAs side-by-side per Instacart placement guidelines */}
-            <div className="flex flex-wrap items-center gap-3">
-              <button
-                onClick={handleCalculateCost}
-                disabled={loading.calculation || ingredients.length === 0 || selectedStores.length === 0}
-                className="px-8 py-3 bg-green-600 text-white text-lg font-bold rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-lg"
-              >
-                {loading.calculation ? 'Calculating...' : 'Calculate Costs'}
-              </button>
-              {features.instacart && (
-                <InstacartCTA
-                  onClick={handleShopOnInstacart}
-                  loading={loading.instacart}
-                  disabled={ingredients.length === 0}
-                  text="Shop ingredients"
-                />
-              )}
-            </div>
-          </div>
-          {costError && (
-            <InlineError message={costError} onDismiss={() => setCostError(null)} />
-          )}
-          {instacartError && (
-            <InlineError message={instacartError} onDismiss={() => setInstacartError(null)} />
-          )}
-        </section>
-
-        {/* Section 6: Results */}
-        {costData && costData.length > 0 && (
-          <section className="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-gray-900">Results</h2>
-              <CSVExportButton costData={costData} ingredients={ingredients} />
-            </div>
-
-            {/* Summary banner */}
-            {summary && summary.cheapestStore && (
-              <div className="mb-4 p-4 bg-green-50 border border-green-300 rounded-lg flex flex-wrap gap-4 items-center">
+        {/* Section 5: Calculate Button + Results */}
+        {hasStores && (
+          <>
+            <motion.section {...revealAnimation} className="mb-8 p-6 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg shadow-md border-2 border-green-300">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                 <div>
-                  <span className="text-sm text-green-700 font-medium">Best overall price:</span>
-                  <span className="ml-2 text-lg font-bold text-green-800">{summary.cheapestStore}</span>
-                  <span className="ml-2 text-green-700">${summary.cheapestTotal.toFixed(2)} total</span>
-                </div>
-                {Object.entries(summary.storeTotals || {})
-                  .sort((a, b) => a[1] - b[1])
-                  .slice(1)
-                  .map(([store, total]) => (
-                    <div key={store} className="text-sm text-gray-600">
-                      {store}: <span className="font-medium">${total.toFixed(2)}</span>
-                      {summary.cheapestTotal > 0 && (
-                        <span className="ml-1 text-gray-400">
-                          (+${(total - summary.cheapestTotal).toFixed(2)})
-                        </span>
-                      )}
-                    </div>
-                  ))}
-              </div>
-            )}
-
-            <CostResultsTable costData={costData} />
-
-            {/* Shop on Instacart CTA — only rendered when key is configured */}
-            {features.instacart && (
-              <div className="mt-6 p-5 bg-[#F5FAF7] border border-[#003D29]/20 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div>
-                  <p className="font-semibold text-gray-900">Ready to shop?</p>
-                  <p className="text-sm text-gray-600 mt-0.5">
-                    Add this recipe&apos;s ingredients to your cart via the Instacart® service — delivery or pickup at local stores.
+                  <h2 className="text-2xl font-bold text-gray-900">Step 5: Get Price Comparison</h2>
+                  <p className="text-gray-700 mt-1">
+                    {ingredients.length} ingredients • {selectedStores.length} stores selected
                   </p>
                 </div>
-                <InstacartCTA
-                  onClick={handleShopOnInstacart}
-                  loading={loading.instacart}
-                  disabled={ingredients.length === 0}
-                  text="Shop ingredients"
-                />
+                {/* CTAs side-by-side per Instacart placement guidelines */}
+                <div className="flex flex-wrap items-center gap-3">
+                  <button
+                    onClick={handleCalculateCost}
+                    disabled={loading.calculation || ingredients.length === 0 || selectedStores.length === 0}
+                    className="px-8 py-3 bg-green-600 text-white text-lg font-bold rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-lg"
+                  >
+                    {loading.calculation ? 'Calculating...' : 'Calculate Costs'}
+                  </button>
+                  {features.instacart && (
+                    <InstacartCTA
+                      onClick={handleShopOnInstacart}
+                      loading={loading.instacart}
+                      disabled={ingredients.length === 0}
+                      text="Shop ingredients"
+                    />
+                  )}
+                </div>
               </div>
+              {costError && (
+                <InlineError message={costError} onDismiss={() => setCostError(null)} />
+              )}
+              {instacartError && (
+                <InlineError message={instacartError} onDismiss={() => setInstacartError(null)} />
+              )}
+            </motion.section>
+
+            {/* Section 6: Results */}
+            {costData && costData.length > 0 && (
+              <motion.section {...revealAnimation} className="mb-8 p-6 bg-white rounded-lg shadow-md">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-2xl font-bold text-gray-900">Results</h2>
+                  <CSVExportButton costData={costData} ingredients={ingredients} />
+                </div>
+
+                {/* Summary banner */}
+                {summary && summary.cheapestStore && (
+                  <div className="mb-4 p-4 bg-gray-50 border border-gray-200 rounded-lg flex flex-wrap gap-4 items-center">
+                    <div>
+                      <span className="text-sm text-gray-500 font-medium">Best overall price:</span>
+                      <span className="ml-2 text-lg font-bold text-forest-dark">{summary.cheapestStore}</span>
+                      <span className="ml-2 text-gray-700">${summary.cheapestTotal.toFixed(2)} total</span>
+                    </div>
+                    {Object.entries(summary.storeTotals || {})
+                      .sort((a, b) => a[1] - b[1])
+                      .slice(1)
+                      .map(([store, total]) => (
+                        <div key={store} className="text-sm text-gray-500">
+                          {store}: <span className="font-medium text-gray-700">${total.toFixed(2)}</span>
+                          {summary.cheapestTotal > 0 && (
+                            <span className="ml-1 text-gray-400">
+                              (+${(total - summary.cheapestTotal).toFixed(2)})
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                  </div>
+                )}
+
+                <CostResultsTable costData={costData} />
+
+                {/* Shop on Instacart CTA — only rendered when key is configured */}
+                {features.instacart && (
+                  <div className="mt-6 p-5 bg-[#F5FAF7] border border-[#003D29]/20 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div>
+                      <p className="font-semibold text-gray-900">Ready to shop?</p>
+                      <p className="text-sm text-gray-600 mt-0.5">
+                        Add this recipe&apos;s ingredients to your cart via the Instacart® service — delivery or pickup at local stores.
+                      </p>
+                    </div>
+                    <InstacartCTA
+                      onClick={handleShopOnInstacart}
+                      loading={loading.instacart}
+                      disabled={ingredients.length === 0}
+                      text="Shop ingredients"
+                    />
+                  </div>
+                )}
+              </motion.section>
             )}
-          </section>
+          </>
         )}
 
         {/* Data Partners */}
