@@ -270,7 +270,7 @@ export default function SpoonAssistPage() {
       ? {
           recipeTitle:    selectedRecipe.title,
           recipeId:       selectedRecipe.id ?? null,
-          imageUrl:       selectedRecipe.image || null,
+          imageUrl:       selectedRecipe.instacartImage || selectedRecipe.image || null,
           instructions:   selectedRecipe.instructions || [],
           dietaryFilters: dietaryFilters,
           retailerKey:    selectedRetailerKey,

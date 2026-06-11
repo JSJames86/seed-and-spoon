@@ -63,7 +63,7 @@ export default function InstacartCTA({ onClick, loading = false, disabled = fals
         disabled:opacity-40 disabled:cursor-not-allowed
         select-none whitespace-nowrap
       "
-      aria-label={loading ? 'Creating Instacart shopping list…' : `${text} on Instacart`}
+      aria-label={loading ? 'Creating Instacart shopping list…' : `${text} via Instacart`}
     >
       <InstacartCarrot size={22} />
       <InstacartWordmark height={15} />
