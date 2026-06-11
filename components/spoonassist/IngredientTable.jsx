@@ -1,9 +1,50 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
+const SCALE_DEBOUNCE_MS = 400;
+
+function TrashIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" aria-hidden="true">
+      <path fillRule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clipRule="evenodd" />
+    </svg>
+  );
+}
 
 export default function IngredientTable({ ingredients, onChange }) {
-  const [servingScale, setServingScale] = useState(1);
+  const [scaleInput, setScaleInput] = useState('1');
+
+  // Tracks the multiplier already baked into the current quantities, so a new
+  // scale value can be applied as an incremental factor (newScale / prevScale)
+  // rather than compounding from scratch each time.
+  const appliedScaleRef = useRef(1);
+  const ingredientsRef = useRef(ingredients);
+  const onChangeRef = useRef(onChange);
+  const debounceRef = useRef(null);
+  const isInternalUpdateRef = useRef(false);
+
+  ingredientsRef.current = ingredients;
+  onChangeRef.current = onChange;
+
+  // Reset scale tracking when a new ingredient list arrives from outside this
+  // component (e.g. a different recipe is selected or parsed in).
+  useEffect(() => {
+    if (!isInternalUpdateRef.current) {
+      appliedScaleRef.current = 1;
+      setScaleInput('1');
+    }
+    isInternalUpdateRef.current = false;
+  }, [ingredients]);
+
+  useEffect(() => () => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+  }, []);
+
+  const emitChange = (updated) => {
+    isInternalUpdateRef.current = true;
+    onChangeRef.current(updated);
+  };
 
   const handleFieldChange = (id, field, value) => {
     const updated = ingredients.map(ing => {
@@ -12,7 +53,7 @@ export default function IngredientTable({ ingredients, onChange }) {
       }
       return ing;
     });
-    onChange(updated);
+    emitChange(updated);
   };
 
   const handleQuantityChange = (id, value) => {
@@ -24,7 +65,7 @@ export default function IngredientTable({ ingredients, onChange }) {
 
   const handleRemove = (id) => {
     const updated = ingredients.filter(ing => ing.id !== id);
-    onChange(updated);
+    emitChange(updated);
   };
 
   const handleAddRow = () => {
@@ -34,17 +75,31 @@ export default function IngredientTable({ ingredients, onChange }) {
       quantity: 1,
       unit: 'each'
     };
-    onChange([...ingredients, newIngredient]);
+    emitChange([...ingredients, newIngredient]);
   };
 
-  const handleScaleServings = () => {
-    if (servingScale <= 0) return;
-    const scaled = ingredients.map(ing => ({
-      ...ing,
-      quantity: ing.quantity * servingScale
-    }));
-    onChange(scaled);
-    setServingScale(1); // Reset
+  const handleScaleInputChange = (e) => {
+    const value = e.target.value;
+    setScaleInput(value);
+
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    const newScale = parseFloat(value);
+    if (isNaN(newScale) || newScale <= 0) return;
+
+    debounceRef.current = setTimeout(() => {
+      const prevScale = appliedScaleRef.current;
+      if (newScale === prevScale) return;
+
+      const factor = newScale / prevScale;
+      const scaled = ingredientsRef.current.map(ing => ({
+        ...ing,
+        quantity: Math.round(ing.quantity * factor * 100) / 100,
+      }));
+
+      appliedScaleRef.current = newScale;
+      emitChange(scaled);
+    }, SCALE_DEBOUNCE_MS);
   };
 
   return (
@@ -72,7 +127,9 @@ export default function IngredientTable({ ingredients, onChange }) {
                   <th className="px-4 py-2 text-left font-semibold text-gray-700">Ingredient</th>
                   <th className="px-4 py-2 text-left font-semibold text-gray-700">Quantity</th>
                   <th className="px-4 py-2 text-left font-semibold text-gray-700">Unit</th>
-                  <th className="px-4 py-2 text-center font-semibold text-gray-700">Action</th>
+                  <th className="px-4 py-2 text-center font-semibold text-gray-700">
+                    <span className="sr-only">Remove</span>
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -118,9 +175,11 @@ export default function IngredientTable({ ingredients, onChange }) {
                     <td className="px-4 py-2 text-center">
                       <button
                         onClick={() => handleRemove(ing.id)}
-                        className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors"
+                        aria-label={`Remove ${ing.name || 'ingredient'}`}
+                        title="Remove"
+                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
                       >
-                        Remove
+                        <TrashIcon />
                       </button>
                     </td>
                   </tr>
@@ -130,23 +189,19 @@ export default function IngredientTable({ ingredients, onChange }) {
           </div>
 
           <div className="mt-4 flex items-center gap-3">
-            <label className="text-sm font-medium text-gray-700">Scale Servings:</label>
+            <label htmlFor="serving-scale" className="text-sm font-medium text-gray-700">
+              Scale Servings:
+            </label>
             <input
+              id="serving-scale"
               type="number"
-              value={servingScale}
-              onChange={(e) => setServingScale(parseFloat(e.target.value) || 1)}
+              value={scaleInput}
+              onChange={handleScaleInputChange}
               min="0.1"
               step="0.5"
               className="w-20 px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-green-500"
             />
-            <button
-              onClick={handleScaleServings}
-              disabled={servingScale <= 0 || servingScale === 1}
-              className="px-4 py-1 bg-purple-600 text-white text-sm rounded hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-            >
-              Apply Scale
-            </button>
-            <span className="text-xs text-gray-500">(e.g., 2 = double, 0.5 = halve)</span>
+            <span className="text-xs text-gray-500">Quantities update automatically (e.g., 2 = double, 0.5 = halve)</span>
           </div>
         </>
       )}

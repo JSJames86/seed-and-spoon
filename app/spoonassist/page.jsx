@@ -17,6 +17,20 @@ import InstacartRetailerSelector from '@/components/spoonassist/InstacartRetaile
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
 
+function InlineError({ message, onDismiss }) {
+  return (
+    <div role="alert" className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800 flex items-center justify-between gap-3">
+      <span>{message}</span>
+      <button
+        onClick={onDismiss}
+        className="text-red-600 hover:text-red-800 font-medium shrink-0"
+      >
+        Dismiss
+      </button>
+    </div>
+  );
+}
+
 export default function SpoonAssistPage() {
   // State management
   const [recipes, setRecipes] = useState([]);
@@ -39,7 +53,10 @@ export default function SpoonAssistPage() {
     instacart: false,
     instacartRetailers: false,
   });
-  const [error, setError] = useState(null);
+  const [recipeError, setRecipeError] = useState(null);
+  const [storeError, setStoreError] = useState(null);
+  const [costError, setCostError] = useState(null);
+  const [instacartError, setInstacartError] = useState(null);
 
   // Fetch recipes + feature flags on mount
   useEffect(() => {
@@ -53,7 +70,7 @@ export default function SpoonAssistPage() {
 
   const fetchRecipes = async () => {
     setLoading(prev => ({ ...prev, recipes: true }));
-    setError(null);
+    setRecipeError(null);
 
     try {
       const response = await fetch(`${API_BASE_URL}/recipes/`);
@@ -62,7 +79,7 @@ export default function SpoonAssistPage() {
       const data = await response.json();
       setRecipes(data.recipes || data || []);
     } catch (err) {
-      setError('Could not load recipes. Please try again later.');
+      setRecipeError('Could not load recipes. Please try again later.');
       console.error('Recipe fetch error:', err);
     } finally {
       setLoading(prev => ({ ...prev, recipes: false }));
@@ -92,7 +109,7 @@ export default function SpoonAssistPage() {
     setZipCode(zip);
     setSelectedRetailerKey(null);
     setLoading(prev => ({ ...prev, stores: true }));
-    setError(null);
+    setStoreError(null);
 
     const fetches = [fetch(`${API_BASE_URL}/stores/?zip=${zip}`)];
     if (features.instacart) {
@@ -109,7 +126,7 @@ export default function SpoonAssistPage() {
       setStores(storesList);
       setSelectedStores(storesList.map(s => s.id));
     } catch (err) {
-      setError('Could not find stores for this ZIP code.');
+      setStoreError('Could not find stores for this ZIP code.');
       console.error('Store fetch error:', err);
       setStores([]);
     } finally {
@@ -132,17 +149,17 @@ export default function SpoonAssistPage() {
 
   const handleCalculateCost = async () => {
     if (ingredients.length === 0) {
-      setError('Please add ingredients first.');
+      setCostError('Please add ingredients first.');
       return;
     }
 
     if (selectedStores.length === 0) {
-      setError('Please select at least one store.');
+      setCostError('Please select at least one store.');
       return;
     }
 
     setLoading(prev => ({ ...prev, calculation: true }));
-    setError(null);
+    setCostError(null);
 
     captureEvent(EVENTS.SPOONASSIST_QUERY_SUBMITTED, {
       query_type: 'cost_calculation',
@@ -183,7 +200,7 @@ export default function SpoonAssistPage() {
         query_type: 'cost_calculation',
       });
     } catch (err) {
-      setError('Could not calculate costs. Please try again.');
+      setCostError('Could not calculate costs. Please try again.');
       console.error('Cost calculation error:', err);
       captureEvent(EVENTS.SPOONASSIST_ERROR, {
         error_type: 'cost_calculation_failed',
@@ -226,6 +243,7 @@ export default function SpoonAssistPage() {
     });
 
     setLoading(prev => ({ ...prev, instacart: true }));
+    setInstacartError(null);
     setInstacartUrl(null);
 
     const isRecipe = !!selectedRecipe;
@@ -282,7 +300,7 @@ export default function SpoonAssistPage() {
         writeCachedUrl(instacartCacheKey(selectedRecipe.id, ingList), data.url);
       }
     } catch (err) {
-      setError('Could not create Instacart shopping list. Please try again.');
+      setInstacartError('Could not create Instacart shopping list. Please try again.');
       console.error('Instacart list error:', err);
       captureEvent(EVENTS.SPOONASSIST_ERROR, {
         error_type: 'instacart_list_failed',
@@ -353,19 +371,6 @@ export default function SpoonAssistPage() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-12 max-w-7xl">
-        {/* Error Banner */}
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
-            {error}
-            <button
-              onClick={() => setError(null)}
-              className="ml-4 text-red-600 hover:text-red-800 font-medium"
-            >
-              Dismiss
-            </button>
-          </div>
-        )}
-
         {/* Section 1: Recipe Selection */}
         <section className="mb-8 p-6 bg-white rounded-lg shadow-md">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Step 1: Choose or Enter Recipe</h2>
@@ -377,6 +382,9 @@ export default function SpoonAssistPage() {
             />
             <RecipeTextInput onParsed={handleParsedIngredients} />
           </div>
+          {recipeError && (
+            <InlineError message={recipeError} onDismiss={() => setRecipeError(null)} />
+          )}
         </section>
 
         {/* Section 2: Ingredients Table */}
@@ -402,6 +410,9 @@ export default function SpoonAssistPage() {
               onChange={setSelectedRetailerKey}
               loading={loading.instacartRetailers}
             />
+          )}
+          {storeError && (
+            <InlineError message={storeError} onDismiss={() => setStoreError(null)} />
           )}
         </section>
 
@@ -442,6 +453,12 @@ export default function SpoonAssistPage() {
               )}
             </div>
           </div>
+          {costError && (
+            <InlineError message={costError} onDismiss={() => setCostError(null)} />
+          )}
+          {instacartError && (
+            <InlineError message={instacartError} onDismiss={() => setInstacartError(null)} />
+          )}
         </section>
 
         {/* Section 6: Results */}
