@@ -1,14 +1,9 @@
 import { NextResponse } from 'next/server';
-
-const BASE_URL = process.env.NODE_ENV === 'production'
-  ? 'https://connect.instacart.com'
-  : 'https://connect.dev.instacart.tools';
+import { getInstacartBaseUrl, requireInstacartApiKey } from '@/lib/spoonassist/instacart';
 
 export async function GET(request) {
-  const apiKey = process.env.INSTACART_API_KEY;
-  if (!apiKey) {
-    return NextResponse.json({ retailers: [] });
-  }
+  const { apiKey, errorResponse } = requireInstacartApiKey();
+  if (errorResponse) return errorResponse;
 
   const { searchParams } = new URL(request.url);
   const postalCode = searchParams.get('zip') || searchParams.get('postal_code');
@@ -20,7 +15,7 @@ export async function GET(request) {
   let response;
   try {
     response = await fetch(
-      `${BASE_URL}/idp/v1/retailers?postal_code=${postalCode}&country_code=US`,
+      `${getInstacartBaseUrl()}/idp/v1/retailers?postal_code=${postalCode}&country_code=US`,
       {
         headers: {
           'Authorization': `Bearer ${apiKey}`,
