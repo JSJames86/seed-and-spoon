@@ -63,7 +63,25 @@ package's `pkgQty` first — e.g. 12 eggs against a 12-count carton
 (`{ pkg: 3.99, pkgQty: 12, pkgUnit: 'each' }`) costs one carton (~$3.99),
 not 12 cartons (~$47.88).
 
+`getStoresByZip()` returns Kroger-family stores first (live, geocoded), then
+fills remaining slots from `UNIVERSAL_CHAINS`/`NJ_CHAINS`. Those static
+candidates are passed through `googlePlacesClient.filterChainsByZip()` to
+drop chains with no real location near the ZIP.
+
+## `googlePlacesClient.js` — geo-matching for static chain fallbacks
+
+Geocodes a ZIP via Zippopotam.us (free) and runs a Google Places Nearby
+Search (New) for `grocery_store`/`supermarket` places within ~25 miles,
+requesting only Basic-tier fields (`places.displayName`). Chain names from
+`UNIVERSAL_CHAINS`/`NJ_CHAINS` are matched against the results so a ZIP only
+shows chains that actually have a nearby location — pricing for matched
+chains stays multiplier-based.
+
+Returns `null` when `GOOGLE_PLACES_API_KEY` is unset or the lookup fails, so
+`getStoresByZip()` falls back to the unfiltered static list.
+
 ## `config.js` — feature flags
 
 `FEATURES` exposes which price/integration tiers are active based on which
-env vars are set (`KROGER_CLIENT_ID`/`SECRET`, `INSTACART_API_KEY`).
+env vars are set (`KROGER_CLIENT_ID`/`SECRET`, `INSTACART_API_KEY`,
+`GOOGLE_PLACES_API_KEY`).
