@@ -15,6 +15,11 @@ function TrashIcon() {
 export default function IngredientTable({ ingredients, onChange }) {
   const [scaleInput, setScaleInput] = useState('1');
 
+  // Raw text of each quantity field while it's being edited, so the input can
+  // be cleared to empty (or an intermediate value like "1.") without snapping
+  // back to the last valid quantity on every keystroke.
+  const [quantityDrafts, setQuantityDrafts] = useState({});
+
   // Tracks the multiplier already baked into the current quantities, so a new
   // scale value can be applied as an incremental factor (newScale / prevScale)
   // rather than compounding from scratch each time.
@@ -57,10 +62,19 @@ export default function IngredientTable({ ingredients, onChange }) {
   };
 
   const handleQuantityChange = (id, value) => {
+    setQuantityDrafts(prev => ({ ...prev, [id]: value }));
     const numValue = parseFloat(value);
     if (!isNaN(numValue) && numValue > 0) {
       handleFieldChange(id, 'quantity', numValue);
     }
+  };
+
+  const handleQuantityBlur = (id) => {
+    setQuantityDrafts(prev => {
+      if (!(id in prev)) return prev;
+      const { [id]: _omit, ...rest } = prev;
+      return rest;
+    });
   };
 
   const handleRemove = (id) => {
@@ -147,8 +161,9 @@ export default function IngredientTable({ ingredients, onChange }) {
                     <td className="px-4 py-2">
                       <input
                         type="number"
-                        value={ing.quantity}
+                        value={quantityDrafts[ing.id] ?? ing.quantity}
                         onChange={(e) => handleQuantityChange(ing.id, e.target.value)}
+                        onBlur={() => handleQuantityBlur(ing.id)}
                         min="0.01"
                         step="0.01"
                         className="w-20 px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-green-500"
