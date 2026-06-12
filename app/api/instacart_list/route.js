@@ -58,6 +58,12 @@ export async function POST(request) {
   };
 
   const absoluteImage = toAbsoluteImageUrl(imageUrl);
+  console.log('[/api/instacart_list] image_url resolution:', {
+    rawImageUrl: imageUrl,
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+    SITE_URL: process.env.SITE_URL,
+    resolved: absoluteImage,
+  });
   if (absoluteImage) payload.image_url = absoluteImage;
 
   if (Array.isArray(instructions) && instructions.length > 0) {
