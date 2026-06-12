@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import SpoonButton from './ui/Button';
 
 const SCALE_DEBOUNCE_MS = 400;
 
@@ -119,42 +120,39 @@ export default function IngredientTable({ ingredients, onChange }) {
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-3">
-        <h3 className="text-lg font-semibold text-gray-800">Ingredients</h3>
-        <button
-          onClick={handleAddRow}
-          className="px-4 py-1 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors"
-        >
+        <h3 className="text-lg font-semibold text-spoon-ink">Ingredients</h3>
+        <SpoonButton onClick={handleAddRow} variant="secondary" size="sm">
           + Add Row
-        </button>
+        </SpoonButton>
       </div>
 
       {ingredients.length === 0 ? (
-        <div className="text-center py-8 text-gray-500 border border-dashed border-gray-300 rounded-lg">
+        <div className="text-center py-8 text-spoon-subtext spoon-glass-lite rounded-spoon-card">
           No ingredients yet. Add manually or parse from recipe text above.
         </div>
       ) : (
         <>
-          <div className="overflow-x-auto border border-gray-300 rounded-lg">
+          <div className="overflow-x-auto spoon-glass-lite rounded-spoon-card overflow-hidden">
             <table className="w-full text-sm">
-              <thead className="bg-gray-100">
+              <thead className="bg-white/40">
                 <tr>
-                  <th className="px-4 py-2 text-left font-semibold text-gray-700">Ingredient</th>
-                  <th className="px-4 py-2 text-left font-semibold text-gray-700">Quantity</th>
-                  <th className="px-4 py-2 text-left font-semibold text-gray-700">Unit</th>
-                  <th className="px-4 py-2 text-center font-semibold text-gray-700">
+                  <th className="px-4 py-2 text-left font-semibold text-spoon-subtext">Ingredient</th>
+                  <th className="px-4 py-2 text-left font-semibold text-spoon-subtext">Quantity</th>
+                  <th className="px-4 py-2 text-left font-semibold text-spoon-subtext">Unit</th>
+                  <th className="px-4 py-2 text-center font-semibold text-spoon-subtext">
                     <span className="sr-only">Remove</span>
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {ingredients.map((ing, idx) => (
-                  <tr key={ing.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                  <tr key={ing.id} className={idx % 2 === 0 ? 'bg-transparent' : 'bg-white/30'}>
                     <td className="px-4 py-2">
                       <input
                         type="text"
                         value={ing.name}
                         onChange={(e) => handleFieldChange(ing.id, 'name', e.target.value)}
-                        className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-green-500"
+                        className="w-full rounded-lg bg-white/60 border border-white/70 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-spoon-mint spoon-transition"
                         placeholder="e.g., flour"
                       />
                     </td>
@@ -166,14 +164,14 @@ export default function IngredientTable({ ingredients, onChange }) {
                         onBlur={() => handleQuantityBlur(ing.id)}
                         min="0.01"
                         step="0.01"
-                        className="w-20 px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-green-500"
+                        className="w-20 rounded-lg bg-white/60 border border-white/70 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-spoon-mint spoon-transition"
                       />
                     </td>
                     <td className="px-4 py-2">
                       <select
                         value={ing.unit}
                         onChange={(e) => handleFieldChange(ing.id, 'unit', e.target.value)}
-                        className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-green-500"
+                        className="w-full rounded-lg bg-white/60 border border-white/70 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-spoon-mint spoon-transition"
                       >
                         <option value="each">each</option>
                         <option value="cup">cup</option>
@@ -192,7 +190,7 @@ export default function IngredientTable({ ingredients, onChange }) {
                         onClick={() => handleRemove(ing.id)}
                         aria-label={`Remove ${ing.name || 'ingredient'}`}
                         title="Remove"
-                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                        className="p-1.5 text-spoon-subtext hover:text-red-600 hover:bg-white/60 rounded-full spoon-transition"
                       >
                         <TrashIcon />
                       </button>
@@ -204,7 +202,7 @@ export default function IngredientTable({ ingredients, onChange }) {
           </div>
 
           <div className="mt-4 flex items-center gap-3">
-            <label htmlFor="serving-scale" className="text-sm font-medium text-gray-700">
+            <label htmlFor="serving-scale" className="text-sm font-medium text-spoon-ink">
               Scale Servings:
             </label>
             <input
@@ -214,9 +212,9 @@ export default function IngredientTable({ ingredients, onChange }) {
               onChange={handleScaleInputChange}
               min="0.1"
               step="0.5"
-              className="w-20 px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-green-500"
+              className="w-20 rounded-lg bg-white/60 border border-white/70 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-spoon-mint spoon-transition"
             />
-            <span className="text-xs text-gray-500">Quantities update automatically (e.g., 2 = double, 0.5 = halve)</span>
+            <span className="text-xs text-spoon-subtext">Quantities update automatically (e.g., 2 = double, 0.5 = halve)</span>
           </div>
         </>
       )}

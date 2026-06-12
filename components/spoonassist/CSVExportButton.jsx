@@ -1,5 +1,7 @@
 'use client';
 
+import SpoonButton from './ui/Button';
+
 export default function CSVExportButton({ costData, ingredients }) {
   const handleExport = () => {
     if (!costData || costData.length === 0) return;
@@ -74,12 +76,13 @@ export default function CSVExportButton({ costData, ingredients }) {
   const hasData = costData && costData.length > 0;
 
   return (
-    <button
+    <SpoonButton
       onClick={handleExport}
       disabled={!hasData}
-      className="px-6 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-sm"
+      variant="secondary"
+      size="sm"
     >
       {hasData ? 'Export to CSV' : 'No Data to Export'}
-    </button>
+    </SpoonButton>
   );
 }

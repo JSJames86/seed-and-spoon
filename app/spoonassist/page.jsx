@@ -9,22 +9,24 @@ import RecipeDropdown from '@/components/spoonassist/RecipeDropdown';
 import RecipeTextInput from '@/components/spoonassist/RecipeTextInput';
 import IngredientTable from '@/components/spoonassist/IngredientTable';
 import StoreSelector from '@/components/spoonassist/StoreSelector';
+import StoreFilterBar from '@/components/spoonassist/StoreFilterBar';
 import DietaryFilters from '@/components/spoonassist/DietaryFilters';
 import CostResultsTable from '@/components/spoonassist/CostResultsTable';
 import CSVExportButton from '@/components/spoonassist/CSVExportButton';
 import PoweredBy from '@/components/spoonassist/PoweredBy';
 import InstacartCTA from '@/components/spoonassist/InstacartCTA';
-import InstacartRetailerSelector from '@/components/spoonassist/InstacartRetailerSelector';
+import GlassCard from '@/components/spoonassist/ui/GlassCard';
+import SpoonButton from '@/components/spoonassist/ui/Button';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
 
 function InlineError({ message, onDismiss }) {
   return (
-    <div role="alert" className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800 flex items-center justify-between gap-3">
+    <div role="alert" className="mt-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-800 flex items-center justify-between gap-3 spoon-transition">
       <span>{message}</span>
       <button
         onClick={onDismiss}
-        className="text-red-600 hover:text-red-800 font-medium shrink-0"
+        className="text-red-600 hover:text-red-800 font-medium shrink-0 spoon-transition"
       >
         Dismiss
       </button>
@@ -45,7 +47,7 @@ export default function SpoonAssistPage() {
   const [zipCode, setZipCode] = useState('');
   const [instacartUrl, setInstacartUrl] = useState(null);
   const [instacartRetailers, setInstacartRetailers] = useState([]);
-  const [selectedRetailerKey, setSelectedRetailerKey] = useState(null);
+  const [selectedRetailerKeys, setSelectedRetailerKeys] = useState([]);
   const [features, setFeatures] = useState({ kroger: false, instacart: false });
   const [loading, setLoading] = useState({
     recipes: false,
@@ -108,7 +110,7 @@ export default function SpoonAssistPage() {
 
   const handleFindStores = async (zip) => {
     setZipCode(zip);
-    setSelectedRetailerKey(null);
+    setSelectedRetailerKeys([]);
     setLoading(prev => ({ ...prev, stores: true }));
     setStoreError(null);
 
@@ -273,13 +275,13 @@ export default function SpoonAssistPage() {
           imageUrl:       selectedRecipe.instacartImage || selectedRecipe.image || null,
           instructions:   selectedRecipe.instructions || [],
           dietaryFilters: dietaryFilters,
-          retailerKey:    selectedRetailerKey,
+          retailerKey:    selectedRetailerKeys[0] ?? null,
           ingredients:    ingList,
         }
       : {
           title:          'My Ingredient List',
           dietaryFilters: dietaryFilters,
-          retailerKey:    selectedRetailerKey,
+          retailerKey:    selectedRetailerKeys[0] ?? null,
           ingredients:    ingList,
         };
 
@@ -326,66 +328,58 @@ export default function SpoonAssistPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-amber-50 via-yellow-100 to-green-500 py-20 md:py-28">
-        <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10"></div>
+      <section className="relative py-16 md:py-24">
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
             {/* Logo */}
-            <div className="mb-8 transform hover:scale-105 transition-transform duration-300">
+            <div className="mb-8 spoon-transition hover:scale-105">
               <Image
                 src="/spoonassist/logo.png"
                 alt="SpoonAssist Logo"
                 width={200}
                 height={200}
-                className="rounded-2xl shadow-2xl"
+                className="rounded-spoon-card shadow-spoon-glass"
                 priority
               />
             </div>
 
             {/* Title */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-800 mb-6 drop-shadow-sm">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-spoon-ink mb-6">
               SpoonAssist
             </h1>
 
             {/* Tagline */}
-            <p className="text-xl md:text-2xl text-gray-700 mb-8 max-w-2xl leading-relaxed">
+            <p className="text-xl md:text-2xl text-spoon-subtext mb-8 max-w-2xl leading-relaxed">
               Compare local grocery prices for any recipe and create smart shopping lists that save you money
             </p>
 
             {/* Features */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 w-full max-w-3xl">
-              <div className="bg-white rounded-lg p-4 shadow-lg border border-gray-200">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 w-full max-w-3xl">
+              <div className="spoon-glass rounded-spoon-card p-4">
                 <div className="text-3xl mb-2">💰</div>
-                <div className="font-semibold text-gray-800">Price Comparison</div>
-                <div className="text-sm text-gray-600">Multiple stores</div>
+                <div className="font-semibold text-spoon-ink">Price Comparison</div>
+                <div className="text-sm text-spoon-subtext">Multiple stores</div>
               </div>
-              <div className="bg-white rounded-lg p-4 shadow-lg border border-gray-200">
+              <div className="spoon-glass rounded-spoon-card p-4">
                 <div className="text-3xl mb-2">🥗</div>
-                <div className="font-semibold text-gray-800">Dietary Options</div>
-                <div className="text-sm text-gray-600">Filter preferences</div>
+                <div className="font-semibold text-spoon-ink">Dietary Options</div>
+                <div className="text-sm text-spoon-subtext">Filter preferences</div>
               </div>
-              <div className="bg-white rounded-lg p-4 shadow-lg border border-gray-200">
+              <div className="spoon-glass rounded-spoon-card p-4">
                 <div className="text-3xl mb-2">📋</div>
-                <div className="font-semibold text-gray-800">Smart Lists</div>
-                <div className="text-sm text-gray-600">Export to CSV</div>
+                <div className="font-semibold text-spoon-ink">Smart Lists</div>
+                <div className="text-sm text-spoon-subtext">Export to CSV</div>
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Wave divider */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" className="w-full h-auto">
-            <path fill="#ffffff" fillOpacity="1" d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,58.7C960,64,1056,64,1152,58.7C1248,53,1344,43,1392,37.3L1440,32L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z"></path>
-          </svg>
         </div>
       </section>
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-12 max-w-7xl">
         {/* Section 1: Recipe Selection */}
-        <section className="mb-8 p-6 bg-white rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Step 1: Choose or Enter Recipe</h2>
+        <GlassCard as="section" className="mb-8">
+          <h2 className="text-2xl font-bold text-spoon-ink mb-4">Step 1: Choose or Enter Recipe</h2>
           <div className="grid md:grid-cols-2 gap-6">
             <RecipeDropdown
               recipes={recipes}
@@ -397,20 +391,20 @@ export default function SpoonAssistPage() {
           {recipeError && (
             <InlineError message={recipeError} onDismiss={() => setRecipeError(null)} />
           )}
-        </section>
+        </GlassCard>
 
         {/* Section 2: Ingredients Table */}
         {hasIngredients && (
-          <motion.section {...revealAnimation} className="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Step 2: Review & Edit Ingredients</h2>
+          <GlassCard as={motion.section} {...revealAnimation} className="mb-8">
+            <h2 className="text-2xl font-bold text-spoon-ink mb-4">Step 2: Review & Edit Ingredients</h2>
             <IngredientTable ingredients={ingredients} onChange={setIngredients} />
-          </motion.section>
+          </GlassCard>
         )}
 
         {/* Section 3: Store Selection */}
         {hasIngredients && (
-          <motion.section {...revealAnimation} className="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Step 3: Select Stores</h2>
+          <GlassCard as={motion.section} {...revealAnimation} className="mb-8">
+            <h2 className="text-2xl font-bold text-spoon-ink mb-4">Step 3: Select Stores</h2>
             <StoreSelector
               onFindStores={handleFindStores}
               stores={stores}
@@ -419,50 +413,51 @@ export default function SpoonAssistPage() {
               loading={loading.stores}
             />
             {features.instacart && (
-              <InstacartRetailerSelector
+              <StoreFilterBar
                 retailers={instacartRetailers}
-                selectedKey={selectedRetailerKey}
-                onChange={setSelectedRetailerKey}
+                selectedKeys={selectedRetailerKeys}
+                onChange={setSelectedRetailerKeys}
                 loading={loading.instacartRetailers}
               />
             )}
             {storeError && (
               <InlineError message={storeError} onDismiss={() => setStoreError(null)} />
             )}
-          </motion.section>
+          </GlassCard>
         )}
 
         {/* Section 4: Dietary Filters */}
         {hasIngredients && (
-          <motion.section {...revealAnimation} className="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Step 4: Dietary Preferences (Optional)</h2>
+          <GlassCard as={motion.section} {...revealAnimation} className="mb-8">
+            <h2 className="text-2xl font-bold text-spoon-ink mb-4">Step 4: Dietary Preferences (Optional)</h2>
             <DietaryFilters
               selectedFilters={dietaryFilters}
               onChange={setDietaryFilters}
             />
-          </motion.section>
+          </GlassCard>
         )}
 
         {/* Section 5: Calculate Button + Results */}
         {hasStores && (
           <>
-            <motion.section {...revealAnimation} className="mb-8 p-6 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg shadow-md border-2 border-green-300">
+            <GlassCard as={motion.section} {...revealAnimation} className="mb-8">
               <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">Step 5: Get Price Comparison</h2>
-                  <p className="text-gray-700 mt-1">
+                  <h2 className="text-2xl font-bold text-spoon-ink">Step 5: Get Price Comparison</h2>
+                  <p className="text-spoon-subtext mt-1">
                     {ingredients.length} ingredients • {selectedStores.length} stores selected
                   </p>
                 </div>
                 {/* CTAs side-by-side per Instacart placement guidelines */}
                 <div className="flex flex-wrap items-center gap-3">
-                  <button
+                  <SpoonButton
+                    variant="primary"
+                    size="lg"
                     onClick={handleCalculateCost}
                     disabled={loading.calculation || ingredients.length === 0 || selectedStores.length === 0}
-                    className="px-8 py-3 bg-green-600 text-white text-lg font-bold rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-lg"
                   >
                     {loading.calculation ? 'Calculating...' : 'Calculate Costs'}
-                  </button>
+                  </SpoonButton>
                   {features.instacart && (
                     <InstacartCTA
                       onClick={handleShopOnInstacart}
@@ -479,32 +474,32 @@ export default function SpoonAssistPage() {
               {instacartError && (
                 <InlineError message={instacartError} onDismiss={() => setInstacartError(null)} />
               )}
-            </motion.section>
+            </GlassCard>
 
             {/* Section 6: Results */}
             {costData && costData.length > 0 && (
-              <motion.section {...revealAnimation} className="mb-8 p-6 bg-white rounded-lg shadow-md">
+              <GlassCard as={motion.section} {...revealAnimation} className="mb-8">
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-2xl font-bold text-gray-900">Results</h2>
+                  <h2 className="text-2xl font-bold text-spoon-ink">Results</h2>
                   <CSVExportButton costData={costData} ingredients={ingredients} />
                 </div>
 
                 {/* Summary banner */}
                 {summary && summary.cheapestStore && (
-                  <div className="mb-4 p-4 bg-gray-50 border border-gray-200 rounded-lg flex flex-wrap gap-4 items-center">
+                  <div className="mb-4 p-4 spoon-glass-lite rounded-spoon-card flex flex-wrap gap-4 items-center">
                     <div>
-                      <span className="text-sm text-gray-500 font-medium">Best overall price:</span>
-                      <span className="ml-2 text-lg font-bold text-forest-dark">{summary.cheapestStore}</span>
-                      <span className="ml-2 text-gray-700">${summary.cheapestTotal.toFixed(2)} total</span>
+                      <span className="text-sm text-spoon-subtext font-medium">Best overall price:</span>
+                      <span className="ml-2 text-lg font-bold text-spoon-mint">{summary.cheapestStore}</span>
+                      <span className="ml-2 text-spoon-ink">${summary.cheapestTotal.toFixed(2)} total</span>
                     </div>
                     {Object.entries(summary.storeTotals || {})
                       .sort((a, b) => a[1] - b[1])
                       .slice(1)
                       .map(([store, total]) => (
-                        <div key={store} className="text-sm text-gray-500">
-                          {store}: <span className="font-medium text-gray-700">${total.toFixed(2)}</span>
+                        <div key={store} className="text-sm text-spoon-subtext">
+                          {store}: <span className="font-medium text-spoon-ink">${total.toFixed(2)}</span>
                           {summary.cheapestTotal > 0 && (
-                            <span className="ml-1 text-gray-400">
+                            <span className="ml-1 text-spoon-subtext/70">
                               (+${(total - summary.cheapestTotal).toFixed(2)})
                             </span>
                           )}
@@ -517,10 +512,10 @@ export default function SpoonAssistPage() {
 
                 {/* Shop on Instacart CTA — only rendered when key is configured */}
                 {features.instacart && (
-                  <div className="mt-6 p-5 bg-[#F5FAF7] border border-[#003D29]/20 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="mt-6 p-5 spoon-glass-lite rounded-spoon-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
-                      <p className="font-semibold text-gray-900">Ready to shop?</p>
-                      <p className="text-sm text-gray-600 mt-0.5">
+                      <p className="font-semibold text-spoon-ink">Ready to shop?</p>
+                      <p className="text-sm text-spoon-subtext mt-0.5">
                         Add this recipe&apos;s ingredients to your cart via the Instacart® service — delivery or pickup at local stores.
                       </p>
                     </div>
@@ -532,14 +527,14 @@ export default function SpoonAssistPage() {
                     />
                   </div>
                 )}
-              </motion.section>
+              </GlassCard>
             )}
           </>
         )}
 
         {/* Data Partners */}
-        <section className="mt-10 pt-8 border-t border-gray-200">
-          <p className="text-xs text-gray-400 uppercase tracking-wide font-semibold mb-3 text-center">
+        <section className="mt-10 pt-8 border-t border-white/60">
+          <p className="text-xs text-spoon-subtext uppercase tracking-wide font-semibold mb-3 text-center">
             Data Partners
           </p>
           <div className="flex flex-wrap justify-center gap-3">
@@ -552,18 +547,18 @@ export default function SpoonAssistPage() {
         </section>
 
         {/* Footer */}
-        <footer className="mt-8 text-center text-sm text-gray-500">
+        <footer className="mt-8 text-center text-sm text-spoon-subtext">
           <p>SpoonAssist is a service by Seed &amp; Spoon</p>
           <p className="mt-1">Helping you save money on healthy, delicious meals</p>
           {features.instacart && (
-            <p className="mt-4 text-xs text-gray-400 max-w-2xl mx-auto">
+            <p className="mt-4 text-xs text-spoon-subtext max-w-2xl mx-auto">
               Instacart® is a registered trademark of Maplebear Inc. d/b/a Instacart.
               Instacart may not be available in all zip codes.{' '}
               <a
                 href="https://www.instacart.com/terms"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline hover:text-gray-600"
+                className="underline hover:text-spoon-ink"
               >
                 See Instacart Terms of Service for more details.
               </a>
