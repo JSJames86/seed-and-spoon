@@ -17,6 +17,7 @@ import PoweredBy from '@/components/spoonassist/PoweredBy';
 import InstacartCTA from '@/components/spoonassist/InstacartCTA';
 import GlassCard from '@/components/spoonassist/ui/GlassCard';
 import SpoonButton from '@/components/spoonassist/ui/Button';
+import StepProgress from '@/components/spoonassist/ui/StepProgress';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
 
@@ -319,6 +320,16 @@ export default function SpoonAssistPage() {
   const hasIngredients = ingredients.length > 0;
   const hasStores = stores.length > 0;
 
+  // Overall progress indicator. Steps 2-4 (ingredients, stores, dietary) are
+  // revealed together as one phase, so step 2 represents that whole phase.
+  const TOTAL_STEPS = 5;
+  const currentStep = hasStores ? 5 : hasIngredients ? 2 : 1;
+  const STEP_LABELS = {
+    1: 'Choose or enter your recipe',
+    2: 'Review ingredients, pick stores & dietary needs',
+    5: 'Compare prices & shop',
+  };
+
   const revealAnimation = {
     initial: { opacity: 0, y: 16 },
     animate: { opacity: 1, y: 0 },
@@ -377,6 +388,12 @@ export default function SpoonAssistPage() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-12 max-w-7xl">
+        <StepProgress
+          currentStep={currentStep}
+          totalSteps={TOTAL_STEPS}
+          label={STEP_LABELS[currentStep]}
+        />
+
         {/* Section 1: Recipe Selection */}
         <GlassCard as="section" className="mb-8">
           <h2 className="text-2xl font-bold text-spoon-ink mb-4">Step 1: Choose or Enter Recipe</h2>
@@ -448,31 +465,17 @@ export default function SpoonAssistPage() {
                     {ingredients.length} ingredients • {selectedStores.length} stores selected
                   </p>
                 </div>
-                {/* CTAs side-by-side per Instacart placement guidelines */}
-                <div className="flex flex-wrap items-center gap-3">
-                  <SpoonButton
-                    variant="primary"
-                    size="lg"
-                    onClick={handleCalculateCost}
-                    disabled={loading.calculation || ingredients.length === 0 || selectedStores.length === 0}
-                  >
-                    {loading.calculation ? 'Calculating...' : 'Calculate Costs'}
-                  </SpoonButton>
-                  {features.instacart && (
-                    <InstacartCTA
-                      onClick={handleShopOnInstacart}
-                      loading={loading.instacart}
-                      disabled={ingredients.length === 0}
-                      text="Shop ingredients"
-                    />
-                  )}
-                </div>
+                <SpoonButton
+                  variant="primary"
+                  size="lg"
+                  onClick={handleCalculateCost}
+                  disabled={loading.calculation || ingredients.length === 0 || selectedStores.length === 0}
+                >
+                  {loading.calculation ? 'Calculating...' : 'Calculate Costs'}
+                </SpoonButton>
               </div>
               {costError && (
                 <InlineError message={costError} onDismiss={() => setCostError(null)} />
-              )}
-              {instacartError && (
-                <InlineError message={instacartError} onDismiss={() => setInstacartError(null)} />
               )}
             </GlassCard>
 
@@ -526,6 +529,9 @@ export default function SpoonAssistPage() {
                       text="Shop ingredients"
                     />
                   </div>
+                )}
+                {instacartError && (
+                  <InlineError message={instacartError} onDismiss={() => setInstacartError(null)} />
                 )}
               </GlassCard>
             )}
