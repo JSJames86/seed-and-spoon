@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import SpoonButton from './ui/Button';
+import { spoonInputClass, spoonLabelClass } from './ui/Input';
 
 // Parse ingredient text into structured data
 function parseIngredients(text) {
@@ -112,7 +114,7 @@ export default function RecipeTextInput({ onParsed }) {
 
   return (
     <div className="w-full">
-      <label htmlFor="recipe-text" className="block text-sm font-medium text-gray-700 mb-2">
+      <label htmlFor="recipe-text" className={spoonLabelClass}>
         Or Paste Recipe Text
       </label>
       <textarea
@@ -121,16 +123,17 @@ export default function RecipeTextInput({ onParsed }) {
         onChange={(e) => setRecipeText(e.target.value)}
         placeholder="Paste your recipe here... (e.g., '2 cups flour, 1/2 tsp salt, 3 eggs')"
         rows={6}
-        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm resize-y"
+        className={`${spoonInputClass} resize-y`}
       />
-      <button
+      <SpoonButton
         onClick={handleParse}
         disabled={!recipeText.trim() || isParsing}
-        className="mt-3 px-6 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-sm"
+        variant="primary"
+        className="mt-3"
       >
         {isParsing ? 'Parsing...' : 'Parse & Add Ingredients'}
-      </button>
-      <p className="mt-2 text-xs text-gray-500">
+      </SpoonButton>
+      <p className="mt-2 text-xs text-spoon-subtext">
         Tip: Each ingredient on a new line. Supports fractions (½, 1/2) and common units (cup, tbsp, oz, lb, g, kg).
       </p>
     </div>
