@@ -36,7 +36,7 @@ export default function RecipeCard({ recipe, onClick, index = 0 }) {
   } = recipe;
 
   // Fallback image if recipe image is not available
-  const imageSrc = image || '/images/recipes/placeholder.jpg';
+  const imageSrc = image || '/images/recipes/placeholder.png';
 
   return (
     <motion.article
@@ -68,7 +68,7 @@ export default function RecipeCard({ recipe, onClick, index = 0 }) {
           loading="lazy"
           onError={(e) => {
             // Fallback to placeholder if image fails to load
-            e.currentTarget.src = '/images/recipes/placeholder.jpg';
+            e.currentTarget.src = '/images/recipes/placeholder.png';
           }}
         />
 
