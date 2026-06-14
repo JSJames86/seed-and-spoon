@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { recipes } from '@/data/recipes';
 
 /**
  * HeroSection Component
@@ -50,7 +51,7 @@ export default function HeroSection() {
           transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
         >
           <div className="text-center">
-            <div className="text-3xl font-bold">8</div>
+            <div className="text-3xl font-bold">{recipes.length}</div>
             <div className="text-sm text-green-50">Recipes</div>
           </div>
           <div className="text-center">

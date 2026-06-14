@@ -101,7 +101,7 @@ export default function RecipeModal({ recipe, onClose }) {
     nutrition,
   } = recipe;
 
-  const imageSrc = image || '/images/recipes/placeholder.jpg';
+  const imageSrc = image || '/images/recipes/placeholder.png';
 
   return (
     <AnimatePresence>
@@ -163,7 +163,7 @@ export default function RecipeModal({ recipe, onClose }) {
                 className="object-cover"
                 priority
                 onError={(e) => {
-                  e.currentTarget.src = '/images/recipes/placeholder.jpg';
+                  e.currentTarget.src = '/images/recipes/placeholder.png';
                 }}
               />
 

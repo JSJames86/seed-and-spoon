@@ -334,6 +334,327 @@ export const recipes = [
       carbs: "68g",
       fat: "26g"
     }
+  },
+  {
+    id: 9,
+    slug: "big-mac-bowl",
+    title: "Big Mac Bowl",
+    category: "Main Dishes",
+    difficulty: "Easy",
+    prepTime: "15 min",
+    cookTime: "20 min",
+    cookTimeMinutes: 20,
+    servings: "4 servings",
+    description: "All the flavor of a Big Mac without the bun—seasoned beef, lettuce, pickles, cheese, and creamy special sauce in a low-carb bowl.",
+    cuisine: ["American"],
+    ingredients: [
+      "1 lb lean ground beef",
+      "1/2 cup onion, chopped",
+      "2 tsp yellow mustard",
+      "1 tsp garlic powder",
+      "1 tsp onion powder",
+      "Salt and black pepper",
+      "1/2 cup light mayonnaise",
+      "1/3 cup ketchup",
+      "1/4 cup dill pickles, chopped",
+      "1 1/2 tbsp pickle juice",
+      "8 cups iceberg lettuce, shredded",
+      "1 cup cheddar cheese",
+      "1 cup dill pickles",
+      "1 cup tomatoes",
+      "1/2 cup red onion"
+    ],
+    instructions: [
+      "Brown ground beef in skillet over medium-high heat.",
+      "Add onion, mustard, garlic powder, onion powder, salt, and pepper.",
+      "Cook until onions are soft and beef is fully cooked; drain fat.",
+      "Mix mayo, ketchup, pickles, pickle juice, garlic powder, onion powder, paprika to make sauce.",
+      "Layer lettuce in bowls.",
+      "Top with beef mixture, cheese, pickles, tomatoes, and onion.",
+      "Drizzle with sauce and serve immediately."
+    ],
+    tags: ["low-carb", "keto-friendly", "fast-food-inspired", "high-protein", "no-bun"]
+  },
+  {
+    id: 10,
+    slug: "creamy-lemon-chicken-orzo",
+    title: "Creamy Lemon Chicken Orzo",
+    category: "Main Dishes",
+    difficulty: "Easy",
+    prepTime: "10 min",
+    cookTime: "30 min",
+    cookTimeMinutes: 30,
+    servings: "4 servings",
+    description: "One-pot creamy orzo with tender chicken, lemon, garlic, and herbs for a bright and comforting dinner.",
+    cuisine: ["Mediterranean", "American"],
+    ingredients: [
+      "2 tbsp olive oil",
+      "1 lb chicken breast, cubed",
+      "1 tsp salt",
+      "1/2 tsp black pepper",
+      "3 cloves garlic, minced",
+      "1 tsp oregano",
+      "2 cups chicken broth",
+      "1 cup orzo",
+      "1/2 cup heavy cream",
+      "Juice and zest of 1 lemon",
+      "2 cups spinach",
+      "Fresh parsley"
+    ],
+    instructions: [
+      "Heat olive oil in skillet and cook chicken with salt and pepper.",
+      "Add garlic and oregano; sauté until fragrant.",
+      "Add broth and orzo; simmer until pasta absorbs liquid.",
+      "Stir in cream, lemon juice, and zest.",
+      "Add spinach and cook until wilted.",
+      "Garnish with parsley and serve."
+    ],
+    tags: ["one-pot", "creamy", "lemon", "comfort-food"]
+  },
+  {
+    id: 11,
+    slug: "crunchy-coconut-chicken",
+    title: "Crunchy Coconut Chicken",
+    category: "Main Dishes",
+    difficulty: "Easy",
+    prepTime: "15 min",
+    cookTime: "30 min",
+    cookTimeMinutes: 30,
+    servings: "4 servings",
+    description: "Crispy baked chicken coated in coconut and panko for a kid-friendly, crunchy dinner.",
+    cuisine: ["American", "Fusion"],
+    ingredients: [
+      "1.5 lbs chicken breast strips",
+      "1 cup flour",
+      "2 eggs",
+      "1.5 cups panko breadcrumbs",
+      "1 cup shredded coconut",
+      "1 tsp salt",
+      "1/2 tsp garlic powder",
+      "1/2 tsp black pepper"
+    ],
+    instructions: [
+      "Preheat oven to 400°F.",
+      "Set up flour, egg, and coconut-panko stations.",
+      "Dredge chicken in flour, egg, then coconut mixture.",
+      "Place on baking sheet and spray lightly with oil.",
+      "Bake 22–25 minutes until golden and cooked through."
+    ],
+    tags: ["crispy", "baked", "kid-friendly", "sheet-pan"]
+  },
+  {
+    id: 12,
+    slug: "orange-chicken",
+    title: "Orange Chicken",
+    category: "Main Dishes",
+    difficulty: "Medium",
+    prepTime: "15 min",
+    cookTime: "30 min",
+    cookTimeMinutes: 30,
+    servings: "4 servings",
+    description: "Crispy chicken tossed in a sticky, sweet orange glaze with soy, ginger, and garlic.",
+    cuisine: ["Asian"],
+    ingredients: [
+      "1.5 lbs chicken thighs",
+      "1/2 cup cornstarch",
+      "3 tbsp oil",
+      "3/4 cup orange juice",
+      "1/4 cup soy sauce",
+      "1/4 cup honey",
+      "2 tbsp rice vinegar",
+      "Garlic and ginger",
+      "1 tsp sesame oil"
+    ],
+    instructions: [
+      "Coat chicken in cornstarch.",
+      "Pan-fry until crispy and golden.",
+      "Cook garlic and ginger in pan.",
+      "Add sauce ingredients and simmer.",
+      "Return chicken and toss in glaze.",
+      "Serve over rice."
+    ],
+    tags: ["takeout-style", "crispy", "sweet-savory"]
+  },
+  {
+    id: 13,
+    slug: "hawaiian-shoyu-chicken",
+    title: "Hawaiian Shoyu Chicken",
+    category: "Main Dishes",
+    difficulty: "Medium",
+    prepTime: "10 min",
+    cookTime: "50 min",
+    cookTimeMinutes: 50,
+    servings: "4-6 servings",
+    description: "Slow-baked soy-glazed chicken with garlic, ginger, and sweet caramelized sauce.",
+    cuisine: ["Hawaiian", "Asian"],
+    ingredients: [
+      "3 lbs chicken thighs",
+      "1 cup soy sauce",
+      "1 cup water",
+      "1 cup sugar",
+      "3/4 cup mirin",
+      "Garlic and ginger"
+    ],
+    instructions: [
+      "Mix marinade ingredients.",
+      "Brown chicken in skillet.",
+      "Add sauce and bake until caramelized.",
+      "Baste occasionally while cooking.",
+      "Serve over rice."
+    ],
+    tags: ["sweet-savory", "glazed", "oven-baked"]
+  },
+  {
+    id: 14,
+    slug: "chicken-broccoli-stir-fry",
+    title: "Chicken and Broccoli Stir-Fry",
+    category: "Main Dishes",
+    difficulty: "Easy",
+    prepTime: "10 min",
+    cookTime: "20 min",
+    cookTimeMinutes: 20,
+    servings: "4 servings",
+    description: "Quick skillet stir-fry with tender chicken, crisp broccoli, and savory sauce.",
+    cuisine: ["Asian"],
+    ingredients: [
+      "1.5 lbs chicken breast",
+      "4 cups broccoli",
+      "3 tbsp oil",
+      "Garlic",
+      "Soy sauce",
+      "Oyster sauce",
+      "Honey",
+      "Cornstarch"
+    ],
+    instructions: [
+      "Cook chicken until browned.",
+      "Stir-fry broccoli until crisp-tender.",
+      "Add garlic.",
+      "Add sauce and simmer until thickened.",
+      "Combine and serve over rice."
+    ],
+    tags: ["quick", "healthy", "stir-fry"]
+  },
+  {
+    id: 15,
+    slug: "greek-orzo-skillet",
+    title: "Greek Orzo Skillet",
+    category: "Main Dishes",
+    difficulty: "Medium",
+    prepTime: "10 min",
+    cookTime: "35 min",
+    cookTimeMinutes: 35,
+    servings: "4 servings",
+    description: "Mediterranean one-pan orzo with chicken, feta, spinach, olives, and sun-dried tomatoes.",
+    cuisine: ["Mediterranean"],
+    ingredients: [
+      "1.5 lbs chicken thighs",
+      "1.5 cups orzo",
+      "2.5 cups broth",
+      "Sun-dried tomatoes",
+      "Spinach",
+      "Feta cheese",
+      "Olives",
+      "Garlic"
+    ],
+    instructions: [
+      "Brown chicken.",
+      "Cook aromatics.",
+      "Add orzo and broth and simmer.",
+      "Stir in spinach, olives, feta.",
+      "Serve warm."
+    ],
+    tags: ["one-pan", "cheesy", "vegetable-rich"]
+  },
+  {
+    id: 16,
+    slug: "chicken-alfredo-gnocchi-sundried-tomato",
+    title: "Sun-Dried Tomato Chicken Gnocchi",
+    category: "Main Dishes",
+    difficulty: "Medium",
+    prepTime: "10 min",
+    cookTime: "30 min",
+    cookTimeMinutes: 30,
+    servings: "4 servings",
+    description: "Creamy skillet gnocchi with chicken, sun-dried tomatoes, spinach, and Parmesan.",
+    cuisine: ["Italian"],
+    ingredients: [
+      "1.5 lbs chicken breast",
+      "1 lb gnocchi",
+      "Sun-dried tomatoes",
+      "Garlic",
+      "Chicken broth",
+      "Heavy cream",
+      "Parmesan",
+      "Spinach"
+    ],
+    instructions: [
+      "Cook chicken until browned.",
+      "Sauté garlic and sun-dried tomatoes.",
+      "Add gnocchi and liquid; simmer.",
+      "Stir in cream and Parmesan.",
+      "Add spinach and chicken back in."
+    ],
+    tags: ["creamy", "one-pan", "comfort-food"]
+  },
+  {
+    id: 17,
+    slug: "chicken-lettuce-wraps",
+    title: "Chicken Lettuce Wraps",
+    category: "Main Dishes",
+    difficulty: "Easy",
+    prepTime: "10 min",
+    cookTime: "15 min",
+    cookTimeMinutes: 15,
+    servings: "4 servings",
+    description: "Savory ground chicken lettuce wraps with hoisin, soy sauce, garlic, and water chestnuts.",
+    cuisine: ["Asian"],
+    ingredients: [
+      "1 lb ground chicken",
+      "Garlic",
+      "Ginger",
+      "Water chestnuts",
+      "Soy sauce",
+      "Hoisin sauce",
+      "Sesame oil",
+      "Lettuce cups"
+    ],
+    instructions: [
+      "Cook chicken until crumbled and browned.",
+      "Add aromatics and water chestnuts.",
+      "Add sauces and simmer.",
+      "Serve in lettuce cups."
+    ],
+    tags: ["low-carb", "handheld", "quick"]
+  },
+  {
+    id: 18,
+    slug: "lazy-chicken-pot-pie",
+    title: "Lazy Chicken Pot Pie",
+    category: "Main Dishes",
+    difficulty: "Medium",
+    prepTime: "10 min",
+    cookTime: "45 min",
+    cookTimeMinutes: 45,
+    servings: "4-6 servings",
+    description: "Creamy chicken and vegetables topped with puff pastry for a fast comfort-food classic.",
+    cuisine: ["American"],
+    ingredients: [
+      "3 cups cooked chicken",
+      "Butter",
+      "Flour",
+      "Chicken broth",
+      "Milk",
+      "Frozen vegetables",
+      "Puff pastry"
+    ],
+    instructions: [
+      "Make creamy sauce base.",
+      "Add chicken and vegetables.",
+      "Top with puff pastry.",
+      "Bake until golden."
+    ],
+    tags: ["comfort-food", "baked", "family-meal"]
   }
 ];
 
@@ -379,11 +700,20 @@ export const COOK_TIME_FILTERS = [
 ];
 
 /**
- * Get all unique tags across recipes, sorted alphabetically.
+ * Get tags for the FilterBar, sorted alphabetically.
+ *
+ * Only tags shared by 2 or more recipes are included - with 18 recipes the
+ * full tag vocabulary is ~40 entries, most used by a single recipe, which
+ * would make the Tags filter unusably long. Recipes remain searchable by
+ * their one-off tags via the search bar (title match) or category filter.
  */
 export const getAllTags = () => {
-  const tags = recipes.flatMap(recipe => recipe.tags);
-  return [...new Set(tags)].sort();
+  const counts = recipes.flatMap(recipe => recipe.tags).reduce((acc, tag) => {
+    acc[tag] = (acc[tag] || 0) + 1;
+    return acc;
+  }, {});
+
+  return Object.keys(counts).filter(tag => counts[tag] >= 2).sort();
 };
 
 /**
