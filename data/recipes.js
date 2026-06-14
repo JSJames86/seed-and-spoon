@@ -18,6 +18,7 @@ export const recipes = [
     difficulty: "Easy",
     prepTime: "5 min",
     cookTime: "15 min",
+    cookTimeMinutes: 15,
     servings: "3 cups",
     description: "Sweet, tangy, and festive cranberry orange sauce perfect for holiday meals.",
     image: "/images/recipes/cranberry-orange-sauce.jpg",
@@ -51,6 +52,7 @@ export const recipes = [
     difficulty: "Medium",
     prepTime: "15 min",
     cookTime: "50 min",
+    cookTimeMinutes: 50,
     servings: "9-10 cups",
     description: "Classic stuffing with savory Italian sausage, tart apples, and herbs baked to golden perfection.",
     image: "/images/recipes/sausage-apple-stuffing.png",
@@ -93,6 +95,7 @@ export const recipes = [
     difficulty: "Hard",
     prepTime: "30 min",
     cookTime: "Varies by weight",
+    cookTimeMinutes: 240,
     servings: "12-16 servings",
     description: "Juicy, flavorful Cajun-style turkey with a spicy butter marinade and aromatic rub, perfect for roasting or deep-frying.",
     image: "/images/recipes/cajun-turkey.png",
@@ -136,6 +139,7 @@ export const recipes = [
     difficulty: "Easy",
     prepTime: "10 min",
     cookTime: "20 min",
+    cookTimeMinutes: 20,
     servings: "4-6 servings",
     description: "Creamy, fluffy mashed potatoes made from scratch with butter and milk, perfect for holiday meals.",
     image: "/images/recipes/mashed-potatoes.jpeg",
@@ -171,6 +175,7 @@ export const recipes = [
     difficulty: "Easy",
     prepTime: "5 min",
     cookTime: "10 min",
+    cookTimeMinutes: 10,
     servings: "2.5-3 cups",
     description: "Savory, spicy Cajun-style turkey gravy perfect for drizzling over roasted turkey and mashed potatoes.",
     image: "/images/recipes/cajun-turkey-gravy.jpeg",
@@ -206,6 +211,7 @@ export const recipes = [
     difficulty: "Medium",
     prepTime: "10 min",
     cookTime: "1 hr 30 min - 2 hr",
+    cookTimeMinutes: 105,
     servings: "6-8 servings",
     description: "Slow-simmered fresh green beans cooked with smoked turkey, onions, garlic, and rich broth for deep, soulful flavor.",
     image: "/images/recipes/green-beans.jpeg",
@@ -244,6 +250,7 @@ export const recipes = [
     difficulty: "Easy",
     prepTime: "10 min",
     cookTime: "20-25 min",
+    cookTimeMinutes: 22,
     servings: "8 servings",
     description: "Ultra-moist, cake-like Jiffy cornbread boosted with vanilla pudding mix, served with a sweet cinnamon honey butter spread.",
     image: "/images/recipes/moist-cornbread.png",
@@ -285,6 +292,7 @@ export const recipes = [
     difficulty: "Medium",
     prepTime: "25 min",
     cookTime: "1 hr 15 min",
+    cookTimeMinutes: 75,
     servings: "8 slices",
     description: "Velvety sweet potato base layered with a glossy pecan topping — a soulful holiday pie. Fill crust half sweet potato and half pecan topping to avoid overflow.",
     image: "/images/recipes/sweet-potato-pecan-pie.png",
@@ -357,4 +365,54 @@ export const getRecipeById = (id) => {
  */
 export const getRecipeBySlug = (slug) => {
   return recipes.find(recipe => recipe.slug === slug);
+};
+
+/**
+ * Cook time filter options for the recipes page FilterBar.
+ * `value` is matched against `recipe.cookTimeMinutes` in filterRecipes().
+ */
+export const COOK_TIME_FILTERS = [
+  { value: 'all', label: 'Any time' },
+  { value: '15', label: '15 min or less' },
+  { value: '30', label: '30 min or less' },
+  { value: '30+', label: 'Over 30 min' },
+];
+
+/**
+ * Get all unique tags across recipes, sorted alphabetically.
+ */
+export const getAllTags = () => {
+  const tags = recipes.flatMap(recipe => recipe.tags);
+  return [...new Set(tags)].sort();
+};
+
+/**
+ * Pure filter function combining search, category, cook time, and tag
+ * filters with AND logic. UI-free and testable - this is the seam a real
+ * data source/API swaps into later.
+ *
+ * @param {Array} recipeList - recipes to filter
+ * @param {Object} filters
+ * @param {string} [filters.search] - case-insensitive title search
+ * @param {string} [filters.category] - 'All' or a category name
+ * @param {string} [filters.cookTime] - 'all' | '15' | '30' | '30+'
+ * @param {string[]} [filters.tags] - tags the recipe must include
+ */
+export const filterRecipes = (recipeList, filters = {}) => {
+  const { search = '', category = 'All', cookTime = 'all', tags = [] } = filters;
+  const query = search.trim().toLowerCase();
+
+  return recipeList.filter((recipe) => {
+    const matchesSearch = !query || recipe.title.toLowerCase().includes(query);
+    const matchesCategory = category === 'All' || recipe.category === category;
+    const matchesCookTime =
+      cookTime === 'all' ||
+      (cookTime === '15' && recipe.cookTimeMinutes <= 15) ||
+      (cookTime === '30' && recipe.cookTimeMinutes <= 30) ||
+      (cookTime === '30+' && recipe.cookTimeMinutes > 30);
+    // Recipe must match every selected tag (AND). For "match any" (OR), swap .every() for .some().
+    const matchesTags = tags.every(tag => recipe.tags.includes(tag));
+
+    return matchesSearch && matchesCategory && matchesCookTime && matchesTags;
+  });
 };
