@@ -85,3 +85,67 @@ Returns `null` when `GOOGLE_PLACES_API_KEY` is unset or the lookup fails, so
 `FEATURES` exposes which price/integration tiers are active based on which
 env vars are set (`KROGER_CLIENT_ID`/`SECRET`, `INSTACART_API_KEY`,
 `GOOGLE_PLACES_API_KEY`).
+
+## `mealLeverageEngine.js` — Meal Leverage Engine (MLE)
+
+Optimizes for a *household*, not a recipe: "what should I buy today so I can
+cook all week?" Used by `app/api/spoonassist/meal-plan/route.js`.
+
+### The Meal Leverage Score (MLS)
+
+```
+MLS(recipe) = (servings * nutrition^nutritionWeight * depletion * preference) / bundleCost
+```
+
+- `bundleCost` is the cost of just the recipe's *missing* ingredients
+  (`shortfall()`), priced via the injected `priceBasket(missing, storeId)`.
+- `bundleCost <= 0` (fully covered by pantry/cart already) → `MLS = Infinity`,
+  so free pantry meals are always cooked first.
+- `preference == 0` on any ingredient (`household_prefs.weight = 0`, a hard
+  dislike) → `MLS = 0`, skipping the recipe entirely.
+- `depletionBonus()` adds +0.25 per ingredient that's within
+  `pantry_items.expires_in_days <= 3` ("use it before it rots").
+
+### The greedy-recompute loop (`planBuyList`)
+
+Repeatedly picks the highest-MLS affordable recipe, moves its ingredients
+from "missing" into "owned" (pantry + cart), and recomputes. Overlap isn't a
+rule — it emerges: buying rice for one recipe makes every other rice recipe
+cheaper (and its MLS higher) on the next pass. Loops until
+`servingsNeeded = household.size * household.dinnersNeeded` is met or nothing
+affordable adds a meal (a gap).
+
+### The gap branch (`findBridgeBuy` / `evaluateStoreSwitch`)
+
+When `planBuyList` ends with `gapServings > 0`:
+
+- `findBridgeBuy()` continues the same greedy loop with no budget cap, to
+  report the *extra* spend that would close the gap.
+- `evaluateStoreSwitch()` re-runs `planBuyList` at an alternate store (with a
+  flat `tripCost`) to see if switching stores closes the gap within budget.
+- If neither closes it, the output includes a `seed_and_spoon_referral` to
+  `/get-help` — the unclosed gap routes to Seed & Spoon's own pantry network
+  instead of a dead end.
+
+### `priceBasket(missing, storeId)`
+
+The one injected dependency, wrapping `priceEngine.js`'s
+`resolveIngredientPrice()`/`calculateRecipeCost()`:
+`(missing: {id, amount, unit}[], storeId) => Promise<{ total, items: {id, amount, unit, price}[] }>`.
+
+### SNAP/WIC variant (`runMealLeverageEngine({ snap })`)
+
+Same engine, different framing: `budget = snap.balance`,
+`dinnersNeeded = min(snap.daysUntilReload, MAX_SNAP_DINNERS)`,
+`nutritionWeight = SNAP_NUTRITION_WEIGHT` (squares the nutrition term so
+benefits buy sustenance over filler), and recipes with `snap_eligible = false`
+(hot/prepared food) are excluded.
+
+### Recipe corpus
+
+`recipes` rows with `nutrition IS NOT NULL` are the MLE corpus (seeded in
+`supabase/migrations/20260614000003_meal_leverage_seed_recipes.sql`).
+`recipe_ingredients.quantity`/`unit` for these rows MUST already be in the
+ingredient's `canonical_ingredients.standard_unit` — `shortfall()` compares
+recipe amounts directly against `pantry_items.remaining`, with no conversion
+hop at plan time.
