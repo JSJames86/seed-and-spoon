@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 import { captureEvent } from '@/analytics/posthog';
 import { EVENTS } from '@/analytics/events';
 import RecipeDropdown from '@/components/spoonassist/RecipeDropdown';
@@ -363,6 +364,13 @@ export default function SpoonAssistPage() {
             <p className="text-xl md:text-2xl text-spoon-subtext mb-8 max-w-2xl leading-relaxed">
               Compare local grocery prices for any recipe and create smart shopping lists that save you money
             </p>
+
+            <Link
+              href="/spoonassist/recipes"
+              className="text-sm font-semibold text-spoon-mint hover:underline mb-8 inline-block"
+            >
+              Browse the Recipe Price Index →
+            </Link>
 
             {/* Features */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 w-full max-w-3xl">
