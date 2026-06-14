@@ -12,14 +12,16 @@ import RecipeCard from './RecipeCard';
  * @param {Object} props
  * @param {Array} props.recipes - Array of recipe objects to display
  * @param {Function} props.onRecipeClick - Callback when a recipe card is clicked
+ * @param {Function} [props.onClearFilters] - Callback to reset filters, shown in the empty state
  *
  * @example
  * <RecipeGrid
  *   recipes={filteredRecipes}
  *   onRecipeClick={(recipe) => setSelectedRecipe(recipe)}
+ *   onClearFilters={handleClearFilters}
  * />
  */
-export default function RecipeGrid({ recipes, onRecipeClick }) {
+export default function RecipeGrid({ recipes, onRecipeClick, onClearFilters }) {
   // Handle empty state
   if (!recipes || recipes.length === 0) {
     return (
@@ -42,9 +44,18 @@ export default function RecipeGrid({ recipes, onRecipeClick }) {
           <h3 className="text-xl font-semibold text-gray-700 mb-2">
             No recipes found
           </h3>
-          <p className="text-gray-500">
-            Try selecting a different category or check back later for new recipes.
+          <p className="text-gray-500 mb-6">
+            Try a different search, or adjust your filters to see more recipes.
           </p>
+          {onClearFilters && (
+            <button
+              type="button"
+              onClick={onClearFilters}
+              className="px-5 py-2.5 rounded-full font-medium bg-green-primary text-white shadow-green-glow hover:shadow-green-glow-lg transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-primary focus-visible:ring-offset-2"
+            >
+              Clear filters
+            </button>
+          )}
         </div>
       </div>
     );
