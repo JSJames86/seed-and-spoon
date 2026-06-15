@@ -154,6 +154,7 @@ export async function POST(request) {
     };
   };
 
+  let plannedBase = null;
   const result = await runMealLeverageEngine({
     recipes,
     pantry,
@@ -165,7 +166,30 @@ export async function POST(request) {
     altStores,
     snap,
     householdId: household.id,
+    onBase: (base) => { plannedBase = base; },
   });
+
+  // §4 shortfall, instrumented (5 Loaves Pilot): each plan recipe's `missing`
+  // -- ingredients the pantry didn't cover before this run's purchases --
+  // becomes a requirement_events row. satisfied_by stays null here; it's set
+  // later by /api/spoonassist/provenance/lots when a matching self_purchase
+  // or five_loaves_delivery lot is logged. Best-effort: a failure here
+  // shouldn't block the plan response.
+  if (plannedBase) {
+    const requirementRows = plannedBase.plan.flatMap(p => p.missing.map(m => ({
+      household_id: household.id,
+      ingredient_id: m.id,
+      qty_required: m.amount,
+      satisfied_by: null,
+    })));
+
+    if (requirementRows.length > 0) {
+      const { error: requirementError } = await supabase.from('requirement_events').insert(requirementRows);
+      if (requirementError) {
+        console.error('[/api/spoonassist/meal-plan] Failed to log requirement_events:', requirementError.message);
+      }
+    }
+  }
 
   return NextResponse.json(result);
 }

@@ -397,3 +397,82 @@ app-tracked meals. Pair the result with the weekly `app_coverage` survey line
 ("what share of dinners did you track in the app?") and report the metric as
 "share among app-tracked meals (covering ~X% of dinners)" — never as if it
 covered every meal the household ate.
+
+## `app/api/spoonassist/provenance/*` — 5 Loaves Pilot event-logging routes
+
+All four routes use the same RLS-scoped session client as
+`pantry`/`meal-plan`/`recipe-import` (401 if unauthenticated, 404 if
+`householdId` doesn't resolve to a household the caller owns, 503 if
+SpoonAssist env vars aren't configured).
+
+### POST `.../intake` — the one-time `pre_existing` tap
+
+Body: `{ householdId }`. Snapshots every `pantry_items` row with
+`remaining > 0` into an `acquisition_lots` row with `source: 'pre_existing'`,
+`qty_initial = qty_remaining = remaining`, `unit = canonical_ingredients.standard_unit`.
+This is the **only** place `pre_existing` is ever written. Returns 409 if the
+household already has any `pre_existing` lots (the tap already ran), 400 if
+the pantry is empty.
+
+### `.../lots` — log a new acquisition
+
+`GET ?householdId=...` → `{ lots: [...] }`, oldest-`acquiredAt`-first (the
+`drawFromLots` FIFO order) — for inspecting current provenance.
+
+`POST` body: `{ householdId, ingredientId, source, qty, acquiredAt? }` where
+`source` is `self_purchase | food_pantry | five_loaves_delivery |
+regenerative` (rejects `pre_existing` — 400). `unit` is always taken from
+`canonical_ingredients.standard_unit`, never from the caller. Inserts one
+`acquisition_lots` row with `qty_initial = qty_remaining = qty`.
+
+When `source` is `self_purchase` or `five_loaves_delivery`, any open
+`requirement_events` (`satisfied_by IS NULL`) for this household+ingredient
+are updated to `satisfied_by = source` — closing the loop that
+`meal-plan`/`provenance/meals` opened. The response includes
+`satisfiedRequirements` (count updated).
+
+### POST `.../meals` — log a cooked meal
+
+Body: `{ householdId, recipeId?, servings, plannedInApp? (default true),
+items: [{ ingredientId, qty }] }`. For each item:
+
+1. Loads the household's `acquisition_lots` for that ingredient
+   (`qty_remaining > 0`) and calls `drawFromLots` (the attribution rule).
+2. Writes one `consumption_events` row per lot drawn (inheriting that lot's
+   `source`) and writes back each drawn lot's `qty_remaining`.
+3. If `drawFromLots` reports a `shortfall > 0`, inserts a `requirement_events`
+   row (`satisfied_by: null`) for the unmet remainder.
+
+This is several sequential Supabase writes with no DB transaction/RPC — an
+accepted pilot-scale tradeoff. A failure partway through can leave
+`meal_events`/`consumption_events`/`acquisition_lots` partially updated for
+that meal.
+
+### GET `.../summary?householdId=...&days=7` — the two lines, rolled up
+
+Loads `meal_events` where `planned_in_app = true` and `cooked_at` is within
+the last `days` days (the denominator guard), joins each meal's
+`consumption_events` to its lot's `source`, prices each consumed quantity via
+`priceEngine.resolveIngredientPrice`, and runs `attributeMeal` per meal +
+`rollUpWeeklyShares` across the window.
+
+Returns `{ since, until, mealsCount, totalServings, ownResourceShare,
+deliveryDependenceShare, perMeal: [...] }`. `ownResourceShare`/
+`deliveryDependenceShare` cover app-tracked meals only — pair with the weekly
+`app_coverage` survey line when reporting (see Denominator guard, above).
+
+## `requirement_events` wiring (`app/api/spoonassist/meal-plan/route.js`)
+
+`runMealLeverageEngine` accepts an optional `onBase(base)` hook, called with
+the winning candidate's `base` (the `planBuyList`/`buildCoveragePlans` result
+— `plan`, `cart`, `gapServings`, ...) right before the §7 verdict is built.
+This lets a caller read internals like `base.plan[].missing` (raw
+`{id, amount, unit}[]` from `shortfall()`, with canonical ingredient ids)
+without changing `runMealLeverageEngine`'s JSON-serializable return shape.
+
+`meal-plan/route.js` uses this hook to log one `requirement_events` row
+(`meal_event_id: null`, `satisfied_by: null`) per missing ingredient across
+the winning plan's recipes — "§4 shortfall, instrumented." This insert is
+best-effort: a failure is logged to the console but doesn't fail the plan
+response. `.../provenance/lots` later sets `satisfied_by` when a matching
+`self_purchase`/`five_loaves_delivery` lot is logged for that ingredient.
