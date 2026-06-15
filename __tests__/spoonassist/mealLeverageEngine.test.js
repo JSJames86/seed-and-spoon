@@ -3,12 +3,20 @@ import {
   shortfall,
   depletionBonus,
   prefMultiplier,
+  passesNourishmentFloor,
   mealLeverageScore,
   planBuyList,
+  scoreCoveragePlan,
+  buildCoveragePlans,
+  selectBestCoveragePlan,
   findBridgeBuy,
   evaluateStoreSwitch,
+  buildBridgeRequest,
+  buildRecipeInResult,
   buildVerdict,
   runMealLeverageEngine,
+  NOURISHMENT_FLOOR,
+  DONATION_THRESHOLD,
 } from '@/lib/spoonassist/mealLeverageEngine';
 
 function round2(n) {
@@ -329,16 +337,17 @@ describe('buildVerdict', () => {
     expect(verdict.coversDays).toBe(1);
     expect(verdict.store).toBe('ShopRite');
     expect(verdict.buy).toEqual([{ name: 'Rice', qty: '8 oz', price: 8 }]);
-    expect(verdict.plan[0]).toEqual({ name: 'Recipe One', servings: 4, source: 'buy', missing: ['Rice'] });
+    expect(verdict.plan[0]).toEqual({ name: 'Recipe One', servings: 4, source: 'buy', missing: ['Rice'], pinned: false });
     expect(verdict.headline).toBe("You're $8.00 away from 4 meals.");
     expect(verdict.gap).toBeNull();
   });
 
-  test('gap verdict reports bridge, store switch, and referral', () => {
+  test('gap verdict reports a Gap Report with bridge, store switch, and referral', () => {
     const base = { plan: [], cart: new Map(), spent: 0, stretched: false, gapServings: 4 };
     const gap = {
       bridge: { extraCost: 12, additions: [{ recipe: { id: 'b', name: 'Bridge Recipe', servings: 4 } }], closesGap: true },
       storeSwitch: null,
+      bridgeRequest: null,
       referral: null,
     };
 
@@ -347,8 +356,13 @@ describe('buildVerdict', () => {
     });
 
     expect(verdict.verdict).toBe('gap');
-    expect(verdict.gap.servings).toBe(4);
+    expect(verdict.gap.neededServings).toBe(4);
+    expect(verdict.gap.coveredServings).toBe(0);
+    expect(verdict.gap.shortfallServings).toBe(4);
+    expect(verdict.gap.additionalCost).toBe(12);
     expect(verdict.gap.bridge).toEqual({ extraCost: 12, unlocks: 4, closesGap: true, recipes: ['Bridge Recipe'] });
+    expect(verdict.gap.bridgeRequest).toBeNull();
+    expect(verdict.gap.referral).toBeNull();
   });
 });
 
@@ -406,9 +420,13 @@ describe('runMealLeverageEngine', () => {
     });
 
     expect(result.verdict).toBe('gap');
-    expect(result.gap.servings).toBe(4);
+    expect(result.gap.neededServings).toBe(8);
+    expect(result.gap.coveredServings).toBe(4);
+    expect(result.gap.shortfallServings).toBe(4);
+    expect(result.gap.additionalCost).toBe(0);
     expect(result.gap.bridge.closesGap).toBe(false);
     expect(result.gap.storeSwitch).toBeNull();
+    expect(result.gap.bridgeRequest).toBeNull();
     expect(result.gap.referral.type).toBe('seed_and_spoon_referral');
     expect(result.gap.referral.ctaUrl).toBe('/get-help');
   });
@@ -464,5 +482,289 @@ describe('runMealLeverageEngine', () => {
 
     expect(result.plan.map(p => p.name)).toEqual(['Eligible Recipe']);
     expect(result.spent).toBeLessThanOrEqual(20);
+  });
+
+  test('excludes recipes below NOURISHMENT_FLOOR from the candidate pool entirely', async () => {
+    const junk = {
+      id: 'junk', name: 'Buttered Noodles', servings: 4, nutrition: NOURISHMENT_FLOOR - 0.01, snapEligible: true,
+      ingredients: [{ id: 'noodles', amount: 1, unit: 'oz' }],
+    };
+    const healthy = {
+      id: 'healthy', name: 'Healthy Bowl', servings: 4, nutrition: 0.6, snapEligible: true,
+      ingredients: [{ id: 'rice', amount: 4, unit: 'oz' }],
+    };
+    const priceBasket = makePriceBasket({ noodles: 0.01, rice: 1 });
+
+    const result = await runMealLeverageEngine({
+      recipes: [junk, healthy],
+      pantry: [],
+      household: { size: 4, dinnersNeeded: 1 },
+      priceBasket,
+      ingredientCatalog: new Map([...ingredientCatalog, ['noodles', { name: 'Noodles' }]]),
+      store: { id: 'test-store', name: 'Test Store' },
+      budget: 10,
+    });
+
+    expect(result.plan.map(p => p.name)).toEqual(['Healthy Bowl']);
+  });
+
+  test('mints a bridge_request when the unclosed gap is within DONATION_THRESHOLD', async () => {
+    const recipeA = {
+      id: 'a', name: 'Recipe A', servings: 4, nutrition: 0.8, snapEligible: true,
+      ingredients: [{ id: 'rice', amount: 4, unit: 'oz' }],
+    };
+    const recipeB = {
+      id: 'b', name: 'Recipe B', servings: 4, nutrition: 0.8, snapEligible: true,
+      ingredients: [{ id: 'beans', amount: 4, unit: 'oz' }],
+    };
+    const priceBasket = makePriceBasket({ rice: 1, beans: 2 });
+
+    const result = await runMealLeverageEngine({
+      recipes: [recipeA, recipeB],
+      pantry: [],
+      household: { size: 4, dinnersNeeded: 3 }, // needs 12 servings
+      priceBasket,
+      ingredientCatalog,
+      store: { id: 'test-store', name: 'Test Store' },
+      budget: 4, // only covers Recipe A
+      householdId: 'house-1',
+    });
+
+    expect(result.verdict).toBe('gap');
+    expect(result.gap.neededServings).toBe(12);
+    expect(result.gap.coveredServings).toBe(4);
+    expect(result.gap.shortfallServings).toBe(8);
+    expect(result.gap.additionalCost).toBe(8);
+    expect(result.gap.bridge.closesGap).toBe(false);
+    expect(result.gap.referral).toBeNull();
+    expect(result.gap.bridgeRequest).toEqual({
+      type: 'bridge_request',
+      household_id: 'house-1',
+      gapCost: 8,
+      shortfallServings: 4,
+      blurb: "This household is $8.00 away from a full week of meals -- 4 meals short.",
+      donation: { amount: 800, currency: 'usd', interval: 'one_time' },
+    });
+  });
+
+  test('recipe-in: pre-seeds the imported recipe and reports what cooking it unlocks', async () => {
+    const imported = {
+      id: 'imported', name: 'Imported Skillet', servings: 4, nutrition: 0.8,
+      ingredients: [{ id: 'rice', amount: 4, unit: 'oz' }, { id: 'beans', amount: 2, unit: 'oz' }],
+    };
+    const riceBowl = {
+      id: 'rice-bowl', name: 'Rice Bowl', servings: 4, nutrition: 0.8, snapEligible: true,
+      ingredients: [{ id: 'rice', amount: 4, unit: 'oz' }],
+    };
+    const priceBasket = makePriceBasket({ rice: 1, beans: 2 });
+
+    const result = await runMealLeverageEngine({
+      recipes: [riceBowl],
+      pantry: [],
+      household: { size: 4, dinnersNeeded: 2 }, // needs 8 servings
+      priceBasket,
+      ingredientCatalog,
+      store: { id: 'test-store', name: 'Test Store' },
+      recipeIn: imported,
+      householdId: 'house-1',
+    });
+
+    expect(result.plan[0]).toMatchObject({ name: 'Imported Skillet', servings: 4, source: 'buy', pinned: true });
+    expect(result.plan[1]).toMatchObject({ name: 'Rice Bowl', servings: 4, source: 'pantry', pinned: false });
+    expect(result.recipeIn).toEqual({
+      name: 'Imported Skillet',
+      have: [],
+      need: [{ name: 'Rice', qty: '4 oz' }, { name: 'Black Beans', qty: '2 oz' }],
+      cost: 8,
+      missing: ['Rice', 'Black Beans'],
+      unlocks: ['Rice Bowl'],
+      unlocksServings: 4,
+    });
+    expect(result.gap).toBeNull();
+  });
+});
+
+describe('passesNourishmentFloor', () => {
+  test('passes recipes at or above NOURISHMENT_FLOOR', () => {
+    expect(passesNourishmentFloor({ nutrition: NOURISHMENT_FLOOR })).toBe(true);
+    expect(passesNourishmentFloor({ nutrition: 0.9 })).toBe(true);
+  });
+
+  test('rejects recipes below NOURISHMENT_FLOOR, including those missing a nutrition field', () => {
+    expect(passesNourishmentFloor({ nutrition: NOURISHMENT_FLOOR - 0.01 })).toBe(false);
+    expect(passesNourishmentFloor({})).toBe(false);
+  });
+});
+
+describe('scoreCoveragePlan', () => {
+  test('rewards coverage, nutrition, overlap, and preference; penalizes single-use spend', async () => {
+    const riceAndBeans = {
+      id: 'rice-beans', name: 'Rice & Beans', servings: 4, nutrition: 0.8,
+      ingredients: [{ id: 'rice', amount: 4, unit: 'oz' }, { id: 'beans', amount: 2, unit: 'oz' }],
+    };
+    const cheesyRice = {
+      id: 'cheesy-rice', name: 'Cheesy Rice', servings: 4, nutrition: 0.8,
+      ingredients: [{ id: 'rice', amount: 4, unit: 'oz' }, { id: 'cheese', amount: 1, unit: 'oz' }],
+    };
+    const priceBasket = makePriceBasket({ rice: 1, beans: 2, cheese: 3 });
+    const household = { size: 4, dinnersNeeded: 2 }; // needs 8 servings
+
+    const base = await planBuyList({
+      recipes: [riceAndBeans, cheesyRice],
+      pantry: [],
+      household,
+      budget: 100,
+      storeId: 'test-store',
+      priceBasket,
+    });
+
+    const score = scoreCoveragePlan({ base, household });
+
+    expect(score.coverageScore).toBe(1); // 8 servings produced / 8 needed
+    expect(score.nutritionScore).toBeCloseTo(0.8, 5);
+    // rice is used by both recipes -- 2 of 4 total ingredient-uses are shared
+    expect(score.overlapScore).toBeCloseTo(0.5, 5);
+    expect(score.preferenceScore).toBe(1);
+    // beans ($4) and cheese ($3) are each used by only one recipe -> 7 of 11 $ wasted
+    expect(score.wastePenalty).toBeCloseTo(7 / 11, 5);
+    expect(score.planScore).toBeCloseTo(0.61, 5);
+  });
+
+  test('returns zeroed scores for an empty plan', () => {
+    const base = { plan: [], cart: new Map() };
+    const score = scoreCoveragePlan({ base, household: { size: 4, dinnersNeeded: 2 } });
+
+    expect(score).toEqual({
+      coverageScore: 0, nutritionScore: 0, overlapScore: 0, preferenceScore: 0, wastePenalty: 0, planScore: 0,
+    });
+  });
+});
+
+describe('buildCoveragePlans / selectBestCoveragePlan', () => {
+  test('builds deduped candidates across seeds and picks the highest planScore', async () => {
+    const highNutrition = {
+      id: 'high', name: 'High Nutrition', servings: 4, nutrition: 0.9,
+      ingredients: [{ id: 'rice', amount: 4, unit: 'oz' }],
+    };
+    const lowNutrition = {
+      id: 'low', name: 'Low Nutrition', servings: 4, nutrition: 0.5,
+      ingredients: [{ id: 'junk', amount: 4, unit: 'oz' }],
+    };
+    const priceBasket = makePriceBasket({ rice: 1, junk: 1 });
+    const household = { size: 4, dinnersNeeded: 1 }; // needs 4 servings, budget covers only one recipe
+
+    const candidates = await buildCoveragePlans({
+      recipes: [highNutrition, lowNutrition],
+      pantry: [],
+      household,
+      budget: 4,
+      storeId: 'test-store',
+      priceBasket,
+    });
+
+    // 3 seeds (null + 2 anchors), but seed=null and seed=highNutrition produce
+    // the same plan -- only 2 distinct candidates survive dedup.
+    expect(candidates.length).toBe(2);
+
+    const best = selectBestCoveragePlan(candidates);
+    expect(best.base.plan.map(p => p.recipe.id)).toEqual(['high']);
+  });
+
+  test('pinnedRecipe collapses the beam to a single candidate', async () => {
+    const recipe = {
+      id: 'r1', name: 'Recipe', servings: 4, nutrition: 0.8,
+      ingredients: [{ id: 'rice', amount: 4, unit: 'oz' }],
+    };
+    const priceBasket = makePriceBasket({ rice: 1 });
+
+    const candidates = await buildCoveragePlans({
+      recipes: [recipe],
+      pantry: [],
+      household: { size: 4, dinnersNeeded: 1 },
+      budget: 10,
+      storeId: 'test-store',
+      priceBasket,
+      pinnedRecipe: recipe,
+    });
+
+    expect(candidates.length).toBe(1);
+    expect(candidates[0].base.plan[0].pinned).toBe(true);
+  });
+});
+
+describe('planBuyList with pinnedRecipe', () => {
+  test('commits the pinned recipe first, even over budget, and still picks free recipes after', async () => {
+    const pricey = {
+      id: 'pricey', name: 'Pricey Pinned', servings: 4, nutrition: 0.8,
+      ingredients: [{ id: 'steak', amount: 1, unit: 'oz' }],
+    };
+    const free = {
+      id: 'free', name: 'Free Meal', servings: 4, nutrition: 0.5,
+      ingredients: [{ id: 'rice', amount: 4, unit: 'oz' }],
+    };
+    const priceBasket = makePriceBasket({ steak: 50 });
+
+    const result = await planBuyList({
+      recipes: [free],
+      pantry: [{ id: 'rice', remaining: 10 }],
+      household: { size: 4, dinnersNeeded: 2 }, // needs 8 servings
+      budget: 10,
+      storeId: 'test-store',
+      priceBasket,
+      pinnedRecipe: pricey,
+    });
+
+    expect(result.plan[0]).toMatchObject({ cost: 50, pinned: true });
+    expect(result.budgetLeft).toBe(10 - 50);
+    // Free, pantry-covered recipe still gets picked despite negative budgetLeft.
+    expect(result.plan[1]).toMatchObject({ recipe: free, cost: 0, fromPantry: true });
+    expect(result.stretched).toBe(true); // pinned (4) + free (4) = 8 servings needed
+  });
+
+  test('a pinned recipe fully covered by pantry is free and still subtracts its servings', async () => {
+    const recipe = {
+      id: 'r1', name: 'Recipe', servings: 4, nutrition: 0.8,
+      ingredients: [{ id: 'rice', amount: 4, unit: 'oz' }],
+    };
+
+    const result = await planBuyList({
+      recipes: [],
+      pantry: [{ id: 'rice', remaining: 10 }],
+      household: { size: 4, dinnersNeeded: 1 },
+      budget: 10,
+      storeId: 'test-store',
+      priceBasket: async () => ({ total: 0, items: [] }),
+      pinnedRecipe: recipe,
+    });
+
+    expect(result.plan).toEqual([{ recipe, cost: 0, missing: [], fromPantry: true, pinned: true }]);
+    expect(result.budgetLeft).toBe(10);
+    expect(result.stretched).toBe(true);
+    expect(result.gapServings).toBe(0);
+  });
+});
+
+describe('buildBridgeRequest', () => {
+  test('shapes a donation request matching donationCheckoutSchema', () => {
+    const req = buildBridgeRequest({ householdId: 'house-1', gapCost: 8.5, shortfallServings: 2 });
+
+    expect(req.type).toBe('bridge_request');
+    expect(req.household_id).toBe('house-1');
+    expect(req.gapCost).toBe(8.5);
+    expect(req.shortfallServings).toBe(2);
+    expect(req.blurb).toBe('This household is $8.50 away from a full week of meals -- 2 meals short.');
+    expect(req.donation).toEqual({ amount: 850, currency: 'usd', interval: 'one_time' });
+  });
+
+  test('enforces the $1.00 donationCheckoutSchema minimum even for sub-dollar gaps', () => {
+    const req = buildBridgeRequest({ householdId: 'house-1', gapCost: 0.5, shortfallServings: 1 });
+    expect(req.donation.amount).toBe(100);
+  });
+});
+
+describe('buildRecipeInResult', () => {
+  test('returns null when no recipe is pinned', () => {
+    const base = { plan: [{ recipe: { id: 'r', name: 'R', servings: 4, ingredients: [] }, cost: 4, missing: [], fromPantry: false }] };
+    expect(buildRecipeInResult({ base, ingredientCatalog: new Map() })).toBeNull();
   });
 });

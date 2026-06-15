@@ -164,6 +164,7 @@ export async function POST(request) {
     budget: body.budget,
     altStores,
     snap,
+    householdId: household.id,
   });
 
   return NextResponse.json(result);
