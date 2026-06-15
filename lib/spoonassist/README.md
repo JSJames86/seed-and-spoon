@@ -146,10 +146,32 @@ flat `IMPORTED_RECIPE_NUTRITION` score.
 
 - If `pinnedRecipe` is given (§9 recipe-in), it's the only seed — the pin
   itself is the constraint, so there's nothing to vary.
-- Otherwise, builds one unseeded plan plus one plan per "anchor" recipe (the
-  top `BEAM_WIDTH - 1` recipes by marginal score against a flat cost of 1,
-  each pinned first via `planBuyList`'s `pinnedRecipe`). Duplicate resulting
-  plans (same recipe-id set) are collapsed.
+- Otherwise, builds one unseeded plan plus one plan per "anchor" recipe, each
+  pinned first via `planBuyList`'s `pinnedRecipe`. Duplicate resulting plans
+  (same recipe-id set) are collapsed.
+
+#### Anchor seeding (`BEAM_WIDTH - 1` slots, value + overlap interleaved)
+
+Anchors fill `BEAM_WIDTH - 1` slots by interleaving two rankings of eligible
+recipes (`mls > 0` against a flat cost of 1, i.e. not a hard preference skip):
+
+- **VALUE** — top recipes by marginal score against a flat cost of 1
+  (`servings * nutrition^w * depletion * preference`), a cost-agnostic proxy
+  for "inherently high-value" since real cost depends on pantry state that
+  only exists once a recipe is pinned.
+- **OVERLAP POTENTIAL** — top recipes by, for each of their ingredients, how
+  many *other* eligible recipes also use that ingredient, summed across the
+  recipe. High potential means pinning this recipe makes the most *other*
+  recipes cheaper next.
+
+The two rankings are interleaved (value, overlap, value, overlap, ...,
+skipping recipes already chosen) until the slots are full. Value-only seeding
+strands low-value "hub" recipes: a cheap, non-overlapping recipe out-scores
+the hub on its own marginal value, so the hub never gets a seeded plan and
+the beam never sees what buying it would unlock (`buildCoveragePlans` has no
+lookahead beyond the seeds it actually builds). Interleaving guarantees a
+high-overlap hub gets a seed slot even when its standalone value wouldn't earn
+one — see `__tests__/spoonassist/beamSearchOverlap.test.js`.
 
 Each candidate is scored with `scoreCoveragePlan`; `selectBestCoveragePlan`
 picks the highest `planScore` (ties favor the earlier/unseeded candidate).

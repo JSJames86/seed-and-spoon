@@ -15,12 +15,15 @@ import {
 // greedy takes the cheap one and stalls -- it strands the overlap.
 //
 // The beam search (buildCoveragePlans) exists to fix exactly this: it also
-// builds anchor-SEEDED candidate plans that pin a high-value recipe first,
-// then lets planScore (which rewards coverage + overlap) pick the winner.
+// builds anchor-SEEDED candidate plans that pin a recipe first, then lets
+// planScore (which rewards coverage + overlap) pick the winner. Anchors are
+// seeded two ways -- by VALUE (top marginal score) and by OVERLAP POTENTIAL
+// (how many other corpus recipes share a recipe's ingredients) -- and
+// interleaved, so a low-value high-overlap "hub" still earns a seed slot.
 //
-// These two tests draw the boundary of how well that fix currently works:
-//   1. value-competitive hub  -> beam RECOVERS the strand   (proves the win)
-//   2. low-value hub          -> beam STILL strands         (pins the gap)
+// These two tests cover both seeding paths:
+//   1. value-competitive hub  -> recovered via a VALUE-seeded anchor
+//   2. low-value hub          -> recovered via an OVERLAP-seeded anchor
 //
 // Both use the same shape: a household needing 16 servings (4 people x 4
 // dinners) on an $8 budget, a "hub" ingredient (chicken, $4) shared by four
@@ -105,17 +108,18 @@ describe('beam search vs. overlap stranding', () => {
 
   // -- Scenario 2: identical overlap structure, but the hub recipes are
   //    LOW-value (nutrition 0.45 -- still above the 0.4 nourishment floor),
-  //    while three high-nutrition standalone decoys occupy the anchor slots.
-  //    Anchors are seeded by VALUE, not OVERLAP, so no chicken recipe is ever
-  //    seeded, the 16/16 hub plan is never generated, and the beam strands
-  //    just like greedy. This test pins the CURRENT limitation. --
-  test('STILL strands a low-value high-overlap hub (value-only anchor seeding)', async () => {
+  //    while three high-nutrition standalone decoys occupy the top VALUE
+  //    anchor slots. No chicken recipe would ever be seeded by value alone --
+  //    but every chkX recipe has the highest OVERLAP POTENTIAL in the corpus
+  //    (chicken is shared by all four), so one of them fills the
+  //    overlap-seeded anchor slot, pins the hub, and the beam recovers. --
+  test('RECOVERS a strand when the high-overlap hub is LOW-value (overlap-seeded anchor)', async () => {
     const recipes = [
       recipe('dec1', 0.9, ['d1']),                  // high-nutrition decoys: no overlap,
-      recipe('dec2', 0.9, ['d2']),                  // but they grab the top anchor seeds
+      recipe('dec2', 0.9, ['d2']),                  // but they win the top VALUE anchor slots
       recipe('dec3', 0.9, ['d3']),
-      recipe('chkA', 0.45, ['chicken', 'pA']),       // low-value hub: never seeded
-      recipe('chkB', 0.45, ['chicken', 'pB']),
+      recipe('chkA', 0.45, ['chicken', 'pA']),       // low-value hub: never a VALUE anchor,
+      recipe('chkB', 0.45, ['chicken', 'pB']),       // but the top OVERLAP anchor
       recipe('chkC', 0.45, ['chicken', 'pC']),
       recipe('chkD', 0.45, ['chicken', 'pD']),
     ];
@@ -129,22 +133,17 @@ describe('beam search vs. overlap stranding', () => {
     });
     const best = selectBestCoveragePlan(candidates);
 
-    // The chicken hub plan (which would cover 16/16 on the same $8) is never
-    // even a candidate -- every plan the beam builds is a decoy strand.
+    // The chicken hub plan IS a candidate -- the overlap-seeded anchor pins
+    // it, and the same $8 that strands a decoy-only plan at 8/16 rides the
+    // chicken overlap to full 16/16 coverage.
     const hubEverConsidered = candidates.some(c =>
       c.base.plan.some(p => p.recipe.id.startsWith('chk')));
-    expect(hubEverConsidered).toBe(false);
+    expect(hubEverConsidered).toBe(true);
 
-    // So the selected plan strands at 8/16, exactly like plain greedy.
-    expect(best.base.gapServings).toBe(8);
-    expect(best.base.plan.every(p => p.recipe.id.startsWith('dec'))).toBe(true);
+    expect(best.base.gapServings).toBe(0);
+    expect(best.base.plan).toHaveLength(4);
+    expect(best.base.plan.every(p => p.recipe.id.startsWith('chk'))).toBe(true);
+    expect(best.base.spent).toBeLessThanOrEqual(BUDGET);
+    expect(best.score.planScore).toBeGreaterThan(0.5);
   });
-
-  // The behavior Scenario 2 SHOULD have once anchors are also seeded by
-  // overlap potential (how many other corpus recipes share a recipe's
-  // ingredients), not value alone. When that lands, implement this and the
-  // characterization assertions above should be updated to expect recovery.
-  test.todo(
-    'overlap-seeded anchors let the beam recover a low-value high-overlap hub (16/16)'
-  );
 });
