@@ -331,3 +331,69 @@ one).
 4. `runMealLeverageEngine({ ..., recipeIn: pinnedRecipe, householdId })` — the
    same §7 verdict shape as `meal-plan`, plus `recipeIn` (§9), `importedRecipe:
    { name, sourceUrl, image, servings }`, and `unresolved`.
+
+## `provenance.js` — 5 Loaves Pilot: event logging & provenance model
+
+Pure, DB-free math for the pilot's resilience metric: *what share of a
+household's meals come from their own resources, vs. 5 Loaves deliveries?*
+Schema lives in
+`supabase/migrations/20260615000001_five_loaves_provenance.sql`
+(`acquisition_lots`, `meal_events`, `consumption_events`,
+`requirement_events`, plus the `acquisition_source` enum), which extends §3
+(pantry availability) with an event log.
+
+### The one invariant
+
+Provenance lives on the `acquisition_lots` row and **never changes**. A lot is
+one ingredient, from one source, at one time. `pre_existing` is written
+**once**, at the intake pantry tap — after that, nothing is ever
+`pre_existing` again, and no job anywhere re-tags a lot's `source`. Pantry
+availability is `Σ qty_remaining` across a household's lots; it has no source
+of its own. This is what makes "5 Loaves food from last week became 'existing
+stock'" impossible by construction.
+
+### `drawFromLots(lots, ingredientId, qtyNeeded)` — the attribution rule
+
+Strict FIFO by `acquired_at`, **source-blind**: oldest food first, regardless
+of which `acquisition_source` it came from. Models real kitchen behavior and
+can't be tuned to flatter the metric. Mutates each drawn lot's `qtyRemaining`
+in place and returns `{ draws: {lotId, source, qty}[], shortfall }` —
+`draws[i].source` is how a `consumption_events` row inherits its lot's
+provenance.
+
+Honest consequence: intake `pre_existing` lots are oldest, so early weeks show
+a high own-resource share that *dips* as that baseline depletes. A share that
+*rises* again afterward can only come from `self_purchase` (or, in Phase 3,
+`regenerative`) — the real resilience signal.
+
+### `attributeMeal({ items, servings })` / `rollUpWeeklyShares(...)` — the two lines
+
+`attributeMeal` splits one meal's consumed value by source:
+
+```
+ownShare      = Σ value where source in (pre_existing, self_purchase, regenerative) / Σ value
+deliveredShare = Σ value where source == five_loaves_delivery / Σ value
+ownServings = servings * ownShare
+deliveredServings = servings * deliveredShare
+```
+
+`value` is the PriceEngine cost of each consumed item; if *any* item's value
+is unresolvable, the whole meal falls back to ingredient-slot counting (each
+item weighted 1) rather than mixing $ and slot counts. A third source
+(`food_pantry`) counts toward neither line by design — the two shares need not
+sum to 1.
+
+`rollUpWeeklyShares(mealAttributions, totalServings)` sums `ownServings` /
+`deliveredServings` across a set of meals into the week's two trend lines —
+**own-resource share** (resilience) and **delivery-dependence share**
+(dependence). Report both, never collapsed to one number: a rising own-share
+only means something if delivery-share isn't simultaneously backfilling it.
+
+### Denominator guard
+
+`meal_events.planned_in_app` flags whether a meal came through the planner —
+`rollUpWeeklyShares`'s `totalServings` should be the sum over the same
+app-tracked meals. Pair the result with the weekly `app_coverage` survey line
+("what share of dinners did you track in the app?") and report the metric as
+"share among app-tracked meals (covering ~X% of dinners)" — never as if it
+covered every meal the household ate.
