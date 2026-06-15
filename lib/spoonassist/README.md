@@ -146,10 +146,32 @@ flat `IMPORTED_RECIPE_NUTRITION` score.
 
 - If `pinnedRecipe` is given (§9 recipe-in), it's the only seed — the pin
   itself is the constraint, so there's nothing to vary.
-- Otherwise, builds one unseeded plan plus one plan per "anchor" recipe (the
-  top `BEAM_WIDTH - 1` recipes by marginal score against a flat cost of 1,
-  each pinned first via `planBuyList`'s `pinnedRecipe`). Duplicate resulting
-  plans (same recipe-id set) are collapsed.
+- Otherwise, builds one unseeded plan plus one plan per "anchor" recipe, each
+  pinned first via `planBuyList`'s `pinnedRecipe`. Duplicate resulting plans
+  (same recipe-id set) are collapsed.
+
+#### Anchor seeding (`BEAM_WIDTH - 1` slots, value + overlap interleaved)
+
+Anchors fill `BEAM_WIDTH - 1` slots by interleaving two rankings of eligible
+recipes (`mls > 0` against a flat cost of 1, i.e. not a hard preference skip):
+
+- **VALUE** — top recipes by marginal score against a flat cost of 1
+  (`servings * nutrition^w * depletion * preference`), a cost-agnostic proxy
+  for "inherently high-value" since real cost depends on pantry state that
+  only exists once a recipe is pinned.
+- **OVERLAP POTENTIAL** — top recipes by, for each of their ingredients, how
+  many *other* eligible recipes also use that ingredient, summed across the
+  recipe. High potential means pinning this recipe makes the most *other*
+  recipes cheaper next.
+
+The two rankings are interleaved (value, overlap, value, overlap, ...,
+skipping recipes already chosen) until the slots are full. Value-only seeding
+strands low-value "hub" recipes: a cheap, non-overlapping recipe out-scores
+the hub on its own marginal value, so the hub never gets a seeded plan and
+the beam never sees what buying it would unlock (`buildCoveragePlans` has no
+lookahead beyond the seeds it actually builds). Interleaving guarantees a
+high-overlap hub gets a seed slot even when its standalone value wouldn't earn
+one — see `__tests__/spoonassist/beamSearchOverlap.test.js`.
 
 Each candidate is scored with `scoreCoveragePlan`; `selectBestCoveragePlan`
 picks the highest `planScore` (ties favor the earlier/unseeded candidate).
@@ -309,3 +331,148 @@ one).
 4. `runMealLeverageEngine({ ..., recipeIn: pinnedRecipe, householdId })` — the
    same §7 verdict shape as `meal-plan`, plus `recipeIn` (§9), `importedRecipe:
    { name, sourceUrl, image, servings }`, and `unresolved`.
+
+## `provenance.js` — 5 Loaves Pilot: event logging & provenance model
+
+Pure, DB-free math for the pilot's resilience metric: *what share of a
+household's meals come from their own resources, vs. 5 Loaves deliveries?*
+Schema lives in
+`supabase/migrations/20260615000001_five_loaves_provenance.sql`
+(`acquisition_lots`, `meal_events`, `consumption_events`,
+`requirement_events`, plus the `acquisition_source` enum), which extends §3
+(pantry availability) with an event log.
+
+### The one invariant
+
+Provenance lives on the `acquisition_lots` row and **never changes**. A lot is
+one ingredient, from one source, at one time. `pre_existing` is written
+**once**, at the intake pantry tap — after that, nothing is ever
+`pre_existing` again, and no job anywhere re-tags a lot's `source`. Pantry
+availability is `Σ qty_remaining` across a household's lots; it has no source
+of its own. This is what makes "5 Loaves food from last week became 'existing
+stock'" impossible by construction.
+
+### `drawFromLots(lots, ingredientId, qtyNeeded)` — the attribution rule
+
+Strict FIFO by `acquired_at`, **source-blind**: oldest food first, regardless
+of which `acquisition_source` it came from. Models real kitchen behavior and
+can't be tuned to flatter the metric. Mutates each drawn lot's `qtyRemaining`
+in place and returns `{ draws: {lotId, source, qty}[], shortfall }` —
+`draws[i].source` is how a `consumption_events` row inherits its lot's
+provenance.
+
+Honest consequence: intake `pre_existing` lots are oldest, so early weeks show
+a high own-resource share that *dips* as that baseline depletes. A share that
+*rises* again afterward can only come from `self_purchase` (or, in Phase 3,
+`regenerative`) — the real resilience signal.
+
+### `attributeMeal({ items, servings })` / `rollUpWeeklyShares(...)` — the two lines
+
+`attributeMeal` splits one meal's consumed value by source:
+
+```
+ownShare      = Σ value where source in (pre_existing, self_purchase, regenerative) / Σ value
+deliveredShare = Σ value where source == five_loaves_delivery / Σ value
+ownServings = servings * ownShare
+deliveredServings = servings * deliveredShare
+```
+
+`value` is the PriceEngine cost of each consumed item; if *any* item's value
+is unresolvable, the whole meal falls back to ingredient-slot counting (each
+item weighted 1) rather than mixing $ and slot counts. A third source
+(`food_pantry`) counts toward neither line by design — the two shares need not
+sum to 1.
+
+`rollUpWeeklyShares(mealAttributions, totalServings)` sums `ownServings` /
+`deliveredServings` across a set of meals into the week's two trend lines —
+**own-resource share** (resilience) and **delivery-dependence share**
+(dependence). Report both, never collapsed to one number: a rising own-share
+only means something if delivery-share isn't simultaneously backfilling it.
+
+### Denominator guard
+
+`meal_events.planned_in_app` flags whether a meal came through the planner —
+`rollUpWeeklyShares`'s `totalServings` should be the sum over the same
+app-tracked meals. Pair the result with the weekly `app_coverage` survey line
+("what share of dinners did you track in the app?") and report the metric as
+"share among app-tracked meals (covering ~X% of dinners)" — never as if it
+covered every meal the household ate.
+
+## `app/api/spoonassist/provenance/*` — 5 Loaves Pilot event-logging routes
+
+All four routes use the same RLS-scoped session client as
+`pantry`/`meal-plan`/`recipe-import` (401 if unauthenticated, 404 if
+`householdId` doesn't resolve to a household the caller owns, 503 if
+SpoonAssist env vars aren't configured).
+
+### POST `.../intake` — the one-time `pre_existing` tap
+
+Body: `{ householdId }`. Snapshots every `pantry_items` row with
+`remaining > 0` into an `acquisition_lots` row with `source: 'pre_existing'`,
+`qty_initial = qty_remaining = remaining`, `unit = canonical_ingredients.standard_unit`.
+This is the **only** place `pre_existing` is ever written. Returns 409 if the
+household already has any `pre_existing` lots (the tap already ran), 400 if
+the pantry is empty.
+
+### `.../lots` — log a new acquisition
+
+`GET ?householdId=...` → `{ lots: [...] }`, oldest-`acquiredAt`-first (the
+`drawFromLots` FIFO order) — for inspecting current provenance.
+
+`POST` body: `{ householdId, ingredientId, source, qty, acquiredAt? }` where
+`source` is `self_purchase | food_pantry | five_loaves_delivery |
+regenerative` (rejects `pre_existing` — 400). `unit` is always taken from
+`canonical_ingredients.standard_unit`, never from the caller. Inserts one
+`acquisition_lots` row with `qty_initial = qty_remaining = qty`.
+
+When `source` is `self_purchase` or `five_loaves_delivery`, any open
+`requirement_events` (`satisfied_by IS NULL`) for this household+ingredient
+are updated to `satisfied_by = source` — closing the loop that
+`meal-plan`/`provenance/meals` opened. The response includes
+`satisfiedRequirements` (count updated).
+
+### POST `.../meals` — log a cooked meal
+
+Body: `{ householdId, recipeId?, servings, plannedInApp? (default true),
+items: [{ ingredientId, qty }] }`. For each item:
+
+1. Loads the household's `acquisition_lots` for that ingredient
+   (`qty_remaining > 0`) and calls `drawFromLots` (the attribution rule).
+2. Writes one `consumption_events` row per lot drawn (inheriting that lot's
+   `source`) and writes back each drawn lot's `qty_remaining`.
+3. If `drawFromLots` reports a `shortfall > 0`, inserts a `requirement_events`
+   row (`satisfied_by: null`) for the unmet remainder.
+
+This is several sequential Supabase writes with no DB transaction/RPC — an
+accepted pilot-scale tradeoff. A failure partway through can leave
+`meal_events`/`consumption_events`/`acquisition_lots` partially updated for
+that meal.
+
+### GET `.../summary?householdId=...&days=7` — the two lines, rolled up
+
+Loads `meal_events` where `planned_in_app = true` and `cooked_at` is within
+the last `days` days (the denominator guard), joins each meal's
+`consumption_events` to its lot's `source`, prices each consumed quantity via
+`priceEngine.resolveIngredientPrice`, and runs `attributeMeal` per meal +
+`rollUpWeeklyShares` across the window.
+
+Returns `{ since, until, mealsCount, totalServings, ownResourceShare,
+deliveryDependenceShare, perMeal: [...] }`. `ownResourceShare`/
+`deliveryDependenceShare` cover app-tracked meals only — pair with the weekly
+`app_coverage` survey line when reporting (see Denominator guard, above).
+
+## `requirement_events` wiring (`app/api/spoonassist/meal-plan/route.js`)
+
+`runMealLeverageEngine` accepts an optional `onBase(base)` hook, called with
+the winning candidate's `base` (the `planBuyList`/`buildCoveragePlans` result
+— `plan`, `cart`, `gapServings`, ...) right before the §7 verdict is built.
+This lets a caller read internals like `base.plan[].missing` (raw
+`{id, amount, unit}[]` from `shortfall()`, with canonical ingredient ids)
+without changing `runMealLeverageEngine`'s JSON-serializable return shape.
+
+`meal-plan/route.js` uses this hook to log one `requirement_events` row
+(`meal_event_id: null`, `satisfied_by: null`) per missing ingredient across
+the winning plan's recipes — "§4 shortfall, instrumented." This insert is
+best-effort: a failure is logged to the console but doesn't fail the plan
+response. `.../provenance/lots` later sets `satisfied_by` when a matching
+`self_purchase`/`five_loaves_delivery` lot is logged for that ingredient.
