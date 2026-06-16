@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { captureEvent } from '@/analytics/posthog';
 import { EVENTS } from '@/analytics/events';
 
@@ -13,6 +14,7 @@ export default function DonatePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [taxAcknowledged, setTaxAcknowledged] = useState(false);
+  const [activeCampaign, setActiveCampaign] = useState(null);
 
   const presetAmounts = [2500, 5000, 10000, 25000]; // $25, $50, $100, $250
 
@@ -21,6 +23,12 @@ export default function DonatePage() {
       source: new URLSearchParams(window.location.search).get('source') || 'direct',
       referrer: document.referrer || '',
     });
+
+    // Fetch active campaign for banner
+    fetch('/api/campaigns/active')
+      .then((r) => r.json())
+      .then((json) => { if (json.ok && json.data) setActiveCampaign(json.data); })
+      .catch(() => {});
   }, []);
 
   const handleAmountClick = (amount) => {
@@ -97,6 +105,11 @@ export default function DonatePage() {
     }
   };
 
+  const formatDeadline = (iso) => {
+    if (!iso) return null;
+    return new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-orange-50">
       <div className="container mx-auto px-4 py-20">
@@ -106,6 +119,24 @@ export default function DonatePage() {
           transition={{ duration: 0.6 }}
           className="max-w-3xl mx-auto"
         >
+          {/* Active campaign banner */}
+          {activeCampaign && (
+            <Link
+              href={`/campaigns/${activeCampaign.slug}`}
+              className="flex items-center gap-3 bg-primary-soil text-white px-5 py-3 rounded-xl mb-8 hover:bg-gradient-green transition-all group"
+            >
+              <span className="text-lg">🌱</span>
+              <span className="flex-1 text-sm font-medium leading-snug">
+                We&apos;re raising ${(activeCampaign.goal_cents / 100).toLocaleString()} for <strong>{activeCampaign.title}</strong>.{' '}
+                {activeCampaign.percent}% funded
+                {activeCampaign.deadline ? ` — chip in before ${formatDeadline(activeCampaign.deadline)}` : ''}.
+              </span>
+              <svg className="w-4 h-4 shrink-0 opacity-70 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          )}
+
           {/* Header */}
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold text-gray-900 mb-4">

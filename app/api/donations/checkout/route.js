@@ -1,10 +1,12 @@
 /**
  * Donations Checkout API Route
  *
- * Creates Stripe Checkout sessions for one-time and recurring donations
+ * Creates Stripe Checkout sessions for one-time and recurring donations.
+ * Accepts an optional campaign_slug to associate the donation with a campaign.
  */
 
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 import {
   createOneTimeCheckoutSession,
   createMonthlyCheckoutSession,
@@ -13,16 +15,19 @@ import {
 } from '@/lib/stripe-helpers';
 import { donationCheckoutSchema, validateRequest } from '@/lib/validation';
 
+function getServiceSupabase() {
+  const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
+}
+
 export async function POST(request) {
   try {
-    // Check if Stripe is configured
     if (!process.env.STRIPE_SECRET_KEY) {
       console.error('[Donations API] STRIPE_SECRET_KEY is not configured');
       return NextResponse.json(
-        {
-          ok: false,
-          error: 'Payment processing is not configured. Please contact support.',
-        },
+        { ok: false, error: 'Payment processing is not configured. Please contact support.' },
         { status: 503 }
       );
     }
@@ -37,84 +42,66 @@ export async function POST(request) {
       );
     }
 
-    const { amount, currency, interval, email, name, source } = validation.data;
+    const { amount, currency, interval, email, name, source, campaign_slug } = validation.data;
 
-    // Get URLs
+    // If a campaign slug was provided, look up its UUID
+    let campaignId = null;
+    if (campaign_slug) {
+      const supabase = getServiceSupabase();
+      if (supabase) {
+        const { data: campaign } = await supabase
+          .from('campaigns')
+          .select('id')
+          .eq('slug', campaign_slug)
+          .single();
+        campaignId = campaign?.id || null;
+      }
+    }
+
     const { successUrl, cancelUrl } = getDonationUrls();
-
-    // Generate idempotency key
     const idempotencyKey = generateIdempotencyKey('donation');
 
-    // Metadata for tracking
     const metadata = {
       source: source || 'donate_page',
       donorName: name || undefined,
+      ...(campaignId && { campaign_id: campaignId }),
     };
 
     let session;
 
     if (interval === 'month') {
-      // Create monthly recurring donation
       session = await createMonthlyCheckoutSession({
-        amount,
-        currency,
-        email,
-        name,
-        metadata,
-        successUrl,
-        cancelUrl,
-        idempotencyKey,
+        amount, currency, email, name, metadata, successUrl, cancelUrl, idempotencyKey,
       });
     } else {
-      // Create one-time donation
       session = await createOneTimeCheckoutSession({
-        amount,
-        currency,
-        email,
-        name,
-        metadata,
-        successUrl,
-        cancelUrl,
-        idempotencyKey,
+        amount, currency, email, name, metadata, successUrl, cancelUrl, idempotencyKey,
       });
     }
 
     return NextResponse.json({
       ok: true,
-      data: {
-        sessionId: session.id,
-        checkoutUrl: session.url,
-      },
+      data: { sessionId: session.id, checkoutUrl: session.url },
     });
   } catch (error) {
     console.error('[Donations API] Error creating checkout session:', error);
 
-    // Handle Stripe-specific errors
     if (error.type === 'StripeCardError') {
       return NextResponse.json(
-        {
-          ok: false,
-          error: 'Your card was declined. Please try a different payment method.',
-        },
+        { ok: false, error: 'Your card was declined. Please try a different payment method.' },
         { status: 400 }
       );
     }
 
     if (error.type === 'StripeInvalidRequestError') {
       return NextResponse.json(
-        {
-          ok: false,
-          error: 'Invalid request. Please check your donation details.',
-        },
+        { ok: false, error: 'Invalid request. Please check your donation details.' },
         { status: 400 }
       );
     }
 
     return NextResponse.json(
-      {
-        ok: false,
-        error: error.message || 'Failed to create checkout session',
-      },
+      { ok: false, error: error.message || 'Failed to create checkout session' },
       { status: 500 }
     );
   }

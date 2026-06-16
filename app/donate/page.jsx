@@ -5,7 +5,7 @@ export const metadata = {
   openGraph: {
     title: "Donate | Seed & Spoon NJ - Every Dollar Feeds Families",
     description:
-      "Support community-powered hunger relief in New Jersey. Your tax-deductible donation rescues food, feeds families, and builds a more sustainable food system.",
+      "Support community-powered hunger relief in New Jersey. Your donation rescues food, feeds families, and builds a more sustainable food system. 501(c)(3) status pending.",
     url: "https://seedandspoon.org/donate",
     images: ["/og-default.jpg"],
     type: "website",
@@ -14,7 +14,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Donate | Seed & Spoon NJ - Every Dollar Feeds Families",
     description:
-      "Help us turn surplus into sustenance. Donate to fight hunger and food waste in New Jersey.",
+      "Help us turn surplus into sustenance. Donate to fight hunger and food waste in New Jersey. 501(c)(3) status pending.",
     images: ["/og-default.jpg"],
   },
 };

@@ -20,25 +20,60 @@ function getServiceSupabase() {
   return createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
 }
 
-async function recordDonation({ donorEmail, donorName, amountCents, isMonthly, transactionId, stripePaymentIntentId }) {
+/**
+ * Record a donation and return whether it was a new insert (false = duplicate).
+ * Uses stripe_session_id unique index for idempotency.
+ */
+async function recordDonation({
+  donorEmail, donorName, amountCents, isMonthly, transactionId,
+  stripePaymentIntentId, stripeSessionId, campaignId,
+}) {
+  const supabase = getServiceSupabase();
+  if (!supabase) {
+    console.warn('[Stripe Webhook] Skipping DB record — service role key not configured');
+    return { isNew: false };
+  }
+
   try {
-    const supabase = getServiceSupabase();
-    if (!supabase) {
-      console.warn('[Stripe Webhook] Skipping DB record — service role key not configured');
-      return;
-    }
-    await supabase.from('donations').insert({
+    const { error } = await supabase.from('donations').insert({
       donor_email: donorEmail || null,
       donor_name: donorName,
       amount: amountCents / 100,
       donation_type: isMonthly ? 'monthly' : 'one_time',
       transaction_id: transactionId,
       stripe_payment_intent_id: stripePaymentIntentId || null,
+      stripe_session_id: stripeSessionId || null,
       payment_method: 'stripe',
       status: 'completed',
+      campaign_id: campaignId || null,
     });
+
+    if (error) {
+      // 23505 = unique_violation — duplicate webhook delivery
+      if (error.code === '23505') {
+        console.log('[Stripe Webhook] Duplicate webhook skipped:', stripeSessionId || transactionId);
+        return { isNew: false };
+      }
+      console.error('[Stripe Webhook] Failed to record donation (non-fatal):', error);
+      return { isNew: false };
+    }
+
+    return { isNew: true };
   } catch (err) {
     console.error('[Stripe Webhook] Failed to record donation (non-fatal):', err);
+    return { isNew: false };
+  }
+}
+
+async function incrementCampaignTotal(campaignId, amountCents) {
+  const supabase = getServiceSupabase();
+  if (!supabase || !campaignId) return;
+  const { error } = await supabase.rpc('increment_campaign_total', {
+    p_campaign_id: campaignId,
+    p_amount_cents: amountCents,
+  });
+  if (error) {
+    console.error('[Stripe Webhook] Failed to increment campaign total:', error);
   }
 }
 
@@ -91,14 +126,13 @@ async function sendDonationEmails({ name, email, amountCents, isMonthly, transac
   }
 }
 
-
 async function notifyAdmin(type, title, body, href) {
   try {
     await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/notifications`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user_id: '836fc70f-1fd5-4d61-9250-a806cb92593d', type, title, body, href })
-    })
+      body: JSON.stringify({ user_id: '836fc70f-1fd5-4d61-9250-a806cb92593d', type, title, body, href }),
+    });
   } catch {}
 }
 
@@ -129,13 +163,13 @@ export async function POST(request) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object;
-        const { interval, source, donorName } = session.metadata || {};
+        const { interval, source, donorName, campaign_id } = session.metadata || {};
         const customerId = session.customer;
         const amount = session.amount_total;
         const isMonthly = interval === 'month';
 
         console.log(
-          `[Stripe Webhook] Donation completed — amount: ${amount}, interval: ${interval}, source: ${source}, name: ${donorName}`
+          `[Stripe Webhook] Donation completed — amount: ${amount}, interval: ${interval}, source: ${source}, campaign: ${campaign_id || 'none'}`
         );
 
         await captureServerEvent(customerId || event.id, EVENTS.DONATION_COMPLETED, {
@@ -143,6 +177,7 @@ export async function POST(request) {
           frequency: isMonthly ? 'monthly' : 'one_time',
           tier: session.metadata?.tier || null,
           donor_id: customerId,
+          campaign_id: campaign_id || null,
         });
 
         if (isMonthly) {
@@ -155,14 +190,21 @@ export async function POST(request) {
         const donorEmail = session.customer_details?.email;
         const resolvedName = session.customer_details?.name || donorName || 'Friend';
 
-        await recordDonation({
+        const { isNew } = await recordDonation({
           donorEmail,
           donorName: resolvedName,
           amountCents: amount,
           isMonthly,
           transactionId: session.id,
           stripePaymentIntentId: session.payment_intent || null,
+          stripeSessionId: session.id,
+          campaignId: campaign_id || null,
         });
+
+        // Only increment campaign total if this is a new (non-duplicate) donation
+        if (isNew && campaign_id) {
+          await incrementCampaignTotal(campaign_id, amount);
+        }
 
         if (donorEmail) {
           await sendDonationEmails({
@@ -178,14 +220,12 @@ export async function POST(request) {
       }
 
       case 'payment_intent.succeeded': {
-        // Notify admin
-        const pi = event.data.object
         await notifyAdmin(
           'donation.received',
-          `New donation received`,
-          `$${(pi.amount / 100).toFixed(2)} via Stripe`,
+          'New donation received',
+          `$${(event.data.object.amount / 100).toFixed(2)} via Stripe`,
           '/admin?tab=Donors'
-        )
+        );
         const intent = event.data.object;
         if (intent.invoice) break; // skip subscription renewals
 
@@ -202,6 +242,8 @@ export async function POST(request) {
           isMonthly,
           transactionId: intent.id,
           stripePaymentIntentId: intent.id,
+          stripeSessionId: null,
+          campaignId: null,
         });
 
         if (donorEmail) {
@@ -219,25 +261,17 @@ export async function POST(request) {
 
       case 'invoice.payment_succeeded': {
         const invoice = event.data.object;
-        const subscriptionId = invoice.subscription;
-        const amount = invoice.amount_paid;
-
         console.log(
-          `[Stripe Webhook] Recurring payment succeeded — subscription: ${subscriptionId}, amount: ${amount}`
+          `[Stripe Webhook] Recurring payment succeeded — subscription: ${invoice.subscription}, amount: ${invoice.amount_paid}`
         );
         break;
       }
 
       case 'invoice.payment_failed': {
         const invoice = event.data.object;
-        const subscriptionId = invoice.subscription;
         const customerId = invoice.customer;
         const lastError = invoice.last_finalization_error;
-
-        console.warn(
-          `[Stripe Webhook] Recurring payment failed — subscription: ${subscriptionId}`
-        );
-
+        console.warn(`[Stripe Webhook] Recurring payment failed — subscription: ${invoice.subscription}`);
         await captureServerEvent(customerId || event.id, EVENTS.DONATION_FAILED, {
           error_code: lastError?.code || 'payment_failed',
           tier: null,
@@ -249,11 +283,9 @@ export async function POST(request) {
       case 'customer.subscription.deleted': {
         const subscription = event.data.object;
         const customerId = subscription.customer;
-
         console.log(
           `[Stripe Webhook] Subscription cancelled — id: ${subscription.id}, status: ${subscription.status}`
         );
-
         await captureServerEvent(customerId || event.id, EVENTS.MONTHLY_SUBSCRIPTION_CANCELLED, {
           donor_id: customerId,
           reason: subscription.cancellation_details?.reason || null,
