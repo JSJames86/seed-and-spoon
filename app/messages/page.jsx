@@ -53,14 +53,18 @@ export default function MessagesPage() {
 
   useEffect(() => {
     fetch('/api/messages/channels')
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error(`Channels fetch failed: ${r.status}`)
+        return r.json()
+      })
       .then(data => {
         if (data.channels?.length) {
           setChannels(data.channels)
           setActiveChannel(data.channels[0])
         }
-        setLoading(false)
       })
+      .catch(err => console.error('Failed to load channels:', err))
+      .finally(() => setLoading(false))
   }, [])
 
   useEffect(() => {
