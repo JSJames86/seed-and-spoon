@@ -88,7 +88,7 @@ export default function MessagesPage() {
       .channel(`msg:${activeChannel.id}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'messages', filter: `channel_id=eq.${activeChannel.id}` },
         (payload) => {
-          if (payload.eventType === 'INSERT') setMessages(prev => [...prev, payload.new])
+          if (payload.eventType === 'INSERT') setMessages(prev => prev.some(m => m.id === payload.new.id) ? prev : [...prev, payload.new])
           else if (payload.eventType === 'UPDATE') setMessages(prev => prev.map(m => m.id === payload.new.id ? payload.new : m))
           else if (payload.eventType === 'DELETE') setMessages(prev => prev.filter(m => m.id !== payload.old.id))
         })
@@ -111,7 +111,14 @@ export default function MessagesPage() {
       })
       .subscribe()
 
-    return () => { supabase.removeChannel(msgSub); supabase.removeChannel(reactSub) }
+    const poll = setInterval(() => {
+      fetch(`/api/messages?channel_id=${activeChannel.id}`)
+        .then(r => r.json())
+        .then(data => { if (data.messages) setMessages(data.messages) })
+        .catch(() => {})
+    }, 10000)
+
+    return () => { clearInterval(poll); supabase.removeChannel(msgSub); supabase.removeChannel(reactSub) }
   }, [activeChannel])
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
@@ -120,11 +127,19 @@ export default function MessagesPage() {
     e.preventDefault()
     if (!input.trim() || !activeChannel || sending || !user) return
     setSending(true)
-    await fetch('/api/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ channel_id: activeChannel.id, sender_id: user.id, username: displayName, content: input.trim() }),
-    })
+    try {
+      const res = await fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channel_id: activeChannel.id, sender_id: user.id, username: displayName, content: input.trim() }),
+      })
+      const data = await res.json()
+      if (data.message) {
+        setMessages(prev => prev.some(m => m.id === data.message.id) ? prev : [...prev, data.message])
+      }
+    } catch (err) {
+      console.error('Failed to send message:', err)
+    }
     setInput('')
     setSending(false)
     inputRef.current?.focus()
