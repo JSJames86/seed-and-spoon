@@ -61,6 +61,7 @@ function OnboardContent() {
       volunteerId={volunteerData.volunteer_id}
       inviteEmail={volunteerData.invite_email}
       firstName={volunteerData.first_name}
+      roles={volunteerData.roles}
     />
   );
 }
