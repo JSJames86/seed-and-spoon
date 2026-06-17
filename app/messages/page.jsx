@@ -31,6 +31,21 @@ function fmtTime(ts) {
     : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
 }
 
+async function loadReactionsForMessages(messageIds) {
+  if (!messageIds.length) return {}
+  const { data } = await supabase
+    .from('message_reactions')
+    .select('*')
+    .in('message_id', messageIds)
+  const grouped = {}
+  for (const r of (data || [])) {
+    if (!grouped[r.message_id]) grouped[r.message_id] = {}
+    if (!grouped[r.message_id][r.emoji]) grouped[r.message_id][r.emoji] = []
+    grouped[r.message_id][r.emoji].push(r.username)
+  }
+  return grouped
+}
+
 export default function MessagesPage() {
   const { user, profile } = useAuth()
   const [channels, setChannels] = useState([])
@@ -51,28 +66,18 @@ export default function MessagesPage() {
     ? `${profile.first_name} ${profile.last_name || ''}`.trim()
     : (profile?.username || user?.email?.split('@')[0] || '?')
 
-  const authFetch = async (url, options = {}) => {
-    const { data: { session } } = await supabase.auth.getSession()
-    const headers = { ...options.headers }
-    if (session?.access_token) {
-      headers['Authorization'] = `Bearer ${session.access_token}`
-    }
-    return fetch(url, { ...options, headers })
-  }
-
   useEffect(() => {
-    authFetch('/api/messages/channels')
-      .then(r => {
-        if (!r.ok) throw new Error(`Channels fetch failed: ${r.status}`)
-        return r.json()
-      })
-      .then(data => {
-        if (data.channels?.length) {
-          setChannels(data.channels)
-          setActiveChannel(data.channels[0])
+    supabase
+      .from('channels')
+      .select('id, name, description, intro, intro_author')
+      .order('created_at')
+      .then(({ data, error }) => {
+        if (error) { console.error('Failed to load channels:', error); return }
+        if (data?.length) {
+          setChannels(data)
+          setActiveChannel(data[0])
         }
       })
-      .catch(err => console.error('Failed to load channels:', err))
       .finally(() => setLoading(false))
   }, [])
 
@@ -81,20 +86,17 @@ export default function MessagesPage() {
     setMessages([])
     setReactions({})
 
-    authFetch(`/api/messages?channel_id=${activeChannel.id}`)
-      .then(r => r.json())
-      .then(data => setMessages(data.messages || []))
-
-    authFetch(`/api/messages/reactions?channel_id=${activeChannel.id}`)
-      .then(r => r.json())
-      .then(data => {
-        const grouped = {}
-        for (const r of (data.reactions || [])) {
-          if (!grouped[r.message_id]) grouped[r.message_id] = {}
-          if (!grouped[r.message_id][r.emoji]) grouped[r.message_id][r.emoji] = []
-          grouped[r.message_id][r.emoji].push(r.username)
-        }
-        setReactions(grouped)
+    supabase
+      .from('messages')
+      .select('*')
+      .eq('channel_id', activeChannel.id)
+      .order('is_pinned', { ascending: false })
+      .order('created_at', { ascending: true })
+      .limit(100)
+      .then(({ data }) => {
+        const msgs = data || []
+        setMessages(msgs)
+        loadReactionsForMessages(msgs.map(m => m.id)).then(setReactions)
       })
 
     const msgSub = supabase
@@ -110,25 +112,22 @@ export default function MessagesPage() {
     const reactSub = supabase
       .channel(`react:${activeChannel.id}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'message_reactions' }, () => {
-        authFetch(`/api/messages/reactions?channel_id=${activeChannel.id}`)
-          .then(r => r.json())
-          .then(data => {
-            const grouped = {}
-            for (const r of (data.reactions || [])) {
-              if (!grouped[r.message_id]) grouped[r.message_id] = {}
-              if (!grouped[r.message_id][r.emoji]) grouped[r.message_id][r.emoji] = []
-              grouped[r.message_id][r.emoji].push(r.username)
-            }
-            setReactions(grouped)
-          })
+        setMessages(prev => {
+          loadReactionsForMessages(prev.map(m => m.id)).then(setReactions)
+          return prev
+        })
       })
       .subscribe()
 
     const poll = setInterval(() => {
-      authFetch(`/api/messages?channel_id=${activeChannel.id}`)
-        .then(r => r.json())
-        .then(data => { if (data.messages) setMessages(data.messages) })
-        .catch(() => {})
+      supabase
+        .from('messages')
+        .select('*')
+        .eq('channel_id', activeChannel.id)
+        .order('is_pinned', { ascending: false })
+        .order('created_at', { ascending: true })
+        .limit(100)
+        .then(({ data }) => { if (data) setMessages(data) })
     }, 10000)
 
     return () => { clearInterval(poll); supabase.removeChannel(msgSub); supabase.removeChannel(reactSub) }
@@ -141,14 +140,14 @@ export default function MessagesPage() {
     if (!input.trim() || !activeChannel || sending || !user) return
     setSending(true)
     try {
-      const res = await authFetch('/api/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ channel_id: activeChannel.id, sender_id: user.id, username: displayName, content: input.trim() }),
-      })
-      const data = await res.json()
-      if (data.message) {
-        setMessages(prev => prev.some(m => m.id === data.message.id) ? prev : [...prev, data.message])
+      const { data, error } = await supabase
+        .from('messages')
+        .insert({ channel_id: activeChannel.id, sender_id: user.id, username: displayName, content: input.trim() })
+        .select()
+        .single()
+      if (error) { console.error('Failed to send message:', error); return }
+      if (data) {
+        setMessages(prev => prev.some(m => m.id === data.id) ? prev : [...prev, data])
       }
     } catch (err) {
       console.error('Failed to send message:', err)
@@ -160,38 +159,40 @@ export default function MessagesPage() {
 
   const saveEdit = async (msg) => {
     if (!editText.trim()) return
-    await authFetch('/api/messages', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: msg.id, content: editText.trim() }),
-    })
+    await supabase
+      .from('messages')
+      .update({ content: editText.trim(), edited_at: new Date().toISOString() })
+      .eq('id', msg.id)
     setEditingId(null)
   }
 
   const deleteMessage = async (id) => {
-    await authFetch('/api/messages', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id }),
-    })
+    await supabase.from('messages').delete().eq('id', id)
   }
 
   const togglePin = async (msg) => {
-    await authFetch('/api/messages', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: msg.id, is_pinned: !msg.is_pinned }),
-    })
+    await supabase
+      .from('messages')
+      .update({ is_pinned: !msg.is_pinned })
+      .eq('id', msg.id)
     setHoveredId(null)
   }
 
   const addReaction = async (messageId, emoji) => {
     setEmojiPickerId(null)
-    await authFetch('/api/messages/reactions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message_id: messageId, user_id: user.id, username: displayName, emoji }),
-    })
+    const { data: existing } = await supabase
+      .from('message_reactions')
+      .select('id')
+      .eq('message_id', messageId)
+      .eq('user_id', user.id)
+      .eq('emoji', emoji)
+      .single()
+
+    if (existing) {
+      await supabase.from('message_reactions').delete().eq('id', existing.id)
+    } else {
+      await supabase.from('message_reactions').insert({ message_id: messageId, user_id: user.id, username: displayName, emoji })
+    }
   }
 
   const pinnedMessages = messages.filter(m => m.is_pinned)
@@ -207,7 +208,7 @@ export default function MessagesPage() {
         {/* Sidebar — light cream with green accents */}
         <div className="w-52 flex flex-col flex-shrink-0 border-r"
           style={{ background: '#f5f7f0', borderColor: '#d4e8cc' }}>
-          
+
           {/* Logo + org name */}
           <div className="px-3 py-4 flex items-center gap-2 border-b" style={{ borderColor: '#d4e8cc' }}>
             <img src="/logo-compact.webp" alt="Seed & Spoon" className="w-6 h-6 object-contain" />
@@ -251,7 +252,7 @@ export default function MessagesPage() {
 
         {/* Main chat */}
         <div className="flex-1 flex flex-col min-w-0">
-          
+
           {/* Channel header */}
           <div className="px-4 py-3 flex items-center gap-2 border-b" style={{ background: '#ffffff', borderColor: '#d4e8cc' }}>
             <span className="font-bold" style={{ color: '#4FAF3B' }}>#</span>
