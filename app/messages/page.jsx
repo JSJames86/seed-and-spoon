@@ -138,23 +138,23 @@ export default function MessagesPage() {
   const sendMessage = async (e) => {
     e.preventDefault()
     if (!input.trim() || !activeChannel || sending || !user) return
+    const text = input.trim()
+    setInput('')
     setSending(true)
     try {
       const { data, error } = await supabase
         .from('messages')
-        .insert({ channel_id: activeChannel.id, sender_id: user.id, username: displayName, content: input.trim() })
+        .insert({ channel_id: activeChannel.id, sender_id: user.id, username: displayName, content: text })
         .select()
         .single()
-      if (error) { console.error('Failed to send message:', error); return }
-      if (data) {
-        setMessages(prev => prev.some(m => m.id === data.id) ? prev : [...prev, data])
-      }
+      if (error) console.error('Failed to send message:', error)
+      else if (data) setMessages(prev => prev.some(m => m.id === data.id) ? prev : [...prev, data])
     } catch (err) {
       console.error('Failed to send message:', err)
+    } finally {
+      setSending(false)
+      inputRef.current?.focus()
     }
-    setInput('')
-    setSending(false)
-    inputRef.current?.focus()
   }
 
   const saveEdit = async (msg) => {
