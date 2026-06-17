@@ -1,0 +1,93 @@
+export const boardAssessment = {
+  ratingScale: ["SD", "D", "A", "SA", "DK"],
+  ratingLabels: {
+    SD: "Strongly Disagree",
+    D: "Disagree",
+    A: "Agree",
+    SA: "Strongly Agree",
+    DK: "Don't Know",
+  },
+  domains: [
+    { key: "mission", title: "Mission & Strategic Direction", statements: [
+      { id: "mission_1", text: "The board has a clear, shared understanding of the organization's mission." },
+      { id: "mission_2", text: "The board's decisions are consistently guided by the mission." },
+      { id: "mission_3", text: "The board is engaged in setting strategic direction, not only approving it." },
+      { id: "mission_4", text: "The board regularly reviews whether programs are advancing the mission." },
+    ]},
+    { key: "roles", title: "Roles & Responsibilities",
+      note: "Matters especially when the founder also serves as Executive Director: a healthy board governs and oversees rather than blending into management.",
+      statements: [
+        { id: "roles_1", text: "Board members understand the difference between governing and managing day-to-day operations." },
+        { id: "roles_2", text: "The board focuses on oversight and strategy, and lets staff run operations." },
+        { id: "roles_3", text: "Individual board members understand their legal duties (care, loyalty, obedience)." },
+        { id: "roles_4", text: "New board members receive an orientation to their role." },
+    ]},
+    { key: "composition", title: "Board Composition & Development",
+      note: "An early-stage board is often small; low scores here are expected and point to a board-building plan, not a failure.",
+      statements: [
+        { id: "composition_1", text: "The board is large enough to share the governance workload effectively." },
+        { id: "composition_2", text: "The board has, or has a plan to recruit, the skills the organization needs (finance, legal, fundraising, community)." },
+        { id: "composition_3", text: "The board reflects and is connected to the community served." },
+        { id: "composition_4", text: "There is an active plan to recruit and onboard new members." },
+    ]},
+    { key: "finance", title: "Financial Oversight", statements: [
+      { id: "finance_1", text: "The board receives financial information it can understand and act on." },
+      { id: "finance_2", text: "The board reviews and approves an annual budget." },
+      { id: "finance_3", text: "The board understands the organization's current financial position and runway." },
+      { id: "finance_4", text: "Appropriate financial controls and approval policies are in place." },
+    ]},
+    { key: "fundraising", title: "Fundraising & Resource Development",
+      note: "Many funders ask whether the board gives; full board giving at any level is a common expectation.",
+      statements: [
+        { id: "fundraising_1", text: "The board understands its role in resourcing the organization." },
+        { id: "fundraising_2", text: "Board members contribute to fundraising in some form (giving, connecting, asking, thanking)." },
+        { id: "fundraising_3", text: "The board supports a realistic plan for diversifying revenue." },
+        { id: "fundraising_4", text: "100% of board members make a personal contribution at a level meaningful to them." },
+    ]},
+    { key: "ed", title: "Executive Director Partnership",
+      note: "Where the founder is the ED, independent oversight is the most important governance habit to establish early.",
+      statements: [
+        { id: "ed_1", text: "The board provides independent oversight of the Executive Director." },
+        { id: "ed_2", text: "The roles and boundaries between board and ED are clear." },
+        { id: "ed_3", text: "The board supports the ED while still holding the role accountable." },
+        { id: "ed_4", text: "There is a plan to evaluate the ED regularly." },
+    ]},
+    { key: "compliance", title: "Legal, Ethical & Compliance Readiness",
+      note: "NJ: charitable-solicitation registration with the NJ Division of Consumer Affairs is typically required to fundraise; confirm status.",
+      statements: [
+        { id: "compliance_1", text: "The board understands the 501(c)(3) application status and what completion requires." },
+        { id: "compliance_2", text: "The org has adopted bylaws and a conflict-of-interest policy, and the board follows them." },
+        { id: "compliance_3", text: "Board meetings are properly noticed and minutes are kept as official records." },
+        { id: "compliance_4", text: "The board understands required state and federal filings." },
+    ]},
+    { key: "meetings", title: "Board Meetings & Engagement", statements: [
+      { id: "meetings_1", text: "Meetings are well-run, with agendas sent in advance and time used well." },
+      { id: "meetings_2", text: "Board members come prepared and participate actively." },
+      { id: "meetings_3", text: "The board has the right information, at the right time, to make decisions." },
+      { id: "meetings_4", text: "Disagreement is welcomed and handled respectfully." },
+    ]},
+    { key: "community", title: "Community Connection & Equity", statements: [
+      { id: "community_1", text: "The board keeps the lived experience of those served at the center of decisions." },
+      { id: "community_2", text: "The organization seeks and listens to community input." },
+      { id: "community_3", text: "The board reflects on equity in how the organization operates." },
+      { id: "community_4", text: "The board reflects the communities of Newark and the broader service area." },
+    ]},
+  ],
+  textPrompts: {
+    individual: [
+      { id: "indiv_1", text: "What is the most valuable thing I contribute to this board?" },
+      { id: "indiv_2", text: "Where could I show up more fully — preparation, participation, giving, connecting?" },
+      { id: "indiv_3", text: "What do I need from the board or ED to serve more effectively?" },
+    ],
+    board: [
+      { id: "board_1", text: "What is the board doing well right now?" },
+      { id: "board_2", text: "What is the single most important thing the board should improve this year?" },
+      { id: "board_3", text: "What does this board need to be ready for once 501(c)(3) status is granted and the org grows?" },
+    ],
+    action: [
+      { id: "action_1", text: "Priority 1 — owner — by when" },
+      { id: "action_2", text: "Priority 2 — owner — by when" },
+      { id: "action_3", text: "Priority 3 — owner — by when" },
+    ],
+  },
+};
