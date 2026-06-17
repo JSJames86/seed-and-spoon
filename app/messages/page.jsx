@@ -51,8 +51,17 @@ export default function MessagesPage() {
     ? `${profile.first_name} ${profile.last_name || ''}`.trim()
     : (profile?.username || user?.email?.split('@')[0] || '?')
 
+  const authFetch = async (url, options = {}) => {
+    const { data: { session } } = await supabase.auth.getSession()
+    const headers = { ...options.headers }
+    if (session?.access_token) {
+      headers['Authorization'] = `Bearer ${session.access_token}`
+    }
+    return fetch(url, { ...options, headers })
+  }
+
   useEffect(() => {
-    fetch('/api/messages/channels')
+    authFetch('/api/messages/channels')
       .then(r => {
         if (!r.ok) throw new Error(`Channels fetch failed: ${r.status}`)
         return r.json()
@@ -72,11 +81,11 @@ export default function MessagesPage() {
     setMessages([])
     setReactions({})
 
-    fetch(`/api/messages?channel_id=${activeChannel.id}`)
+    authFetch(`/api/messages?channel_id=${activeChannel.id}`)
       .then(r => r.json())
       .then(data => setMessages(data.messages || []))
 
-    fetch(`/api/messages/reactions?channel_id=${activeChannel.id}`)
+    authFetch(`/api/messages/reactions?channel_id=${activeChannel.id}`)
       .then(r => r.json())
       .then(data => {
         const grouped = {}
@@ -101,7 +110,7 @@ export default function MessagesPage() {
     const reactSub = supabase
       .channel(`react:${activeChannel.id}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'message_reactions' }, () => {
-        fetch(`/api/messages/reactions?channel_id=${activeChannel.id}`)
+        authFetch(`/api/messages/reactions?channel_id=${activeChannel.id}`)
           .then(r => r.json())
           .then(data => {
             const grouped = {}
@@ -116,7 +125,7 @@ export default function MessagesPage() {
       .subscribe()
 
     const poll = setInterval(() => {
-      fetch(`/api/messages?channel_id=${activeChannel.id}`)
+      authFetch(`/api/messages?channel_id=${activeChannel.id}`)
         .then(r => r.json())
         .then(data => { if (data.messages) setMessages(data.messages) })
         .catch(() => {})
@@ -132,7 +141,7 @@ export default function MessagesPage() {
     if (!input.trim() || !activeChannel || sending || !user) return
     setSending(true)
     try {
-      const res = await fetch('/api/messages', {
+      const res = await authFetch('/api/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ channel_id: activeChannel.id, sender_id: user.id, username: displayName, content: input.trim() }),
@@ -151,7 +160,7 @@ export default function MessagesPage() {
 
   const saveEdit = async (msg) => {
     if (!editText.trim()) return
-    await fetch('/api/messages', {
+    await authFetch('/api/messages', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: msg.id, content: editText.trim() }),
@@ -160,7 +169,7 @@ export default function MessagesPage() {
   }
 
   const deleteMessage = async (id) => {
-    await fetch('/api/messages', {
+    await authFetch('/api/messages', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id }),
@@ -168,7 +177,7 @@ export default function MessagesPage() {
   }
 
   const togglePin = async (msg) => {
-    await fetch('/api/messages', {
+    await authFetch('/api/messages', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: msg.id, is_pinned: !msg.is_pinned }),
@@ -178,7 +187,7 @@ export default function MessagesPage() {
 
   const addReaction = async (messageId, emoji) => {
     setEmojiPickerId(null)
-    await fetch('/api/messages/reactions', {
+    await authFetch('/api/messages/reactions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message_id: messageId, user_id: user.id, username: displayName, emoji }),
