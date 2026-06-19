@@ -8,7 +8,7 @@ import CookieSettingsModal from "@/components/CookieSettingsModal";
 import AnalyticsLoader from "@/components/AnalyticsLoader";
 import Providers from "@/components/Providers";
 import { SubscribePopupTrigger } from "@/components/email/SubscribeModal";
-import { Libre_Franklin, Roboto_Slab, Crimson_Text } from 'next/font/google';
+import { Libre_Franklin, Roboto_Slab, Crimson_Text, Fraunces, Hanken_Grotesk } from 'next/font/google';
 
 const libreFranklin = Libre_Franklin({
   subsets: ['latin'],
@@ -28,6 +28,20 @@ const crimsonText = Crimson_Text({
   subsets: ['latin'],
   weight: ['400'],
   variable: '--font-crimson-text',
+  display: 'swap',
+});
+
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  weight: ['500', '600'],
+  variable: '--font-fraunces',
+  display: 'swap',
+});
+
+const hankenGrotesk = Hanken_Grotesk({
+  subsets: ['latin'],
+  weight: ['500', '600', '700'],
+  variable: '--font-hanken-grotesk',
   display: 'swap',
 });
 
@@ -95,7 +109,7 @@ const organizationSchema = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${libreFranklin.variable} ${robotoSlab.variable} ${crimsonText.variable} font-sans min-h-screen antialiased transition-colors duration-300`}>
+      <body className={`${libreFranklin.variable} ${robotoSlab.variable} ${crimsonText.variable} ${fraunces.variable} ${hankenGrotesk.variable} font-sans min-h-screen antialiased transition-colors duration-300`}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
