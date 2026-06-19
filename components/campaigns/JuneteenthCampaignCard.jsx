@@ -75,7 +75,7 @@ export default function JuneteenthCampaignCard({ campaign = {} }) {
           style={{ ...B.cta, background: TOKENS.orange, boxShadow: "0 14px 26px -14px rgba(232,106,29,0.85)" }}
         >
           <Heart size={18} strokeWidth={2.4} style={{ fill: TOKENS.cream }} />
-          Give for Juneteenth
+          {c.cta_label}
           <ArrowRight size={18} strokeWidth={2.4} style={{ marginLeft: "auto" }} />
         </a>
 

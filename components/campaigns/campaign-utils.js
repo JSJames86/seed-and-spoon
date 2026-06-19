@@ -26,6 +26,7 @@ export const DEFAULT_CAMPAIGN = {
   share_url: "",
   hero_image_url: "",
   org_line: "Seed & Spoon, Inc. · EIN 41-4059078 · 501(c)(3) status pending",
+  cta_label: "Give a Meal",
 };
 
 export function usd(n) {

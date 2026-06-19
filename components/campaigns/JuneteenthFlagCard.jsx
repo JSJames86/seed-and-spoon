@@ -2,7 +2,7 @@
 
 import { ArrowRight, Heart, Share2 } from "lucide-react";
 import {
-  TOKENS, DEFAULT_CAMPAIGN, BASE_STYLES as B,
+  TOKENS, DEFAULT_CAMPAIGN, BASE_STYLES as B, FONT_DISPLAY,
   usd, useCampaignMeter, cardBackground, scopedCSS,
 } from "./campaign-utils";
 
@@ -16,10 +16,11 @@ const FLAG = {
 
 const DEFAULTS = {
   ...DEFAULT_CAMPAIGN,
-  eyebrow: "OUR INDEPENDENCE DAY",
+  eyebrow: "JUNETEENTH 2026",
   date_line: "JUNE 19, 1865",
+  kicker: "Our Independence Day.",
   subtitle:
-    "America turns 250 this year — and freedom still isn't finished while Newark kids go hungry. Help us set the table this Juneteenth.",
+    "America turns 250 this year. Yet nearly 1 in 3 Black households with children still faces food insecurity. Help us raise $25,000 to provide 7,000 meals for Newark kids this summer.",
   cta_style: "orange",
 };
 
@@ -111,7 +112,16 @@ export default function JuneteenthFlagCard({ campaign = {} }) {
           )}
         </header>
 
-        <h2 style={{ ...B.title, position: "relative" }}>{c.title}</h2>
+        <h2 style={{ ...B.title, position: "relative", margin: "0 0 6px" }}>{c.title}</h2>
+        {c.kicker && (
+          <p style={{
+            position: "relative", fontFamily: FONT_DISPLAY,
+            fontStyle: "italic", fontWeight: 500, fontSize: 16, color: TOKENS.leaf,
+            margin: "0 0 14px", letterSpacing: "0.005em",
+          }}>
+            {c.kicker}
+          </p>
+        )}
         <p style={{ ...B.sub, position: "relative" }}>{c.subtitle}</p>
 
         <div style={{ ...B.meterTop, position: "relative" }}>
@@ -157,7 +167,7 @@ export default function JuneteenthFlagCard({ campaign = {} }) {
           style={{ ...B.cta, position: "relative", background: ctaBg, boxShadow: "0 14px 26px -16px rgba(0,0,0,0.7)" }}
         >
           <Heart size={18} strokeWidth={2.4} style={{ fill: TOKENS.cream }} />
-          Give for Juneteenth
+          {c.cta_label}
           <ArrowRight size={18} strokeWidth={2.4} style={{ marginLeft: "auto" }} />
         </a>
 
