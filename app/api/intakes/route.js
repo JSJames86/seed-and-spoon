@@ -16,8 +16,6 @@ export async function POST(request) {
   try {
     const data = await request.json();
 
-    console.log('[Intakes API] Received intake submission:', data.kind);
-
     // Validate required fields
     if (!data.kind || !['client', 'referral'].includes(data.kind)) {
       return NextResponse.json(
@@ -95,15 +93,11 @@ export async function POST(request) {
         if (dbError) {
           console.error('[Intakes API] Supabase error:', dbError);
           // Continue anyway - don't fail the submission
-        } else {
-          console.log('[Intakes API] Stored intake in Supabase:', insertedData?.[0]?.id);
         }
       } catch (supabaseError) {
         console.error('[Intakes API] Supabase connection error:', supabaseError);
         // Continue anyway - log but don't fail
       }
-    } else {
-      console.log('[Intakes API] Supabase not configured, skipping database storage');
     }
 
     // Return success response

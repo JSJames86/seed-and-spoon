@@ -39,12 +39,12 @@ export default function ReportsPage() {
       name: 'Janelle Glanville',
       affiliation: {
         '@type': 'Organization',
-        name: 'Seed and Spoon, Incorporated',
+        name: 'Seed & Spoon, Incorporated',
       },
     },
     publisher: {
       '@type': 'Organization',
-      name: 'Seed and Spoon',
+      name: 'Seed & Spoon',
       url: 'https://seedandspoon.org',
     },
     datePublished: '2026',

@@ -11,7 +11,7 @@ const CONTENT = {
   // SEO & Metadata
   meta: {
     title: 'Our Mission',
-    description: 'Seed and Spoon exists to eliminate youth hunger in Newark and Essex County through sustainable, community-powered food programs.',
+    description: 'Seed & Spoon exists to eliminate youth hunger in Newark and Essex County through sustainable, community-powered food programs.',
     ogImage: '/assets/logo-transparent.png',
   },
 

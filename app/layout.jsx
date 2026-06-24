@@ -47,14 +47,14 @@ const hankenGrotesk = Hanken_Grotesk({
 
 export const metadata = {
   title: {
-    default: "Seed and Spoon | Fighting Youth Hunger in Newark, NJ",
-    template: "%s | Seed and Spoon",
+    default: "Seed & Spoon | Fighting Youth Hunger in Newark, NJ",
+    template: "%s | Seed & Spoon",
   },
   description:
-    "Seed and Spoon is a Newark, NJ nonprofit providing community meal donations, monthly meal boxes, and youth gardening programs to families in Essex County.",
+    "Seed & Spoon is a Newark, NJ nonprofit providing community meal donations, monthly meal boxes, and youth gardening programs to families in Essex County.",
   metadataBase: new URL("https://seedandspoon.org"),
   openGraph: {
-    siteName: "Seed and Spoon",
+    siteName: "Seed & Spoon",
     locale: "en_US",
     type: "website",
   },
@@ -90,7 +90,7 @@ export const viewport = {
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "NonprofitOrganization",
-  name: "Seed and Spoon",
+  name: "Seed & Spoon",
   url: "https://seedandspoon.org",
   logo: "https://seedandspoon.org/logo.png",
   description:

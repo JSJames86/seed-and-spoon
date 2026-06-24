@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { supabase } from '@/lib/supabase'
@@ -211,7 +212,7 @@ export default function MessagesPage() {
 
           {/* Logo + org name */}
           <div className="px-3 py-4 flex items-center gap-2 border-b" style={{ borderColor: '#d4e8cc' }}>
-            <img src="/logo-compact.webp" alt="Seed & Spoon" className="w-6 h-6 object-contain" />
+            <Image src="/logo-compact.webp" alt="Seed & Spoon" width={24} height={24} className="w-6 h-6 object-contain" />
             <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#2d5a27' }}>
               Seed & Spoon
             </p>
@@ -266,7 +267,7 @@ export default function MessagesPage() {
           <div className="flex-1 overflow-y-auto px-4 py-4 relative" style={{ background: '#fafcf8' }} onClick={() => { setHoveredId(null); setEmojiPickerId(null) }}>
             {/* Watermark logo */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ opacity: 0.04 }}>
-              <img src="/logo-full.webp" alt="" className="w-96 object-contain" />
+              <Image src="/logo-full.webp" alt="" width={384} height={384} className="w-96 object-contain" />
             </div>
 
             <div className="relative z-10">
