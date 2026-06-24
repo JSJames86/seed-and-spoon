@@ -499,15 +499,6 @@ export default function ImpactClient() {
             </div>
           </div>
 
-          <div className="mt-10 text-center">
-            <a
-              href="/reports/seed-spoon-impact-2024.pdf"
-              className="inline-flex items-center gap-2 text-green-200/60 hover:text-green-100 text-sm transition-colors"
-            >
-              <span aria-hidden="true">↓</span>
-              Download our 2024 Impact Report (PDF)
-            </a>
-          </div>
         </div>
       </section>
 
