@@ -51,7 +51,7 @@ export const metadata = {
     template: "%s | Seed & Spoon",
   },
   description:
-    "Seed & Spoon is a Newark, NJ nonprofit providing community meal donations, monthly meal boxes, and youth gardening programs to families in Essex County.",
+    "Seed & Spoon is a Newark-based nonprofit serving Essex County with community meal donations, monthly meal boxes, and youth gardening programs.",
   metadataBase: new URL("https://seedandspoon.org"),
   openGraph: {
     siteName: "Seed & Spoon",
@@ -94,7 +94,7 @@ const organizationSchema = {
   url: "https://seedandspoon.org",
   logo: "https://seedandspoon.org/logo.png",
   description:
-    "A Newark, NJ nonprofit reducing youth hunger through community meal donations, monthly meal box subscriptions, and youth gardening programs serving Essex County.",
+    "A Newark-based nonprofit serving Essex County — reducing youth hunger through community meal donations, monthly meal box subscriptions, and youth gardening programs.",
   areaServed: "Essex County, NJ",
   address: {
     "@type": "PostalAddress",
