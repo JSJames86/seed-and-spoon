@@ -145,7 +145,7 @@ export default function Header() {
           <Link href="/" className="flex-shrink-0 bg-transparent">
             <img
               src={isScrolled ? logoScrolled : logoDefault}
-              alt="Seed & Spoon NJ"
+              alt="Seed & Spoon"
               style={{
                 background: "transparent",
                 mixBlendMode: "normal",

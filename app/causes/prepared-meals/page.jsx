@@ -1,18 +1,18 @@
 export const metadata = {
-  title: "Prepared Meals | Seed & Spoon NJ – Fresh, Nutritious Meals for Families",
+  title: "Prepared Meals | Seed & Spoon – Fresh, Nutritious Meals for Families",
   description:
-    "Seed & Spoon NJ prepares fresh, home-style meals for families, seniors, veterans, and neighbors in need—using rescued food, donated ingredients, and community-powered kitchens.",
+    "Seed & Spoon prepares fresh, home-style meals for families, seniors, veterans, and neighbors in need—using rescued food, donated ingredients, and community-powered kitchens.",
   openGraph: {
-    title: "Prepared Meals | Seed & Spoon NJ",
+    title: "Prepared Meals | Seed & Spoon",
     description:
-      "Explore how Seed & Spoon NJ transforms rescued ingredients into nutritious prepared meals that support families across New Jersey.",
+      "Explore how Seed & Spoon transforms rescued ingredients into nutritious prepared meals that support families across New Jersey.",
     url: "https://seedandspoon.org/causes/prepared-meals",
     images: ["/og-prepared-meals.jpg"], // optional upload later
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Prepared Meals | Seed & Spoon NJ",
+    title: "Prepared Meals | Seed & Spoon",
     description:
       "Fresh, ready-to-eat meals made with love and delivered with dignity—discover our Prepared Meals program.",
     images: ["/og-prepared-meals.jpg"],
@@ -28,7 +28,7 @@ export default function PreparedMealsPage() {
       <section className="relative w-full h-[320px] md:h-[420px] overflow-hidden">
         <img
           src="/images/causes/prepared-meals/prepared-meals-hero-alt.jpg"
-          alt="Seed & Spoon NJ prepared meals hero image"
+          alt="Seed & Spoon prepared meals hero image"
           className="w-full h-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-black/45 flex items-center justify-center px-4">

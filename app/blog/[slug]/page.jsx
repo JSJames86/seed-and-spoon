@@ -12,7 +12,7 @@ function getSupabase() {
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const supabase = getSupabase();
-  if (!supabase) return { title: 'Blog – Seed & Spoon NJ' };
+  if (!supabase) return { title: 'Blog – Seed & Spoon' };
 
   const { data } = await supabase
     .from('posts')
@@ -21,10 +21,10 @@ export async function generateMetadata({ params }) {
     .eq('status', 'published')
     .single();
 
-  if (!data) return { title: 'Blog – Seed & Spoon NJ' };
+  if (!data) return { title: 'Blog – Seed & Spoon' };
 
   return {
-    title: `${data.title} – Seed & Spoon NJ`,
+    title: `${data.title} – Seed & Spoon`,
     description: data.excerpt || '',
     openGraph: {
       title: data.title,

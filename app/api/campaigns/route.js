@@ -80,7 +80,7 @@ export async function POST(request) {
       impact_metric_label: impact_metric_label || null,
       impact_metric_value: impact_metric_value || null,
       impact_metric_amount: impact_metric_amount || null,
-      organization_name: organization_name || "Seed & Spoon NJ",
+      organization_name: organization_name || "Seed & Spoon",
       created_by: user.id,
     })
     .select()

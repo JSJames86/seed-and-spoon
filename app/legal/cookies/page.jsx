@@ -1,9 +1,9 @@
 export const metadata = {
-  title: "Cookie Policy | Seed & Spoon NJ - Manage Your Preferences",
+  title: "Cookie Policy | Seed & Spoon - Manage Your Preferences",
   description:
-    "Learn how Seed & Spoon NJ uses cookies and similar technologies. Manage your cookie preferences and understand how we collect website usage data.",
+    "Learn how Seed & Spoon uses cookies and similar technologies. Manage your cookie preferences and understand how we collect website usage data.",
   openGraph: {
-    title: "Cookie Policy | Seed & Spoon NJ",
+    title: "Cookie Policy | Seed & Spoon",
     description:
       "Manage your cookie preferences and learn about our cookie usage for website functionality and analytics.",
     url: "https://seedandspoon.org/legal/cookies",
@@ -12,7 +12,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Cookie Policy | Seed & Spoon NJ",
+    title: "Cookie Policy | Seed & Spoon",
     description:
       "Learn about cookie usage and manage your preferences on our website.",
     images: ["/og-default.jpg"],

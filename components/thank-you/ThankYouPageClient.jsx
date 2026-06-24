@@ -14,7 +14,7 @@ function ShareSection({ donation, formatAmount }) {
   const amountText = donation
     ? `${formatAmount(donation.amount, donation.currency)}${donation.interval === 'month' ? '/month' : ''}`
     : '';
-  const shareText = `I just donated ${amountText} to Seed & Spoon NJ to help feed families in Essex County. Join me! 🌱`;
+  const shareText = `I just donated ${amountText} to Seed & Spoon to help feed families in Essex County. Join me! 🌱`;
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(DONATE_URL);

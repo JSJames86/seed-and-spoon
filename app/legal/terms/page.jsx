@@ -1,20 +1,20 @@
 export const metadata = {
-  title: "Terms & Conditions | Seed & Spoon NJ - Service Guidelines",
+  title: "Terms & Conditions | Seed & Spoon - Service Guidelines",
   description:
-    "Read the terms and conditions for using Seed & Spoon NJ's website, services, and programs. Understand your rights and responsibilities.",
+    "Read the terms and conditions for using Seed & Spoon's website, services, and programs. Understand your rights and responsibilities.",
   openGraph: {
-    title: "Terms & Conditions | Seed & Spoon NJ",
+    title: "Terms & Conditions | Seed & Spoon",
     description:
-      "Terms governing the use of Seed & Spoon NJ's website and services. Read our service guidelines and user responsibilities.",
+      "Terms governing the use of Seed & Spoon's website and services. Read our service guidelines and user responsibilities.",
     url: "https://seedandspoon.org/legal/terms",
     images: ["/og-default.jpg"],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Terms & Conditions | Seed & Spoon NJ",
+    title: "Terms & Conditions | Seed & Spoon",
     description:
-      "Read the terms and conditions for using Seed & Spoon NJ services and website.",
+      "Read the terms and conditions for using Seed & Spoon services and website.",
     images: ["/og-default.jpg"],
   },
 };

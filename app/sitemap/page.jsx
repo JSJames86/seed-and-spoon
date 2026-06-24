@@ -1,22 +1,22 @@
 // Sitemap page - renders an HTML sitemap for users
 
 export const metadata = {
-  title: "Sitemap | Seed & Spoon NJ - Complete Site Navigation",
+  title: "Sitemap | Seed & Spoon - Complete Site Navigation",
   description:
-    "Explore all pages on Seed & Spoon NJ's website. Find resources for getting help, volunteering, donating, and learning about our food rescue mission.",
+    "Explore all pages on Seed & Spoon's website. Find resources for getting help, volunteering, donating, and learning about our food rescue mission.",
   openGraph: {
-    title: "Sitemap | Seed & Spoon NJ",
+    title: "Sitemap | Seed & Spoon",
     description:
-      "Browse the complete Seed & Spoon NJ site map to find food assistance resources, volunteer opportunities, and ways to support our mission.",
+      "Browse the complete Seed & Spoon site map to find food assistance resources, volunteer opportunities, and ways to support our mission.",
     url: "https://seedandspoon.org/sitemap",
     images: ["/og-default.jpg"],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sitemap | Seed & Spoon NJ",
+    title: "Sitemap | Seed & Spoon",
     description:
-      "Complete site navigation for Seed & Spoon NJ - food rescue, hunger relief, and community empowerment.",
+      "Complete site navigation for Seed & Spoon - food rescue, hunger relief, and community empowerment.",
     images: ["/og-default.jpg"],
   },
 };

@@ -1,9 +1,9 @@
 export const metadata = {
-  title: "Donor Privacy Policy | Seed & Spoon NJ - Protecting Your Contributions",
+  title: "Donor Privacy Policy | Seed & Spoon - Protecting Your Contributions",
   description:
-    "Seed & Spoon NJ values donor privacy. Learn how we protect your donation information, financial data, and personal details with transparency and care.",
+    "Seed & Spoon values donor privacy. Learn how we protect your donation information, financial data, and personal details with transparency and care.",
   openGraph: {
-    title: "Donor Privacy Policy | Seed & Spoon NJ",
+    title: "Donor Privacy Policy | Seed & Spoon",
     description:
       "Our commitment to protecting donor information. Learn how we handle contributions and financial data with security and respect.",
     url: "https://seedandspoon.org/legal/donor-privacy",
@@ -12,7 +12,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Donor Privacy | Seed & Spoon NJ",
+    title: "Donor Privacy | Seed & Spoon",
     description:
       "Learn how we protect donor information and handle contributions with transparency and security.",
     images: ["/og-default.jpg"],

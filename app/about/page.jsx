@@ -277,7 +277,7 @@ const CONTENT = {
 
   // Schema.org structured data
   schema: {
-    organizationName: 'Seed & Spoon NJ',
+    organizationName: 'Seed & Spoon',
     url: 'https://seedandspoon.org',
     logo: 'https://seedandspoon.org/assets/logo-transparent.png',
     description: 'Nonprofit food rescue and meal preparation organization serving New Jersey communities facing food insecurity.',
@@ -304,13 +304,13 @@ export const metadata = {
     title: CONTENT.meta.title,
     description: CONTENT.meta.description,
     url: 'https://seedandspoon.org/about',
-    siteName: 'Seed & Spoon NJ',
+    siteName: 'Seed & Spoon',
     images: [
       {
         url: CONTENT.meta.ogImage,
         width: 1200,
         height: 630,
-        alt: 'Seed & Spoon NJ Logo',
+        alt: 'Seed & Spoon Logo',
       },
     ],
     locale: 'en_US',

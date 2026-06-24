@@ -10,7 +10,7 @@ export default function CreateCampaignPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
-    organization_name: 'Seed & Spoon NJ',
+    organization_name: 'Seed & Spoon',
     title: '',
     slug: '',
     description: '',

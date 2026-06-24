@@ -1,20 +1,20 @@
 export const metadata = {
-  title: "Our Causes | Seed & Spoon NJ - Feeding Families, Growing Community",
+  title: "Our Causes | Seed & Spoon - Feeding Families, Growing Community",
   description:
-    "Explore Seed & Spoon NJ’s core causes: surplus food rescue, community pantry partners, prepared meals & family food boxes, and hands-on education & workshops that empower New Jersey families.",
+    "Explore Seed & Spoon’s core causes: surplus food rescue, community pantry partners, prepared meals & family food boxes, and hands-on education & workshops that empower New Jersey families.",
   openGraph: {
-    title: "Our Causes | Seed & Spoon NJ",
+    title: "Our Causes | Seed & Spoon",
     description:
-      "Learn about Seed & Spoon NJ’s essential programs: food rescue, pantry partnerships, meal distributions, and community education.",
+      "Learn about Seed & Spoon’s essential programs: food rescue, pantry partnerships, meal distributions, and community education.",
     url: "https://seedandspoon.org/causes",
     images: ["/og-causes.jpg"],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Our Causes | Seed & Spoon NJ",
+    title: "Our Causes | Seed & Spoon",
     description:
-      "Discover how Seed & Spoon NJ feeds families, reduces food waste, and strengthens community resilience.",
+      "Discover how Seed & Spoon feeds families, reduces food waste, and strengthens community resilience.",
     images: ["/og-causes.jpg"],
   },
 };
@@ -175,7 +175,7 @@ export default function CausesPage() {
                       </h2>
                     </Link>
                     <p className="text-sm uppercase tracking-[0.16em] text-[#0B88C2]/80 font-semibold">
-                      Seed & Spoon NJ Cause
+                      Seed & Spoon Cause
                     </p>
                   </div>
 

@@ -60,7 +60,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Seed & Spoon NJ | Neighbors Feeding Neighbors",
+    title: "Seed & Spoon | Neighbors Feeding Neighbors",
     description:
       "Fighting food waste, feeding families, and teaching long-term food stability across Essex County.",
     images: ["/og-image.jpg"],

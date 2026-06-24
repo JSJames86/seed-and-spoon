@@ -1,20 +1,20 @@
 export const metadata = {
-  title: "Community Pantry Partners | Seed & Spoon NJ – Expanding Food Access Together",
+  title: "Community Pantry Partners | Seed & Spoon – Expanding Food Access Together",
   description:
-    "Seed & Spoon NJ partners with schools, churches, nonprofits, and local organizations to host community pantries that provide families with fresh groceries, dignity, and reliable access to food.",
+    "Seed & Spoon partners with schools, churches, nonprofits, and local organizations to host community pantries that provide families with fresh groceries, dignity, and reliable access to food.",
   openGraph: {
-    title: "Community Pantry Partners | Seed & Spoon NJ",
+    title: "Community Pantry Partners | Seed & Spoon",
     description:
-      "Discover how Seed & Spoon NJ builds neighborhood pantry partnerships across New Jersey—bringing fresh food directly into the heart of communities.",
+      "Discover how Seed & Spoon builds neighborhood pantry partnerships across New Jersey—bringing fresh food directly into the heart of communities.",
     url: "https://seedandspoon.org/causes/pantry-partners",
     images: ["/og-pantry-partners.jpg"], // optional later upload
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Community Pantry Partners | Seed & Spoon NJ",
+    title: "Community Pantry Partners | Seed & Spoon",
     description:
-      "Partner with Seed & Spoon NJ to bring food security directly into your community.",
+      "Partner with Seed & Spoon to bring food security directly into your community.",
     images: ["/og-pantry-partners.jpg"],
   },
 };
@@ -27,7 +27,7 @@ export default function PantryPartnersPage() {
       <section className="relative w-full h-[320px] md:h-[420px] overflow-hidden">
         <img
           src="/images/causes/pantry-partners/pantry-partners-hero.png"
-          alt="Community pantry partnership with Seed & Spoon NJ"
+          alt="Community pantry partnership with Seed & Spoon"
           className="w-full h-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-black/40 flex items-center justify-center px-4">
@@ -107,7 +107,7 @@ export default function PantryPartnersPage() {
           />
           <img
             src="/images/causes/pantry-partners/pantry-partners-hero.png"
-            alt="Seed & Spoon NJ collaborating with a community pantry partner"
+            alt="Seed & Spoon collaborating with a community pantry partner"
             className="rounded-lg shadow-md object-cover w-full h-64"
           />
         </div>

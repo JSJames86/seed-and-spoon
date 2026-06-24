@@ -1,18 +1,18 @@
 export const metadata = {
-  title: "Non-Discrimination Policy | Seed & Spoon NJ - Equal Access for All",
+  title: "Non-Discrimination Policy | Seed & Spoon - Equal Access for All",
   description:
-    "Seed & Spoon NJ is committed to equal access and non-discrimination. We serve all people regardless of race, religion, gender, age, disability, or background.",
+    "Seed & Spoon is committed to equal access and non-discrimination. We serve all people regardless of race, religion, gender, age, disability, or background.",
   openGraph: {
-    title: "Non-Discrimination Policy | Seed & Spoon NJ",
+    title: "Non-Discrimination Policy | Seed & Spoon",
     description:
-      "Our commitment to equal access and dignity for all. Seed & Spoon NJ serves families without discrimination.",
+      "Our commitment to equal access and dignity for all. Seed & Spoon serves families without discrimination.",
     url: "https://seedandspoon.org/legal/non-discrimination",
     images: ["/og-default.jpg"],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Non-Discrimination | Seed & Spoon NJ",
+    title: "Non-Discrimination | Seed & Spoon",
     description:
       "Equal access and dignity for all. Read our non-discrimination policy.",
     images: ["/og-default.jpg"],
