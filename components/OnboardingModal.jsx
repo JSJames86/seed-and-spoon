@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 
@@ -116,7 +117,7 @@ export default function OnboardingModal() {
         <div className="p-8">
           {/* Logo */}
           <div className="flex items-center gap-2 mb-6">
-            <img src="/logo-compact.webp" alt="Seed & Spoon" className="w-8 h-8 object-contain" />
+            <Image src="/logo-compact.webp" alt="Seed & Spoon" width={32} height={32} className="w-8 h-8 object-contain" />
             <span className="text-sm font-semibold text-gray-500">Seed & Spoon</span>
             <span className="ml-auto text-xs text-gray-300">{step + 1} of {steps.length}</span>
           </div>

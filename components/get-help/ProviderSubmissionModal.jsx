@@ -421,7 +421,7 @@ export default function ProviderSubmissionModal({ isOpen, onClose }) {
             />
 
             <FormField
-              label="I confirm that the information provided is accurate and I agree to be contacted by Seed & Spoon NJ to verify this information."
+              label="I confirm that the information provided is accurate and I agree to be contacted by Seed & Spoon to verify this information."
               name="consent"
               type="checkbox"
               value={formData.consent}

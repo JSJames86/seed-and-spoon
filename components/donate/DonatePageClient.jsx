@@ -231,7 +231,7 @@ export default function DonatePage() {
                 className="mt-1 h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer shrink-0"
               />
               <span className="text-sm text-gray-600 group-hover:text-gray-800 transition-colors">
-                I understand that Seed and Spoon Incorporated&apos;s 501(c)(3) status is
+                I understand that Seed & Spoon Incorporated&apos;s 501(c)(3) status is
                 pending and contributions are not currently tax-deductible.
               </span>
             </label>
@@ -329,7 +329,7 @@ export default function DonatePage() {
             className="mt-8 text-center text-sm text-gray-500"
           >
             <p>
-              Seed and Spoon Incorporated is a nonprofit organization with 501(c)(3)
+              Seed & Spoon Incorporated is a nonprofit organization with 501(c)(3)
               status pending. Contributions are not currently tax-deductible but may
               become deductible upon approval.
             </p>

@@ -32,7 +32,7 @@ export default function AccessibilityPage() {
         </p>
 
         <p className="text-base text-black/70 leading-relaxed mb-4">
-          Seed & Spoon NJ is committed to ensuring that our website and digital resources are accessible to everyone, including people with disabilities. We believe that access to information about food assistance should be available to all members of our community, regardless of ability.
+          Seed & Spoon is committed to ensuring that our website and digital resources are accessible to everyone, including people with disabilities. We believe that access to information about food assistance should be available to all members of our community, regardless of ability.
         </p>
 
         <section>
@@ -232,7 +232,7 @@ export default function AccessibilityPage() {
             We welcome feedback and questions about the accessibility of our website and services.
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            <strong>Seed & Spoon NJ</strong><br />
+            <strong>Seed & Spoon</strong><br />
             Email: <strong>seedandspoonnj@gmail.com</strong>
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">

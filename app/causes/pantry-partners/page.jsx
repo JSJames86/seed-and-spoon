@@ -43,7 +43,7 @@ export default function PantryPartnersPage() {
           Together, We Expand Access to Fresh Food
         </h2>
         <p className="text-lg text-neutral-700 leading-relaxed mb-4">
-          Seed & Spoon NJ partners with schools, churches, nonprofits, housing communities,
+          Seed & Spoon partners with schools, churches, nonprofits, housing communities,
           small local pantries, and neighborhood leaders to bring fresh food directly to families.
           Our partnership model is designed to be simple, barrier-free, and community-powered —
           meeting people where they already are.

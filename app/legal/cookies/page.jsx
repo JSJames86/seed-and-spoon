@@ -32,7 +32,7 @@ export default function CookiesPage() {
         </p>
 
         <p className="text-base text-black/70 leading-relaxed mb-4">
-          This Cookie Policy explains how Seed & Spoon NJ uses cookies and similar technologies on our website. By using our site, you consent to the use of cookies as described in this policy.
+          This Cookie Policy explains how Seed & Spoon uses cookies and similar technologies on our website. By using our site, you consent to the use of cookies as described in this policy.
         </p>
 
         <section>
@@ -263,7 +263,7 @@ export default function CookiesPage() {
             If you have questions or concerns about our use of cookies, please contact us:
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            <strong>Seed & Spoon NJ</strong><br />
+            <strong>Seed & Spoon</strong><br />
             Email: <strong>seedandspoonnj@gmail.com</strong>
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">

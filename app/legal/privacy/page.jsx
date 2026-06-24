@@ -32,7 +32,7 @@ export default function PrivacyPage() {
         </p>
 
         <p className="text-base text-black/70 leading-relaxed mb-4">
-          Seed & Spoon NJ ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, share, and safeguard your personal information when you interact with our website, programs, and services.
+          Seed & Spoon ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, share, and safeguard your personal information when you interact with our website, programs, and services.
         </p>
 
         <section>
@@ -238,7 +238,7 @@ export default function PrivacyPage() {
             If you have questions, concerns, or requests regarding this Privacy Policy or how we handle your personal information, please contact us:
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            <strong>Seed & Spoon NJ</strong><br />
+            <strong>Seed & Spoon</strong><br />
             Email: <strong>seedandspoonnj@gmail.com</strong>
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">

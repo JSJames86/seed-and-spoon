@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { format } from 'date-fns';
 
@@ -175,7 +176,7 @@ function PostEditor({ initial, onSave, onCancel }) {
           className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
         />
         {fields.cover_image_url && (
-          <img src={fields.cover_image_url} alt="Cover preview" className="mt-2 rounded-lg max-h-40 object-cover" />
+          <Image src={fields.cover_image_url} alt="Cover preview" width={400} height={160} unoptimized className="mt-2 rounded-lg max-h-40 object-cover" />
         )}
       </div>
 

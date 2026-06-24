@@ -123,8 +123,6 @@ export async function POST(request) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  console.log(`[Stripe Webhook] Received event: ${event.type} (${event.id})`);
-
   try {
     switch (event.type) {
       case 'checkout.session.completed': {
@@ -133,10 +131,6 @@ export async function POST(request) {
         const customerId = session.customer;
         const amount = session.amount_total;
         const isMonthly = interval === 'month';
-
-        console.log(
-          `[Stripe Webhook] Donation completed — amount: ${amount}, interval: ${interval}, source: ${source}, name: ${donorName}`
-        );
 
         await captureServerEvent(customerId || event.id, EVENTS.DONATION_COMPLETED, {
           amount: amount / 100,
@@ -222,9 +216,6 @@ export async function POST(request) {
         const subscriptionId = invoice.subscription;
         const amount = invoice.amount_paid;
 
-        console.log(
-          `[Stripe Webhook] Recurring payment succeeded — subscription: ${subscriptionId}, amount: ${amount}`
-        );
         break;
       }
 
@@ -249,10 +240,6 @@ export async function POST(request) {
       case 'customer.subscription.deleted': {
         const subscription = event.data.object;
         const customerId = subscription.customer;
-
-        console.log(
-          `[Stripe Webhook] Subscription cancelled — id: ${subscription.id}, status: ${subscription.status}`
-        );
 
         await captureServerEvent(customerId || event.id, EVENTS.MONTHLY_SUBSCRIPTION_CANCELLED, {
           donor_id: customerId,

@@ -62,7 +62,7 @@ export default function CapabilityStatementViewer({ compact = false }) {
             src={GDOCS_VIEWER}
             className="w-full"
             style={{ height: '800px' }}
-            title="Seed and Spoon Capability Statement"
+            title="Seed & Spoon Capability Statement"
             allow="autoplay"
           />
         </div>

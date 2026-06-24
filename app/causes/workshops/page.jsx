@@ -263,7 +263,7 @@ export default function WorkshopsPage() {
           </h2>
           <p className="text-lg md:text-xl leading-relaxed opacity-95">
             Schools, churches, housing communities, and local groups can partner
-            with Seed & Spoon NJ to host budgeting sessions, cooking classes,
+            with Seed & Spoon to host budgeting sessions, cooking classes,
             smart grocery workshops, or youth agriculture days. We’ll work with
             you to design something that fits your people and your space.
           </p>

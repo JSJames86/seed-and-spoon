@@ -109,13 +109,13 @@ export default function DocumentsPage() {
             </div>
 
             <div className="bg-gray-50 rounded-xl p-6 text-sm text-gray-700 space-y-3 mb-6 max-h-72 overflow-y-auto">
-              <p className="font-bold text-charcoal">SEED AND SPOON, INC. — CONFIDENTIALITY AGREEMENT</p>
+              <p className="font-bold text-charcoal">SEED & SPOON, INC. — CONFIDENTIALITY AGREEMENT</p>
               <p>By accessing the internal document library, you agree to the following terms:</p>
-              <p><strong>1. Confidentiality.</strong> All documents, policies, procedures, financial information, and organizational materials accessed through this library are strictly confidential. You agree not to share, copy, distribute, or disclose any such materials to individuals outside of Seed and Spoon, Incorporated without prior written authorization from the Executive Director.</p>
-              <p><strong>2. Authorized Use Only.</strong> Documents accessed through this library are provided solely for use in connection with your role with Seed and Spoon. You agree to use these materials only for purposes directly related to your authorized responsibilities.</p>
-              <p><strong>3. Return of Materials.</strong> Upon termination of your relationship with Seed and Spoon, you agree to promptly delete, destroy, or return any copies of internal documents in your possession.</p>
+              <p><strong>1. Confidentiality.</strong> All documents, policies, procedures, financial information, and organizational materials accessed through this library are strictly confidential. You agree not to share, copy, distribute, or disclose any such materials to individuals outside of Seed & Spoon, Incorporated without prior written authorization from the Executive Director.</p>
+              <p><strong>2. Authorized Use Only.</strong> Documents accessed through this library are provided solely for use in connection with your role with Seed & Spoon. You agree to use these materials only for purposes directly related to your authorized responsibilities.</p>
+              <p><strong>3. Return of Materials.</strong> Upon termination of your relationship with Seed & Spoon, you agree to promptly delete, destroy, or return any copies of internal documents in your possession.</p>
               <p><strong>4. No Unauthorized Reproduction.</strong> You agree not to reproduce, publish, or otherwise make available any internal document in any form without authorization.</p>
-              <p><strong>5. Acknowledgment.</strong> You acknowledge that unauthorized disclosure of confidential materials may result in termination of your relationship with Seed and Spoon and may expose you to legal liability.</p>
+              <p><strong>5. Acknowledgment.</strong> You acknowledge that unauthorized disclosure of confidential materials may result in termination of your relationship with Seed & Spoon and may expose you to legal liability.</p>
               <p className="text-gray-400 text-xs">This agreement is electronically recorded with your account ID, IP address, and timestamp.</p>
             </div>
 

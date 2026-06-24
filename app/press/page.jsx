@@ -60,7 +60,7 @@ export default function PressPage() {
               <div className="border border-gray-200 rounded-2xl p-6 bg-white">
                 <h2 className="font-semibold text-gray-900 mb-3">About Seed &amp; Spoon</h2>
                 <p className="text-sm text-gray-600 leading-relaxed mb-3">
-                  Seed and Spoon is a New Jersey-based nonprofit organization specializing in youth
+                  Seed & Spoon is a New Jersey-based nonprofit organization specializing in youth
                   food insecurity intervention, community food distribution, and family support
                   services. Founded in 2026 and headquartered in Newark, we partner with schools,
                   community organizations, and local stakeholders to provide consistent access to

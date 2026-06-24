@@ -501,7 +501,7 @@ export default function ClientIntakeForm({ onSuccess, onScrollToMap }) {
 
       <div className="border-t-2 border-gray-200 dark:border-gray-700 pt-6 mt-8">
         <FormField
-          label="I consent to Seed & Spoon NJ using this information to provide food assistance. Your information will be kept confidential."
+          label="I consent to Seed & Spoon using this information to provide food assistance. Your information will be kept confidential."
           name="consent"
           type="checkbox"
           value={formData.consent}

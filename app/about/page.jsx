@@ -11,7 +11,7 @@ const CONTENT = {
   // SEO & Metadata
   meta: {
     title: 'Our Mission',
-    description: 'Seed and Spoon exists to eliminate youth hunger in Newark and Essex County through sustainable, community-powered food programs.',
+    description: 'Seed & Spoon exists to eliminate youth hunger in Newark and Essex County through sustainable, community-powered food programs.',
     ogImage: '/assets/logo-transparent.png',
   },
 
@@ -50,7 +50,7 @@ const CONTENT = {
   // Solution Section
   solution: {
     title: 'Our Model: Rescue, Transform, Deliver',
-    intro: 'Seed & Spoon NJ operates a dignity-first food rescue and meal preparation program that directly connects surplus food with families who need it most.',
+    intro: 'Seed & Spoon operates a dignity-first food rescue and meal preparation program that directly connects surplus food with families who need it most.',
     description: 'We bridge the gap between abundance and need through community-powered logistics, commercial kitchen operations, and partnerships built on trust and respect.',
     howItWorks: [
       {
@@ -215,12 +215,12 @@ const CONTENT = {
     intro: 'We\'re here to answer your questions about how we work, who we serve, and how you can get involved.',
     questions: [
       {
-        question: 'Who can receive food from Seed & Spoon NJ?',
+        question: 'Who can receive food from Seed & Spoon?',
         answer: 'Anyone who needs a meal can access our services--no ID, no income verification, no paperwork required. We work on a dignity-first model. Our partner distribution sites (schools, community centers, food banks) are open to all community members. If you or someone you know needs food, please visit our Partner Locations page or contact us directly.',
       },
       {
         question: 'Are donations tax-deductible?',
-        answer: 'Yes! Seed & Spoon NJ is a registered 501(c)(3) nonprofit organization. All monetary and in-kind donations are tax-deductible to the fullest extent allowed by law. You\'ll receive a receipt for your records after every contribution. Our EIN is available upon request for your tax filings.',
+        answer: 'Yes! Seed & Spoon is a registered 501(c)(3) nonprofit organization. All monetary and in-kind donations are tax-deductible to the fullest extent allowed by law. You\'ll receive a receipt for your records after every contribution. Our EIN is available upon request for your tax filings.',
       },
       {
         question: 'How do you ensure food safety?',

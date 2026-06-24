@@ -13,8 +13,6 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.
 
 export async function GET(request) {
   try {
-    console.log('[Pantries API] Fetching pantries from Supabase...');
-
     // Check if Supabase is configured
     if (!supabaseUrl || !supabaseServiceKey) {
       console.warn('[Pantries API] Supabase not configured, returning empty array');
@@ -70,8 +68,6 @@ export async function GET(request) {
         longitude,
       };
     });
-
-    console.log(`[Pantries API] Successfully fetched ${transformedData.length} pantries`);
 
     // Return the data as an array
     return NextResponse.json(transformedData, {
