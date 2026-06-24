@@ -135,7 +135,7 @@ export default function CausesPage() {
             stronger, more food-secure New Jersey.
           </p>
           <p className="mt-4 text-sm md:text-base opacity-90">
-            Explore each cause below to see how Seed & Spoon NJ turns compassion
+            Explore each cause below to see how Seed & Spoon turns compassion
             into action—and where you can plug in.
           </p>
         </div>
@@ -254,7 +254,7 @@ export default function CausesPage() {
           </h2>
           <p className="text-xl leading-relaxed opacity-95">
             Whether you’re passionate about food rescue, pantries, prepared
-            meals, or education, there’s a Seed & Spoon NJ cause that fits your
+            meals, or education, there’s a Seed & Spoon cause that fits your
             heart. Support one—or support the whole ecosystem.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

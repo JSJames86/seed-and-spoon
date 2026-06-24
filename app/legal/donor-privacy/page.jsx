@@ -32,7 +32,7 @@ export default function DonorPrivacyPage() {
         </p>
 
         <p className="text-base text-black/70 leading-relaxed mb-4">
-          Seed & Spoon NJ is deeply grateful for the generosity of our donors. We recognize that your support makes our mission possible, and we are committed to protecting your privacy and handling your information with the highest level of care and transparency. This Donor Privacy Policy explains how we collect, use, and safeguard donor information.
+          Seed & Spoon is deeply grateful for the generosity of our donors. We recognize that your support makes our mission possible, and we are committed to protecting your privacy and handling your information with the highest level of care and transparency. This Donor Privacy Policy explains how we collect, use, and safeguard donor information.
         </p>
 
         <section>
@@ -40,7 +40,7 @@ export default function DonorPrivacyPage() {
             1. What Donor Information We Collect
           </h2>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            When you make a donation to Seed & Spoon NJ, we may collect the following information:
+            When you make a donation to Seed & Spoon, we may collect the following information:
           </p>
           <ul className="list-disc pl-6 text-base text-black/70 leading-relaxed mb-4 space-y-2">
             <li><strong>Personal information:</strong> Name, email address, phone number, and mailing address</li>
@@ -108,7 +108,7 @@ export default function DonorPrivacyPage() {
             4. We Do Not Sell or Trade Donor Information
           </h2>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            <strong>Seed & Spoon NJ will never sell, rent, trade, or share your personal information with third parties for their marketing purposes.</strong>
+            <strong>Seed & Spoon will never sell, rent, trade, or share your personal information with third parties for their marketing purposes.</strong>
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
             Your donor information is confidential and will only be used to support our mission and communicate with you as described in this policy.
@@ -123,7 +123,7 @@ export default function DonorPrivacyPage() {
             We use secure third-party payment platforms, such as Stripe, to process donations. When you make a donation, your payment information is transmitted directly to the payment processor and is subject to their privacy policy and security standards.
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            Seed & Spoon NJ does not store full credit card numbers or bank account details on our servers. We only retain transaction confirmation data and donation amounts for record-keeping purposes.
+            Seed & Spoon does not store full credit card numbers or bank account details on our servers. We only retain transaction confirmation data and donation amounts for record-keeping purposes.
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
             Payment processors are bound by industry-standard security protocols, including PCI-DSS compliance, to protect your financial information.
@@ -239,11 +239,11 @@ export default function DonorPrivacyPage() {
             If you have any questions, concerns, or requests regarding this Donor Privacy Policy, please contact us:
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            <strong>Seed & Spoon NJ</strong><br />
+            <strong>Seed & Spoon</strong><br />
             Email: <strong>seedandspoonnj@gmail.com</strong>
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            Your trust and support are invaluable to us. Thank you for helping Seed & Spoon NJ fight hunger and build a more equitable food system.
+            Your trust and support are invaluable to us. Thank you for helping Seed & Spoon fight hunger and build a more equitable food system.
           </p>
         </section>
       </div>

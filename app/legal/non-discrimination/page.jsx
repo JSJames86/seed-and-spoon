@@ -32,7 +32,7 @@ export default function NonDiscriminationPage() {
         </p>
 
         <p className="text-base text-black/70 leading-relaxed mb-4">
-          Seed & Spoon NJ is committed to providing food assistance, services, and opportunities to all members of our community with dignity, respect, and without discrimination. We believe that access to nutritious food is a fundamental human right, and we work to ensure that everyone who needs support can receive it, regardless of who they are or where they come from.
+          Seed & Spoon is committed to providing food assistance, services, and opportunities to all members of our community with dignity, respect, and without discrimination. We believe that access to nutritious food is a fundamental human right, and we work to ensure that everyone who needs support can receive it, regardless of who they are or where they come from.
         </p>
 
         <section>
@@ -40,7 +40,7 @@ export default function NonDiscriminationPage() {
             1. Our Commitment to Equal Access
           </h2>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            Seed & Spoon NJ does not discriminate on the basis of:
+            Seed & Spoon does not discriminate on the basis of:
           </p>
           <ul className="list-disc pl-6 text-base text-black/70 leading-relaxed mb-4 space-y-2">
             <li><strong>Race or color</strong></li>
@@ -110,7 +110,7 @@ export default function NonDiscriminationPage() {
             4. Reasonable Accommodations
           </h2>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            Seed & Spoon NJ is committed to providing reasonable accommodations for individuals with disabilities to ensure equal access to our programs and services. Accommodations may include:
+            Seed & Spoon is committed to providing reasonable accommodations for individuals with disabilities to ensure equal access to our programs and services. Accommodations may include:
           </p>
           <ul className="list-disc pl-6 text-base text-black/70 leading-relaxed mb-4 space-y-2">
             <li>Physical accessibility modifications (ramps, accessible parking, etc.)</li>
@@ -129,7 +129,7 @@ export default function NonDiscriminationPage() {
             5. Reporting Discrimination
           </h2>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            If you believe you have experienced discrimination in accessing Seed & Spoon NJ's services, programs, or opportunities, we encourage you to report it. You may:
+            If you believe you have experienced discrimination in accessing Seed & Spoon's services, programs, or opportunities, we encourage you to report it. You may:
           </p>
           <ul className="list-disc pl-6 text-base text-black/70 leading-relaxed mb-4 space-y-2">
             <li><strong>Contact us directly:</strong> Email <strong>seedandspoonnj@gmail.com</strong> or speak with a staff member or volunteer coordinator</li>
@@ -146,7 +146,7 @@ export default function NonDiscriminationPage() {
             6. No Retaliation
           </h2>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            Seed & Spoon NJ strictly prohibits retaliation against anyone who:
+            Seed & Spoon strictly prohibits retaliation against anyone who:
           </p>
           <ul className="list-disc pl-6 text-base text-black/70 leading-relaxed mb-4 space-y-2">
             <li>Reports discrimination or harassment</li>
@@ -197,7 +197,7 @@ export default function NonDiscriminationPage() {
             9. External Complaint Procedures
           </h2>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            In addition to reporting discrimination to Seed & Spoon NJ directly, individuals may file complaints with external agencies, including:
+            In addition to reporting discrimination to Seed & Spoon directly, individuals may file complaints with external agencies, including:
           </p>
           <ul className="list-disc pl-6 text-base text-black/70 leading-relaxed mb-4 space-y-2">
             <li><strong>New Jersey Division on Civil Rights:</strong> Enforces the New Jersey Law Against Discrimination</li>
@@ -218,7 +218,7 @@ export default function NonDiscriminationPage() {
             For questions, concerns, or to request accommodations, please contact us:
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            <strong>Seed & Spoon NJ</strong><br />
+            <strong>Seed & Spoon</strong><br />
             Email: <strong>seedandspoonnj@gmail.com</strong>
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">

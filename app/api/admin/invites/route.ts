@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
         <p>You've been invited to join the Seed & Spoon platform as a <strong>${role}</strong>.${channelName}</p>
         <p><a href="${inviteUrl}" style="background:#2d5a27;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Accept Invitation</a></p>
         <p>This link expires in 7 days.</p>
-        <p>With gratitude,<br/>Janelle<br/>Founder, Seed & Spoon NJ</p>
+        <p>With gratitude,<br/>Janelle<br/>Founder, Seed & Spoon</p>
       `,
     })
   }

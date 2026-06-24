@@ -561,7 +561,7 @@ export default function ReferralIntakeForm({ onSuccess }) {
 
       <div className="border-t-2 border-blue-200 dark:border-blue-700 pt-6 mt-8">
         <FormField
-          label="I confirm that the client has given permission to share their information with Seed & Spoon NJ for the purpose of receiving food assistance."
+          label="I confirm that the client has given permission to share their information with Seed & Spoon for the purpose of receiving food assistance."
           name="clientConsent"
           type="checkbox"
           value={formData.clientConsent}

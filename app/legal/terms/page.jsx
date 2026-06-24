@@ -32,7 +32,7 @@ export default function TermsPage() {
         </p>
 
         <p className="text-black/70 mb-8">
-          These Terms &amp; Conditions govern your use of the Seed & Spoon NJ
+          These Terms &amp; Conditions govern your use of the Seed & Spoon
           website, participation in our programs, donations, and communication
           with our organization. By accessing our site or taking part in any of
           our services, you agree to the following terms.
@@ -56,7 +56,7 @@ export default function TermsPage() {
             2. Program Participation
           </h2>
           <p className="text-black/70 mb-3">
-            Seed &amp; Spoon NJ provides food assistance, workshops, community
+            Seed &amp; Spoon provides food assistance, workshops, community
             meals, and donation-based services on a voluntary, goodwill basis.
           </p>
           <p className="text-black/70">
@@ -78,7 +78,7 @@ export default function TermsPage() {
             shellfish.
           </p>
           <p className="text-black/70">
-            By accepting food from Seed &amp; Spoon NJ, you acknowledge and
+            By accepting food from Seed &amp; Spoon, you acknowledge and
             accept all associated risks and agree to review ingredients and
             exercise personal judgment before consumption.
           </p>
@@ -108,7 +108,7 @@ export default function TermsPage() {
           </h2>
           <p className="text-black/70">
             All website content—including text, graphics, logos, and images—is
-            the property of Seed &amp; Spoon NJ or licensed to us. You may not
+            the property of Seed &amp; Spoon or licensed to us. You may not
             reproduce or distribute any content without written permission,
             except for personal, non-commercial use.
           </p>
@@ -120,7 +120,7 @@ export default function TermsPage() {
             6. Third-Party Links
           </h2>
           <p className="text-black/70">
-            Our website may link to external sites. Seed &amp; Spoon NJ is not
+            Our website may link to external sites. Seed &amp; Spoon is not
             responsible for content, policies, or actions taken by third-party
             platforms, including donation processors or partner organizations.
           </p>
@@ -132,7 +132,7 @@ export default function TermsPage() {
             7. Liability Limitations
           </h2>
           <p className="text-black/70 mb-3">
-            Seed &amp; Spoon NJ, including its volunteers and partners, is not
+            Seed &amp; Spoon, including its volunteers and partners, is not
             liable for damages arising from:
           </p>
           <ul className="list-disc pl-6 text-black/70 space-y-2">

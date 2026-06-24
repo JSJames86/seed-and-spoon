@@ -44,7 +44,7 @@ export default function PreparedMealsPage() {
           Fresh, Home-Style Meals Cooked With Care
         </h2>
         <p className="text-lg text-neutral-700 leading-relaxed mb-4">
-          Seed & Spoon NJ&apos;s Prepared Meals program provides ready-to-heat meals
+          Seed & Spoon&apos;s Prepared Meals program provides ready-to-heat meals
           designed to support families, elders, veterans, and disabled neighbors
           who need convenient, nutritious options.
         </p>

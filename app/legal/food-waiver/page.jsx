@@ -32,7 +32,7 @@ export default function FoodWaiverPage() {
         </p>
 
         <p className="text-base text-black/70 leading-relaxed mb-4">
-          Seed & Spoon NJ is committed to providing safe, nutritious food to families in need. This waiver explains important information about the nature of our food programs, potential allergen risks, and your responsibilities as a participant. By accepting food from Seed & Spoon NJ, you acknowledge and agree to the terms outlined below.
+          Seed & Spoon is committed to providing safe, nutritious food to families in need. This waiver explains important information about the nature of our food programs, potential allergen risks, and your responsibilities as a participant. By accepting food from Seed & Spoon, you acknowledge and agree to the terms outlined below.
         </p>
 
         <section>
@@ -40,7 +40,7 @@ export default function FoodWaiverPage() {
             1. Nature of Our Food Programs
           </h2>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            Seed & Spoon NJ operates community-based food programs that include:
+            Seed & Spoon operates community-based food programs that include:
           </p>
           <ul className="list-disc pl-6 text-base text-black/70 leading-relaxed mb-4 space-y-2">
             <li><strong>Surplus food rescue:</strong> We collect unsold or excess food from grocery stores, bakeries, restaurants, farms, and food banks that would otherwise go to waste</li>
@@ -148,7 +148,7 @@ export default function FoodWaiverPage() {
             6. Assumption of Risk
           </h2>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            By accepting food from Seed & Spoon NJ, you acknowledge and accept the following risks:
+            By accepting food from Seed & Spoon, you acknowledge and accept the following risks:
           </p>
           <ul className="list-disc pl-6 text-base text-black/70 leading-relaxed mb-4 space-y-2">
             <li>Risk of allergic reactions, including severe or life-threatening reactions</li>
@@ -157,7 +157,7 @@ export default function FoodWaiverPage() {
             <li>Risk that ingredient information may be incomplete or unavailable</li>
           </ul>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            You assume full responsibility for any consequences that may result from consuming food provided by Seed & Spoon NJ. This includes, but is not limited to, allergic reactions, foodborne illness, or adverse health effects.
+            You assume full responsibility for any consequences that may result from consuming food provided by Seed & Spoon. This includes, but is not limited to, allergic reactions, foodborne illness, or adverse health effects.
           </p>
         </section>
 
@@ -166,7 +166,7 @@ export default function FoodWaiverPage() {
             7. Emergency Procedures
           </h2>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            If you or someone in your household experiences an allergic reaction or becomes ill after consuming food from Seed & Spoon NJ:
+            If you or someone in your household experiences an allergic reaction or becomes ill after consuming food from Seed & Spoon:
           </p>
           <ul className="list-disc pl-6 text-base text-black/70 leading-relaxed mb-4 space-y-2">
             <li><strong>Seek immediate medical attention</strong> by calling 911 or going to the nearest emergency room, especially for severe allergic reactions</li>
@@ -180,7 +180,7 @@ export default function FoodWaiverPage() {
             8. Limitation of Liability
           </h2>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            To the fullest extent permitted by law, Seed & Spoon NJ, its directors, officers, volunteers, staff, and partner organizations are not liable for any injury, illness, allergic reaction, or other harm that may result from consuming food we provide.
+            To the fullest extent permitted by law, Seed & Spoon, its directors, officers, volunteers, staff, and partner organizations are not liable for any injury, illness, allergic reaction, or other harm that may result from consuming food we provide.
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
             This includes, but is not limited to, harm caused by:
@@ -193,7 +193,7 @@ export default function FoodWaiverPage() {
             <li>Food that has passed its expiration date</li>
           </ul>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            By accepting food from us, you agree to release and hold harmless Seed & Spoon NJ and all affiliated parties from any claims, damages, or liabilities related to food consumption.
+            By accepting food from us, you agree to release and hold harmless Seed & Spoon and all affiliated parties from any claims, damages, or liabilities related to food consumption.
           </p>
         </section>
 
@@ -202,7 +202,7 @@ export default function FoodWaiverPage() {
             9. Good Samaritan Food Donation Act
           </h2>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            Seed & Spoon NJ operates in accordance with the Bill Emerson Good Samaritan Food Donation Act, which protects food donors and nonprofit organizations from liability when donating food in good faith to those in need.
+            Seed & Spoon operates in accordance with the Bill Emerson Good Samaritan Food Donation Act, which protects food donors and nonprofit organizations from liability when donating food in good faith to those in need.
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
             We work diligently to ensure food safety and quality, but we rely on the cooperation and good judgment of participants to use food responsibly.
@@ -217,7 +217,7 @@ export default function FoodWaiverPage() {
             If you have questions about food safety, allergens, or this waiver, please contact us:
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            <strong>Seed & Spoon NJ</strong><br />
+            <strong>Seed & Spoon</strong><br />
             Email: <strong>seedandspoonnj@gmail.com</strong>
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
@@ -230,7 +230,7 @@ export default function FoodWaiverPage() {
             Acknowledgment
           </h2>
           <p className="text-base text-black/70 leading-relaxed">
-            By accepting food from Seed & Spoon NJ, you acknowledge that you have read, understood, and agree to the terms of this Food Safety & Allergy Waiver. You accept full responsibility for inspecting food, making informed decisions about consumption, and understanding the risks involved.
+            By accepting food from Seed & Spoon, you acknowledge that you have read, understood, and agree to the terms of this Food Safety & Allergy Waiver. You accept full responsibility for inspecting food, making informed decisions about consumption, and understanding the risks involved.
           </p>
         </section>
       </div>
