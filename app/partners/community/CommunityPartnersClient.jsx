@@ -186,7 +186,12 @@ function CommunityPartnerForm() {
 
       setStatus('success');
     } catch (err) {
-      setServerError(err.message || 'Something went wrong. Please try again.');
+      const isNetworkFailure = err instanceof TypeError;
+      setServerError(
+        isNetworkFailure
+          ? "We couldn't reach our server. Please check your connection and try again."
+          : err.message || 'Something went wrong. Please try again.'
+      );
       setStatus('error');
     }
   };
