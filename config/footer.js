@@ -41,6 +41,7 @@ export const columns = [
       { label: "Volunteer", href: "/volunteer" },
       { label: "Donate Funds", href: "/donate" },
       { label: "Corporate Partnerships", href: "/partners/corporate" },
+      { label: "Community Partnerships", href: "/partners/community" },
       { label: "Host a Food Drive", href: "/get-involved/food-drive" },
       { label: "Become an Affiliate", href: "/affiliate" },
       { label: "Amazon Wishlist", href: "https://www.amazon.com/hz/wishlist/ls/1ZC494TKCOAHJ?ref_=wl_share", external: true },
