@@ -1,7 +1,6 @@
 // app/layout.jsx
 import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import SiteChrome from "@/components/SiteChrome";
 import SmoothScroll from "@/components/SmoothScroll";
 import CookieBanner from "@/components/CookieBanner";
 import CookieSettingsModal from "@/components/CookieSettingsModal";
@@ -122,9 +121,7 @@ export default function RootLayout({ children }) {
             Skip to content
           </a>
           <SmoothScroll />
-          <Header />
-          <main id="main">{children}</main>
-          <Footer />
+          <SiteChrome>{children}</SiteChrome>
 
           {/* GDPR/CCPA Cookie Consent System */}
           <CookieBanner />
