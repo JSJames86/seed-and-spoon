@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,7 +9,13 @@ import LeverageBadge from '@/components/spoonassist/LeverageBadge';
 import ServingsStepper from '@/components/spoonassist/ServingsStepper';
 import IngredientRow from '@/components/spoonassist/IngredientRow';
 import EmptyState from '@/components/spoonassist/EmptyState';
+import PillButton from '@/components/spoonassist/PillButton';
+import { usePlan } from '@/components/spoonassist/PlanProvider';
+import { toPlanIngredients } from '@/lib/spoonassist/consolidateList';
 import { seedRecipes } from '@/data/spoonassistV2Seed';
+
+const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const SLOTS = ['breakfast', 'lunch', 'dinner'];
 
 function PlateImage({ image }) {
   return (
@@ -37,10 +43,15 @@ function MetaPill({ children }) {
 
 export default function SpoonAssistRecipeDetailPage() {
   const { slug } = useParams();
+  const plan = usePlan();
   const [status, setStatus] = useState('loading'); // loading | db | fallback | not-found
   const [recipe, setRecipe] = useState(null);
   const [servings, setServings] = useState(4);
   const [checked, setChecked] = useState(() => new Set());
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickerDay, setPickerDay] = useState(() => new Date().getDay());
+  const [pickerSlot, setPickerSlot] = useState('dinner');
+  const [addedMessage, setAddedMessage] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -89,6 +100,29 @@ export default function SpoonAssistRecipeDetailPage() {
     });
   };
 
+  // Shape DB ingredient rows into what PlanProvider.addRecipe/leverage.ts
+  // expect. Only meaningful for status === 'db' -- fallback (seed) recipes
+  // have no real ingredient list to build a plan item from.
+  const planIngredients = useMemo(() => {
+    if (status !== 'db' || !recipe) return [];
+    return toPlanIngredients(recipe.ingredients);
+  }, [status, recipe]);
+
+  const dynamicLeverage = useMemo(() => {
+    if (status !== 'db' || !recipe || planIngredients.length === 0) return null;
+    return plan.leverageForCandidate({ id: recipe.id, servings, ingredientKeys: planIngredients.map((i) => i.key) });
+  }, [status, recipe, servings, planIngredients, plan]);
+
+  const addToPlan = (day, slot) => {
+    plan.addRecipe(
+      { recipeId: recipe.id, slug: recipe.slug, title: recipe.title, image, baseServings: recipe.servings, ingredients: planIngredients },
+      { day, slot, servings }
+    );
+    setPickerOpen(false);
+    setAddedMessage(`Added to ${DAY_LABELS[day]} · ${slot[0].toUpperCase()}${slot.slice(1)}`);
+    setTimeout(() => setAddedMessage(null), 3000);
+  };
+
   if (status === 'loading') {
     return <p className="text-[15px] text-[var(--sa-ink-soft)]">Loading recipe...</p>;
   }
@@ -125,7 +159,11 @@ export default function SpoonAssistRecipeDetailPage() {
       <div className="mt-4 flex flex-wrap justify-center gap-2">
         <CostBadge perServing={recipe.costPerServing} />
         {totalMinutes != null && <MetaPill>{totalMinutes} min</MetaPill>}
-        {recipe.leverage != null && <LeverageBadge score={recipe.leverage} />}
+        {dynamicLeverage != null ? (
+          <LeverageBadge score={dynamicLeverage} />
+        ) : recipe.leverage != null ? (
+          <LeverageBadge score={recipe.leverage} />
+        ) : null}
       </div>
 
       {status === 'db' ? (
@@ -152,6 +190,69 @@ export default function SpoonAssistRecipeDetailPage() {
               <p className="text-[15px] text-[var(--sa-ink-soft)]">No ingredients listed.</p>
             )}
           </div>
+
+          {/* Sticky actions -- spec §4.3: "both sticky on scroll" */}
+          <div className="sticky bottom-[76px] z-30 mt-8 flex gap-3 rounded-[var(--sa-radius-card)] bg-[var(--sa-surface)] p-3 shadow-[var(--sa-shadow-card)] lg:bottom-4">
+            <PillButton variant="secondary" className="flex-1" onClick={() => addToPlan(new Date().getDay(), 'dinner')}>
+              Add to list
+            </PillButton>
+            <PillButton variant="primary" className="flex-1" onClick={() => setPickerOpen(true)}>
+              Add to plan
+            </PillButton>
+          </div>
+
+          {addedMessage && (
+            <p className="mt-3 text-center text-[13px] font-medium text-[var(--sa-savings)]">{addedMessage}</p>
+          )}
+
+          {pickerOpen && (
+            <div className="fixed inset-0 z-50 flex items-end justify-center lg:items-center" role="dialog" aria-modal="true">
+              <button
+                type="button"
+                aria-label="Close"
+                onClick={() => setPickerOpen(false)}
+                className="absolute inset-0 bg-[var(--sa-green-deep)]/40"
+              />
+              <div className="relative w-full max-w-[420px] rounded-t-[var(--sa-radius-card)] bg-[var(--sa-surface)] p-6 shadow-[var(--sa-shadow-card)] lg:rounded-[var(--sa-radius-card)] lg:mb-6">
+                <h2 className="text-[17px] font-semibold text-[var(--sa-ink)]">Add to which day?</h2>
+                <div className="mt-4 grid grid-cols-7 gap-1.5">
+                  {DAY_LABELS.map((label, day) => (
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={() => setPickerDay(day)}
+                      className={`rounded-[var(--sa-radius-pill)] py-2 text-[13px] font-semibold spoon-transition ${
+                        pickerDay === day ? 'bg-[var(--sa-green-deep)] text-[var(--sa-bg)]' : 'bg-[var(--sa-surface-alt)] text-[var(--sa-ink)]'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+                <div className="mt-4 flex gap-2">
+                  {SLOTS.map((slot) => (
+                    <button
+                      key={slot}
+                      type="button"
+                      onClick={() => setPickerSlot(slot)}
+                      className={`flex-1 rounded-[var(--sa-radius-pill)] py-2 text-[13px] font-semibold capitalize spoon-transition ${
+                        pickerSlot === slot ? 'bg-[var(--sa-green-deep)] text-[var(--sa-bg)]' : 'bg-[var(--sa-surface-alt)] text-[var(--sa-ink)]'
+                      }`}
+                    >
+                      {slot}
+                    </button>
+                  ))}
+                </div>
+                <PillButton
+                  variant="primary"
+                  className="mt-5 w-full"
+                  onClick={() => addToPlan(pickerDay, pickerSlot)}
+                >
+                  Add {DAY_LABELS[pickerDay]} &middot; {pickerSlot}
+                </PillButton>
+              </div>
+            </div>
+          )}
         </>
       ) : (
         <p className="mx-auto mt-8 max-w-sm text-center text-[15px] text-[var(--sa-ink-soft)]">

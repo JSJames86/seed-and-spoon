@@ -7,6 +7,7 @@ import ChipToggle from '@/components/spoonassist/ChipToggle';
 import RecipeCard from '@/components/spoonassist/RecipeCard';
 import CoverageBar from '@/components/spoonassist/CoverageBar';
 import SectionHeader from '@/components/spoonassist/SectionHeader';
+import { usePlan } from '@/components/spoonassist/PlanProvider';
 import {
   savingsCarousel,
   highLeverageCarousel,
@@ -44,6 +45,8 @@ function RecipeCarousel({ recipes }) {
 }
 
 export default function SpoonAssistHomePage() {
+  const plan = usePlan();
+  const hasRealPlan = plan.hydrated && plan.items.length > 0;
   const [search, setSearch] = useState('');
   const [householdSize, setHouseholdSize] = useState(seedHousehold.size);
   const [budgetCents, setBudgetCents] = useState(seedHousehold.weeklyBudgetCents);
@@ -79,21 +82,35 @@ export default function SpoonAssistHomePage() {
         </div>
       </section>
 
-      {/* Coverage snapshot */}
+      {/* Coverage snapshot -- real session plan once one exists, otherwise
+          a labeled example so first-run visitors see what this card means. */}
       <section className="rounded-[var(--sa-radius-card)] bg-[var(--sa-surface)] p-5 shadow-[var(--sa-shadow-card)]">
         <Link href="/spoonassist/plan" className="block">
           <p className="text-[13px] font-semibold uppercase tracking-wide text-[var(--sa-ink-soft)]">
-            Your week
+            {hasRealPlan ? 'Your week' : 'Your week (example)'}
           </p>
-          <p className="mt-1 text-[17px] font-semibold text-[var(--sa-ink)]">
-            {seedCoverageSnapshot.mealsPlanned} of {seedCoverageSnapshot.mealsTotal} meals planned &middot; est. $
-            {(seedCoverageSnapshot.estCostCents / 100).toFixed(2)} &middot; Leverage {seedCoverageSnapshot.leverage.toFixed(1)}
-          </p>
-          <CoverageBar
-            className="mt-3"
-            value={seedCoverageSnapshot.mealsPlanned}
-            max={seedCoverageSnapshot.mealsTotal}
-          />
+          {hasRealPlan ? (
+            <>
+              <p className="mt-1 text-[17px] font-semibold text-[var(--sa-ink)]">
+                {plan.mealsPlanned} meal{plan.mealsPlanned === 1 ? '' : 's'} planned &middot;{' '}
+                {plan.consolidatedItems.length} item{plan.consolidatedItems.length === 1 ? '' : 's'} &middot; Leverage{' '}
+                {plan.overallLeverage.toFixed(1)}
+              </p>
+              <CoverageBar className="mt-3" value={plan.mealsPlanned} max={Math.max(plan.mealsPlanned, 7)} />
+            </>
+          ) : (
+            <>
+              <p className="mt-1 text-[17px] font-semibold text-[var(--sa-ink)]">
+                {seedCoverageSnapshot.mealsPlanned} of {seedCoverageSnapshot.mealsTotal} meals planned &middot; est. $
+                {(seedCoverageSnapshot.estCostCents / 100).toFixed(2)} &middot; Leverage {seedCoverageSnapshot.leverage.toFixed(1)}
+              </p>
+              <CoverageBar
+                className="mt-3"
+                value={seedCoverageSnapshot.mealsPlanned}
+                max={seedCoverageSnapshot.mealsTotal}
+              />
+            </>
+          )}
         </Link>
       </section>
 

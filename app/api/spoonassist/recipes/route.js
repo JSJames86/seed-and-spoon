@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { deriveIngredientKey } from '@/lib/spoonassist/consolidateList';
 
 // ---------------------------------------------------------------------------
 // GET /api/spoonassist/recipes
@@ -17,9 +18,12 @@ import { supabase } from '@/lib/supabase';
 //   sort       'quickest' (total_minutes asc) | 'newest' (default)
 //   limit      default 48, max 100
 //
-// Cost-per-serving and leverage are intentionally absent here -- they need
-// a store/price lookup (Phase 4) and an active plan (Phase 3) respectively.
-// RecipeCard renders without those badges when the fields are missing.
+// Cost-per-serving is intentionally absent here -- it needs a store/price
+// lookup (Phase 4). RecipeCard renders without that badge when the field is
+// missing. `ingredientKeys` (deduped, canonical_id-or-normalized-name) rides
+// along on every row so the Plan page's "Add a meal" picker can rank
+// candidates by lib/spoonassist/leverage.ts against the current plan without
+// an N+1 detail fetch per recipe.
 // ---------------------------------------------------------------------------
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -32,7 +36,7 @@ export async function GET(request) {
 
   let query = supabase
     .from('recipes')
-    .select('id, slug, title, description, image_url, category, total_minutes, servings, dietary_tags, created_at')
+    .select('id, slug, title, description, image_url, category, total_minutes, servings, dietary_tags, created_at, recipe_ingredients(canonical_id, ingredient_name)')
     .eq('is_published', true)
     .limit(limit);
 
@@ -52,8 +56,13 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Failed to load recipes' }, { status: 500 });
   }
 
+  const recipes = (data ?? []).map(({ recipe_ingredients, ...recipe }) => ({
+    ...recipe,
+    ingredientKeys: [...new Set((recipe_ingredients ?? []).map((ing) => deriveIngredientKey(ing.canonical_id, ing.ingredient_name)))],
+  }));
+
   return NextResponse.json(
-    { recipes: data ?? [] },
+    { recipes },
     { headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600' } }
   );
 }

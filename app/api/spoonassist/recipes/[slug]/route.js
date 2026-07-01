@@ -25,7 +25,7 @@ export async function GET(_request, { params }) {
 
   const { data: ingredients, error: ingredientsErr } = await supabase
     .from('recipe_ingredients')
-    .select('id, canonical_id, quantity, unit, ingredient_name, raw_text')
+    .select('id, canonical_id, quantity, unit, ingredient_name, raw_text, canonical_ingredients(category)')
     .eq('recipe_id', recipe.id)
     .order('id', { ascending: true });
 
@@ -34,8 +34,18 @@ export async function GET(_request, { params }) {
     return NextResponse.json({ error: 'Failed to load recipe ingredients' }, { status: 500 });
   }
 
+  const shapedIngredients = (ingredients ?? []).map((ing) => ({
+    id: ing.id,
+    canonical_id: ing.canonical_id,
+    quantity: ing.quantity,
+    unit: ing.unit,
+    ingredient_name: ing.ingredient_name,
+    raw_text: ing.raw_text,
+    category: ing.canonical_ingredients?.category ?? null,
+  }));
+
   return NextResponse.json(
-    { recipe: { ...recipe, ingredients: ingredients ?? [] } },
+    { recipe: { ...recipe, ingredients: shapedIngredients } },
     { headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600' } }
   );
 }
