@@ -27,7 +27,7 @@ sweet-potato-pecan-pie.jpg
 
 1. Each recipe in `data/recipes.js` has an `instacartImage` field pointing
    here, alongside its on-site `image`.
-2. `app/spoonassist/page.jsx` sends `selectedRecipe.instacartImage` (falling
+2. `app/spoonassist/classic/page.jsx` sends `selectedRecipe.instacartImage` (falling
    back to `selectedRecipe.image`) as `imageUrl` in the `/api/instacart_list`
    request body.
 3. `lib/spoonassist/instacart.js`'s `toAbsoluteImageUrl()` resolves that
