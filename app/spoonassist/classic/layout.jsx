@@ -15,7 +15,7 @@ const interFont = Inter({
 });
 
 export const metadata = {
-  title: 'SpoonAssist | Seed & Spoon',
+  title: 'SpoonAssist Classic | Seed & Spoon',
   description: 'Compare local grocery prices for any recipe and create shopping lists.',
   icons: {
     icon: '/spoonassist/favicon.ico',

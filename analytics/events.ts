@@ -16,11 +16,18 @@ export const EVENTS = {
   MEAL_BOX_DELIVERED: 'meal_box_delivered',
   DELIVERY_FAILED: 'delivery_failed',
 
-  // SpoonAssist
+  // SpoonAssist (classic wizard, /spoonassist/classic)
   SPOONASSIST_SESSION_STARTED: 'spoonassist_session_started',
   SPOONASSIST_QUERY_SUBMITTED: 'spoonassist_query_submitted',
   SPOONASSIST_RESPONSE_RECEIVED: 'spoonassist_response_received',
   SPOONASSIST_RECOMMENDATION_ACCEPTED: 'spoonassist_recommendation_accepted',
   SPOONASSIST_RECOMMENDATION_REJECTED: 'spoonassist_recommendation_rejected',
   SPOONASSIST_ERROR: 'spoonassist_error',
+
+  // SpoonAssist v2 (/spoonassist -- plan/list/compare/handoff funnel, spec Phase 5)
+  SPOONASSIST_V2_PLAN_CREATED: 'plan_created',
+  SPOONASSIST_V2_LIST_BUILT: 'list_built',
+  SPOONASSIST_V2_COMPARE_VIEWED: 'compare_viewed',
+  SPOONASSIST_V2_HANDOFF_CLICKED: 'handoff_clicked',
+  SPOONASSIST_V2_SAVINGS_SHOWN: 'savings_shown',
 } as const
