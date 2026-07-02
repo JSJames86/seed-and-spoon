@@ -1,14 +1,20 @@
 'use client';
 
+import Link from 'next/link';
 import { useSpoonAssistTheme } from '@/components/spoonassist/ThemeProvider';
 
+// Household settings and Dietary & allergens are live today -- they're the
+// editable quick-setup card on Home (#household). The rest (Pantry, Saved
+// recipes, List history, Stores & ZIP) need an account to persist anything
+// and don't have a page yet, so they're shown disabled rather than as dead
+// buttons.
 const ROWS = [
-  { label: 'Household settings', hint: '4 people · $85/week' },
-  { label: 'Dietary & allergens', hint: 'Vegetarian' },
-  { label: 'Pantry', hint: 'Manage what you have on hand' },
-  { label: 'Saved recipes', hint: 'Collections' },
-  { label: 'List history', hint: 'Past shopping lists' },
-  { label: 'Stores & ZIP', hint: 'Not set' },
+  { label: 'Household settings', hint: '4 people · $85/week', href: '/spoonassist#household' },
+  { label: 'Dietary & allergens', hint: 'Vegetarian', href: '/spoonassist#household' },
+  { label: 'Pantry', hint: 'Coming soon' },
+  { label: 'Saved recipes', hint: 'Coming soon' },
+  { label: 'List history', hint: 'Coming soon' },
+  { label: 'Stores & ZIP', hint: 'Coming soon' },
 ];
 
 function ChevronIcon() {
@@ -53,21 +59,34 @@ export default function SpoonAssistProfilePage() {
           </span>
         </button>
 
-        {ROWS.map((row) => (
-          <button
-            key={row.label}
-            type="button"
-            className="flex w-full items-center justify-between px-5 py-4 text-left spoon-transition hover:bg-[var(--sa-surface-alt)]"
-          >
-            <div>
-              <p className="text-[15px] font-medium text-[var(--sa-ink)]">{row.label}</p>
-              <p className="text-[13px] text-[var(--sa-ink-soft)]">{row.hint}</p>
+        {ROWS.map((row) =>
+          row.href ? (
+            <Link
+              key={row.label}
+              href={row.href}
+              className="flex w-full items-center justify-between px-5 py-4 text-left spoon-transition hover:bg-[var(--sa-surface-alt)]"
+            >
+              <div>
+                <p className="text-[15px] font-medium text-[var(--sa-ink)]">{row.label}</p>
+                <p className="text-[13px] text-[var(--sa-ink-soft)]">{row.hint}</p>
+              </div>
+              <span className="text-[var(--sa-ink-soft)]">
+                <ChevronIcon />
+              </span>
+            </Link>
+          ) : (
+            <div
+              key={row.label}
+              aria-disabled="true"
+              className="flex w-full items-center justify-between px-5 py-4 opacity-50"
+            >
+              <div>
+                <p className="text-[15px] font-medium text-[var(--sa-ink)]">{row.label}</p>
+                <p className="text-[13px] text-[var(--sa-ink-soft)]">{row.hint}</p>
+              </div>
             </div>
-            <span className="text-[var(--sa-ink-soft)]">
-              <ChevronIcon />
-            </span>
-          </button>
-        ))}
+          )
+        )}
       </div>
     </div>
   );

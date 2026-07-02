@@ -129,7 +129,7 @@ export default function SpoonAssistHomePage() {
       </section>
 
       {/* Household quick-setup */}
-      <section className="rounded-[var(--sa-radius-card)] bg-[var(--sa-surface)] p-5 shadow-[var(--sa-shadow-card)]">
+      <section id="household" className="scroll-mt-6 rounded-[var(--sa-radius-card)] bg-[var(--sa-surface)] p-5 shadow-[var(--sa-shadow-card)]">
         <h2 className="text-[17px] font-semibold text-[var(--sa-ink)]">Household</h2>
 
         <div className="mt-4 flex items-center justify-between">
