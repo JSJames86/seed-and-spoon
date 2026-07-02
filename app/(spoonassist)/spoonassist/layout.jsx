@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import BottomTabNav from '@/components/spoonassist/BottomTabNav';
 import { PlanProvider } from '@/components/spoonassist/PlanProvider';
@@ -36,8 +37,8 @@ export default function SpoonAssistV2Layout({ children }) {
         {/* Desktop top bar: brand + segmented nav control */}
         <header className="hidden lg:block border-b border-[var(--sa-surface-alt)]">
           <div className="mx-auto flex max-w-[1100px] items-center justify-between px-6 py-4">
-            <Link href="/spoonassist" className="text-[17px] font-semibold text-[var(--sa-ink)]">
-              SpoonAssist
+            <Link href="/spoonassist" aria-label="SpoonAssist home">
+              <Image src="/spoonassist/logo.png" alt="SpoonAssist" width={512} height={268} priority className="h-9 w-auto" />
             </Link>
             <BottomTabNav variant="desktop" />
           </div>
