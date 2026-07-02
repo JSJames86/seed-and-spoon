@@ -6,6 +6,7 @@ import { usePlan } from '@/components/spoonassist/PlanProvider';
 import PillButton from '@/components/spoonassist/PillButton';
 import LeverageBadge from '@/components/spoonassist/LeverageBadge';
 import EmptyState from '@/components/spoonassist/EmptyState';
+import { ListRowSkeleton } from '@/components/spoonassist/Skeleton';
 import { itemRowKey } from '@/lib/spoonassist/consolidateList';
 
 function formatQuantity(n) {
@@ -55,12 +56,19 @@ export default function SpoonAssistListPage() {
   };
 
   if (!plan.hydrated) {
-    return <p className="text-[15px] text-[var(--sa-ink-soft)]">Loading your list...</p>;
+    return (
+      <div className="space-y-2">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <ListRowSkeleton key={i} />
+        ))}
+      </div>
+    );
   }
 
   if (plan.consolidatedItems.length === 0) {
     return (
       <EmptyState
+        variant="basket"
         title="No shopping list yet"
         description="Build a weekly plan first -- SpoonAssist consolidates and dedupes the ingredients into one smart list."
         action={

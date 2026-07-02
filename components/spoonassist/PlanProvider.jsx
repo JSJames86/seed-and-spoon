@@ -3,6 +3,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { consolidateIngredients, groupByCategory, deriveIngredientKey, itemRowKey } from '@/lib/spoonassist/consolidateList';
 import { recipeLeverage, planLeverage, planIngredientUnion } from '@/lib/spoonassist/leverage';
+import { captureEvent } from '@/analytics/posthog';
+import { EVENTS } from '@/analytics/events';
 
 const MANUAL_RECIPE_ID = 'manual';
 
@@ -97,7 +99,11 @@ export function PlanProvider({ children }) {
     // One recipe per day+slot -- PlanDayColumn only ever renders the first
     // match for a slot, so silently stacking a second item here would leave
     // an invisible entry that still counts toward the consolidated list.
-    setItems((prev) => [...prev.filter((i) => !(i.day === day && i.slot === slot)), item]);
+    setItems((prev) => {
+      const next = [...prev.filter((i) => !(i.day === day && i.slot === slot)), item];
+      if (prev.length === 0) captureEvent(EVENTS.SPOONASSIST_V2_PLAN_CREATED, { recipe_count: next.length });
+      return next;
+    });
     return item.id;
   }, []);
 

@@ -190,7 +190,7 @@ export default function SpoonAssistHomePage() {
 
       {/* Banner CTA */}
       <section className="flex flex-col items-center gap-3 rounded-[var(--sa-radius-card)] bg-[var(--sa-green-deep)] px-6 py-8 text-center">
-        <p className="text-[17px] font-semibold text-[var(--sa-bg)]">
+        <p className="text-[17px] font-semibold text-[var(--sa-on-dark)]">
           Ready to plan? Turn a few recipes into one smart list.
         </p>
         <PillButton as={Link} href="/spoonassist/plan" size="lg">

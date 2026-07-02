@@ -11,6 +11,7 @@ import IngredientRow from '@/components/spoonassist/IngredientRow';
 import EmptyState from '@/components/spoonassist/EmptyState';
 import PillButton from '@/components/spoonassist/PillButton';
 import { usePlan } from '@/components/spoonassist/PlanProvider';
+import { Skeleton, ListRowSkeleton } from '@/components/spoonassist/Skeleton';
 import { toPlanIngredients } from '@/lib/spoonassist/consolidateList';
 import { seedRecipes } from '@/data/spoonassistV2Seed';
 
@@ -124,7 +125,21 @@ export default function SpoonAssistRecipeDetailPage() {
   };
 
   if (status === 'loading') {
-    return <p className="text-[15px] text-[var(--sa-ink-soft)]">Loading recipe...</p>;
+    return (
+      <div>
+        <Skeleton className="mx-auto my-6 h-48 w-48 !rounded-full" />
+        <Skeleton className="mx-auto h-6 w-2/3" />
+        <div className="mt-4 flex justify-center gap-2">
+          <Skeleton className="h-7 w-20 !rounded-[var(--sa-radius-pill)]" />
+          <Skeleton className="h-7 w-16 !rounded-[var(--sa-radius-pill)]" />
+        </div>
+        <div className="mt-6 space-y-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <ListRowSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (status === 'not-found') {
@@ -222,7 +237,7 @@ export default function SpoonAssistRecipeDetailPage() {
                       type="button"
                       onClick={() => setPickerDay(day)}
                       className={`rounded-[var(--sa-radius-pill)] py-2 text-[13px] font-semibold spoon-transition ${
-                        pickerDay === day ? 'bg-[var(--sa-green-deep)] text-[var(--sa-bg)]' : 'bg-[var(--sa-surface-alt)] text-[var(--sa-ink)]'
+                        pickerDay === day ? 'bg-[var(--sa-green-deep)] text-[var(--sa-on-dark)]' : 'bg-[var(--sa-surface-alt)] text-[var(--sa-ink)]'
                       }`}
                     >
                       {label}
@@ -236,7 +251,7 @@ export default function SpoonAssistRecipeDetailPage() {
                       type="button"
                       onClick={() => setPickerSlot(slot)}
                       className={`flex-1 rounded-[var(--sa-radius-pill)] py-2 text-[13px] font-semibold capitalize spoon-transition ${
-                        pickerSlot === slot ? 'bg-[var(--sa-green-deep)] text-[var(--sa-bg)]' : 'bg-[var(--sa-surface-alt)] text-[var(--sa-ink)]'
+                        pickerSlot === slot ? 'bg-[var(--sa-green-deep)] text-[var(--sa-on-dark)]' : 'bg-[var(--sa-surface-alt)] text-[var(--sa-ink)]'
                       }`}
                     >
                       {slot}

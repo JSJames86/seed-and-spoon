@@ -20,6 +20,11 @@
   --sa-savings: #4C7A3F;
   --sa-warning: #C0392B;
 
+  /* Constant regardless of theme -- text/icons placed on a --sa-green-deep
+     surface (active nav pill, banner CTA, day/slot picker selection) need
+     to stay light even when --sa-bg (the page field) goes dark. */
+  --sa-on-dark: #EFF2DC;
+
   /* shape */
   --sa-radius-card: 20px;
   --sa-radius-pill: 999px;
@@ -29,6 +34,19 @@
   color: var(--sa-ink);
   min-height: 100vh;
   font-family: var(--font-sa-sans, -apple-system, BlinkMacSystemFont, "SF Pro Display", Inter, sans-serif);
+}
+
+/* Dark mode -- token remap only (spec §3), no component-level branching.
+   Brand hues (green/accent/savings/warning) stay put; surfaces and ink
+   invert so the same tokens keep working everywhere they're used. */
+.spoonassist-v2.dark {
+  --sa-bg: #1B1F10;
+  --sa-surface: #262B16;
+  --sa-surface-alt: #333A1E;
+  --sa-ink: #EFF2DC;
+  --sa-ink-soft: #B7BC94;
+  --sa-accent-soft: #5A3B26;
+  --sa-shadow-card: 0 2px 12px rgb(0 0 0 / 0.45);
 }
 
 .spoonassist-v2 ::selection {

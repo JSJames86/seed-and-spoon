@@ -6,6 +6,7 @@ import SectionHeader from '@/components/spoonassist/SectionHeader';
 import FilterSheet, { MAX_MINUTES_CEILING } from '@/components/spoonassist/FilterSheet';
 import PillButton from '@/components/spoonassist/PillButton';
 import EmptyState from '@/components/spoonassist/EmptyState';
+import { RecipeGridSkeleton } from '@/components/spoonassist/Skeleton';
 import { seedRecipes } from '@/data/spoonassistV2Seed';
 
 function FilterIcon() {
@@ -139,7 +140,7 @@ export default function SpoonAssistRecipesPage() {
       )}
 
       {recipes === null ? (
-        <p className="text-[15px] text-[var(--sa-ink-soft)]">Loading recipes...</p>
+        <RecipeGridSkeleton />
       ) : recipes.length === 0 ? (
         <EmptyState title="No recipes match" description="Try clearing a filter." />
       ) : (

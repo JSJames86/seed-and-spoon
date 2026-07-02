@@ -86,7 +86,7 @@ export default function BottomTabNav({ variant = 'mobile' }) {
               aria-current={active ? 'page' : undefined}
               className={`flex items-center gap-1.5 rounded-[var(--sa-radius-pill)] px-4 py-2 text-[14px] font-semibold spoon-transition ${
                 active
-                  ? 'bg-[var(--sa-green-deep)] text-[var(--sa-bg)]'
+                  ? 'bg-[var(--sa-green-deep)] text-[var(--sa-on-dark)]'
                   : 'text-[var(--sa-ink-soft)] hover:bg-[var(--sa-surface-alt)]'
               }`}
             >
@@ -115,7 +115,7 @@ export default function BottomTabNav({ variant = 'mobile' }) {
               aria-current={active ? 'page' : undefined}
               className={`flex h-11 w-11 items-center justify-center rounded-full spoon-transition ${
                 active
-                  ? 'bg-[var(--sa-green-deep)] text-[var(--sa-bg)]'
+                  ? 'bg-[var(--sa-green-deep)] text-[var(--sa-on-dark)]'
                   : 'bg-[var(--sa-surface-alt)] text-[var(--sa-ink)]'
               }`}
             >

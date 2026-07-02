@@ -8,8 +8,11 @@ import PillButton from '@/components/spoonassist/PillButton';
 import LeverageBadge from '@/components/spoonassist/LeverageBadge';
 import EmptyState from '@/components/spoonassist/EmptyState';
 import ServingsStepper from '@/components/spoonassist/ServingsStepper';
+import { ListRowSkeleton } from '@/components/spoonassist/Skeleton';
 import { rankByLeverage } from '@/lib/spoonassist/leverage';
 import { toPlanIngredients } from '@/lib/spoonassist/consolidateList';
+import { captureEvent } from '@/analytics/posthog';
+import { EVENTS } from '@/analytics/events';
 
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const SLOTS = ['breakfast', 'lunch', 'dinner'];
@@ -43,7 +46,11 @@ function AddMealPicker({ picker, ranked, onPick, onConfirm, onServingsChange, on
         )}
 
         {picker.step === 'loading' && (
-          <p className="mt-4 text-[15px] text-[var(--sa-ink-soft)]">Loading...</p>
+          <div className="mt-4 space-y-2">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <ListRowSkeleton key={i} />
+            ))}
+          </div>
         )}
 
         {picker.step === 'confirm' && picker.detail && (
@@ -132,7 +139,7 @@ export default function SpoonAssistPlanPage() {
       </div>
 
       {plan.items.length > 0 && (
-        <div className="mt-4 rounded-[var(--sa-radius-card)] bg-[var(--sa-green-deep)] p-5 text-[var(--sa-bg)]">
+        <div className="mt-4 rounded-[var(--sa-radius-card)] bg-[var(--sa-green-deep)] p-5 text-[var(--sa-on-dark)]">
           <p className="text-[15px] leading-relaxed">
             Your <strong>{plan.items.length}</strong> recipe{plan.items.length === 1 ? '' : 's'} share{' '}
             <strong>{sharedIngredientCount}</strong> ingredient{sharedIngredientCount === 1 ? '' : 's'} &mdash; you&rsquo;re
@@ -158,6 +165,7 @@ export default function SpoonAssistPlanPage() {
 
       {plan.items.length === 0 && (
         <EmptyState
+          variant="plate"
           className="mt-4"
           title="No meals planned yet"
           description="Tap + Add on any day to start building this week's plan."
@@ -171,7 +179,17 @@ export default function SpoonAssistPlanPage() {
 
       {plan.items.length > 0 && (
         <div className="mt-6 flex justify-center">
-          <PillButton as={Link} href="/spoonassist/list" size="lg">
+          <PillButton
+            as={Link}
+            href="/spoonassist/list"
+            size="lg"
+            onClick={() =>
+              captureEvent(EVENTS.SPOONASSIST_V2_LIST_BUILT, {
+                item_count: plan.consolidatedItems.length,
+                recipe_count: plan.items.length,
+              })
+            }
+          >
             Build my list &rarr;
           </PillButton>
         </div>

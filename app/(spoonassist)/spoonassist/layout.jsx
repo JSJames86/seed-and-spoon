@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import BottomTabNav from '@/components/spoonassist/BottomTabNav';
 import { PlanProvider } from '@/components/spoonassist/PlanProvider';
+import { ThemeProvider } from '@/components/spoonassist/ThemeProvider';
 import './spoonassist-v2.css';
 
 export const metadata = {
@@ -31,7 +32,7 @@ export const viewport = {
 export default function SpoonAssistV2Layout({ children }) {
   return (
     <PlanProvider>
-      <div className="spoonassist-v2">
+      <ThemeProvider>
         {/* Desktop top bar: brand + segmented nav control */}
         <header className="hidden lg:block border-b border-[var(--sa-surface-alt)]">
           <div className="mx-auto flex max-w-[1100px] items-center justify-between px-6 py-4">
@@ -57,7 +58,7 @@ export default function SpoonAssistV2Layout({ children }) {
             A Seed &amp; Spoon service
           </Link>
         </footer>
-      </div>
+      </ThemeProvider>
     </PlanProvider>
   );
 }
