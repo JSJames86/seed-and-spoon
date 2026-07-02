@@ -14,6 +14,7 @@ import { usePlan } from '@/components/spoonassist/PlanProvider';
 import { Skeleton, ListRowSkeleton } from '@/components/spoonassist/Skeleton';
 import { toPlanIngredients } from '@/lib/spoonassist/consolidateList';
 import { seedRecipes } from '@/data/spoonassistV2Seed';
+import { getRecipeBySlug } from '@/data/recipes';
 
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const SLOTS = ['breakfast', 'lunch', 'dinner'];
@@ -114,6 +115,13 @@ export default function SpoonAssistRecipeDetailPage() {
     return plan.leverageForCandidate({ id: recipe.id, servings, ingredientKeys: planIngredients.map((i) => i.key) });
   }, [status, recipe, servings, planIngredients, plan]);
 
+  // The legacy /recipes catalog (data/recipes.js) shares slugs with the 19
+  // pre-existing DB rows that predate the instructions/notes columns --
+  // fall back to its hardcoded steps when the DB value is null.
+  const legacyRecipe = useMemo(() => getRecipeBySlug(slug), [slug]);
+  const instructions = recipe?.instructions?.length ? recipe.instructions : legacyRecipe?.instructions ?? null;
+  const notes = recipe?.notes ?? null;
+
   const addToPlan = (day, slot) => {
     plan.addRecipe(
       { recipeId: recipe.id, slug: recipe.slug, title: recipe.title, image, baseServings: recipe.servings, ingredients: planIngredients },
@@ -205,6 +213,29 @@ export default function SpoonAssistRecipeDetailPage() {
               <p className="text-[15px] text-[var(--sa-ink-soft)]">No ingredients listed.</p>
             )}
           </div>
+
+          {instructions?.length > 0 && (
+            <div className="mt-6">
+              <h2 className="text-[17px] font-semibold text-[var(--sa-ink)] mb-3">Instructions</h2>
+              <ol className="space-y-3">
+                {instructions.map((step, index) => (
+                  <li key={index} className="flex items-start gap-3 text-[15px] text-[var(--sa-ink-soft)]">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--sa-surface-alt)] text-[var(--sa-ink)] text-[13px] font-semibold flex items-center justify-center">
+                      {index + 1}
+                    </span>
+                    <span className="pt-0.5">{step}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+
+          {notes && (
+            <div className="mt-6">
+              <h2 className="text-[17px] font-semibold text-[var(--sa-ink)] mb-3">Notes</h2>
+              <p className="text-[15px] text-[var(--sa-ink-soft)]">{notes}</p>
+            </div>
+          )}
 
           {/* Sticky actions -- spec §4.3: "both sticky on scroll" */}
           <div className="sticky bottom-[76px] z-30 mt-8 flex gap-3 rounded-[var(--sa-radius-card)] bg-[var(--sa-surface)] p-3 shadow-[var(--sa-shadow-card)] lg:bottom-4">
