@@ -34,22 +34,23 @@ export default function SpoonAssistV2Layout({ children }) {
   return (
     <PlanProvider>
       <ThemeProvider>
-        {/* Top bar: desktop gets the full brand + segmented nav control;
-            mobile gets a slim bar with just a way back to the main site,
-            since the fixed bottom tab nav is SpoonAssist-only navigation. */}
+        {/* Top bar on every breakpoint: a way back to the main site plus the
+            SpoonAssist brand logo. Desktop additionally gets the segmented
+            nav control (mobile navigation is the fixed bottom tab bar). */}
         <header className="border-b border-[var(--sa-surface-alt)]">
           <div className="mx-auto flex max-w-[1100px] items-center justify-between px-4 py-3 lg:px-6 lg:py-4">
-            <Link href="/spoonassist" aria-label="SpoonAssist home" className="hidden lg:block">
-              <Image src="/spoonassist/logo.png" alt="SpoonAssist" width={512} height={268} priority className="h-9 w-auto" />
-            </Link>
             <Link
               href="/"
-              className="flex items-center gap-1 text-[13px] font-semibold text-[var(--sa-ink-soft)] lg:hidden"
+              aria-label="Back to Seed & Spoon"
+              className="flex items-center gap-1 text-[13px] font-semibold text-[var(--sa-ink-soft)] spoon-transition hover:text-[var(--sa-ink)]"
             >
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                 <path d="M10 3.5 5 8l5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              Seed &amp; Spoon
+              <span className="hidden sm:inline">Seed &amp; Spoon</span>
+            </Link>
+            <Link href="/spoonassist" aria-label="SpoonAssist home">
+              <Image src="/spoonassist/logo.png" alt="SpoonAssist" width={512} height={268} priority className="h-7 w-auto lg:h-9" />
             </Link>
             <BottomTabNav variant="desktop" />
           </div>
