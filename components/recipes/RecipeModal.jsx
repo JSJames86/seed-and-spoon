@@ -97,6 +97,7 @@ export default function RecipeModal({ recipe, onClose }) {
     image,
     ingredients,
     instructions,
+    notes,
     tags,
     nutrition,
   } = recipe;
@@ -179,20 +180,22 @@ export default function RecipeModal({ recipe, onClose }) {
                   <span className="text-sm font-medium text-green-primary">
                     {category}
                   </span>
-                  <span
-                    className={`
-                      px-3 py-1 rounded-full text-xs font-semibold text-white
-                      ${
-                        difficulty === 'Easy'
-                          ? 'bg-green-primary'
-                          : difficulty === 'Medium'
-                          ? 'bg-orange-primary'
-                          : 'bg-red-500'
-                      }
-                    `}
-                  >
-                    {difficulty}
-                  </span>
+                  {difficulty && (
+                    <span
+                      className={`
+                        px-3 py-1 rounded-full text-xs font-semibold text-white
+                        ${
+                          difficulty === 'Easy'
+                            ? 'bg-green-primary'
+                            : difficulty === 'Medium'
+                            ? 'bg-orange-primary'
+                            : 'bg-red-500'
+                        }
+                      `}
+                    >
+                      {difficulty}
+                    </span>
+                  )}
                 </div>
 
                 <h2 id="modal-title" className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
@@ -204,18 +207,24 @@ export default function RecipeModal({ recipe, onClose }) {
 
               {/* Quick Info */}
               <div className="flex flex-wrap gap-6 mb-8 pb-8 border-b border-gray-200">
-                <div>
-                  <div className="text-sm text-gray-500">Prep Time</div>
-                  <div className="text-lg font-semibold text-gray-900">{prepTime}</div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-500">Cook Time</div>
-                  <div className="text-lg font-semibold text-gray-900">{cookTime}</div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-500">Servings</div>
-                  <div className="text-lg font-semibold text-gray-900">{servings}</div>
-                </div>
+                {prepTime && (
+                  <div>
+                    <div className="text-sm text-gray-500">Prep Time</div>
+                    <div className="text-lg font-semibold text-gray-900">{prepTime}</div>
+                  </div>
+                )}
+                {cookTime && (
+                  <div>
+                    <div className="text-sm text-gray-500">Cook Time</div>
+                    <div className="text-lg font-semibold text-gray-900">{cookTime}</div>
+                  </div>
+                )}
+                {servings && (
+                  <div>
+                    <div className="text-sm text-gray-500">Servings</div>
+                    <div className="text-lg font-semibold text-gray-900">{servings}</div>
+                  </div>
+                )}
               </div>
 
               {/* Two Column Layout for Ingredients and Instructions */}
@@ -225,19 +234,23 @@ export default function RecipeModal({ recipe, onClose }) {
                   <h3 className="text-2xl font-bold text-gray-900 mb-4">
                     Ingredients
                   </h3>
-                  <ul className="space-y-2">
-                    {ingredients.map((ingredient, index) => (
-                      <li
-                        key={index}
-                        className="flex items-start gap-3 text-gray-700"
-                      >
-                        <span className="text-green-primary mt-1.5 flex-shrink-0">
-                          •
-                        </span>
-                        <span>{ingredient}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  {ingredients?.length > 0 ? (
+                    <ul className="space-y-2">
+                      {ingredients.map((ingredient, index) => (
+                        <li
+                          key={index}
+                          className="flex items-start gap-3 text-gray-700"
+                        >
+                          <span className="text-green-primary mt-1.5 flex-shrink-0">
+                            •
+                          </span>
+                          <span>{ingredient}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-gray-500">No ingredients listed.</p>
+                  )}
                 </div>
 
                 {/* Instructions */}
@@ -245,21 +258,33 @@ export default function RecipeModal({ recipe, onClose }) {
                   <h3 className="text-2xl font-bold text-gray-900 mb-4">
                     Instructions
                   </h3>
-                  <ol className="space-y-4">
-                    {instructions.map((instruction, index) => (
-                      <li
-                        key={index}
-                        className="flex items-start gap-3 text-gray-700"
-                      >
-                        <span className="flex-shrink-0 w-6 h-6 bg-green-primary text-white rounded-full flex items-center justify-center text-sm font-semibold">
-                          {index + 1}
-                        </span>
-                        <span className="pt-0.5">{instruction}</span>
-                      </li>
-                    ))}
-                  </ol>
+                  {instructions?.length > 0 ? (
+                    <ol className="space-y-4">
+                      {instructions.map((instruction, index) => (
+                        <li
+                          key={index}
+                          className="flex items-start gap-3 text-gray-700"
+                        >
+                          <span className="flex-shrink-0 w-6 h-6 bg-green-primary text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                            {index + 1}
+                          </span>
+                          <span className="pt-0.5">{instruction}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  ) : (
+                    <p className="text-gray-500">No instructions listed.</p>
+                  )}
                 </div>
               </div>
+
+              {/* Notes */}
+              {notes && (
+                <div className="mb-8 p-6 bg-gray-50 rounded-xl">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">Notes</h3>
+                  <p className="text-gray-700">{notes}</p>
+                </div>
+              )}
 
               {/* Nutrition Info */}
               {nutrition && (

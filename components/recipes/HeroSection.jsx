@@ -10,10 +10,12 @@ import { recipes } from '@/data/recipes';
  * Features animated text and a call-to-action design.
  *
  * @component
+ * @param {Object} props
+ * @param {number} [props.count] - Recipe count to display; defaults to the static catalog size
  * @example
- * <HeroSection />
+ * <HeroSection count={54} />
  */
-export default function HeroSection() {
+export default function HeroSection({ count = recipes.length }) {
   return (
     <section className="relative bg-gradient-to-br from-green-primary via-green-leaf-mid to-forest-mid text-white py-20 px-4 overflow-hidden">
       {/* Background Pattern - Optional decorative element */}
@@ -51,7 +53,7 @@ export default function HeroSection() {
           transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
         >
           <div className="text-center">
-            <div className="text-3xl font-bold">{recipes.length}</div>
+            <div className="text-3xl font-bold">{count}</div>
             <div className="text-sm text-green-50">Recipes</div>
           </div>
           <div className="text-center">

@@ -1,19 +1,19 @@
 import { NextResponse } from 'next/server';
-import { recipes } from '@/data/recipes';
-import { parseIngredientString } from '@/lib/spoonassist/priceEngine';
+import { getAllRecipes } from '@/lib/recipes';
 
 export async function GET() {
   try {
-    const normalized = recipes.map(recipe => ({
-      ...recipe,
-      ingredients: recipe.ingredients
-        .map(raw => parseIngredientString(raw))
-        .filter(Boolean),
-    }));
+    const { recipes, usingFallback } = await getAllRecipes();
 
     return NextResponse.json(
-      { recipes: normalized },
-      { headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' } }
+      { recipes, usingFallback },
+      {
+        headers: {
+          'Cache-Control': usingFallback
+            ? 'public, s-maxage=60'
+            : 'public, s-maxage=300, stale-while-revalidate=3600',
+        },
+      }
     );
   } catch (err) {
     console.error('[/api/recipes] Error:', err.message);
