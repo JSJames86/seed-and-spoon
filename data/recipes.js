@@ -661,8 +661,8 @@ export const recipes = [
 /**
  * Get all unique categories from recipes
  */
-export const getCategories = () => {
-  const categories = recipes.map(recipe => recipe.category);
+export const getCategories = (recipeList = recipes) => {
+  const categories = recipeList.map(recipe => recipe.category).filter(Boolean);
   return ['All', ...new Set(categories)];
 };
 
@@ -707,8 +707,8 @@ export const COOK_TIME_FILTERS = [
  * would make the Tags filter unusably long. Recipes remain searchable by
  * their one-off tags via the search bar (title match) or category filter.
  */
-export const getAllTags = () => {
-  const counts = recipes.flatMap(recipe => recipe.tags).reduce((acc, tag) => {
+export const getAllTags = (recipeList = recipes) => {
+  const counts = recipeList.flatMap(recipe => recipe.tags || []).reduce((acc, tag) => {
     acc[tag] = (acc[tag] || 0) + 1;
     return acc;
   }, {});
@@ -737,11 +737,12 @@ export const filterRecipes = (recipeList, filters = {}) => {
     const matchesCategory = category === 'All' || recipe.category === category;
     const matchesCookTime =
       cookTime === 'all' ||
-      (cookTime === '15' && recipe.cookTimeMinutes <= 15) ||
-      (cookTime === '30' && recipe.cookTimeMinutes <= 30) ||
-      (cookTime === '30+' && recipe.cookTimeMinutes > 30);
+      (recipe.cookTimeMinutes != null &&
+        ((cookTime === '15' && recipe.cookTimeMinutes <= 15) ||
+          (cookTime === '30' && recipe.cookTimeMinutes <= 30) ||
+          (cookTime === '30+' && recipe.cookTimeMinutes > 30)));
     // Recipe must match every selected tag (AND). For "match any" (OR), swap .every() for .some().
-    const matchesTags = tags.every(tag => recipe.tags.includes(tag));
+    const matchesTags = tags.every(tag => (recipe.tags || []).includes(tag));
 
     return matchesSearch && matchesCategory && matchesCookTime && matchesTags;
   });
