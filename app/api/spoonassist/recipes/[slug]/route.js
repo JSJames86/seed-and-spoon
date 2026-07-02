@@ -9,7 +9,7 @@ export async function GET(_request, { params }) {
 
   const { data: recipe, error: recipeErr } = await supabase
     .from('recipes')
-    .select('id, slug, title, description, image_url, category, total_minutes, servings, dietary_tags, source_url')
+    .select('id, slug, title, description, image_url, category, total_minutes, servings, dietary_tags, source_url, instructions, notes')
     .eq('slug', slug)
     .eq('is_published', true)
     .maybeSingle();
