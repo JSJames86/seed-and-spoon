@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import PillButton from '@/components/spoonassist/PillButton';
 import ChipToggle from '@/components/spoonassist/ChipToggle';
 import RecipeCard from '@/components/spoonassist/RecipeCard';
@@ -45,6 +46,7 @@ function RecipeCarousel({ recipes }) {
 }
 
 export default function SpoonAssistHomePage() {
+  const router = useRouter();
   const plan = usePlan();
   const hasRealPlan = plan.hydrated && plan.items.length > 0;
   const [search, setSearch] = useState('');
@@ -56,6 +58,12 @@ export default function SpoonAssistHomePage() {
     setDietary((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
   };
 
+  const submitSearch = (e) => {
+    e.preventDefault();
+    const params = search.trim() ? `?q=${encodeURIComponent(search.trim())}` : '';
+    router.push(`/spoonassist/recipes${params}`);
+  };
+
   return (
     <div className="space-y-10">
       {/* Greeting + search */}
@@ -63,8 +71,13 @@ export default function SpoonAssistHomePage() {
         <h1 className="text-[28px] font-semibold text-[var(--sa-ink)]">
           Let&rsquo;s stretch your groceries, neighbor
         </h1>
-        <div className="mt-4 flex items-center gap-2 rounded-[var(--sa-radius-pill)] bg-[var(--sa-surface)] px-4 py-3 shadow-[var(--sa-shadow-card)]">
-          <SearchIcon />
+        <form
+          onSubmit={submitSearch}
+          className="mt-4 flex items-center gap-2 rounded-[var(--sa-radius-pill)] bg-[var(--sa-surface)] px-4 py-3 shadow-[var(--sa-shadow-card)]"
+        >
+          <button type="submit" aria-label="Search" className="shrink-0 text-[var(--sa-ink-soft)]">
+            <SearchIcon />
+          </button>
           <input
             type="search"
             value={search}
@@ -75,11 +88,12 @@ export default function SpoonAssistHomePage() {
           <button
             type="button"
             aria-label="Filters"
+            onClick={() => router.push('/spoonassist/recipes')}
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--sa-surface-alt)] text-[var(--sa-ink-soft)]"
           >
             <FilterIcon />
           </button>
-        </div>
+        </form>
       </section>
 
       {/* Coverage snapshot -- real session plan once one exists, otherwise

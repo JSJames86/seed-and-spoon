@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import RecipeCard from '@/components/spoonassist/RecipeCard';
 import SectionHeader from '@/components/spoonassist/SectionHeader';
 import FilterSheet, { MAX_MINUTES_CEILING } from '@/components/spoonassist/FilterSheet';
@@ -17,15 +18,34 @@ function FilterIcon() {
   );
 }
 
+function SearchIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M11 11l3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 const SORTS = [
   { value: 'newest', label: 'Newest' },
   { value: 'quickest', label: 'Quickest' },
 ];
 
 export default function SpoonAssistRecipesPage() {
+  return (
+    <Suspense fallback={<RecipeGridSkeleton />}>
+      <RecipesPageContent />
+    </Suspense>
+  );
+}
+
+function RecipesPageContent() {
+  const searchParams = useSearchParams();
   const [recipes, setRecipes] = useState(null); // null = loading
   const [usingFallback, setUsingFallback] = useState(false);
   const [sort, setSort] = useState('newest');
+  const [search, setSearch] = useState(() => searchParams.get('q') || '');
 
   // The full, unfiltered catalog -- fetched once, used only to build the
   // category/dietary chip universes so they don't shrink to whatever's
@@ -50,36 +70,44 @@ export default function SpoonAssistRecipesPage() {
   }, []);
 
   useEffect(() => {
-    const params = new URLSearchParams({ sort });
-    if (category) params.set('category', category);
-    if (dietary.length) params.set('dietary', dietary.join(','));
-    if (maxMinutes < MAX_MINUTES_CEILING) params.set('maxMinutes', String(maxMinutes));
-
     let cancelled = false;
     setRecipes(null);
 
-    fetch(`/api/spoonassist/recipes?${params.toString()}`)
-      .then((res) => {
-        if (!res.ok) throw new Error('request failed');
-        return res.json();
-      })
-      .then((data) => {
-        if (cancelled) return;
-        setRecipes(data.recipes || []);
-        setUsingFallback(false);
-      })
-      .catch(() => {
-        if (cancelled) return;
-        // Catalog not migrated/imported yet -- keep the grid usable with
-        // Phase 1's static seed set instead of a dead page.
-        setRecipes(seedRecipes);
-        setUsingFallback(true);
-      });
+    // Debounce free-text search so every keystroke doesn't fire a request;
+    // sort/category/dietary/maxMinutes changes fetch immediately.
+    const delay = search ? 300 : 0;
+    const timer = setTimeout(() => {
+      const params = new URLSearchParams({ sort });
+      if (search) params.set('q', search);
+      if (category) params.set('category', category);
+      if (dietary.length) params.set('dietary', dietary.join(','));
+      if (maxMinutes < MAX_MINUTES_CEILING) params.set('maxMinutes', String(maxMinutes));
+
+      fetch(`/api/spoonassist/recipes?${params.toString()}`)
+        .then((res) => {
+          if (!res.ok) throw new Error('request failed');
+          return res.json();
+        })
+        .then((data) => {
+          if (cancelled) return;
+          setRecipes(data.recipes || []);
+          setUsingFallback(false);
+        })
+        .catch(() => {
+          if (cancelled) return;
+          // Catalog not migrated/imported yet -- keep the grid usable with
+          // Phase 1's static seed set instead of a dead page.
+          const q = search.trim().toLowerCase();
+          setRecipes(q ? seedRecipes.filter((r) => r.title.toLowerCase().includes(q)) : seedRecipes);
+          setUsingFallback(true);
+        });
+    }, delay);
 
     return () => {
       cancelled = true;
+      clearTimeout(timer);
     };
-  }, [sort, category, dietary, maxMinutes]);
+  }, [sort, search, category, dietary, maxMinutes]);
 
   const categories = useMemo(
     () => [...new Set(catalog.map((r) => r.category).filter(Boolean))].sort(),
@@ -115,6 +143,17 @@ export default function SpoonAssistRecipesPage() {
 
   return (
     <div>
+      <div className="mb-4 flex items-center gap-2 rounded-[var(--sa-radius-pill)] bg-[var(--sa-surface)] px-4 py-3 shadow-[var(--sa-shadow-card)]">
+        <SearchIcon />
+        <input
+          type="search"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search recipes..."
+          className="flex-1 bg-transparent text-[15px] text-[var(--sa-ink)] placeholder:text-[var(--sa-ink-soft)] outline-none"
+        />
+      </div>
+
       <div className="mb-4 flex items-center justify-between">
         <SectionHeader title="All recipes" className="mb-0" />
         <div className="flex items-center gap-2">
@@ -142,7 +181,7 @@ export default function SpoonAssistRecipesPage() {
       {recipes === null ? (
         <RecipeGridSkeleton />
       ) : recipes.length === 0 ? (
-        <EmptyState title="No recipes match" description="Try clearing a filter." />
+        <EmptyState title="No recipes match" description="Try a different search or clear a filter." />
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {recipes.map((recipe) => (
