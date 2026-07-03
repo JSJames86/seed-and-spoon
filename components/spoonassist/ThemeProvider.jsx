@@ -35,6 +35,20 @@ export function ThemeProvider({ children }) {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   }, [theme, setTheme]);
 
+  // The root <body> background is the site-wide --cream (#F8F6F0), not this
+  // shell's own --sa-bg -- on iOS Safari, pulling past the top of the page
+  // (elastic overscroll) reveals that mismatched color as a blank-looking
+  // gap above the sticky header. Match it while a SpoonAssist page is
+  // mounted, and restore the site's color on unmount/navigation away.
+  useEffect(() => {
+    const { body } = document;
+    const prevBackground = body.style.backgroundColor;
+    body.style.backgroundColor = theme === 'dark' ? '#1B1F10' : '#EFF2DC';
+    return () => {
+      body.style.backgroundColor = prevBackground;
+    };
+  }, [theme]);
+
   return (
     <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
       <div className={`spoonassist-v2${theme === 'dark' ? ' dark' : ''}`}>{children}</div>
