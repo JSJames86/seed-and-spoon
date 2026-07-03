@@ -10,9 +10,12 @@ import ServingsStepper from '@/components/spoonassist/ServingsStepper';
 import IngredientRow from '@/components/spoonassist/IngredientRow';
 import EmptyState from '@/components/spoonassist/EmptyState';
 import PillButton from '@/components/spoonassist/PillButton';
+import RecipePlaceholder from '@/components/spoonassist/RecipePlaceholder';
+import SaveHeartButton from '@/components/spoonassist/SaveHeartButton';
 import { usePlan } from '@/components/spoonassist/PlanProvider';
 import { Skeleton, ListRowSkeleton } from '@/components/spoonassist/Skeleton';
 import { toPlanIngredients } from '@/lib/spoonassist/consolidateList';
+import { formatMinutes } from '@/lib/spoonassist/formatTime';
 import { seedRecipes } from '@/data/spoonassistV2Seed';
 import { getRecipeBySlug } from '@/data/recipes';
 
@@ -25,11 +28,7 @@ function PlateImage({ image }) {
       {image ? (
         <Image src={image} alt="" fill sizes="192px" className="object-cover" />
       ) : (
-        <div className="sa-plate-fallback">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M6 3v8a2 2 0 002 2h0M6 3v18M10 3v10M18 3v18M18 3a3 3 0 013 3v4a3 3 0 01-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
-        </div>
+        <RecipePlaceholder />
       )}
     </div>
   );
@@ -168,11 +167,12 @@ export default function SpoonAssistRecipeDetailPage() {
 
   return (
     <div>
-      <Link href="/spoonassist/recipes" className="text-[13px] font-semibold text-[var(--sa-ink-soft)]">
-        &larr; Back
-      </Link>
-
-      <PlateImage image={image} />
+      <div className="relative">
+        <PlateImage image={image} />
+        {status === 'db' && (
+          <SaveHeartButton recipeId={recipe.id} className="absolute right-[calc(50%-96px)] top-6" />
+        )}
+      </div>
 
       <h1 className="text-center text-[22px] font-semibold text-[var(--sa-ink)]">{recipe.title}</h1>
       {recipe.description && (
@@ -181,7 +181,7 @@ export default function SpoonAssistRecipeDetailPage() {
 
       <div className="mt-4 flex flex-wrap justify-center gap-2">
         <CostBadge perServing={recipe.costPerServing} />
-        {totalMinutes != null && <MetaPill>{totalMinutes} min</MetaPill>}
+        {totalMinutes != null && <MetaPill>{formatMinutes(totalMinutes)}</MetaPill>}
         {dynamicLeverage != null ? (
           <LeverageBadge score={dynamicLeverage} />
         ) : recipe.leverage != null ? (

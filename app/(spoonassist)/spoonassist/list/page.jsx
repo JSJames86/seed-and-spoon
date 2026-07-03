@@ -68,7 +68,6 @@ export default function SpoonAssistListPage() {
   if (plan.consolidatedItems.length === 0) {
     return (
       <EmptyState
-        variant="basket"
         title="No shopping list yet"
         description="Build a weekly plan first -- SpoonAssist consolidates and dedupes the ingredients into one smart list."
         action={
