@@ -102,7 +102,7 @@ export default function BottomTabNav({ variant = 'mobile' }) {
   return (
     <nav
       aria-label="SpoonAssist"
-      className="lg:hidden fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-3 sa-bottom-nav-safe-area"
+      className="lg:hidden fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 sa-bottom-nav-safe-area"
     >
       <div className="flex items-center gap-1.5 rounded-[var(--sa-radius-pill)] bg-[var(--sa-surface)] px-2.5 py-2 shadow-[0_4px_20px_rgb(69_71_36_/_0.18)]">
         {TABS.map((tab) => {

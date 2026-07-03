@@ -142,6 +142,23 @@ export function PlanProvider({ children }) {
     setManualItems((prev) => prev.filter((m) => m.id !== manualId));
   }, []);
 
+  // "Reuse this list" (Profile > List history): folds a past saved list's
+  // items into the current session's manual items so it becomes the active
+  // list, same as typing each one in by hand.
+  const restoreManualItems = useCallback((items) => {
+    const restored = (items || [])
+      .filter((item) => item && item.name)
+      .map((item, index) => ({
+        id: `manual-${Date.now()}-${index}`,
+        key: deriveIngredientKey(null, item.name),
+        name: item.name,
+        quantity: item.quantity ?? null,
+        unit: item.unit ?? null,
+      }));
+    if (restored.length === 0) return;
+    setManualItems((prev) => [...prev, ...restored]);
+  }, []);
+
   const clearPlan = useCallback(() => {
     setItems([]);
     setCheckedKeys([]);
@@ -190,6 +207,7 @@ export function PlanProvider({ children }) {
       manualItems,
       addManualItem,
       removeManualItem,
+      restoreManualItems,
       clearPlan,
       consolidatedItems: consolidated.items,
       groupedList,
@@ -200,7 +218,7 @@ export function PlanProvider({ children }) {
     }),
     [
       hydrated, items, addRecipe, removeItem, updateItemServings, checkedKeys, toggleChecked,
-      removeConsolidatedItem, manualItems, addManualItem, removeManualItem, clearPlan,
+      removeConsolidatedItem, manualItems, addManualItem, removeManualItem, restoreManualItems, clearPlan,
       consolidated.items, groupedList, totalServings, overallLeverage, leverageForCandidate,
     ]
   );

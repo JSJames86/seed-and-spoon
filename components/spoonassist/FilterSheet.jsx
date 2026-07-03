@@ -91,7 +91,7 @@ export default function FilterSheet({
             step={10}
             value={maxMinutes}
             onChange={(e) => onMaxMinutesChange(Number(e.target.value))}
-            className="mt-2 w-full accent-[var(--sa-accent)]"
+            className="mt-2 w-full accent-[var(--sa-green-deep)]"
           />
         </div>
 

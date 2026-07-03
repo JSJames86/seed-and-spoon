@@ -107,9 +107,12 @@ export default function SpoonAssistHomePage() {
             <>
               <p className="mt-1 text-[17px] font-semibold text-[var(--sa-ink)]">
                 {plan.mealsPlanned} meal{plan.mealsPlanned === 1 ? '' : 's'} planned &middot;{' '}
-                {plan.consolidatedItems.length} item{plan.consolidatedItems.length === 1 ? '' : 's'} &middot; Leverage{' '}
-                {plan.overallLeverage.toFixed(1)}
+                {plan.consolidatedItems.length} item{plan.consolidatedItems.length === 1 ? '' : 's'}
+                {plan.mealsPlanned >= 2 && <> &middot; Leverage {plan.overallLeverage.toFixed(1)}</>}
               </p>
+              {plan.mealsPlanned < 2 && (
+                <p className="mt-0.5 text-[13px] text-[var(--sa-ink-soft)]">Add another meal to unlock leverage</p>
+              )}
               <CoverageBar className="mt-3" value={plan.mealsPlanned} max={Math.max(plan.mealsPlanned, 7)} />
             </>
           ) : (
@@ -167,7 +170,7 @@ export default function SpoonAssistHomePage() {
             step={500}
             value={budgetCents}
             onChange={(e) => setBudgetCents(Number(e.target.value))}
-            className="mt-2 w-full accent-[var(--sa-accent)]"
+            className="mt-2 w-full accent-[var(--sa-green-deep)]"
           />
         </div>
 

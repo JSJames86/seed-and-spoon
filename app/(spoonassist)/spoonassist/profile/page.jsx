@@ -1,20 +1,18 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSpoonAssistTheme } from '@/components/spoonassist/ThemeProvider';
+import PillButton from '@/components/spoonassist/PillButton';
+import { supabase } from '@/lib/supabase';
 
-// Household settings and Dietary & allergens are live today -- they're the
-// editable quick-setup card on Home (#household). The rest (Pantry, Saved
-// recipes, List history, Stores & ZIP) need an account to persist anything
-// and don't have a page yet, so they're shown disabled rather than as dead
-// buttons.
 const ROWS = [
   { label: 'Household settings', hint: '4 people · $85/week', href: '/spoonassist#household' },
   { label: 'Dietary & allergens', hint: 'Vegetarian', href: '/spoonassist#household' },
-  { label: 'Pantry', hint: 'Coming soon' },
-  { label: 'Saved recipes', hint: 'Coming soon' },
-  { label: 'List history', hint: 'Coming soon' },
-  { label: 'Stores & ZIP', hint: 'Coming soon' },
+  { label: 'Pantry', hint: 'What you already have on hand', href: '/spoonassist/profile/pantry' },
+  { label: 'Saved recipes', hint: 'Recipes you ♥', href: '/spoonassist/profile/saved' },
+  { label: 'List history', hint: 'Past shopping lists', href: '/spoonassist/profile/lists' },
+  { label: 'Stores & ZIP', hint: 'Which stores to compare', href: '/spoonassist/profile/stores' },
 ];
 
 function ChevronIcon() {
@@ -27,13 +25,32 @@ function ChevronIcon() {
 
 export default function SpoonAssistProfilePage() {
   const { theme, toggleTheme } = useSpoonAssistTheme();
+  const [signedIn, setSignedIn] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => setSignedIn(!!session));
+    return () => sub.subscription.unsubscribe();
+  }, []);
 
   return (
     <div>
       <h1 className="text-[22px] font-semibold text-[var(--sa-ink)]">Profile</h1>
-      <p className="mt-1 text-[15px] text-[var(--sa-ink-soft)]">
-        Sign up to save your household, pantry, and lists across visits.
-      </p>
+
+      {signedIn ? (
+        <p className="mt-1 text-[15px] text-[var(--sa-ink-soft)]">
+          Your household, pantry, and lists are saved to your account.
+        </p>
+      ) : (
+        <div className="mt-4 flex flex-col items-start gap-3 rounded-[var(--sa-radius-card)] bg-[var(--sa-surface)] p-5 shadow-[var(--sa-shadow-card)] sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-[15px] text-[var(--sa-ink)]">
+            Sign up to save your household, pantry, and lists across visits.
+          </p>
+          <PillButton as={Link} href="/signup" className="shrink-0">
+            Sign up
+          </PillButton>
+        </div>
+      )}
 
       <div className="mt-6 divide-y divide-[var(--sa-surface-alt)] overflow-hidden rounded-[var(--sa-radius-card)] bg-[var(--sa-surface)] shadow-[var(--sa-shadow-card)]">
         <button
@@ -59,34 +76,21 @@ export default function SpoonAssistProfilePage() {
           </span>
         </button>
 
-        {ROWS.map((row) =>
-          row.href ? (
-            <Link
-              key={row.label}
-              href={row.href}
-              className="flex w-full items-center justify-between px-5 py-4 text-left spoon-transition hover:bg-[var(--sa-surface-alt)]"
-            >
-              <div>
-                <p className="text-[15px] font-medium text-[var(--sa-ink)]">{row.label}</p>
-                <p className="text-[13px] text-[var(--sa-ink-soft)]">{row.hint}</p>
-              </div>
-              <span className="text-[var(--sa-ink-soft)]">
-                <ChevronIcon />
-              </span>
-            </Link>
-          ) : (
-            <div
-              key={row.label}
-              aria-disabled="true"
-              className="flex w-full items-center justify-between px-5 py-4 opacity-50"
-            >
-              <div>
-                <p className="text-[15px] font-medium text-[var(--sa-ink)]">{row.label}</p>
-                <p className="text-[13px] text-[var(--sa-ink-soft)]">{row.hint}</p>
-              </div>
+        {ROWS.map((row) => (
+          <Link
+            key={row.label}
+            href={row.href}
+            className="flex w-full items-center justify-between px-5 py-4 text-left spoon-transition hover:bg-[var(--sa-surface-alt)]"
+          >
+            <div>
+              <p className="text-[15px] font-medium text-[var(--sa-ink)]">{row.label}</p>
+              <p className="text-[13px] text-[var(--sa-ink-soft)]">{row.hint}</p>
             </div>
-          )
-        )}
+            <span className="text-[var(--sa-ink-soft)]">
+              <ChevronIcon />
+            </span>
+          </Link>
+        ))}
       </div>
     </div>
   );

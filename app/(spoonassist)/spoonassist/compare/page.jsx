@@ -94,7 +94,6 @@ export default function SpoonAssistComparePage() {
   if (plan.hydrated && activeItems.length === 0) {
     return (
       <EmptyState
-        variant="utensils"
         title="Nothing to compare yet"
         description="Build a shopping list first, then come back here to compare store prices."
         action={

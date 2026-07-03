@@ -77,11 +77,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--sa-green);
-  opacity: 0.85;
 }
 
-/* Safe-area padding for the fixed bottom tab bar on notched devices */
+/* Safe-area padding for the fixed bottom tab bar on notched devices. Uses
+   calc() (not a second padding-bottom utility) so the 12px baseline gap and
+   the device inset always add together instead of one clobbering the other
+   in the cascade. */
 .sa-bottom-nav-safe-area {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
 }

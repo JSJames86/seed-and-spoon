@@ -5,7 +5,13 @@ const SLOT_LABELS = { breakfast: 'Breakfast', lunch: 'Lunch', dinner: 'Dinner' }
 export default function PlanDayColumn({ dayLabel, isToday, slots, items, onAdd, onRemove, className = '' }) {
   return (
     <div className={`rounded-[var(--sa-radius-card)] bg-[var(--sa-surface)] p-3 shadow-[var(--sa-shadow-card)] ${className}`}>
-      <p className={`text-[13px] font-semibold uppercase tracking-wide ${isToday ? 'text-[var(--sa-accent)]' : 'text-[var(--sa-ink-soft)]'}`}>
+      <p
+        className={`inline-flex text-[13px] font-semibold uppercase tracking-wide ${
+          isToday
+            ? 'rounded-[var(--sa-radius-pill)] bg-[var(--sa-green-deep)] px-2 py-0.5 text-[var(--sa-on-dark)]'
+            : 'text-[var(--sa-ink-soft)]'
+        }`}
+      >
         {dayLabel}
       </p>
 

@@ -188,6 +188,7 @@ function RecipesPageContent() {
             <RecipeCard
               key={recipe.slug}
               recipe={{
+                id: recipe.id,
                 slug: recipe.slug,
                 title: recipe.title,
                 image: recipe.image_url ?? recipe.image ?? null,

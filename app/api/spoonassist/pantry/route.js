@@ -111,3 +111,36 @@ export async function POST(request) {
 
   return NextResponse.json({ success: true, count: rows.length });
 }
+
+// DELETE ?householdId=...&canonicalId=... -- swipe-to-delete on the Profile
+// Pantry screen.
+export async function DELETE(request) {
+  const { searchParams } = new URL(request.url);
+  const householdId = searchParams.get('householdId');
+  const canonicalId = searchParams.get('canonicalId');
+  if (!householdId || !canonicalId) {
+    return NextResponse.json({ error: 'householdId and canonicalId query parameters are required' }, { status: 400 });
+  }
+
+  const supabase = await getSessionClient();
+  if (!supabase) {
+    return NextResponse.json({ error: 'SpoonAssist not configured' }, { status: 503 });
+  }
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { error } = await supabase
+    .from('pantry_items')
+    .delete()
+    .eq('household_id', householdId)
+    .eq('canonical_id', canonicalId);
+
+  if (error) {
+    return NextResponse.json({ error: 'Failed to remove pantry item' }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true });
+}

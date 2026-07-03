@@ -165,7 +165,6 @@ export default function SpoonAssistPlanPage() {
 
       {plan.items.length === 0 && (
         <EmptyState
-          variant="plate"
           className="mt-4"
           title="No meals planned yet"
           description="Tap + Add on any day to start building this week's plan."
