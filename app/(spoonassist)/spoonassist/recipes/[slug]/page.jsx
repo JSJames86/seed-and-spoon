@@ -238,7 +238,7 @@ export default function SpoonAssistRecipeDetailPage() {
           )}
 
           {/* Sticky actions -- spec §4.3: "both sticky on scroll" */}
-          <div className="sticky bottom-[76px] z-30 mt-8 flex gap-3 rounded-[var(--sa-radius-card)] bg-[var(--sa-surface)] p-3 shadow-[var(--sa-shadow-card)] lg:bottom-4">
+          <div className="sticky bottom-[88px] z-30 mt-8 flex gap-3 rounded-[var(--sa-radius-card)] bg-[var(--sa-surface)] p-3 shadow-[var(--sa-shadow-card)] lg:bottom-4">
             <PillButton variant="secondary" className="flex-1" onClick={() => addToPlan(new Date().getDay(), 'dinner')}>
               Add to list
             </PillButton>

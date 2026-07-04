@@ -38,19 +38,19 @@ export default function SpoonAssistV2Layout({ children }) {
             SpoonAssist brand logo. Desktop additionally gets the segmented
             nav control (mobile navigation is the fixed bottom tab bar). */}
         <header className="border-b border-[var(--sa-surface-alt)]">
-          <div className="mx-auto flex max-w-[1100px] items-center justify-between px-4 py-3 lg:px-6 lg:py-4">
+          <div className="mx-auto flex max-w-[1100px] items-center justify-between px-4 py-4 lg:px-6 lg:py-5">
             <Link
               href="/"
               aria-label="Back to Seed & Spoon"
-              className="flex items-center gap-1 text-[13px] font-semibold text-[var(--sa-ink-soft)] spoon-transition hover:text-[var(--sa-ink)]"
+              className="flex items-center gap-1.5 text-[15px] font-semibold text-[var(--sa-ink-soft)] spoon-transition hover:text-[var(--sa-ink)]"
             >
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                 <path d="M10 3.5 5 8l5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <span className="hidden sm:inline">Seed &amp; Spoon</span>
+              <span>Seed &amp; Spoon</span>
             </Link>
             <Link href="/spoonassist" aria-label="SpoonAssist home">
-              <Image src="/spoonassist/logo.png" alt="SpoonAssist" width={512} height={268} priority className="h-7 w-auto lg:h-9" />
+              <Image src="/spoonassist/logo.png" alt="SpoonAssist" width={512} height={268} priority className="h-12 w-auto lg:h-14" />
             </Link>
             <BottomTabNav variant="desktop" />
           </div>

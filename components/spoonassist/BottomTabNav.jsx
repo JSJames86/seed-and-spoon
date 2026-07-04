@@ -54,9 +54,9 @@ const TABS = [
   },
 ];
 
-function TabIcon({ children }) {
+function TabIcon({ children, size = 20 }) {
   return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg width={size} height={size} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       {children}
     </svg>
   );
@@ -102,24 +102,24 @@ export default function BottomTabNav({ variant = 'mobile' }) {
   return (
     <nav
       aria-label="SpoonAssist"
-      className="lg:hidden fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-3 sa-bottom-nav-safe-area"
+      className="lg:hidden fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-3 sa-bottom-nav-safe-area"
     >
-      <div className="flex items-center gap-1.5 rounded-[var(--sa-radius-pill)] bg-[var(--sa-surface)] px-2.5 py-2 shadow-[0_4px_20px_rgb(69_71_36_/_0.18)]">
+      <div className="flex w-full max-w-[440px] items-center justify-between gap-1 rounded-[var(--sa-radius-pill)] bg-[var(--sa-surface)] px-2 py-2 shadow-[0_4px_20px_rgb(69_71_36_/_0.18)]">
         {TABS.map((tab) => {
           const active = isActive(pathname, tab.href);
           return (
             <Link
               key={tab.href}
               href={tab.href}
-              aria-label={tab.label}
               aria-current={active ? 'page' : undefined}
-              className={`flex h-11 w-11 items-center justify-center rounded-full spoon-transition ${
+              className={`flex flex-1 flex-col items-center justify-center gap-0.5 rounded-[var(--sa-radius-pill)] py-2 spoon-transition ${
                 active
                   ? 'bg-[var(--sa-green-deep)] text-[var(--sa-on-dark)]'
-                  : 'bg-[var(--sa-surface-alt)] text-[var(--sa-ink)]'
+                  : 'text-[var(--sa-ink-soft)]'
               }`}
             >
-              <TabIcon>{tab.icon}</TabIcon>
+              <TabIcon size={24}>{tab.icon}</TabIcon>
+              <span className="text-[11px] font-semibold">{tab.label}</span>
             </Link>
           );
         })}
