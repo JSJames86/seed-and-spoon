@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import RecipeCard from '@/components/spoonassist/RecipeCard';
 import SectionHeader from '@/components/spoonassist/SectionHeader';
 import FilterSheet, { MAX_MINUTES_CEILING } from '@/components/spoonassist/FilterSheet';
@@ -157,6 +158,12 @@ function RecipesPageContent() {
       <div className="mb-4 flex items-center justify-between">
         <SectionHeader title="All recipes" className="mb-0" />
         <div className="flex items-center gap-2">
+          <Link
+            href="/spoonassist/recipes/import"
+            className="rounded-[var(--sa-radius-pill)] border border-[var(--sa-surface-alt)] bg-[var(--sa-surface)] px-3 py-1.5 text-[13px] font-semibold text-[var(--sa-ink)] spoon-transition hover:bg-[var(--sa-surface-alt)]"
+          >
+            + Share a recipe
+          </Link>
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value)}

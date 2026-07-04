@@ -12,6 +12,7 @@
     "import:spoonassist-recipes": "node scripts/import-spoonassist-recipes.js"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.110.0",
     "@react-email/components": "^0.0.32",
     "@react-email/render": "^2.0.8",
     "@supabase/ssr": "^0.10.2",
