@@ -50,7 +50,7 @@ export default function ImportRecipe({ onBrowseLibrary, onImported }) {
         return;
       }
 
-      const imported = { recipeId: data.recipeId, slug: data.slug, confidence: data.confidence };
+      const imported = { recipeId: data.recipeId, slug: data.slug, confidence: data.confidence, reviewToken: data.reviewToken };
       setResult(imported);
       setMode('success');
       onImported?.(imported);
@@ -148,7 +148,13 @@ export default function ImportRecipe({ onBrowseLibrary, onImported }) {
             </p>
           )}
           <p className="text-[15px] text-[var(--sa-ink-soft)]">Give it a quick check to make sure everything looks right.</p>
-          <PillButton as={Link} href={`/spoonassist/recipes/${result.slug}/review`} variant="primary" size="lg" className="w-full">
+          <PillButton
+            as={Link}
+            href={`/spoonassist/recipes/${result.slug}/review?token=${encodeURIComponent(result.reviewToken)}`}
+            variant="primary"
+            size="lg"
+            className="w-full"
+          >
             Review recipe
           </PillButton>
           <button onClick={reset} className="text-[13px] text-[var(--sa-ink-soft)] hover:text-[var(--sa-ink)]">

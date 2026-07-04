@@ -1,52 +1,37 @@
 import { NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
 import { resolveIngredientLine, buildAliasMap, buildConversionMap } from '@/lib/spoonassist/ingredientResolver';
 import { parseIngredientString, getServiceClient } from '@/lib/spoonassist/priceEngine';
 
 // ---------------------------------------------------------------------------
 // PATCH/DELETE /api/recipes/[id] -- the review step for a "Share a recipe"
-// draft (app/api/recipes/import, is_published = false). Only the recipe's
-// own author can edit, publish, or discard it.
+// draft (app/api/recipes/import, is_published = false). No login required
+// (see that route's comment) -- the caller must instead supply the
+// review_token generated at import time, as a `?token=` query param.
 //
-// PATCH body: { title?, description?, category?, servings?, total_minutes?,
+// PATCH body: { token, title?, description?, category?, servings?, total_minutes?,
 //               dietary_tags?, ingredients?: string[] (raw lines, replaces
 //               recipe_ingredients entirely), instructions?: string[],
 //               publish?: boolean }
-// DELETE: removes the draft outright (recipe_ingredients cascade).
+// DELETE ?token=...: removes the draft outright (recipe_ingredients cascade).
 // ---------------------------------------------------------------------------
 
-async function getSessionClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !anon) return null;
-  const cookieStore = await cookies();
-  return createServerClient(url, anon, {
-    cookies: {
-      getAll: () => cookieStore.getAll(),
-      setAll: () => {},
-    },
-  });
-}
-
 async function requireOwnedDraft(request, id) {
-  const supabase = await getSessionClient();
-  if (!supabase) return { error: NextResponse.json({ error: 'SpoonAssist not configured' }, { status: 503 }) };
-
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
+  const token = new URL(request.url).searchParams.get('token');
+  if (!token) return { error: NextResponse.json({ error: 'Missing review token' }, { status: 401 }) };
 
   const serviceClient = getServiceClient();
   if (!serviceClient) return { error: NextResponse.json({ error: 'SpoonAssist not configured' }, { status: 503 }) };
 
   const { data: recipe, error } = await serviceClient
     .from('recipes')
-    .select('id, author_id, is_published')
+    .select('id, review_token, is_published')
     .eq('id', id)
     .maybeSingle();
 
   if (error || !recipe) return { error: NextResponse.json({ error: 'Recipe not found' }, { status: 404 }) };
-  if (recipe.author_id !== user.id) return { error: NextResponse.json({ error: 'Not found' }, { status: 404 }) };
+  if (!recipe.review_token || recipe.review_token !== token) {
+    return { error: NextResponse.json({ error: 'Not found' }, { status: 404 }) };
+  }
 
   return { serviceClient, recipe };
 }
@@ -66,7 +51,10 @@ export async function PATCH(request, { params }) {
     if (field in body) update[field] = body[field];
   }
   if (Array.isArray(body.instructions)) update.instructions = body.instructions.filter(Boolean);
-  if (body.publish === true) update.is_published = true;
+  if (body.publish === true) {
+    update.is_published = true;
+    update.review_token = null; // one-time use -- once published it's a normal catalog recipe
+  }
 
   if (Object.keys(update).length > 0) {
     const { error: updateError } = await serviceClient.from('recipes').update(update).eq('id', id);

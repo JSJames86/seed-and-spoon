@@ -1,6 +1,4 @@
 import { NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
 import { nanoid } from 'nanoid';
 import { extractRecipeFromText } from '@/lib/spoonassist/recipeExtraction';
 import { resolveIngredientLine, buildAliasMap, buildConversionMap } from '@/lib/spoonassist/ingredientResolver';
@@ -17,6 +15,11 @@ import { parseIngredientString, getServiceClient } from '@/lib/spoonassist/price
 // the editorial `recipes` table as an unpublished draft the user reviews at
 // /spoonassist/recipes/[slug]/review before it appears anywhere else.
 //
+// No login required -- SpoonAssist has no consumer account system (only an
+// internal admin login at /login). Access to the draft is gated by
+// review_token (20260704100002), generated here and returned only to the
+// caller, instead of auth.uid().
+//
 // recipe_ingredients here keep the recipe's OWN units (e.g. "3/4 cup water"),
 // same as the rest of the editorial catalog -- NOT the coverage-engine's
 // standard-unit conversion. canonical_id is attached best-effort via
@@ -24,7 +27,7 @@ import { parseIngredientString, getServiceClient } from '@/lib/spoonassist/price
 // left null otherwise; an ingredient with no canonical match still imports.
 //
 // Body: { text: string (required), sourceUrl?: string }
-// Response: { recipeId, slug, confidence } | { error }
+// Response: { recipeId, slug, confidence, reviewToken } | { error }
 // ---------------------------------------------------------------------------
 
 const ERROR_STATUS = {
@@ -32,19 +35,6 @@ const ERROR_STATUS = {
   no_recipe_found: 422,
   extraction_failed: 502,
 };
-
-async function getSessionClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !anon) return null;
-  const cookieStore = await cookies();
-  return createServerClient(url, anon, {
-    cookies: {
-      getAll: () => cookieStore.getAll(),
-      setAll: () => {},
-    },
-  });
-}
 
 function slugify(title) {
   return title
@@ -65,20 +55,9 @@ export async function POST(request) {
     return NextResponse.json({ error: 'text is required' }, { status: 400 });
   }
 
-  const supabase = await getSessionClient();
-  if (!supabase) {
-    return NextResponse.json({ error: 'SpoonAssist not configured' }, { status: 503 });
-  }
-
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  // Writes (and the slug-uniqueness check, which must see every recipe
-  // regardless of publish status) go through the service client -- there is
-  // no INSERT policy on recipes/recipe_ingredients for the authenticated
-  // role, and the SELECT policy is scoped to published-or-own-draft.
+  // No login check -- see the module comment. All reads/writes go through
+  // the service client since there's no INSERT policy for the anon role and
+  // the draft isn't tied to a Postgres session at all.
   const serviceClient = getServiceClient();
   if (!serviceClient) {
     return NextResponse.json({ error: 'SpoonAssist not configured' }, { status: 503 });
@@ -102,6 +81,7 @@ export async function POST(request) {
   const canonicalCtx = canonicalIngredients ?? [];
 
   const slug = await uniqueSlug(serviceClient, recipe.name);
+  const reviewToken = nanoid(24);
 
   const { data: inserted, error: insertError } = await serviceClient
     .from('recipes')
@@ -116,7 +96,7 @@ export async function POST(request) {
       dietary_tags: recipe.dietaryTags,
       instructions: recipe.instructions,
       is_published: false,
-      author_id: user.id,
+      review_token: reviewToken,
       import_confidence: confidence,
     })
     .select('id')
@@ -153,5 +133,5 @@ export async function POST(request) {
     }
   }
 
-  return NextResponse.json({ recipeId: inserted.id, slug, confidence });
+  return NextResponse.json({ recipeId: inserted.id, slug, confidence, reviewToken });
 }
