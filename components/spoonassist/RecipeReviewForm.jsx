@@ -13,7 +13,7 @@ const labelClass = 'block text-[13px] font-semibold uppercase tracking-wide text
 // instructions edit as one-per-line text, same convention as
 // components/spoonassist/RecipeTextInput.jsx and the editorial import
 // script, instead of a per-row editor.
-export default function RecipeReviewForm({ recipe, ingredientLines }) {
+export default function RecipeReviewForm({ recipe, token, ingredientLines }) {
   const router = useRouter();
   const [title, setTitle] = useState(recipe.title || '');
   const [description, setDescription] = useState(recipe.description || '');
@@ -31,7 +31,7 @@ export default function RecipeReviewForm({ recipe, ingredientLines }) {
     setErrorMessage('');
 
     try {
-      const res = await fetch(`/api/recipes/${recipe.id}`, {
+      const res = await fetch(`/api/recipes/${recipe.id}?token=${encodeURIComponent(token)}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -62,7 +62,7 @@ export default function RecipeReviewForm({ recipe, ingredientLines }) {
   async function handleDiscard() {
     setDiscarding(true);
     try {
-      await fetch(`/api/recipes/${recipe.id}`, { method: 'DELETE' });
+      await fetch(`/api/recipes/${recipe.id}?token=${encodeURIComponent(token)}`, { method: 'DELETE' });
     } finally {
       router.push('/spoonassist/recipes');
     }

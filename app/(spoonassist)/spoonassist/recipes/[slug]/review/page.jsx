@@ -1,42 +1,29 @@
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
+import { getServiceClient } from '@/lib/spoonassist/priceEngine';
 import RecipeReviewForm from '@/components/spoonassist/RecipeReviewForm';
 
-async function getSessionClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !anon) return null;
-  const cookieStore = await cookies();
-  return createServerClient(url, anon, {
-    cookies: {
-      getAll: () => cookieStore.getAll(),
-      setAll: () => {},
-    },
-  });
-}
-
 // Review step for a "Share a recipe" import (app/api/recipes/import): the
-// recipe lands here as an unpublished draft, readable only by its author (see
-// the "Authors read own recipe drafts" RLS policy from
-// 20260704100001_recipe_import_confidence.sql) until they confirm it.
-export default async function RecipeReviewPage({ params }) {
+// recipe lands here as an unpublished draft. No login required -- SpoonAssist
+// has no consumer account system -- so access is gated by the review_token
+// generated at import time (20260704100002), passed as ?token=, instead of
+// auth.uid(). Uses the service client throughout since the draft was never
+// tied to a Postgres session in the first place.
+export default async function RecipeReviewPage({ params, searchParams }) {
   const { slug } = await params;
-  const supabase = await getSessionClient();
-  if (!supabase) notFound();
+  const { token } = await searchParams;
 
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect(`/spoonassist/recipes/${slug}`);
+  const serviceClient = getServiceClient();
+  if (!serviceClient || !token) notFound();
 
-  const { data: recipe } = await supabase
+  const { data: recipe } = await serviceClient
     .from('recipes')
-    .select('id, slug, title, description, category, servings, total_minutes, dietary_tags, instructions, is_published, author_id, import_confidence')
+    .select('id, slug, title, description, category, servings, total_minutes, dietary_tags, instructions, is_published, review_token, import_confidence')
     .eq('slug', slug)
     .maybeSingle();
 
-  if (!recipe || recipe.author_id !== user.id) notFound();
+  if (!recipe || !recipe.review_token || recipe.review_token !== token) notFound();
 
-  const { data: ingredients } = await supabase
+  const { data: ingredients } = await serviceClient
     .from('recipe_ingredients')
     .select('raw_text')
     .eq('recipe_id', recipe.id)
@@ -45,6 +32,7 @@ export default async function RecipeReviewPage({ params }) {
   return (
     <RecipeReviewForm
       recipe={recipe}
+      token={token}
       ingredientLines={(ingredients ?? []).map((i) => i.raw_text).filter(Boolean)}
     />
   );
