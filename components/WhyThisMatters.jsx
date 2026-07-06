@@ -19,6 +19,11 @@ function StatCard({ label, mainStat, percentage, description, delay = 0 }) {
     const currentRef = cardRef.current;
     if (!currentRef) return;
 
+    if (typeof window === "undefined" || typeof window.IntersectionObserver === "undefined") {
+      setIsVisible(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -34,6 +39,13 @@ function StatCard({ label, mainStat, percentage, description, delay = 0 }) {
     );
 
     observer.observe(currentRef);
+
+    // Card may already be in view on mount (e.g. tall viewport, no scroll needed)
+    const rect = currentRef.getBoundingClientRect();
+    const alreadyInView = rect.top < window.innerHeight * 0.7 && rect.bottom > 0;
+    if (alreadyInView) {
+      setTimeout(() => setIsVisible(true), delay);
+    }
 
     return () => {
       if (currentRef) {

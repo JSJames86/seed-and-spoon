@@ -77,7 +77,9 @@ export default function BlogClient() {
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Header */}
-      <section className="bg-green-700 text-white py-16 px-4">
+      <section className="relative bg-green-700 text-white py-16 px-4">
+        {/* Sentinel observed by Header to detect when hero is in view */}
+        <div id="hero-sentinel" className="absolute bottom-0 h-px w-full pointer-events-none" />
         <div className="max-w-4xl mx-auto text-center">
           <p className="text-green-200 uppercase tracking-widest text-sm font-semibold mb-3">
             From Our Team

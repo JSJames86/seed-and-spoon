@@ -371,7 +371,9 @@ function FoodDriveForm() {
 
 function Hero() {
   return (
-    <section className="bg-green-700 text-white py-20 px-4">
+    <section className="relative bg-green-700 text-white py-20 px-4">
+      {/* Sentinel observed by Header to detect when hero is in view */}
+      <div id="hero-sentinel" className="absolute bottom-0 h-px w-full pointer-events-none" />
       <div className="max-w-3xl mx-auto text-center">
         <p className="text-green-200 uppercase tracking-widest text-sm font-semibold mb-4">
           Get Involved
@@ -509,7 +511,7 @@ function CtaReinforcement() {
             Donate Now
           </Link>
           <Link
-            href="/get-involved"
+            href="/get-involved/food-drive"
             className="bg-white border border-gray-300 hover:border-gray-400 text-gray-700 font-semibold py-3 px-8 rounded-lg transition"
           >
             Other Ways to Help

@@ -166,14 +166,14 @@ export default function CookieSettingsModal() {
             <p className="text-sm text-gray-600">
               For more information about how we use cookies and protect your data, please read our{' '}
               <Link
-                href="/privacy-policy"
+                href="/legal/privacy"
                 className="text-green-800 hover:text-green-900 underline font-medium"
               >
                 Privacy Policy
               </Link>
               {' '}and{' '}
               <Link
-                href="/terms"
+                href="/legal/terms"
                 className="text-green-800 hover:text-green-900 underline font-medium"
               >
                 Terms & Conditions

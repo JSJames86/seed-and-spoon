@@ -402,7 +402,9 @@ function CommunityPartnerForm() {
 
 function Hero() {
   return (
-    <section className="bg-gradient-to-br from-[#2d5a27] to-[#1f3f1b] text-white py-20 md:py-28">
+    <section className="relative bg-gradient-to-br from-[#2d5a27] to-[#1f3f1b] text-white py-20 md:py-28">
+      {/* Sentinel observed by Header to detect when hero is in view */}
+      <div id="hero-sentinel" className="absolute bottom-0 h-px w-full pointer-events-none" />
       <div className="container mx-auto px-6 max-w-4xl text-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">Become a Community Partner</h1>
         <p className="text-xl text-green-100 leading-relaxed max-w-2xl mx-auto">

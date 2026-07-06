@@ -25,6 +25,8 @@ export default function WorkshopsPage() {
     <main className="min-h-screen bg-[#F9EED4] pt-16 md:pt-20 lg:pt-24">
       {/* Hero */}
       <section className="relative bg-gradient-to-br from-[#0B88C2] to-[#02538A] text-white py-20 px-4">
+        {/* Sentinel observed by Header to detect when hero is in view */}
+        <div id="hero-sentinel" className="absolute bottom-0 h-px w-full pointer-events-none" />
         <div className="max-w-7xl mx-auto grid gap-10 lg:grid-cols-[3fr,2fr] items-center">
           <div className="space-y-6 text-center lg:text-left">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">

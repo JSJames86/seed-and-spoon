@@ -38,7 +38,9 @@ export default function GetHelpPage() {
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-green-700 to-green-800 text-white py-16 md:py-24">
+      <section className="relative bg-gradient-to-b from-green-700 to-green-800 text-white py-16 md:py-24">
+        {/* Sentinel observed by Header to detect when hero is in view */}
+        <div id="hero-sentinel" className="absolute bottom-0 h-px w-full pointer-events-none" />
         <div className="container mx-auto px-4 max-w-4xl text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             Get Help with Food
@@ -304,7 +306,7 @@ export default function GetHelpPage() {
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 All information you provide is confidential and will only be used to connect you
                 with food resources. We never sell or share your personal information.
-                <a href="/legal/privacy-policy" className="text-green-700 hover:underline ml-1">
+                <a href="/legal/privacy" className="text-green-700 hover:underline ml-1">
                   Read our Privacy Policy →
                 </a>
               </p>

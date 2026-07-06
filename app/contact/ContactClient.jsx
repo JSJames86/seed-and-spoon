@@ -121,7 +121,9 @@ export default function ContactClient() {
   return (
     <main className="bg-[#faf9f6] min-h-screen">
       {/* Hero */}
-      <section className="bg-green-800 text-white py-20 px-6">
+      <section className="relative bg-green-800 text-white py-20 px-6">
+        {/* Sentinel observed by Header to detect when hero is in view */}
+        <div id="hero-sentinel" className="absolute bottom-0 h-px w-full pointer-events-none" />
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-green-300 text-sm font-semibold uppercase tracking-widest mb-3">
             Research &amp; Data
@@ -296,7 +298,7 @@ export default function ContactClient() {
             This page is specifically for academic and institutional research partnership inquiries.
             If you are interested in volunteering, donating, hosting a food drive, or becoming an
             affiliate, please visit our{' '}
-            <a href="/get-involved" className="text-green-700 hover:underline font-medium">
+            <a href="/get-involved/food-drive" className="text-green-700 hover:underline font-medium">
               Get Involved
             </a>{' '}
             page.

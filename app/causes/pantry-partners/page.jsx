@@ -25,6 +25,8 @@ export default function PantryPartnersPage() {
     <div className="bg-white">
       {/* Hero Section */}
       <section className="relative w-full h-[320px] md:h-[420px] overflow-hidden">
+        {/* Sentinel observed by Header to detect when hero is in view */}
+        <div id="hero-sentinel" className="absolute bottom-0 h-px w-full pointer-events-none" />
         <img
           src="/images/causes/pantry-partners/pantry-partners-hero.png"
           alt="Community pantry partnership with Seed & Spoon NJ"
