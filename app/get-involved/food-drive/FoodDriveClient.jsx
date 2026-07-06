@@ -509,7 +509,7 @@ function CtaReinforcement() {
             Donate Now
           </Link>
           <Link
-            href="/get-involved"
+            href="/get-involved/food-drive"
             className="bg-white border border-gray-300 hover:border-gray-400 text-gray-700 font-semibold py-3 px-8 rounded-lg transition"
           >
             Other Ways to Help

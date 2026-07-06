@@ -296,7 +296,7 @@ export default function ContactClient() {
             This page is specifically for academic and institutional research partnership inquiries.
             If you are interested in volunteering, donating, hosting a food drive, or becoming an
             affiliate, please visit our{' '}
-            <a href="/get-involved" className="text-green-700 hover:underline font-medium">
+            <a href="/get-involved/food-drive" className="text-green-700 hover:underline font-medium">
               Get Involved
             </a>{' '}
             page.

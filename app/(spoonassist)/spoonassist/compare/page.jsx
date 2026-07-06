@@ -73,6 +73,7 @@ export default function SpoonAssistComparePage() {
   const [zip, setZip] = useState('');
   const [features, setFeatures] = useState({ kroger: false, instacart: false });
   const [status, setStatus] = useState('zip'); // zip | loading | results | error
+  const [errorReason, setErrorReason] = useState(null); // 'no-stores' | 'lookup-failed'
   const [stores, setStores] = useState([]);
   const [costData, setCostData] = useState([]);
   const [summary, setSummary] = useState(null);
@@ -138,7 +139,9 @@ export default function SpoonAssistComparePage() {
         item_count: activeItems.length,
         cheapest_total: data.summary?.cheapestTotal ?? null,
       });
-    } catch {
+    } catch (err) {
+      console.error('[SpoonAssist compare] price comparison failed:', err.message);
+      setErrorReason(err.message === 'no-stores' ? 'no-stores' : 'lookup-failed');
       setStatus('error');
     }
   };
@@ -208,7 +211,11 @@ export default function SpoonAssistComparePage() {
 
       {status === 'error' && (
         <div className="mt-5">
-          <p className="text-[15px] text-[var(--sa-warning)]">Couldn&rsquo;t compare prices for that ZIP. Try another.</p>
+          <p className="text-[15px] text-[var(--sa-warning)]">
+            {errorReason === 'no-stores'
+              ? "We couldn't find any stores in your area yet. Try a nearby ZIP code."
+              : "We're having trouble looking up prices right now. Please try again in a bit."}
+          </p>
           <PillButton variant="secondary" className="mt-3" onClick={() => setStatus('zip')}>
             Try again
           </PillButton>

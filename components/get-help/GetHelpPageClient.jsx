@@ -304,7 +304,7 @@ export default function GetHelpPage() {
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 All information you provide is confidential and will only be used to connect you
                 with food resources. We never sell or share your personal information.
-                <a href="/legal/privacy-policy" className="text-green-700 hover:underline ml-1">
+                <a href="/legal/privacy" className="text-green-700 hover:underline ml-1">
                   Read our Privacy Policy →
                 </a>
               </p>
