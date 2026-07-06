@@ -26,6 +26,8 @@ export default function PreparedMealsPage() {
     <div className="bg-white">
       {/* Hero */}
       <section className="relative w-full h-[320px] md:h-[420px] overflow-hidden">
+        {/* Sentinel observed by Header to detect when hero is in view */}
+        <div id="hero-sentinel" className="absolute bottom-0 h-px w-full pointer-events-none" />
         <img
           src="/images/causes/prepared-meals/prepared-meals-hero-alt.jpg"
           alt="Seed & Spoon NJ prepared meals hero image"

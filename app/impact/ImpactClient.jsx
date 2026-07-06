@@ -284,6 +284,8 @@ export default function ImpactClient() {
     <main>
       {/* ── Hero ──────────────────────────────────────────────── */}
       <section className="relative bg-gradient-to-br from-green-900 via-green-800 to-green-900 text-white py-20 md:py-28 overflow-hidden">
+        {/* Sentinel observed by Header to detect when hero is in view */}
+        <div id="hero-sentinel" className="absolute bottom-0 h-px w-full pointer-events-none" />
         <div className="absolute inset-0 bg-black/10" aria-hidden="true" />
         <div className="container mx-auto px-6 relative z-10 text-center max-w-4xl">
           <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-green-100 text-xs font-semibold px-4 py-1.5 rounded-full mb-6 uppercase tracking-widest">

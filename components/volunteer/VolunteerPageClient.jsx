@@ -327,6 +327,8 @@ export default function VolunteerPage() {
     <main className="bg-cream pt-16 md:pt-20 lg:pt-24">
       {/* Hero Section */}
       <section className={`relative py-20 md:py-32 bg-gradient-to-br from-green-700 to-green-900 text-white transition-opacity duration-1000 ${visible ? 'opacity-100' : 'opacity-0'}`}>
+        {/* Sentinel observed by Header to detect when hero is in view */}
+        <div id="hero-sentinel" className="absolute bottom-0 h-px w-full pointer-events-none" />
         <div className="container mx-auto px-6 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
             Volunteer with Seed & Spoon

@@ -401,6 +401,8 @@ export default function AboutPage() {
 function HeroSection() {
   return (
     <section className="relative bg-gradient-to-br from-green-700 via-green-800 to-green-900 text-white py-20 md:py-32">
+      {/* Sentinel observed by Header to detect when hero is in view */}
+      <div id="hero-sentinel" className="absolute bottom-0 h-px w-full pointer-events-none" />
       <div className="absolute inset-0 bg-black opacity-20"></div>
       <div className="container mx-auto px-6 relative z-10">
         <div className="max-w-4xl mx-auto text-center">

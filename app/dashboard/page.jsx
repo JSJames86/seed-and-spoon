@@ -63,7 +63,9 @@ export default function DashboardPage() {
       <div className="min-h-screen bg-cream">
 
         {/* Impact Hero */}
-        <div className="bg-[var(--green-primary)] text-white px-4 py-10">
+        <div className="relative bg-[var(--green-primary)] text-white px-4 py-10">
+          {/* Sentinel observed by Header to detect when hero is in view */}
+          <div id="hero-sentinel" className="absolute bottom-0 h-px w-full pointer-events-none" />
           <div className="max-w-3xl mx-auto">
             <p className="text-green-200 text-sm font-medium uppercase tracking-widest mb-1">Welcome back</p>
             <h1 className="text-3xl font-bold mb-6">{firstName} 👋</h1>

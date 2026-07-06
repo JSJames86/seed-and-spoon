@@ -125,6 +125,8 @@ export default function CausesPage() {
     <main className="min-h-screen bg-[#F9EED4] pt-16 md:pt-20 lg:pt-24">
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-[#0B88C2] to-[#02538A] text-white py-20 px-4">
+        {/* Sentinel observed by Header to detect when hero is in view */}
+        <div id="hero-sentinel" className="absolute bottom-0 h-px w-full pointer-events-none" />
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
             Our Causes

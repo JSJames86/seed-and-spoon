@@ -8,7 +8,9 @@ export const metadata = {
 export default function SubscribePage() {
   return (
     <main className="min-h-screen bg-stone-50">
-      <section className="bg-green-900 py-20 px-4 text-center">
+      <section className="relative bg-green-900 py-20 px-4 text-center">
+        {/* Sentinel observed by Header to detect when hero is in view */}
+        <div id="hero-sentinel" className="absolute bottom-0 h-px w-full pointer-events-none" />
         <p className="text-green-300 text-sm font-semibold uppercase tracking-widest mb-3">
           Newsletter
         </p>
