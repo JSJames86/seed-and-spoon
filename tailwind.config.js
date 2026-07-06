@@ -30,6 +30,18 @@ module.exports = {
           cream: "#F8F6F0",
           charcoal: "#1A1A1A",
         },
+        // Top-level alias so `text-cream`/`border-cream`/opacity variants
+        // (e.g. text-cream/90) resolve — `neutral.cream` above only ever
+        // generated `text-neutral-cream`, so plain `text-cream` (used in
+        // Header.jsx's nav hover state and the campaigns pages) silently
+        // rendered as no color at all.
+        cream: "#F8F6F0",
+        // Legacy tokens referenced by older pages (login, admin, profile,
+        // password reset, campaigns, Header) — aliased to the same brand
+        // green already used by Button.jsx's primary variant / forest-mid,
+        // since they were being used as undefined classes (no color at all).
+        "primary-soil": "#4FAF3B",
+        "gradient-green": "#2D6A4F",
         // SpoonAssist glassmorphism palette (scoped to /spoonassist)
         spoon: {
           ink: "#1B241F",
