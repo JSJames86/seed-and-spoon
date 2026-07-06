@@ -7,6 +7,7 @@ import CookieSettingsModal from "@/components/CookieSettingsModal";
 import AnalyticsLoader from "@/components/AnalyticsLoader";
 import Providers from "@/components/Providers";
 import { SubscribePopupTrigger } from "@/components/email/SubscribeModal";
+import { Analytics } from '@vercel/analytics/next';
 import { Libre_Franklin, Roboto_Slab, Crimson_Text, Fraunces, Hanken_Grotesk } from 'next/font/google';
 
 const libreFranklin = Libre_Franklin({
@@ -133,6 +134,9 @@ export default function RootLayout({ children }) {
           {/* Email subscription popup */}
           <SubscribePopupTrigger />
         </Providers>
+        
+        {/* Vercel Web Analytics */}
+        <Analytics />
       </body>
     </html>
   );
