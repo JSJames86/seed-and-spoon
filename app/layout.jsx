@@ -102,7 +102,14 @@ const organizationSchema = {
     addressCountry: "US",
   },
   knowsAbout: ["food insecurity", "youth hunger", "community meal programs", "urban gardening"],
-  sameAs: [],
+  sameAs: [
+    "https://www.facebook.com/share/1DmFiCfhux/?mibextid=wwXIfr",
+    "https://www.instagram.com/seedandspoon_nj",
+    "https://www.threads.com/@seedandspoon_nj",
+    "https://x.com/seedandspoon_nj",
+    "https://www.tiktok.com/@seedandspoonnj",
+    "https://www.linkedin.com/company/seed-and-spoon-foundation/",
+  ],
 };
 
 export default function RootLayout({ children }) {

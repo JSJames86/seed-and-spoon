@@ -7,7 +7,7 @@ export const metadata = {
     description:
       "Terms governing the use of Seed & Spoon NJ's website and services. Read our service guidelines and user responsibilities.",
     url: "https://seedandspoon.org/legal/terms",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
     type: "website",
   },
   twitter: {
@@ -15,7 +15,7 @@ export const metadata = {
     title: "Terms & Conditions | Seed & Spoon NJ",
     description:
       "Read the terms and conditions for using Seed & Spoon NJ services and website.",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
   },
 };
 

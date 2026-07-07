@@ -240,7 +240,7 @@ export default function GetHelpPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Recipes Card */}
             <a
               href="/recipes"
@@ -289,6 +289,23 @@ export default function GetHelpPage() {
               </p>
               <div className="mt-4 text-green-700 dark:text-green-400 font-semibold text-sm">
                 Read Blog →
+              </div>
+            </a>
+
+            {/* Food Allergy Resources Card */}
+            <a
+              href="/resources/food-allergies"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all p-6 border-2 border-transparent hover:border-green-500 transform hover:-translate-y-1"
+            >
+              <div className="text-4xl mb-4">⚠️</div>
+              <h3 className="font-bold text-xl mb-3 text-gray-900 dark:text-white">
+                Food Allergy Resources
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                How we label allergens in meal boxes, what families with food-allergic kids should know, and where to find emergency help in NJ.
+              </p>
+              <div className="mt-4 text-green-700 dark:text-green-400 font-semibold text-sm">
+                View Allergy Info →
               </div>
             </a>
           </div>

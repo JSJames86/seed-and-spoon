@@ -7,7 +7,7 @@ export const metadata = {
     description:
       "Find food assistance in New Jersey. Apply for help, explore our resource map, and connect with pantries, meal programs, and community support.",
     url: "https://seedandspoon.org/get-help",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
     type: "website",
   },
   twitter: {
@@ -15,7 +15,7 @@ export const metadata = {
     title: "Get Food Help | Seed & Spoon NJ",
     description:
       "Need food assistance? We're here to help connect you with meals, groceries, and community resources across New Jersey.",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
   },
 };
 

@@ -7,7 +7,7 @@ export const metadata = {
     description:
       "Our commitment to protecting your personal information and privacy. Read our privacy policy for clients, donors, and volunteers.",
     url: "https://seedandspoon.org/legal/privacy",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
     type: "website",
   },
   twitter: {
@@ -15,7 +15,7 @@ export const metadata = {
     title: "Privacy Policy | Seed & Spoon NJ",
     description:
       "Learn how we protect your privacy and personal information at Seed & Spoon NJ.",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
   },
 };
 
