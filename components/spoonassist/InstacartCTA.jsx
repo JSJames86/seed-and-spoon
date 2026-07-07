@@ -5,26 +5,20 @@
 //   Background:  #003D29  |  Text: #FAF1E5  |  Logo: 22px full-color carrot
 //   Height: 46px  |  Padding: 16px vertical / 18px horizontal  |  Round corners
 
-// Instacart carrot icon — traced from official brand asset.
-// Shape: rounded circle cap → vertical stem → two curved side lobes
-// all converging to a downward V-point, with orange semicircle body below.
+// Instacart carrot icon — exact path data from Instacart's official brand
+// asset pack (Logos - Carrot/RGB/SVG/Instacart_Carrot.svg).
 function InstacartCarrot({ size = 22 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 100 120" fill="none" aria-hidden="true">
-      {/* Circle cap at top of stem */}
-      <circle cx="50" cy="16" r="14" fill="#0AAD0A" />
-      {/* Stem + two wings converging to downward V */}
+    <svg width={size} height={size * (52.9 / 42.3)} viewBox="0 0 42.3 52.9" aria-hidden="true">
       <path
-        d="M36 16 L36 38
-           C24 36 4 42 4 56
-           C4 66 18 74 50 74
-           C82 74 96 66 96 56
-           C96 42 76 36 64 38
-           L64 16 Z"
         fill="#0AAD0A"
+        d="M36.4,8.6c-2.3,0-4,1-5.5,3.2l-4.4,6.4V0H15.9v18.2l-4.4-6.4C9.9,9.6,8.2,8.6,5.9,8.6C2.4,8.6,0,11.2,0,14.4
+           c0,2.7,1.3,4.5,4,6.3l17.1,11l17.1-11c2.7-1.8,4-3.5,4-6.3C42.3,11.2,39.9,8.6,36.4,8.6z"
       />
-      {/* Orange semicircle body */}
-      <path d="M4 88 A46 46 0 0 0 96 88 Z" fill="#FF7009" />
+      <path
+        fill="#FF7009"
+        d="M21.1,34.4c10.2,0,18.5,7.6,18.5,18.5h-37C2.6,42,11,34.4,21.1,34.4z"
+      />
     </svg>
   );
 }
