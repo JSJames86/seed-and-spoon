@@ -7,7 +7,7 @@ export const metadata = {
     description:
       "Your donation is transforming lives. Thank you for supporting hunger relief and food justice in New Jersey.",
     url: "https://seedandspoon.org/thank-you",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
     type: "website",
   },
   twitter: {
@@ -15,7 +15,7 @@ export const metadata = {
     title: "Thank You | Seed & Spoon NJ",
     description:
       "Your support makes a real difference in fighting hunger and food waste across New Jersey. Thank you!",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
   },
 };
 

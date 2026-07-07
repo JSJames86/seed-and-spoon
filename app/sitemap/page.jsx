@@ -9,7 +9,7 @@ export const metadata = {
     description:
       "Browse the complete Seed & Spoon NJ site map to find food assistance resources, volunteer opportunities, and ways to support our mission.",
     url: "https://seedandspoon.org/sitemap",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
     type: "website",
   },
   twitter: {
@@ -17,7 +17,7 @@ export const metadata = {
     title: "Sitemap | Seed & Spoon NJ",
     description:
       "Complete site navigation for Seed & Spoon NJ - food rescue, hunger relief, and community empowerment.",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
   },
 };
 

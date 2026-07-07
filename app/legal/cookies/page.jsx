@@ -7,7 +7,7 @@ export const metadata = {
     description:
       "Manage your cookie preferences and learn about our cookie usage for website functionality and analytics.",
     url: "https://seedandspoon.org/legal/cookies",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
     type: "website",
   },
   twitter: {
@@ -15,7 +15,7 @@ export const metadata = {
     title: "Cookie Policy | Seed & Spoon NJ",
     description:
       "Learn about cookie usage and manage your preferences on our website.",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
   },
 };
 

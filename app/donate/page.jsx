@@ -7,7 +7,7 @@ export const metadata = {
     description:
       "Support community-powered hunger relief in New Jersey. Your tax-deductible donation rescues food, feeds families, and builds a more sustainable food system.",
     url: "https://seedandspoon.org/donate",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
     type: "website",
   },
   twitter: {
@@ -15,7 +15,7 @@ export const metadata = {
     title: "Donate | Seed & Spoon NJ - Every Dollar Feeds Families",
     description:
       "Help us turn surplus into sustenance. Donate to fight hunger and food waste in New Jersey.",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
   },
 };
 

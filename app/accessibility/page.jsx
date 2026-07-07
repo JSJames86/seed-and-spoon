@@ -7,7 +7,7 @@ export const metadata = {
     description:
       "Our commitment to web accessibility and inclusive design. Seed & Spoon NJ ensures equal access to food assistance information and resources.",
     url: "https://seedandspoon.org/accessibility",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
     type: "website",
   },
   twitter: {
@@ -15,7 +15,7 @@ export const metadata = {
     title: "Accessibility | Seed & Spoon NJ",
     description:
       "Committed to inclusive digital access for all. Learn about our accessibility standards and resources.",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
   },
 };
 

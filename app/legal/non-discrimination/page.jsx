@@ -7,7 +7,7 @@ export const metadata = {
     description:
       "Our commitment to equal access and dignity for all. Seed & Spoon NJ serves families without discrimination.",
     url: "https://seedandspoon.org/legal/non-discrimination",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
     type: "website",
   },
   twitter: {
@@ -15,7 +15,7 @@ export const metadata = {
     title: "Non-Discrimination | Seed & Spoon NJ",
     description:
       "Equal access and dignity for all. Read our non-discrimination policy.",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
   },
 };
 

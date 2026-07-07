@@ -164,7 +164,7 @@ export default function PressPage() {
                   <div className="bg-[#f9f6f0] rounded-xl p-4 flex items-center justify-between">
                     <span className="text-sm text-gray-700">Logo (Light BG)</span>
                     <a
-                      href="/assets/logo-transparent.png"
+                      href="/assets/logo/seed-and-spoon-logo-full.png"
                       download
                       className="text-xs text-[#2d5a27] font-semibold hover:underline"
                     >

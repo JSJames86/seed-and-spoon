@@ -12,7 +12,7 @@ const CONTENT = {
   meta: {
     title: 'Our Mission',
     description: 'Seed & Spoon exists to eliminate youth hunger in Newark and Essex County through sustainable, community-powered food programs.',
-    ogImage: '/assets/logo-transparent.png',
+    ogImage: '/og-image.jpg',
   },
 
   // Hero Section
@@ -279,7 +279,7 @@ const CONTENT = {
   schema: {
     organizationName: 'Seed & Spoon NJ',
     url: 'https://seedandspoon.org',
-    logo: 'https://seedandspoon.org/assets/logo-transparent.png',
+    logo: 'https://seedandspoon.org/assets/logo/seed-and-spoon-logo-full.png',
     description: 'Nonprofit food rescue and meal preparation organization serving New Jersey communities facing food insecurity.',
     email: 'info@seedandspoon.org',
     telephone: '+1-555-SPOON-NJ',

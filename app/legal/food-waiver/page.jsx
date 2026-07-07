@@ -7,7 +7,7 @@ export const metadata = {
     description:
       "Food safety protocols and allergen awareness at Seed & Spoon NJ. Read important information for clients receiving food assistance.",
     url: "https://seedandspoon.org/legal/food-waiver",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
     type: "website",
   },
   twitter: {
@@ -15,9 +15,11 @@ export const metadata = {
     title: "Food Safety & Allergen Info | Seed & Spoon NJ",
     description:
       "Important food safety and allergy information for clients of Seed & Spoon NJ.",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
   },
 };
+
+import Link from "next/link";
 
 export default function FoodWaiverPage() {
   return (
@@ -33,6 +35,14 @@ export default function FoodWaiverPage() {
 
         <p className="text-base text-black/70 leading-relaxed mb-4">
           Seed & Spoon is committed to providing safe, nutritious food to families in need. This waiver explains important information about the nature of our food programs, potential allergen risks, and your responsibilities as a participant. By accepting food from Seed & Spoon, you acknowledge and agree to the terms outlined below.
+        </p>
+
+        <p className="text-base text-black/70 leading-relaxed mb-4">
+          Looking for practical guidance instead of legal terms? See our{" "}
+          <Link href="/resources/food-allergies" className="text-green-700 underline underline-offset-2">
+            food allergy resources page
+          </Link>{" "}
+          for how we label allergens in meal boxes, household tips, and NJ food allergy emergency resources.
         </p>
 
         <section>

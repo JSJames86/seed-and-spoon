@@ -7,7 +7,7 @@ export const metadata = {
     description:
       "Our commitment to protecting donor information. Learn how we handle contributions and financial data with security and respect.",
     url: "https://seedandspoon.org/legal/donor-privacy",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
     type: "website",
   },
   twitter: {
@@ -15,7 +15,7 @@ export const metadata = {
     title: "Donor Privacy | Seed & Spoon NJ",
     description:
       "Learn how we protect donor information and handle contributions with transparency and security.",
-    images: ["/og-default.jpg"],
+    images: ["/og-image.jpg"],
   },
 };
 
