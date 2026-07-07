@@ -287,7 +287,7 @@ export default function SpoonAssistComparePage() {
                       Export CSV
                     </PillButton>
                     {features.instacart && (
-                      <InstacartCTA onClick={handleSendToInstacart} loading={instacart.loading} text="Send to Instacart" />
+                      <InstacartCTA onClick={handleSendToInstacart} loading={instacart.loading} text="Shop ingredients" />
                     )}
                   </div>
                 </div>
