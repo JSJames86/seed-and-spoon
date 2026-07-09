@@ -18,7 +18,6 @@ module.exports = {
     '/api/*',
     '/campaigns/create',
     '/thank-you',
-    '/impact/projections',
   ],
   transform: async (config, path) => {
     // Give the homepage maximum priority
