@@ -15,6 +15,7 @@ import CostResultsTable from '@/components/spoonassist/CostResultsTable';
 import CSVExportButton from '@/components/spoonassist/CSVExportButton';
 import PoweredBy from '@/components/spoonassist/PoweredBy';
 import InstacartCTA from '@/components/spoonassist/InstacartCTA';
+import ShareListButtons from '@/components/spoonassist/ShareListButtons';
 import GlassCard from '@/components/spoonassist/ui/GlassCard';
 import SpoonButton from '@/components/spoonassist/ui/Button';
 import StepProgress from '@/components/spoonassist/ui/StepProgress';
@@ -482,10 +483,7 @@ export default function SpoonAssistPage() {
             {/* Section 6: Results */}
             {costData && costData.length > 0 && (
               <GlassCard as={motion.section} {...revealAnimation} className="mb-8">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-2xl font-bold text-spoon-ink">Results</h2>
-                  <CSVExportButton costData={costData} ingredients={ingredients} />
-                </div>
+                <h2 className="text-2xl font-bold text-spoon-ink mb-4">Results</h2>
 
                 {/* Summary banner */}
                 {summary && summary.cheapestStore && (
@@ -513,23 +511,32 @@ export default function SpoonAssistPage() {
 
                 <CostResultsTable costData={costData} />
 
-                {/* Shop on Instacart CTA — only rendered when key is configured */}
-                {features.instacart && (
-                  <div className="mt-6 p-5 spoon-glass-lite rounded-spoon-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div>
-                      <p className="font-semibold text-spoon-ink">Ready to shop?</p>
-                      <p className="text-sm text-spoon-subtext mt-0.5">
-                        Add this recipe&apos;s ingredients to your cart via the Instacart® service — delivery or pickup at local stores.
-                      </p>
-                    </div>
-                    <InstacartCTA
-                      onClick={handleShopOnInstacart}
-                      loading={loading.instacart}
-                      disabled={ingredients.length === 0}
-                      text="Shop ingredients"
-                    />
+                {/* Every way to walk away with this list — share, copy, export, or hand off to Instacart — grouped in one place */}
+                <div className="mt-6 p-5 spoon-glass-lite rounded-spoon-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div>
+                    <p className="font-semibold text-spoon-ink">Ready to shop?</p>
+                    <p className="text-sm text-spoon-subtext mt-0.5">
+                      {features.instacart
+                        ? <>Add this recipe&apos;s ingredients to your cart via the Instacart® service — delivery or pickup at local stores. Or share, copy, or export the list below.</>
+                        : 'Share, copy, or export this list to shop however you like.'}
+                    </p>
                   </div>
-                )}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <ShareListButtons
+                      ingredients={ingredients.map((ing) => ({ name: ing.name, amount: ing.quantity, unit: ing.unit }))}
+                      listTitle={selectedRecipe?.title || 'My Ingredient List'}
+                    />
+                    <CSVExportButton costData={costData} ingredients={ingredients} />
+                    {features.instacart && (
+                      <InstacartCTA
+                        onClick={handleShopOnInstacart}
+                        loading={loading.instacart}
+                        disabled={ingredients.length === 0}
+                        text="Shop ingredients"
+                      />
+                    )}
+                  </div>
+                </div>
                 {instacartError && (
                   <InlineError message={instacartError} onDismiss={() => setInstacartError(null)} />
                 )}

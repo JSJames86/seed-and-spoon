@@ -7,6 +7,7 @@ import EmptyState from '@/components/spoonassist/EmptyState';
 import PillButton from '@/components/spoonassist/PillButton';
 import StoreCard from '@/components/spoonassist/StoreCard';
 import InstacartCTA from '@/components/spoonassist/InstacartCTA';
+import ShareListButtons from '@/components/spoonassist/ShareListButtons';
 import PoweredBy from '@/components/spoonassist/PoweredBy';
 import SavingsShareCard from '@/components/spoonassist/SavingsShareCard';
 import { Skeleton } from '@/components/spoonassist/Skeleton';
@@ -171,11 +172,6 @@ export default function SpoonAssistComparePage() {
     }
   };
 
-  const handleCopyList = () => {
-    const text = activeItems.map((i) => `${i.quantity ? `${i.quantity} ` : ''}${i.unit ? `${i.unit} ` : ''}${i.name}`).join('\n');
-    navigator.clipboard?.writeText(text).catch(() => {});
-  };
-
   const sharedItemCount = plan.consolidatedItems.filter((i) => i.sourceRecipeIds.length > 1).length;
   const mostExpensive = summary ? Math.max(...Object.values(summary.storeTotals)) : null;
 
@@ -280,9 +276,10 @@ export default function SpoonAssistComparePage() {
                     <p className="text-[13px] text-[var(--sa-ink-soft)]">Best total: {summary.cheapestStore} &middot; ${summary.cheapestTotal.toFixed(2)}</p>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <PillButton variant="secondary" size="sm" onClick={handleCopyList}>
-                      Copy list
-                    </PillButton>
+                    <ShareListButtons
+                      ingredients={activeItems.map((i) => ({ name: i.name, amount: i.quantity, unit: i.unit }))}
+                      listTitle="My SpoonAssist list"
+                    />
                     <PillButton variant="secondary" size="sm" onClick={() => downloadCsv(costData)}>
                       Export CSV
                     </PillButton>
