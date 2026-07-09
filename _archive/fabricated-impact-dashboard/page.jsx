@@ -8,7 +8,7 @@ export const metadata = {
     title: 'Impact Dashboard – Seed & Spoon NJ',
     description:
       '1,200+ meals delivered, 14 active volunteers, serving 3 Newark-area communities. See how every dollar funds real change.',
-    url: 'https://seedandspoon.org/impact',
+    url: 'https://seedandspoon.org/impact/dashboard',
     siteName: 'Seed & Spoon NJ',
     type: 'website',
   },
