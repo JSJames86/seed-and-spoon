@@ -96,11 +96,13 @@ export function PlanProvider({ children }) {
       ingredients: scaleIngredients(recipe.ingredients, ratio),
     };
 
-    // One recipe per day+slot -- PlanDayColumn only ever renders the first
-    // match for a slot, so silently stacking a second item here would leave
-    // an invisible entry that still counts toward the consolidated list.
+    // Slots hold multiple recipes (a real meal is often a composition --
+    // omelette + bacon + fruit, salad + dressing) -- picking a recipe always
+    // appends a new item rather than replacing whatever's already in the
+    // day+slot. PlanDayColumn renders every item for a slot, each with its
+    // own remove affordance.
     setItems((prev) => {
-      const next = [...prev.filter((i) => !(i.day === day && i.slot === slot)), item];
+      const next = [...prev, item];
       if (prev.length === 0) captureEvent(EVENTS.SPOONASSIST_V2_PLAN_CREATED, { recipe_count: next.length });
       return next;
     });
@@ -162,6 +164,10 @@ export function PlanProvider({ children }) {
 
   const totalServings = useMemo(() => items.reduce((sum, i) => sum + (i.servings || 0), 0), [items]);
 
+  // A "meal" is a filled day+slot; a slot can hold multiple recipes, so this
+  // is distinct from (and never greater than) the recipe count below.
+  const mealsPlanned = useMemo(() => new Set(items.map((i) => `${i.day}:${i.slot}`)).size, [items]);
+
   const overallLeverage = useMemo(
     () => planLeverage(totalServings, consolidated.items.length),
     [totalServings, consolidated.items.length]
@@ -196,12 +202,13 @@ export function PlanProvider({ children }) {
       totalServings,
       overallLeverage,
       leverageForCandidate,
-      mealsPlanned: items.length,
+      mealsPlanned,
+      recipesPlanned: items.length,
     }),
     [
       hydrated, items, addRecipe, removeItem, updateItemServings, checkedKeys, toggleChecked,
       removeConsolidatedItem, manualItems, addManualItem, removeManualItem, clearPlan,
-      consolidated.items, groupedList, totalServings, overallLeverage, leverageForCandidate,
+      consolidated.items, groupedList, totalServings, overallLeverage, leverageForCandidate, mealsPlanned,
     ]
   );
 

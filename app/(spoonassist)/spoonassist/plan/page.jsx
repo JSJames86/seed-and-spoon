@@ -16,6 +16,7 @@ import { EVENTS } from '@/analytics/events';
 
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const SLOTS = ['breakfast', 'lunch', 'dinner'];
+const SLOT_LABELS = { breakfast: 'Breakfast', lunch: 'Lunch', dinner: 'Dinner' };
 
 function AddMealPicker({ picker, ranked, onPick, onConfirm, onServingsChange, onClose }) {
   return (
@@ -110,6 +111,17 @@ export default function SpoonAssistPlanPage() {
 
   const confirmAdd = () => {
     const { day, slot, detail, servings } = picker;
+
+    // Gentle guardrail, not a hard cap -- catches mis-taps when a slot
+    // already has a handful of recipes stacked in it.
+    const existingInSlot = plan.items.filter((i) => i.day === day && i.slot === slot).length;
+    if (existingInSlot >= 5) {
+      const proceed = window.confirm(
+        `${SLOT_LABELS[slot] || slot} on ${DAY_LABELS[day]} already has ${existingInSlot} recipes. Add ${detail.title} anyway?`
+      );
+      if (!proceed) return;
+    }
+
     plan.addRecipe(
       {
         recipeId: detail.id,
@@ -133,7 +145,10 @@ export default function SpoonAssistPlanPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-[22px] font-semibold text-[var(--sa-ink)]">This week</h1>
-          <p className="text-[15px] text-[var(--sa-ink-soft)]">{plan.mealsPlanned} meals planned</p>
+          <p className="text-[15px] text-[var(--sa-ink-soft)]">
+            {plan.mealsPlanned} meal{plan.mealsPlanned === 1 ? '' : 's'} planned
+            {plan.recipesPlanned > plan.mealsPlanned && ` · ${plan.recipesPlanned} recipes`}
+          </p>
         </div>
         {plan.items.length > 0 && <LeverageBadge score={plan.overallLeverage} />}
       </div>
