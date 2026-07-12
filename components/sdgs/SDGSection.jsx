@@ -47,7 +47,7 @@ export default function SDGSection() {
         </div>
 
         {/* Disclaimer */}
-        <p className="text-center text-xs text-slate-400 mt-10 max-w-xl mx-auto">
+        <p className="text-center text-xs text-slate-600 mt-10 max-w-xl mx-auto">
           Seed &amp; Spoon is not affiliated with or endorsed by the United
           Nations. We independently align our work with the SDG framework
           because we believe in doing our part.{" "}

@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 
 export default function FooterVisual() {
@@ -9,6 +12,7 @@ export default function FooterVisual() {
   // Logo: Use real brand asset (WebP for best performance)
   const logoWebp = "/assets/logo/seed-and-spoon-logo-compact.webp";
   const logoPng = "/assets/logo/seed-and-spoon-logo-full-compact.png";
+  const [logoSrc, setLogoSrc] = useState(`${logoWebp}?v=2`);
 
   return (
     <div className="bg-white">
@@ -36,19 +40,16 @@ export default function FooterVisual() {
 
         {/* Logo - sits directly below illustration with negative margin to close gap */}
         <div className="block mx-auto -mt-[3px] w-[min(560px,92vw)] sm:w-[min(640px,92vw)] md:w-[min(720px,92vw)]">
-          <img
-            src={`${logoWebp}?v=2`}
+          <Image
+            src={logoSrc}
             alt="Seed & Spoon logo"
+            width={924}
+            height={383}
             draggable={false}
-            className="w-full h-auto"
-            onError={(e) => {
-              // Try PNG fallback if WebP fails
-              if (!e.target.dataset.tried) {
-                e.target.dataset.tried = "true";
-                e.target.src = `${logoPng}?v=2`;
-              } else {
-                console.warn("Footer visual logo failed to load - no logo displayed");
-                e.target.style.display = "none";
+            className="w-full h-auto object-contain"
+            onError={() => {
+              if (logoSrc !== `${logoPng}?v=2`) {
+                setLogoSrc(`${logoPng}?v=2`);
               }
             }}
           />

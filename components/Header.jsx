@@ -2,9 +2,16 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import Button from "./Button";
 import { useAuth } from "@/contexts/AuthContext";
+
+// Intrinsic dimensions of the two logo variants, required by next/image.
+const LOGO_DIMENSIONS = {
+  "/assets/new-logos/logo-full.png": { width: 376, height: 118 },
+  "/assets/new-logos/logo-compact.png": { width: 412, height: 129 },
+};
 
 export default function Header() {
   const { user, logout } = useAuth();
@@ -143,9 +150,12 @@ export default function Header() {
       >
         <div className="max-w-7xl mx-auto h-full flex items-center justify-between px-4 sm:px-6">
           <Link href="/" className="flex-shrink-0 bg-transparent">
-            <img
+            <Image
               src={isScrolled ? logoScrolled : logoDefault}
               alt="Seed & Spoon NJ"
+              width={LOGO_DIMENSIONS[isScrolled ? logoScrolled : logoDefault].width}
+              height={LOGO_DIMENSIONS[isScrolled ? logoScrolled : logoDefault].height}
+              priority
               style={{
                 background: "transparent",
                 mixBlendMode: "normal",

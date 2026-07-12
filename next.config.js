@@ -5,6 +5,11 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
     domains: [],
   },
+  experimental: {
+    // Inlines above-the-fold CSS and defers the rest, removing the
+    // render-blocking stylesheet request Lighthouse flags on mobile.
+    optimizeCss: true,
+  },
   async redirects() {
     return [
       {

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import FooterVisual from "./FooterVisual";
 import { InstagramIcon, TikTokIcon, ThreadsIcon, XIcon, FacebookIcon } from "./icons";
 import { org, cta, columns, socials } from "@/config/footer";
@@ -116,7 +117,7 @@ export default function Footer() {
 
           {/* UN SDG Badges */}
           <div className="flex flex-col items-center gap-2 mb-6">
-            <p className="text-xs text-slate-400 uppercase tracking-wide">
+            <p className="text-xs text-slate-600 uppercase tracking-wide">
               Independently aligned with UN Sustainable Development Goals
             </p>
             <div className="flex items-center gap-3">
@@ -129,8 +130,7 @@ export default function Footer() {
                   aria-label={`SDG ${goal.number}: ${goal.name}`}
                   className="opacity-70 hover:opacity-100 transition-opacity duration-200"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                     src={`/images/sdg/sdg-${goal.slug}.png`}
                     alt={`SDG ${goal.number}: ${goal.name}`}
                     width={40}
