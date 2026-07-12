@@ -56,6 +56,8 @@ export async function GET(request) {
   return Response.json({ posts: data, total: count });
 }
 
+const VALID_PILLARS = ['understanding', 'nutrition', 'economic-mobility', 'social-determinants', 'systems-change'];
+
 function slugify(title) {
   return title
     .toLowerCase()
@@ -116,6 +118,9 @@ export async function POST(request) {
     published_at: status === 'published' ? new Date().toISOString() : null,
     meta_title: body.meta_title ? String(body.meta_title).trim().slice(0, 70) : null,
     meta_description: body.meta_description ? String(body.meta_description).trim().slice(0, 160) : null,
+    pillar: VALID_PILLARS.includes(body.pillar) ? body.pillar : null,
+    tags: Array.isArray(body.tags) ? body.tags.map((t) => String(t).trim()).filter(Boolean).slice(0, 20) : [],
+    author_orcid: body.author_orcid ? String(body.author_orcid).trim().slice(0, 20) : null,
   };
 
   const supabase = getServiceClient();

@@ -66,12 +66,17 @@ export default async function PostPage({ params }) {
     image: post.cover_image_url || undefined,
     datePublished: post.published_at || post.created_at,
     dateModified: post.updated_at || post.published_at || post.created_at,
-    author: { '@type': 'Person', name: post.author_name || 'Seed & Spoon Team' },
+    author: {
+      '@type': 'Person',
+      name: post.author_name || 'Seed & Spoon Team',
+      sameAs: post.author_orcid ? `https://orcid.org/${post.author_orcid}` : undefined,
+    },
     publisher: {
       '@type': 'Organization',
       name: 'Seed & Spoon NJ',
       logo: { '@type': 'ImageObject', url: 'https://seedandspoon.org/logo.png' },
     },
+    keywords: post.tags?.length ? post.tags.join(', ') : undefined,
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': `https://seedandspoon.org/blog/${slug}`,
