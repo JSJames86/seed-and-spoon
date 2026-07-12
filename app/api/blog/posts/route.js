@@ -114,6 +114,8 @@ export async function POST(request) {
     author_id: authorId,
     author_name: body.author_name || authorName,
     published_at: status === 'published' ? new Date().toISOString() : null,
+    meta_title: body.meta_title ? String(body.meta_title).trim().slice(0, 70) : null,
+    meta_description: body.meta_description ? String(body.meta_description).trim().slice(0, 160) : null,
   };
 
   const supabase = getServiceClient();

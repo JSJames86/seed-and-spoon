@@ -20,19 +20,22 @@ export async function generateMetadata({ params }) {
 
   const { data } = await supabase
     .from('posts')
-    .select('title, excerpt, cover_image_url')
+    .select('title, excerpt, cover_image_url, meta_title, meta_description')
     .eq('slug', slug)
     .eq('status', 'published')
     .single();
 
   if (!data) return { title: 'Blog – Seed & Spoon NJ' };
 
+  const title = data.meta_title || data.title;
+  const description = data.meta_description || data.excerpt || '';
+
   return {
-    title: `${data.title} – Seed & Spoon NJ`,
-    description: data.excerpt || '',
+    title: `${title} – Seed & Spoon NJ`,
+    description,
     openGraph: {
-      title: data.title,
-      description: data.excerpt || '',
+      title,
+      description,
       images: data.cover_image_url ? [data.cover_image_url] : [],
       url: `https://seedandspoon.org/blog/${slug}`,
       type: 'article',
@@ -59,7 +62,7 @@ export default async function PostPage({ params }) {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: post.title,
-    description: post.excerpt || undefined,
+    description: post.meta_description || post.excerpt || undefined,
     image: post.cover_image_url || undefined,
     datePublished: post.published_at || post.created_at,
     dateModified: post.updated_at || post.published_at || post.created_at,

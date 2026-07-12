@@ -84,6 +84,8 @@ export async function PUT(request, { params }) {
   if (body.content !== undefined) updates.body = body.content;
   if (body.excerpt !== undefined) updates.excerpt = String(body.excerpt).trim().slice(0, 500);
   if (body.author_name !== undefined) updates.author_name = body.author_name;
+  if (body.meta_title !== undefined) updates.meta_title = body.meta_title ? String(body.meta_title).trim().slice(0, 70) : null;
+  if (body.meta_description !== undefined) updates.meta_description = body.meta_description ? String(body.meta_description).trim().slice(0, 160) : null;
   if (body.status !== undefined && ['draft', 'published'].includes(body.status)) {
     updates.status = body.status;
     if (body.status === 'published' && existing?.status !== 'published') {
