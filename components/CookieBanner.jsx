@@ -68,7 +68,7 @@ export default function CookieBanner() {
               {/* Accept All Button */}
               <button
                 onClick={acceptAll}
-                className="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                className="px-6 py-3 bg-[var(--green-primary)] text-white font-semibold rounded-lg hover:bg-green-700 shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                 aria-label="Accept all cookies"
               >
                 Accept All

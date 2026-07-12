@@ -124,7 +124,7 @@ export default function AnalyticsLoader() {
           defer
           data-domain={plausibleDomain}
           src="https://plausible.io/js/script.js"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           onLoad={() => {
             logAnalytics('Plausible', 'loaded', plausibleDomain);
           }}
@@ -142,7 +142,7 @@ export default function AnalyticsLoader() {
         <>
           <Script
             id="meta-pixel"
-            strategy="afterInteractive"
+            strategy="lazyOnload"
             onLoad={() => {
               logAnalytics('Meta', 'loaded', metaPixelId);
             }}
@@ -180,14 +180,14 @@ export default function AnalyticsLoader() {
         <>
           <Script
             src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`}
-            strategy="afterInteractive"
+            strategy="lazyOnload"
             onLoad={() => {
               logAnalytics('GA4', 'loaded', ga4Id);
             }}
           />
           <Script
             id="google-analytics"
-            strategy="afterInteractive"
+            strategy="lazyOnload"
           >
             {`
               window.dataLayer = window.dataLayer || [];
@@ -210,7 +210,7 @@ export default function AnalyticsLoader() {
         <>
           <Script
             id="tiktok-pixel"
-            strategy="afterInteractive"
+            strategy="lazyOnload"
             onLoad={() => {
               logAnalytics('TikTok', 'loaded', tiktokPixelId);
             }}
@@ -234,7 +234,7 @@ export default function AnalyticsLoader() {
         <>
           <Script
             id="snap-pixel"
-            strategy="afterInteractive"
+            strategy="lazyOnload"
             onLoad={() => {
               logAnalytics('Snap', 'loaded', snapPixelId);
             }}
@@ -263,7 +263,7 @@ export default function AnalyticsLoader() {
         <>
           <Script
             id="pinterest-tag"
-            strategy="afterInteractive"
+            strategy="lazyOnload"
             onLoad={() => {
               logAnalytics('Pinterest', 'loaded', pinterestTagId);
             }}
@@ -298,7 +298,7 @@ export default function AnalyticsLoader() {
       {loadedAnalytics.metricool && metricoolHash && (
         <Script
           id="metricool"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           onLoad={() => {
             logAnalytics('Metricool', 'loaded', metricoolHash);
           }}

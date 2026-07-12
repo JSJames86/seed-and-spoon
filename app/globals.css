@@ -5,8 +5,10 @@
 @layer base {
   :root {
     /* Primary Colors */
-    --green-primary: #4FAF3B;
-    --orange-primary: #E86A1D;
+    /* Darkened from the original #4FAF3B/#E86A1D (same hue/saturation) so
+       white text on these backgrounds clears WCAG AA 4.5:1 contrast. */
+    --green-primary: #397E2A;
+    --orange-primary: #B95213;
     --dark-forest: #1B4332;
 
     /* Secondary Colors */

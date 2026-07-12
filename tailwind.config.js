@@ -10,7 +10,9 @@ module.exports = {
       colors: {
         green: {
           50: "#f0fdf4",
-          primary: "#4FAF3B",
+          // Kept in sync with --green-primary in globals.css (darkened for
+          // WCAG AA text contrast — see comment there).
+          primary: "#397E2A",
           700: "#15803d",
           900: "#166534",
           leaf: {
@@ -19,7 +21,9 @@ module.exports = {
           },
         },
         orange: {
-          primary: "#E86A1D",
+          // Kept in sync with --orange-primary in globals.css (darkened for
+          // WCAG AA text contrast — see comment there).
+          primary: "#B95213",
           500: "#FFA500",
         },
         forest: {
