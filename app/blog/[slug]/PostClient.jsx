@@ -6,9 +6,9 @@ import { format } from 'date-fns';
 export default function PostClient({ post }) {
   if (!post) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <p className="text-gray-500">Post unavailable.</p>
-      </main>
+      </div>
     );
   }
 
@@ -17,7 +17,7 @@ export default function PostClient({ post }) {
     : '';
 
   return (
-    <main className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white">
       {/* Cover */}
       {post.cover_image_url && (
         <div className="w-full max-h-[480px] overflow-hidden">
@@ -73,6 +73,6 @@ export default function PostClient({ post }) {
           </Link>
         </div>
       </article>
-    </main>
+    </div>
   );
 }

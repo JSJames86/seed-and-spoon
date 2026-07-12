@@ -216,7 +216,7 @@ export default function AdminPage() {
   const inputClass = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500'
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       <div className="bg-white border-b border-gray-200 px-4 py-4">
         <div className="max-w-6xl mx-auto flex items-center gap-3">
           <div className="flex-shrink-0">
@@ -664,7 +664,7 @@ export default function AdminPage() {
         )}
 
       </div>
-    </main>
+    </div>
   )
 }
 

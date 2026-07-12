@@ -526,13 +526,13 @@ function CtaReinforcement() {
 
 export default function FoodDriveClient() {
   return (
-    <main>
+    <div>
       <Hero />
       <HowItWorks />
       <DriveTypes />
       <WhatWeProvide />
       <RegisterSection />
       <CtaReinforcement />
-    </main>
+    </div>
   );
 }

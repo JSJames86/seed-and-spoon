@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen bg-green-50 text-gray-900 px-4 text-center">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-green-50 text-gray-900 px-4 text-center">
       {/* Title */}
       <h1 className="text-5xl font-bold mb-4">Oh no -- this shelf is empty!</h1>
 
@@ -42,6 +42,6 @@ export default function NotFound() {
         alt="Illustration of an empty pantry shelf with a warm, hopeful style."
         className="mt-6 w-full max-w-md"
       />
-    </main>
+    </div>
   );
 }

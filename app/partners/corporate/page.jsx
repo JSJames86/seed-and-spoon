@@ -14,7 +14,7 @@ export const metadata = {
 
 export default function CorporatePartnersPage() {
   return (
-    <main className="bg-white pt-16 md:pt-20 lg:pt-24">
+    <div className="bg-white pt-16 md:pt-20 lg:pt-24">
       {/* Hero */}
       <section className="relative bg-gradient-to-br from-[#2d5a27] to-[#1f3f1b] text-white py-20 md:py-28">
         {/* Sentinel observed by Header to detect when hero is in view */}
@@ -174,6 +174,6 @@ export default function CorporatePartnersPage() {
           </a>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

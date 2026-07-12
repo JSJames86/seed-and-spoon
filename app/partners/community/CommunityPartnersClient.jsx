@@ -510,11 +510,11 @@ function IntakeFormSection() {
 
 export default function CommunityPartnersClient() {
   return (
-    <main className="bg-white pt-16 md:pt-20 lg:pt-24">
+    <div className="bg-white pt-16 md:pt-20 lg:pt-24">
       <Hero />
       <WhoWePartnerWith />
       <HowWeCanWorkTogether />
       <IntakeFormSection />
-    </main>
+    </div>
   );
 }
