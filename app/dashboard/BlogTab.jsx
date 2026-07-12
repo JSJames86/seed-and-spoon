@@ -74,7 +74,7 @@ const PILLARS = [
   { value: '', label: 'None' },
   { value: 'understanding', label: 'Understanding Food Insecurity' },
   { value: 'nutrition', label: 'Nutrition & Child Development' },
-  { value: 'economic-mobility', label: 'Food Security & Economic Mobility' },
+  { value: 'economics', label: 'Food Security & Economic Mobility' },
   { value: 'social-determinants', label: 'Social Determinants of Health' },
   { value: 'solutions', label: 'Solutions & Systems Change' },
 ];
