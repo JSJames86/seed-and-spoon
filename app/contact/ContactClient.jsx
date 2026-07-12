@@ -119,7 +119,7 @@ export default function ContactClient() {
   if (status === 'success') return <SuccessCard />;
 
   return (
-    <main className="bg-[#faf9f6] min-h-screen">
+    <div className="bg-[#faf9f6] min-h-screen">
       {/* Hero */}
       <section className="relative bg-green-800 text-white py-20 px-6">
         {/* Sentinel observed by Header to detect when hero is in view */}
@@ -305,6 +305,6 @@ export default function ContactClient() {
           </p>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

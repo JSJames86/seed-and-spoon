@@ -491,13 +491,13 @@ function CtaReinforcement() {
 
 export default function AffiliateClient() {
   return (
-    <main>
+    <div>
       <Hero />
       <HowItWorks />
       <BenefitsSection />
       <WhoItsFor />
       <ApplySection />
       <CtaReinforcement />
-    </main>
+    </div>
   );
 }

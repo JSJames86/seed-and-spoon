@@ -87,7 +87,7 @@ export default async function RecipePage({ params }) {
   };
 
   return (
-    <main className="min-h-screen bg-neutral-cream py-6">
+    <div className="min-h-screen bg-neutral-cream py-6">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(recipeSchema) }}
@@ -105,6 +105,6 @@ export default async function RecipePage({ params }) {
           <RecipeDetails recipe={recipe} />
         </div>
       </div>
-    </main>
+    </div>
   );
 }

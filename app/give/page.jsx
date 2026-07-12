@@ -116,7 +116,7 @@ export default function GivePage() {
         }}
       />
 
-      <main className="bg-white pt-16 md:pt-20 lg:pt-24">
+      <div className="bg-white pt-16 md:pt-20 lg:pt-24">
         {/* Hero */}
         <section className="relative bg-gradient-to-br from-green-700 via-green-800 to-green-900 text-white py-16 md:py-24">
           <div id="hero-sentinel" className="absolute bottom-0 h-px w-full pointer-events-none" />
@@ -310,7 +310,7 @@ export default function GivePage() {
             </p>
           </div>
         </section>
-      </main>
+      </div>
     </>
   );
 }

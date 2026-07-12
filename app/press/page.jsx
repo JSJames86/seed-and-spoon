@@ -34,7 +34,7 @@ const quickFacts = [
 
 export default function PressPage() {
   return (
-    <main className="bg-white pt-16 md:pt-20 lg:pt-24">
+    <div className="bg-white pt-16 md:pt-20 lg:pt-24">
       {/* Hero */}
       <section className="bg-[#f9f6f0] py-16 md:py-20">
         <div className="container mx-auto px-6 max-w-4xl">
@@ -220,6 +220,6 @@ export default function PressPage() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

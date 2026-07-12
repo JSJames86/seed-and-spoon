@@ -61,9 +61,11 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
+    // window.Image (not the shadowing `next/image` import above) — the
+    // browser's native constructor for an out-of-DOM prefetch probe.
     const preloadImages = [logoDefault, logoScrolled];
     preloadImages.forEach((src) => {
-      const img = new Image();
+      const img = new window.Image();
       img.src = src;
     });
   }, []);
