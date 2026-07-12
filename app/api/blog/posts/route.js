@@ -56,7 +56,7 @@ export async function GET(request) {
   return Response.json({ posts: data, total: count });
 }
 
-const VALID_PILLARS = ['understanding', 'nutrition', 'economic-mobility', 'social-determinants', 'systems-change'];
+const VALID_PILLARS = ['understanding', 'nutrition', 'economic-mobility', 'social-determinants', 'solutions'];
 
 function slugify(title) {
   return title

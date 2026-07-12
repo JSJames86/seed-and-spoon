@@ -76,7 +76,7 @@ const PILLARS = [
   { value: 'nutrition', label: 'Nutrition & Child Development' },
   { value: 'economic-mobility', label: 'Food Security & Economic Mobility' },
   { value: 'social-determinants', label: 'Social Determinants of Health' },
-  { value: 'systems-change', label: 'Solutions & Systems Change' },
+  { value: 'solutions', label: 'Solutions & Systems Change' },
 ];
 
 const EMPTY_POST = {

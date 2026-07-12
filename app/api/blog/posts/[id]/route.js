@@ -3,7 +3,7 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
-const VALID_PILLARS = ['understanding', 'nutrition', 'economic-mobility', 'social-determinants', 'systems-change'];
+const VALID_PILLARS = ['understanding', 'nutrition', 'economic-mobility', 'social-determinants', 'solutions'];
 
 function getServiceClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
