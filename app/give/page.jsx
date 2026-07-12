@@ -38,7 +38,7 @@ const CONTENT = {
     },
   ],
   giftCards: {
-    brands: ["BJ's", 'Costco', 'Food Depot', 'Amazon'],
+    brands: ["BJ's", 'Costco', 'Amazon'],
     email: 'donors@seedandspoon.org',
     pickupEmail: 'hello@seedandspoon.org',
   },
