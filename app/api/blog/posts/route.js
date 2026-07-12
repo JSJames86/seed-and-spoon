@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { revalidatePath } from 'next/cache';
 
 function getServiceClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -113,6 +114,8 @@ export async function POST(request) {
     author_id: authorId,
     author_name: body.author_name || authorName,
     published_at: status === 'published' ? new Date().toISOString() : null,
+    meta_title: body.meta_title ? String(body.meta_title).trim().slice(0, 70) : null,
+    meta_description: body.meta_description ? String(body.meta_description).trim().slice(0, 160) : null,
   };
 
   const supabase = getServiceClient();
@@ -122,6 +125,11 @@ export async function POST(request) {
   if (error) {
     if (error.code === '23505') return Response.json({ error: 'Slug already exists' }, { status: 409 });
     return Response.json({ error: error.message }, { status: 500 });
+  }
+
+  if (data.status === 'published') {
+    revalidatePath('/blog');
+    revalidatePath(`/blog/${data.slug}`);
   }
 
   return Response.json({ post: data }, { status: 201 });

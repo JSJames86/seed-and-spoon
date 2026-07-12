@@ -79,6 +79,8 @@ const EMPTY_POST = {
   body: '',
   status: 'draft',
   author_name: '',
+  meta_title: '',
+  meta_description: '',
 };
 
 function PostEditor({ initial, onSave, onCancel }) {
@@ -109,6 +111,8 @@ function PostEditor({ initial, onSave, onCancel }) {
       excerpt: fields.excerpt,
       status: fields.status,
       author_name: fields.author_name,
+      meta_title: fields.meta_title,
+      meta_description: fields.meta_description,
     };
 
     try {
@@ -211,6 +215,35 @@ function PostEditor({ initial, onSave, onCancel }) {
           content={fields.body}
           onChange={(html) => set('body', html)}
         />
+      </div>
+
+      {/* SEO overrides */}
+      <div className="border-t border-gray-100 pt-5">
+        <p className="text-sm font-semibold text-gray-700 mb-3">SEO (optional — falls back to title/excerpt)</p>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">Meta Title</label>
+            <input
+              type="text"
+              value={fields.meta_title}
+              onChange={(e) => set('meta_title', e.target.value)}
+              placeholder={fields.title || 'Page title shown in search results'}
+              maxLength={70}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">Meta Description</label>
+            <textarea
+              value={fields.meta_description}
+              onChange={(e) => set('meta_description', e.target.value)}
+              rows={2}
+              placeholder={fields.excerpt || 'Summary shown in search results'}
+              maxLength={160}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Status + Submit */}

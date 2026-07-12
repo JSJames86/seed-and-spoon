@@ -52,7 +52,7 @@ export default function PostClient({ post }) {
 
         {/* Body */}
         <div
-          className="prose prose-lg prose-green max-w-none
+          className="prose prose-lg max-w-none
             prose-headings:font-bold prose-headings:text-gray-900
             prose-p:text-gray-700 prose-p:leading-relaxed
             prose-a:text-green-700 prose-a:no-underline hover:prose-a:underline

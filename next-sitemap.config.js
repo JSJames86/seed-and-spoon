@@ -60,4 +60,31 @@ module.exports = {
     }
     return { loc: path, changefreq: config.changefreq, priority: config.priority };
   },
+  // /blog/[slug] is a dynamic route with no generateStaticParams, so the
+  // build manifest next-sitemap crawls never contains individual post
+  // paths — list published posts explicitly instead.
+  additionalPaths: async (config) => {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!url || !anonKey) return [];
+
+    try {
+      const res = await fetch(
+        `${url}/rest/v1/posts?select=slug,updated_at&status=eq.published`,
+        { headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` } }
+      );
+      if (!res.ok) return [];
+      const posts = await res.json();
+      return Promise.all(
+        posts.map((post) =>
+          config.transform(config, `/blog/${post.slug}`).then((entry) => ({
+            ...entry,
+            lastmod: post.updated_at || entry.lastmod,
+          }))
+        )
+      );
+    } catch {
+      return [];
+    }
+  },
 };
