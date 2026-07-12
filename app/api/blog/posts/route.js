@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { revalidatePath } from 'next/cache';
 
 function getServiceClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -122,6 +123,11 @@ export async function POST(request) {
   if (error) {
     if (error.code === '23505') return Response.json({ error: 'Slug already exists' }, { status: 409 });
     return Response.json({ error: error.message }, { status: 500 });
+  }
+
+  if (data.status === 'published') {
+    revalidatePath('/blog');
+    revalidatePath(`/blog/${data.slug}`);
   }
 
   return Response.json({ post: data }, { status: 201 });
