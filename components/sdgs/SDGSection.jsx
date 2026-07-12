@@ -34,7 +34,7 @@ export default function SDGSection() {
 
         {/* Secondary SDGs */}
         <div className="mt-8">
-          <p className="label-xs text-slate-500 text-center mb-4">
+          <p className="label-xs text-slate-600 text-center mb-4">
             ALSO SUPPORTING
           </p>
           <div className="flex flex-wrap justify-center gap-4">

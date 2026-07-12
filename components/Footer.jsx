@@ -143,7 +143,7 @@ export default function Footer() {
           </div>
 
           {/* Legal Row 1 */}
-          <div className="flex flex-wrap justify-center items-center gap-x-3 gap-y-2 text-xs text-slate-500 mb-3">
+          <div className="flex flex-wrap justify-center items-center gap-x-3 gap-y-2 text-xs text-slate-600 mb-3">
             <span>© {currentYear} {org.name}</span>
             <span>•</span>
             <Link href="/legal/privacy" className="hover:text-[var(--charcoal)] hover:underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--green-primary)] rounded-sm">
@@ -160,7 +160,7 @@ export default function Footer() {
           </div>
 
           {/* Legal Row 2 */}
-          <div className="flex flex-wrap justify-center items-center gap-x-3 gap-y-2 text-xs text-slate-500">
+          <div className="flex flex-wrap justify-center items-center gap-x-3 gap-y-2 text-xs text-slate-600">
             <a href={`tel:${org.phone}`} className="hover:text-[var(--charcoal)] hover:underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--green-primary)] rounded-sm">
               (732) 707-1769
             </a>
