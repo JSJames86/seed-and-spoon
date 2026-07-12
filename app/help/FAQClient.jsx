@@ -332,7 +332,7 @@ export default function FAQClient() {
   }
 
   return (
-    <main>
+    <div>
       {/* ── Hero ──────────────────────────────────────────────── */}
       <section className="relative bg-gradient-to-br from-green-900 via-green-800 to-green-900 text-white py-16 md:py-24 overflow-hidden">
         {/* Sentinel observed by Header to detect when hero is in view */}
@@ -454,6 +454,6 @@ export default function FAQClient() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

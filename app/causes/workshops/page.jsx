@@ -22,7 +22,7 @@ import Image from "next/image";
 import Link from "next/link";
 export default function WorkshopsPage() {
   return (
-    <main className="min-h-screen bg-[#F9EED4] pt-16 md:pt-20 lg:pt-24">
+    <div className="min-h-screen bg-[#F9EED4] pt-16 md:pt-20 lg:pt-24">
       {/* Hero */}
       <section className="relative bg-gradient-to-br from-[#0B88C2] to-[#02538A] text-white py-20 px-4">
         {/* Sentinel observed by Header to detect when hero is in view */}
@@ -285,6 +285,6 @@ export default function WorkshopsPage() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

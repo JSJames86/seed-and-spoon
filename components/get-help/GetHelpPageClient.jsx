@@ -36,7 +36,7 @@ export default function GetHelpPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero Section */}
       <section className="relative bg-gradient-to-b from-green-700 to-green-800 text-white py-16 md:py-24">
         {/* Sentinel observed by Header to detect when hero is in view */}
@@ -350,6 +350,6 @@ export default function GetHelpPage() {
         isOpen={isProviderModalOpen}
         onClose={() => setIsProviderModalOpen(false)}
       />
-    </main>
+    </div>
   );
 }

@@ -16,7 +16,7 @@ export const metadata = {
 
 export default function CapabilityStatementPage() {
   return (
-    <main className="max-w-4xl mx-auto px-4 py-16 pt-24 md:pt-28">
+    <div className="max-w-4xl mx-auto px-4 py-16 pt-24 md:pt-28">
       <div className="mb-10">
         <p className="text-sm font-semibold uppercase tracking-widest text-[var(--green-primary)] mb-2">
           Official Document
@@ -32,6 +32,6 @@ export default function CapabilityStatementPage() {
       </div>
 
       <CapabilityStatementViewer />
-    </main>
+    </div>
   );
 }

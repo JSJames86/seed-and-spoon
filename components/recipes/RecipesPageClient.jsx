@@ -89,7 +89,7 @@ export default function RecipesPageClient({ recipes }) {
   };
 
   return (
-    <main className="min-h-screen bg-neutral-cream">
+    <div className="min-h-screen bg-neutral-cream">
       {/* Page Metadata */}
       <div className="sr-only">
         <h1>Recipes - Healthy Plant-Based Meals</h1>
@@ -137,6 +137,6 @@ export default function RecipesPageClient({ recipes }) {
 
       {/* Recipe Modal */}
       <RecipeModal recipe={selectedRecipe} onClose={handleModalClose} />
-    </main>
+    </div>
   );
 }

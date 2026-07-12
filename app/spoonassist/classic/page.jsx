@@ -388,7 +388,7 @@ export default function SpoonAssistPage() {
       </section>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-12 max-w-7xl">
+      <div className="container mx-auto px-4 py-12 max-w-7xl">
         <StepProgress
           currentStep={currentStep}
           totalSteps={TOTAL_STEPS}
@@ -578,7 +578,7 @@ export default function SpoonAssistPage() {
             </p>
           )}
         </footer>
-      </main>
+      </div>
     </div>
   );
 }

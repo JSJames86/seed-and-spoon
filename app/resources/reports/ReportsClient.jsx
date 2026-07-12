@@ -298,7 +298,7 @@ export default function ReportsClient() {
     : RESOURCES.filter((r) => r.category === activeCategory);
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Hero */}
       <section className="relative bg-green-700 text-white py-16 px-4">
         {/* Sentinel observed by Header to detect when hero is in view */}
@@ -546,6 +546,6 @@ export default function ReportsClient() {
           </Link>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

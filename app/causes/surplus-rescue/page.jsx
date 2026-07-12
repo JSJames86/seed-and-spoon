@@ -24,7 +24,7 @@ import Link from "next/link";
 
 export default function SurplusRescuePage() {
   return (
-    <main className="bg-white">
+    <div className="bg-white">
       {/* Hero */}
       <section className="border-b border-neutral-100 bg-neutral-50/60">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
@@ -259,6 +259,6 @@ export default function SurplusRescuePage() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }
