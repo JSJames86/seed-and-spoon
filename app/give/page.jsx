@@ -42,7 +42,7 @@ const CONTENT = {
     email: 'donors@seedandspoon.org',
     pickupEmail: 'hello@seedandspoon.org',
   },
-  wishlistUrl: '#TODO-REPLACE-WITH-AMAZON-WISHLIST-URL',
+  wishlistUrl: 'https://www.amazon.com/hz/wishlist/ls/1ZC494TKCOAHJ?ref_=wl_share',
   cannotAccept: {
     title: "What We Can't Accept",
     body:
@@ -274,7 +274,6 @@ export default function GivePage() {
                 Shop our Amazon Wishlist for supplies our kitchen and delivery teams need
                 most.
               </p>
-              {/* TODO: replace CONTENT.wishlistUrl above with the real Amazon Wishlist URL */}
               <a
                 href={CONTENT.wishlistUrl}
                 target="_blank"
@@ -283,9 +282,6 @@ export default function GivePage() {
               >
                 View Our Amazon Wishlist
               </a>
-              <p className="mt-3 text-sm text-gray-400">
-                (Placeholder link&mdash;TODO: swap in the live wishlist URL.)
-              </p>
             </div>
           </div>
         </section>
