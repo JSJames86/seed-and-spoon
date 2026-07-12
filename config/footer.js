@@ -7,6 +7,7 @@ export const org = {
 
 export const cta = [
   { label: "Get Help", href: "/get-help" },
+  { label: "Ways to Give", href: "/give" },
   { label: "Donate", href: "/donate" },
   { label: "Volunteer", href: "/volunteer" },
   { label: "Amazon Wishlist", href: "https://www.amazon.com/hz/wishlist/ls/1ZC494TKCOAHJ?ref_=wl_share", external: true },
@@ -38,6 +39,7 @@ export const columns = [
   {
     title: "Get Involved",
     links: [
+      { label: "Ways to Give", href: "/give" },
       { label: "Volunteer", href: "/volunteer" },
       { label: "Donate Funds", href: "/donate" },
       { label: "Corporate Partnerships", href: "/partners/corporate" },

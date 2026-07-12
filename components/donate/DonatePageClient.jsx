@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import { captureEvent } from '@/analytics/posthog';
 import { EVENTS } from '@/analytics/events';
 
+const presetAmounts = [2500, 5000, 10000, 25000]; // $25, $50, $100, $250
+
 export default function DonatePage() {
   const [frequency, setFrequency] = useState('one_time');
   const [selectedAmount, setSelectedAmount] = useState(5000); // Default $50
@@ -14,13 +16,29 @@ export default function DonatePage() {
   const [error, setError] = useState(null);
   const [taxAcknowledged, setTaxAcknowledged] = useState(false);
 
-  const presetAmounts = [2500, 5000, 10000, 25000]; // $25, $50, $100, $250
-
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
     captureEvent(EVENTS.DONATION_PAGE_VIEWED, {
-      source: new URLSearchParams(window.location.search).get('source') || 'direct',
+      source: params.get('source') || 'direct',
       referrer: document.referrer || '',
     });
+
+    if (params.get('interval') === 'month') {
+      setFrequency('month');
+    }
+
+    const amountParam = parseInt(params.get('amount'), 10);
+    if (!isNaN(amountParam) && amountParam > 0) {
+      if (presetAmounts.includes(amountParam)) {
+        setSelectedAmount(amountParam);
+        setIsCustom(false);
+      } else {
+        setIsCustom(true);
+        setSelectedAmount(null);
+        setCustomAmount(String(amountParam / 100));
+      }
+    }
   }, []);
 
   const handleAmountClick = (amount) => {

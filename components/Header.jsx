@@ -251,6 +251,10 @@ export default function Header() {
               Impact
             </Link>
 
+            <Link href="/give" className={getNavLinkClass(isScrolled)}>
+              Ways to Give
+            </Link>
+
             <Button variant="secondary" href="/donate">
               Donate
             </Button>
@@ -439,6 +443,13 @@ export default function Header() {
                 className="body-md font-bold text-white hover:text-[var(--leaf-mid)] text-3xl"
               >
                 Impact
+              </Link>
+              <Link
+                href="/give"
+                onClick={closeMenu}
+                className="body-md font-bold text-white hover:text-[var(--leaf-mid)] text-3xl"
+              >
+                Ways to Give
               </Link>
               <Link
                 href="/volunteer"
