@@ -16,7 +16,7 @@ export function SubscribeFooter() {
           Monthly updates on our work fighting food insecurity in Newark, NJ.
           No spam — just impact.
         </p>
-        <SubscribeForm source="footer" compact className="max-w-md mx-auto" />
+        <SubscribeForm source="footer" compact onDark className="max-w-md mx-auto" />
       </div>
     </section>
   )

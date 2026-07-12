@@ -20,7 +20,7 @@ export default function SpoonAssistFeature() {
               />
             </div>
             {/* Floating badge */}
-            <div className="absolute -bottom-6 -right-6 bg-green-600 text-white px-6 py-4 rounded-xl shadow-xl">
+            <div className="absolute -bottom-6 -right-6 bg-[var(--green-primary)] text-white px-6 py-4 rounded-xl shadow-xl">
               <p className="text-sm font-semibold">Save Money on Groceries</p>
               <p className="text-2xl font-bold">Compare Local Prices</p>
             </div>
@@ -41,7 +41,7 @@ export default function SpoonAssistFeature() {
 
             <div className="space-y-4 mb-8">
               <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center mt-1">
+                <div className="flex-shrink-0 w-6 h-6 bg-[var(--green-primary)] text-white rounded-full flex items-center justify-center mt-1">
                   ✓
                 </div>
                 <div>
@@ -50,7 +50,7 @@ export default function SpoonAssistFeature() {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center mt-1">
+                <div className="flex-shrink-0 w-6 h-6 bg-[var(--green-primary)] text-white rounded-full flex items-center justify-center mt-1">
                   ✓
                 </div>
                 <div>
@@ -59,7 +59,7 @@ export default function SpoonAssistFeature() {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center mt-1">
+                <div className="flex-shrink-0 w-6 h-6 bg-[var(--green-primary)] text-white rounded-full flex items-center justify-center mt-1">
                   ✓
                 </div>
                 <div>
@@ -71,7 +71,7 @@ export default function SpoonAssistFeature() {
 
             <Link
               href="/spoonassist"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors shadow-lg hover:shadow-xl"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--green-primary)] text-white font-bold rounded-lg hover:bg-green-700 transition-colors shadow-lg hover:shadow-xl"
             >
               Try SpoonAssist Now
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

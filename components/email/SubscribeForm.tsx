@@ -11,6 +11,8 @@ export interface SubscribeFormProps {
   onError?: (message: string) => void
   className?: string
   compact?: boolean
+  /** True when this form is embedded directly on a dark (e.g. green-900) background, not a white card — swaps text colors that would otherwise fail contrast. */
+  onDark?: boolean
 }
 
 interface FormState {
@@ -27,6 +29,7 @@ export function SubscribeForm({
   onError,
   className = '',
   compact = false,
+  onDark = false,
 }: SubscribeFormProps) {
   const [form, setForm] = useState<FormState>({ email: '', firstName: '' })
   const [status, setStatus] = useState<Status>('idle')
@@ -108,10 +111,10 @@ export function SubscribeForm({
       </div>
 
       {status === 'error' && (
-        <p className="text-red-600 text-xs">{errorMessage}</p>
+        <p className={`text-xs ${onDark ? 'text-red-300' : 'text-red-600'}`}>{errorMessage}</p>
       )}
 
-      <p className="text-gray-400 text-xs">
+      <p className={`text-xs ${onDark ? 'text-green-300' : 'text-gray-500'}`}>
         No spam, ever. Unsubscribe at any time.
       </p>
     </form>

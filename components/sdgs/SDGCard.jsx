@@ -24,8 +24,15 @@ export default function SDGCard({ goal, size = "default" }) {
         className={`object-contain flex-shrink-0 ${isCompact ? "mb-3" : "mb-4"}`}
       />
 
-      {/* Goal label */}
-      <p className="label-xs text-center mb-1" style={{ color: goal.color }}>
+      {/* Goal label — brand color kept as a decorative accent dot; the
+          official SDG hues (esp. yellow/gold) don't clear WCAG text
+          contrast on white, so the readable text uses a neutral tone. */}
+      <p className="label-xs text-center mb-1 text-slate-600 flex items-center justify-center gap-1.5">
+        <span
+          className="inline-block h-2 w-2 rounded-full flex-shrink-0"
+          style={{ backgroundColor: goal.color }}
+          aria-hidden="true"
+        />
         SDG {goal.number}
       </p>
 
@@ -46,10 +53,7 @@ export default function SDGCard({ goal, size = "default" }) {
       )}
 
       {/* Learn more affordance */}
-      <p
-        className="text-xs font-medium text-center mt-3 group-hover:underline underline-offset-2 transition-colors"
-        style={{ color: goal.color }}
-      >
+      <p className="text-xs font-medium text-center mt-3 text-slate-600 group-hover:text-slate-800 group-hover:underline underline-offset-2 transition-colors">
         Learn more ↗
       </p>
     </a>
