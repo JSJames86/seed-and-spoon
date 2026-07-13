@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
+import BlogTab from './BlogTab';
 
 const MEALS_PER_DOLLAR = 3; // $1 = ~3 meals
 const SUGGESTED_AMOUNTS = [10, 25, 50, 100];
@@ -38,7 +40,7 @@ export default function DashboardPage() {
   const fetchPosts = async () => {
     try {
       const { data } = await supabase
-        .from('blog_posts')
+        .from('posts')
         .select('id, title, slug, excerpt, published_at')
         .eq('status', 'published')
         .order('published_at', { ascending: false })
@@ -204,6 +206,13 @@ export default function DashboardPage() {
               </Link>
             </div>
           </div>
+
+          {/* Blog editor — editors and admins only */}
+          {canBlog && (
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <BlogTab profile={profile} supabase={supabase} />
+            </div>
+          )}
 
           {/* Admin shortcut */}
           {profile?.role === 'admin' && (
