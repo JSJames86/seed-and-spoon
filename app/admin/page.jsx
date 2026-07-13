@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation'
 import SendReceiptsButton from './SendReceiptsButton'
 import NotificationBell from '@/components/NotificationBell'
 import { useDemo } from '@/contexts/DemoContext'
+import { supabase } from '@/lib/supabase'
+import BlogTab from '../dashboard/BlogTab'
 
 const ADMIN_EMAIL = 'janelle.shanise@gmail.com'
 
@@ -19,7 +21,7 @@ const GRANT_STAGES = [
   { id: 'closed', label: 'Closed', color: 'bg-red-100 text-red-700' },
 ]
 
-const TABS = ['Overview', 'Grants', 'Donors', 'Volunteers', 'Users', 'Documents']
+const TABS = ['Overview', 'Grants', 'Donors', 'Volunteers', 'Users', 'Documents', 'Blog']
 
 export default function AdminPage() {
   const { user, profile, loading: authLoading } = useAuth()
@@ -660,6 +662,13 @@ export default function AdminPage() {
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {/* BLOG */}
+        {activeTab === 'Blog' && (
+          <div className="bg-white rounded-xl border border-gray-200 p-5">
+            <BlogTab profile={profile} supabase={supabase} />
           </div>
         )}
 
