@@ -85,11 +85,18 @@ export async function PUT(request, { params }) {
   if (body.pillar !== undefined) updates.pillar = VALID_PILLARS.includes(body.pillar) ? body.pillar : null;
   if (body.tags !== undefined) updates.tags = Array.isArray(body.tags) ? body.tags.map((t) => String(t).trim()).filter(Boolean).slice(0, 20) : [];
   if (body.author_orcid !== undefined) updates.author_orcid = body.author_orcid ? String(body.author_orcid).trim().slice(0, 20) : null;
+  if (body.scheduled_at !== undefined) {
+    updates.scheduled_at = body.scheduled_at && !isNaN(Date.parse(body.scheduled_at))
+      ? new Date(body.scheduled_at).toISOString() : null;
+  }
   if (body.status !== undefined && ['draft', 'published'].includes(body.status)) {
     updates.status = body.status;
-    if (body.status === 'published' && existing?.status !== 'published') {
-      // Only set published_at if newly publishing
-      updates.published_at = new Date().toISOString();
+    if (body.status === 'published') {
+      updates.scheduled_at = null; // publishing now supersedes any pending schedule
+      if (existing?.status !== 'published') {
+        // Only set published_at if newly publishing
+        updates.published_at = new Date().toISOString();
+      }
     }
   }
 
