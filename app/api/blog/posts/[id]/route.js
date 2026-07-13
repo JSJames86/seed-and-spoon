@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { createAuthClient } from '@/lib/supabase-server';
 import { revalidatePath } from 'next/cache';
 
 const VALID_PILLARS = ['understanding', 'nutrition', 'economics', 'sdoh', 'solutions'];
@@ -17,28 +16,23 @@ async function getAuthorizedUser(request) {
   const auth = request.headers.get('authorization') || '';
   const token = auth.replace('Bearer ', '').trim();
   if (apiKey && token === apiKey) return { role: 'admin', id: null };
+  if (!token) return null;
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !anon) return null;
+  const sessionClient = createAuthClient(token);
+  if (!sessionClient) return null;
 
-  const cookieStore = await cookies();
-  const sessionClient = createServerClient(url, anon, {
-    cookies: { getAll: () => cookieStore.getAll(), setAll: () => {} },
-  });
-
-  const { data: { claims } } = await sessionClient.auth.getClaims();
-  if (!claims) return null;
+  const { data: { user } } = await sessionClient.auth.getUser();
+  if (!user) return null;
 
   const service = getServiceClient();
   const { data: profile } = await service
     .from('profiles')
     .select('role, first_name, last_name')
-    .eq('id', claims.sub)
+    .eq('id', user.id)
     .single();
 
   if (!profile || !['editor', 'admin'].includes(profile.role)) return null;
-  return { ...profile, id: claims.sub };
+  return { ...profile, id: user.id };
 }
 
 // GET /api/blog/posts/[id] — get single post (for editor)

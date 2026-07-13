@@ -14,6 +14,14 @@ function slugify(title) {
   return title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-').slice(0, 80);
 }
 
+// The blog API routes identify the caller from this session's own access
+// token (Bearer), not cookies — this app's browser Supabase client only
+// ever persists a session in localStorage.
+async function authHeaders(supabase) {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
+}
+
 // ─── Post list ────────────────────────────────────────────────────────────────
 
 function PostRow({ post, onEdit, onDelete, onToggleStatus }) {
@@ -95,7 +103,7 @@ const EMPTY_POST = {
   author_orcid: '',
 };
 
-function PostEditor({ initial, onSave, onCancel }) {
+function PostEditor({ initial, onSave, onCancel, supabase }) {
   const [fields, setFields] = useState({
     ...EMPTY_POST,
     ...initial,
@@ -139,7 +147,7 @@ function PostEditor({ initial, onSave, onCancel }) {
       const method = fields.id ? 'PUT' : 'POST';
       const res = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...(await authHeaders(supabase)) },
         body: JSON.stringify(payload),
       });
       const data = await res.json();
@@ -460,7 +468,7 @@ export default function BlogTab({ profile, supabase }) {
   };
 
   const handleDelete = async (id) => {
-    await fetch(`/api/blog/posts/${id}`, { method: 'DELETE' });
+    await fetch(`/api/blog/posts/${id}`, { method: 'DELETE', headers: await authHeaders(supabase) });
     loadPosts();
   };
 
@@ -468,14 +476,14 @@ export default function BlogTab({ profile, supabase }) {
     const newStatus = post.status === 'published' ? 'draft' : 'published';
     await fetch(`/api/blog/posts/${post.id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...(await authHeaders(supabase)) },
       body: JSON.stringify({ status: newStatus }),
     });
     loadPosts();
   };
 
   const handleEdit = async (post) => {
-    const res = await fetch(`/api/blog/posts/${post.id}`);
+    const res = await fetch(`/api/blog/posts/${post.id}`, { headers: await authHeaders(supabase) });
     const data = await res.json();
     setEditing(data.post ? { ...data.post, body: data.post.body || '' } : post);
   };
@@ -486,6 +494,7 @@ export default function BlogTab({ profile, supabase }) {
         initial={editing}
         onSave={handleSave}
         onCancel={() => setEditing(null)}
+        supabase={supabase}
       />
     );
   }

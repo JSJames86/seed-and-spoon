@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { createAuthClient } from '@/lib/supabase-server';
 import { revalidatePath } from 'next/cache';
 
 function getServiceClient() {
@@ -8,19 +7,6 @@ function getServiceClient() {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return null;
   return createClient(url, key);
-}
-
-async function getSessionClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !anon) return null;
-  const cookieStore = await cookies();
-  return createServerClient(url, anon, {
-    cookies: {
-      getAll: () => cookieStore.getAll(),
-      setAll: () => {},
-    },
-  });
 }
 
 function isValidApiKey(request) {
@@ -75,25 +61,26 @@ export async function POST(request) {
   const apiKeyValid = isValidApiKey(request);
 
   if (!apiKeyValid) {
-    const sessionClient = await getSessionClient();
+    const token = (request.headers.get('authorization') || '').replace('Bearer ', '').trim();
+    const sessionClient = token ? createAuthClient(token) : null;
     if (!sessionClient) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { data: { claims } } = await sessionClient.auth.getClaims();
-    if (!claims) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    const { data: { user } } = await sessionClient.auth.getUser();
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const serviceClient = getServiceClient();
     const { data: profile } = await serviceClient
       .from('profiles')
       .select('role, first_name, last_name')
-      .eq('id', claims.sub)
+      .eq('id', user.id)
       .single();
 
     if (!profile || !['editor', 'admin'].includes(profile.role)) {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    authorId = claims.sub;
-    authorName = [profile.first_name, profile.last_name].filter(Boolean).join(' ') || claims.email;
+    authorId = user.id;
+    authorName = [profile.first_name, profile.last_name].filter(Boolean).join(' ') || user.email;
   }
 
   let body;
