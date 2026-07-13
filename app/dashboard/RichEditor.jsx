@@ -25,11 +25,13 @@ function ToolbarButton({ onClick, active, title, children }) {
   );
 }
 
-export default function RichEditor({ content, onChange }) {
+export default function RichEditor({ content, onChange, supabase }) {
   const [imageUrl, setImageUrl] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
   const [showImageInput, setShowImageInput] = useState(false);
   const [showVideoInput, setShowVideoInput] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadError, setUploadError] = useState('');
 
   const editor = useEditor({
     extensions: [
@@ -61,6 +63,32 @@ export default function RichEditor({ content, onChange }) {
       editor.chain().focus().setImage({ src: imageUrl.trim() }).run();
       setImageUrl('');
       setShowImageInput(false);
+    }
+  };
+
+  const uploadImage = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file || !supabase) return;
+    setUploadingImage(true);
+    setUploadError('');
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/blog/upload-image', {
+        method: 'POST',
+        headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {},
+        body: fd,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Upload failed');
+      editor.chain().focus().setImage({ src: data.url }).run();
+      setShowImageInput(false);
+    } catch (err) {
+      setUploadError(err.message);
+    } finally {
+      setUploadingImage(false);
     }
   };
 
@@ -139,18 +167,28 @@ export default function RichEditor({ content, onChange }) {
 
       {/* Image input */}
       {showImageInput && (
-        <div className="flex gap-2 p-2 border-b border-gray-200 bg-gray-50">
-          <input
-            type="url"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && addImage()}
-            placeholder="Image URL (https://...)"
-            className="flex-1 border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
-          />
-          <button type="button" onClick={addImage} className="bg-green-600 text-white text-sm px-4 py-1.5 rounded hover:bg-green-700 transition">
-            Insert
-          </button>
+        <div className="p-2 border-b border-gray-200 bg-gray-50 space-y-2">
+          <div className="flex gap-2">
+            <input
+              type="url"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && addImage()}
+              placeholder="Image URL (https://...)"
+              className="flex-1 border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+            />
+            <button type="button" onClick={addImage} className="bg-green-600 text-white text-sm px-4 py-1.5 rounded hover:bg-green-700 transition">
+              Insert
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-400">or</span>
+            <label className={`flex items-center gap-1.5 border border-gray-300 rounded px-3 py-1.5 text-sm font-medium text-gray-700 cursor-pointer hover:border-green-500 hover:bg-white transition ${uploadingImage ? 'opacity-50 cursor-not-allowed' : ''}`}>
+              <input type="file" accept="image/*" className="hidden" onChange={uploadImage} disabled={uploadingImage} />
+              📷 {uploadingImage ? 'Uploading…' : 'Upload a photo'}
+            </label>
+            {uploadError && <span className="text-xs text-red-600">{uploadError}</span>}
+          </div>
         </div>
       )}
 

@@ -22,10 +22,20 @@ async function authHeaders(supabase) {
   return session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
 }
 
+// datetime-local inputs use "YYYY-MM-DDTHH:mm" in the browser's local time,
+// with no timezone — convert to/from a stored ISO timestamp at the edges.
+function toDatetimeLocal(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 // ─── Post list ────────────────────────────────────────────────────────────────
 
 function PostRow({ post, onEdit, onDelete, onToggleStatus }) {
   const [confirming, setConfirming] = useState(false);
+  const isScheduled = post.status === 'draft' && !!post.scheduled_at && new Date(post.scheduled_at) > new Date();
   const date = post.published_at
     ? format(new Date(post.published_at), 'MMM d, yyyy')
     : format(new Date(post.created_at), 'MMM d, yyyy');
@@ -34,12 +44,15 @@ function PostRow({ post, onEdit, onDelete, onToggleStatus }) {
     <div className="flex items-center justify-between py-4 border-b border-gray-100 last:border-0 gap-4">
       <div className="flex-1 min-w-0">
         <p className="font-semibold text-gray-900 truncate">{post.title}</p>
-        <p className="text-sm text-gray-500">{date}</p>
+        <p className="text-sm text-gray-500">
+          {date}
+          {isScheduled && ` · publishes ${format(new Date(post.scheduled_at), 'MMM d, yyyy h:mm a')}`}
+        </p>
       </div>
       <span className={`px-2.5 py-1 rounded-full text-xs font-semibold flex-shrink-0 ${
-        post.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+        post.status === 'published' ? 'bg-green-100 text-green-800' : isScheduled ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'
       }`}>
-        {post.status}
+        {isScheduled ? 'scheduled' : post.status}
       </span>
       <div className="flex gap-2 flex-shrink-0">
         <button
@@ -101,6 +114,7 @@ const EMPTY_POST = {
   pillar: '',
   tags: '',
   author_orcid: '',
+  scheduled_at: '',
 };
 
 function PostEditor({ initial, onSave, onCancel, supabase }) {
@@ -108,9 +122,11 @@ function PostEditor({ initial, onSave, onCancel, supabase }) {
     ...EMPTY_POST,
     ...initial,
     tags: Array.isArray(initial?.tags) ? initial.tags.join(', ') : '',
+    scheduled_at: toDatetimeLocal(initial?.scheduled_at),
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [uploadingCover, setUploadingCover] = useState(false);
   const [slugEdited, setSlugEdited] = useState(!!initial?.id);
 
   const set = (key, val) => setFields((p) => ({ ...p, [key]: val }));
@@ -140,6 +156,7 @@ function PostEditor({ initial, onSave, onCancel, supabase }) {
       pillar: fields.pillar || null,
       tags: fields.tags.split(',').map((t) => t.trim()).filter(Boolean),
       author_orcid: fields.author_orcid,
+      scheduled_at: fields.status === 'draft' && fields.scheduled_at ? new Date(fields.scheduled_at).toISOString() : null,
     };
 
     try {
@@ -157,6 +174,30 @@ function PostEditor({ initial, onSave, onCancel, supabase }) {
       setError(err.message);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const uploadCoverImage = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setUploadingCover(true);
+    setError('');
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/blog/upload-image', {
+        method: 'POST',
+        headers: await authHeaders(supabase),
+        body: fd,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Upload failed');
+      set('cover_image_url', data.url);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setUploadingCover(false);
     }
   };
 
@@ -198,14 +239,20 @@ function PostEditor({ initial, onSave, onCancel, supabase }) {
 
       {/* Cover image */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-1">Cover Image URL</label>
-        <input
-          type="url"
-          value={fields.cover_image_url}
-          onChange={(e) => set('cover_image_url', e.target.value)}
-          placeholder="https://..."
-          className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
-        />
+        <label className="block text-sm font-semibold text-gray-700 mb-1">Cover Image</label>
+        <div className="flex gap-2">
+          <input
+            type="url"
+            value={fields.cover_image_url}
+            onChange={(e) => set('cover_image_url', e.target.value)}
+            placeholder="https://... or upload a photo"
+            className="flex-1 border border-gray-300 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+          <label className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-3 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 cursor-pointer hover:border-green-500 hover:bg-green-50 transition ${uploadingCover ? 'opacity-50 cursor-not-allowed' : ''}`}>
+            <input type="file" accept="image/*" className="hidden" onChange={uploadCoverImage} disabled={uploadingCover} />
+            📷 {uploadingCover ? 'Uploading…' : 'Upload'}
+          </label>
+        </div>
         {fields.cover_image_url && (
           <Image src={fields.cover_image_url} alt="Cover preview" width={400} height={160} unoptimized className="mt-2 rounded-lg max-h-40 object-cover" />
         )}
@@ -280,6 +327,7 @@ function PostEditor({ initial, onSave, onCancel, supabase }) {
         <RichEditor
           content={fields.body}
           onChange={(html) => set('body', html)}
+          supabase={supabase}
         />
       </div>
 
@@ -335,6 +383,21 @@ function PostEditor({ initial, onSave, onCancel, supabase }) {
             </label>
           ))}
         </div>
+
+        {fields.status === 'draft' && (
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">Schedule publish (optional)</label>
+            <input
+              type="datetime-local"
+              value={fields.scheduled_at}
+              onChange={(e) => set('scheduled_at', e.target.value)}
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+            {fields.scheduled_at && (
+              <p className="text-xs text-gray-400 mt-1">Goes live automatically, no need to come back.</p>
+            )}
+          </div>
+        )}
 
         {error && <p className="text-sm text-red-600 flex-1">{error}</p>}
 
@@ -450,7 +513,7 @@ export default function BlogTab({ profile, supabase }) {
     setLoading(true);
     try {
       // Editors see all their own posts; admins see all
-      const q = supabase.from('posts').select('id, title, slug, status, author_name, published_at, created_at').order('created_at', { ascending: false });
+      const q = supabase.from('posts').select('id, title, slug, status, author_name, published_at, created_at, scheduled_at').order('created_at', { ascending: false });
       const { data } = await q;
       setPosts(data || []);
     } catch {

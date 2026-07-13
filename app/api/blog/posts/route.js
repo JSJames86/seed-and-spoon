@@ -108,6 +108,8 @@ export async function POST(request) {
     pillar: VALID_PILLARS.includes(body.pillar) ? body.pillar : null,
     tags: Array.isArray(body.tags) ? body.tags.map((t) => String(t).trim()).filter(Boolean).slice(0, 20) : [],
     author_orcid: body.author_orcid ? String(body.author_orcid).trim().slice(0, 20) : null,
+    scheduled_at: status === 'draft' && body.scheduled_at && !isNaN(Date.parse(body.scheduled_at))
+      ? new Date(body.scheduled_at).toISOString() : null,
   };
 
   const supabase = getServiceClient();
