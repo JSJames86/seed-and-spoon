@@ -70,6 +70,15 @@ function PostRow({ post, onEdit, onDelete, onToggleStatus }) {
 
 // ─── Post editor ──────────────────────────────────────────────────────────────
 
+const PILLARS = [
+  { value: '', label: 'None' },
+  { value: 'understanding', label: 'Understanding Food Insecurity' },
+  { value: 'nutrition', label: 'Nutrition & Child Development' },
+  { value: 'economics', label: 'Food Security & Economic Mobility' },
+  { value: 'sdoh', label: 'Social Determinants of Health' },
+  { value: 'solutions', label: 'Solutions & Systems Change' },
+];
+
 const EMPTY_POST = {
   id: null,
   title: '',
@@ -81,10 +90,17 @@ const EMPTY_POST = {
   author_name: '',
   meta_title: '',
   meta_description: '',
+  pillar: '',
+  tags: '',
+  author_orcid: '',
 };
 
 function PostEditor({ initial, onSave, onCancel }) {
-  const [fields, setFields] = useState({ ...EMPTY_POST, ...initial });
+  const [fields, setFields] = useState({
+    ...EMPTY_POST,
+    ...initial,
+    tags: Array.isArray(initial?.tags) ? initial.tags.join(', ') : '',
+  });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [slugEdited, setSlugEdited] = useState(!!initial?.id);
@@ -113,6 +129,9 @@ function PostEditor({ initial, onSave, onCancel }) {
       author_name: fields.author_name,
       meta_title: fields.meta_title,
       meta_description: fields.meta_description,
+      pillar: fields.pillar || null,
+      tags: fields.tags.split(',').map((t) => t.trim()).filter(Boolean),
+      author_orcid: fields.author_orcid,
     };
 
     try {
@@ -185,15 +204,54 @@ function PostEditor({ initial, onSave, onCancel }) {
       </div>
 
       {/* Author */}
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-1">Author Name</label>
-        <input
-          type="text"
-          value={fields.author_name}
-          onChange={(e) => set('author_name', e.target.value)}
-          placeholder="Seed & Spoon Team"
-          className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
-        />
+      <div className="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Author Name</label>
+          <input
+            type="text"
+            value={fields.author_name}
+            onChange={(e) => set('author_name', e.target.value)}
+            placeholder="Seed & Spoon Team"
+            className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Author ORCID</label>
+          <input
+            type="text"
+            value={fields.author_orcid}
+            onChange={(e) => set('author_orcid', e.target.value)}
+            placeholder="0000-0000-0000-0000"
+            className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+        </div>
+      </div>
+
+      {/* Pillar + tags */}
+      <div className="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Pillar</label>
+          <select
+            value={fields.pillar}
+            onChange={(e) => set('pillar', e.target.value)}
+            className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
+          >
+            {PILLARS.map((p) => (
+              <option key={p.value} value={p.value}>{p.label}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Tags</label>
+          <input
+            type="text"
+            value={fields.tags}
+            onChange={(e) => set('tags', e.target.value)}
+            placeholder="food insecurity, childhood hunger, Newark"
+            className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+          <p className="text-xs text-gray-400 mt-1">Comma-separated</p>
+        </div>
       </div>
 
       {/* Excerpt */}

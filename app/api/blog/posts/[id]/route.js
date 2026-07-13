@@ -3,6 +3,8 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
+const VALID_PILLARS = ['understanding', 'nutrition', 'economics', 'sdoh', 'solutions'];
+
 function getServiceClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -86,6 +88,9 @@ export async function PUT(request, { params }) {
   if (body.author_name !== undefined) updates.author_name = body.author_name;
   if (body.meta_title !== undefined) updates.meta_title = body.meta_title ? String(body.meta_title).trim().slice(0, 70) : null;
   if (body.meta_description !== undefined) updates.meta_description = body.meta_description ? String(body.meta_description).trim().slice(0, 160) : null;
+  if (body.pillar !== undefined) updates.pillar = VALID_PILLARS.includes(body.pillar) ? body.pillar : null;
+  if (body.tags !== undefined) updates.tags = Array.isArray(body.tags) ? body.tags.map((t) => String(t).trim()).filter(Boolean).slice(0, 20) : [];
+  if (body.author_orcid !== undefined) updates.author_orcid = body.author_orcid ? String(body.author_orcid).trim().slice(0, 20) : null;
   if (body.status !== undefined && ['draft', 'published'].includes(body.status)) {
     updates.status = body.status;
     if (body.status === 'published' && existing?.status !== 'published') {
