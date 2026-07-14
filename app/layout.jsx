@@ -8,6 +8,7 @@ import AnalyticsLoader from "@/components/AnalyticsLoader";
 import Providers from "@/components/Providers";
 import { SubscribePopupTrigger } from "@/components/email/SubscribeModal";
 import { Libre_Franklin, Roboto_Slab, Crimson_Text, Fraunces, Hanken_Grotesk } from 'next/font/google';
+import { SOCIAL_LINKS } from "@/data/socialLinks";
 
 const libreFranklin = Libre_Franklin({
   subsets: ['latin'],
@@ -102,14 +103,7 @@ const organizationSchema = {
     addressCountry: "US",
   },
   knowsAbout: ["food insecurity", "youth hunger", "community meal programs", "urban gardening"],
-  sameAs: [
-    "https://www.facebook.com/share/1JUsog1c96/",
-    "https://www.instagram.com/seedandspoon_nj",
-    "https://www.threads.com/@seedandspoon_nj",
-    "https://x.com/seedandspoon_nj",
-    "https://www.tiktok.com/@seedandspoonnj",
-    "https://www.linkedin.com/company/seed-and-spoon-foundation/",
-  ],
+  sameAs: SOCIAL_LINKS.map((social) => social.url),
 };
 
 export default function RootLayout({ children }) {

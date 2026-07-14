@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import Image from 'next/image';
 import { captureEvent } from '@/analytics/posthog';
 import { EVENTS } from '@/analytics/events';
+import { SOCIAL_LINKS } from '@/data/socialLinks';
 
 const UTM_SOURCE = 'seedandspoon';
 const UTM_MEDIUM = 'links_page';
@@ -22,11 +23,25 @@ const LINKS = [
   { emoji: '🌐', label: 'Full Website', destination: '/', external: false },
 ];
 
+const SOCIAL_MONOGRAMS = {
+  instagram: 'IG',
+  threads: '@',
+  x: 'X',
+  facebook: 'f',
+  tiktok: 'TT',
+  linkedin: 'in',
+};
+
 function withTracking(url) {
   const withUtm = new URL(url);
   withUtm.searchParams.set('utm_source', UTM_SOURCE);
   withUtm.searchParams.set('utm_medium', UTM_MEDIUM);
   return withUtm.toString();
+}
+
+function getIncomingUtmSource() {
+  if (typeof window === 'undefined') return undefined;
+  return new URLSearchParams(window.location.search).get('utm_source') || undefined;
 }
 
 export default function LinksPage() {
@@ -39,13 +54,10 @@ export default function LinksPage() {
   }, []);
 
   const handleClick = (link) => {
-    const params = new URLSearchParams(window.location.search);
-    const utmSource = params.get('utm_source') || undefined;
-
     captureEvent(EVENTS.LINKS_PAGE_CLICK, {
       destination: link.destination,
       label: link.label,
-      utm_source: utmSource,
+      utm_source: getIncomingUtmSource(),
     });
 
     if (link.external) {
@@ -53,6 +65,16 @@ export default function LinksPage() {
     } else {
       window.location.href = link.destination;
     }
+  };
+
+  const handleSocialClick = (social) => {
+    captureEvent(EVENTS.LINKS_PAGE_CLICK, {
+      destination: social.url,
+      label: social.label,
+      utm_source: getIncomingUtmSource(),
+    });
+
+    window.open(withTracking(social.url), '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -79,6 +101,19 @@ export default function LinksPage() {
             >
               <span aria-hidden="true">{link.emoji}</span>
               <span>{link.label}</span>
+            </button>
+          ))}
+        </div>
+
+        <div className="w-full flex justify-center gap-3 mt-8">
+          {SOCIAL_LINKS.map((social) => (
+            <button
+              key={social.platform}
+              onClick={() => handleSocialClick(social)}
+              aria-label={social.label}
+              className="w-11 h-11 flex items-center justify-center rounded-full bg-[var(--white)] text-[var(--dark-forest)] font-bold text-sm shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:text-[var(--green-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--green-primary)]"
+            >
+              {SOCIAL_MONOGRAMS[social.platform]}
             </button>
           ))}
         </div>
