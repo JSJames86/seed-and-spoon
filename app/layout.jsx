@@ -103,7 +103,7 @@ const organizationSchema = {
   },
   knowsAbout: ["food insecurity", "youth hunger", "community meal programs", "urban gardening"],
   sameAs: [
-    "https://www.facebook.com/share/1DmFiCfhux/?mibextid=wwXIfr",
+    "https://www.facebook.com/share/1JUsog1c96/",
     "https://www.instagram.com/seedandspoon_nj",
     "https://www.threads.com/@seedandspoon_nj",
     "https://x.com/seedandspoon_nj",

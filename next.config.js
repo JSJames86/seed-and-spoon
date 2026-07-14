@@ -27,6 +27,39 @@ const nextConfig = {
         destination: '/resources/reports',
         permanent: true,
       },
+      // Short links for social bios — forward to the UTM-tagged /links hub.
+      // Not permanent: these are a marketing convenience, not a page move,
+      // and the UTM scheme may change.
+      {
+        source: '/ig',
+        destination: '/links?utm_source=instagram',
+        permanent: false,
+      },
+      {
+        source: '/threads',
+        destination: '/links?utm_source=threads',
+        permanent: false,
+      },
+      {
+        source: '/x',
+        destination: '/links?utm_source=x',
+        permanent: false,
+      },
+      {
+        source: '/fb',
+        destination: '/links?utm_source=facebook',
+        permanent: false,
+      },
+      {
+        source: '/tiktok',
+        destination: '/links?utm_source=tiktok',
+        permanent: false,
+      },
+      {
+        source: '/linkedin',
+        destination: '/links?utm_source=linkedin',
+        permanent: false,
+      },
     ];
   },
   async headers() {
