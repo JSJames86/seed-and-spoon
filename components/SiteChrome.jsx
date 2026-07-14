@@ -16,9 +16,15 @@ function isSpoonAssistV2(pathname) {
   return pathname.startsWith('/spoonassist/') && !pathname.startsWith('/spoonassist/classic');
 }
 
+// /links is a standalone link-in-bio hub with its own header (logo + tagline)
+// and no destination for site nav/footer to usefully point back into.
+function isLinksHub(pathname) {
+  return pathname === '/links';
+}
+
 export default function SiteChrome({ children }) {
   const pathname = usePathname();
-  const hideChrome = isSpoonAssistV2(pathname);
+  const hideChrome = isSpoonAssistV2(pathname) || isLinksHub(pathname);
 
   if (hideChrome) {
     return <main id="main">{children}</main>;

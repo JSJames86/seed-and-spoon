@@ -31,6 +31,9 @@ const nonPublicPaths = [
   '/volunteer/onboard',
   '/volunteer/onboard/*',
   '/survey',
+  // Link-in-bio hub — a UTM-tracked redirect surface for social profiles,
+  // not organic search content
+  '/links',
 ];
 
 module.exports = {
