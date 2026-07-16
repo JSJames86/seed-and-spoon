@@ -19,6 +19,13 @@ import { EVENTS } from '@/analytics/events';
 // totals. This page must never render comparative pricing (no per-store
 // totals, no savings deltas, no "best total" copy) -- a single "your list"
 // context is fine.
+//
+// The actions area around the Instacart CTA (FulfillmentSection) is
+// deliberately limited to Send-to-my-lists/Copy/Export/Instacart -- no
+// "Compare prices" link lives there, so Instacart is never one tap from a
+// comparison entry point either. Comparison is still reachable from this
+// page, just relocated to the header (see below), away from the
+// Instacart-adjacent action cluster.
 
 function formatQuantity(n) {
   if (n == null) return '';
@@ -193,6 +200,13 @@ export default function SpoonAssistListPage() {
         <LeverageBadge score={plan.overallLeverage} />
       </div>
 
+      <Link
+        href="/spoonassist/compare"
+        className="mt-2 inline-flex items-center gap-1 text-[13px] font-medium text-[var(--sa-ink-soft)] underline underline-offset-2 hover:text-[var(--sa-ink)]"
+      >
+        Compare prices across stores &rarr;
+      </Link>
+
       <form onSubmit={submitManual} className="mt-4 flex items-center gap-2 rounded-[var(--sa-radius-pill)] bg-[var(--sa-surface)] px-4 py-2 shadow-[var(--sa-shadow-card)]">
         <input
           type="text"
@@ -248,10 +262,7 @@ export default function SpoonAssistListPage() {
 
       <FulfillmentSection activeItems={activeItems} instacartEnabled={features.instacart} />
 
-      <div className="mt-6 flex flex-col items-center gap-3">
-        <PillButton as={Link} href="/spoonassist/compare" size="lg">
-          Compare prices &rarr;
-        </PillButton>
+      <div className="mt-6 flex justify-center">
         <Link href="/spoonassist/receipts/scan" className="text-[13px] font-medium text-[var(--sa-ink-soft)] underline">
           Scan a receipt to help confirm prices
         </Link>
