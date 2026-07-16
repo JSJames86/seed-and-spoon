@@ -1,3 +1,7 @@
+> **Superseded:** this project now uses **npm**, not Bun — Bun had compatibility
+> conflicts with this Next.js setup. This doc is kept for history only; see
+> `CLAUDE.md` for the current stack. Do not follow the instructions below.
+
 # Bun Migration Complete ✅
 
 ## Summary

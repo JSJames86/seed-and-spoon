@@ -14,8 +14,12 @@ import { captureEvent } from '@/analytics/posthog';
 import { EVENTS } from '@/analytics/events';
 
 // Price comparison across stores (spec §4.6), reusing the pricing engine
-// the classic wizard already uses (lib/spoonassist/priceEngine.js's
-// calculateRecipeCost).
+// the classic wizard already uses. As of the Phase 1 pricing-provider-
+// abstraction refactor, calculateRecipeCost() delegates to the pluggable
+// provider registry in lib/pricing/ (see that directory and
+// /api/pricing/resolve), so every total here traces to a PriceQuote with
+// source/confidence/asOf -- surfaced per-store via the provenance badge on
+// each StoreCard (summary.storeProvenance).
 //
 // Instacart-quarantine (Phase 2): the Instacart CTA does not render on this
 // screen. Instacart's compliance rule is that the CTA and multi-retailer
@@ -229,6 +233,7 @@ export default function SpoonAssistComparePage() {
                   itemCount={activeItems.length}
                   isBest={store.name === summary.cheapestStore}
                   onShopAtClick={(link) => handleShopAtClick(link, total)}
+                  provenance={summary.storeProvenance?.[store.name] ?? null}
                 />
               ))}
           </div>
