@@ -30,6 +30,7 @@ export const EVENTS = {
   SPOONASSIST_V2_COMPARE_VIEWED: 'compare_viewed',
   SPOONASSIST_V2_HANDOFF_CLICKED: 'handoff_clicked',
   SPOONASSIST_V2_SAVINGS_SHOWN: 'savings_shown',
+  SPOONASSIST_V2_RETAILER_DEEPLINK_CLICKED: 'retailer_deeplink_clicked',
 
   // Link-in-bio hub (/links)
   LINKS_PAGE_VIEW: 'links_page_view',

@@ -1,8 +1,25 @@
+import { getRetailerLink } from '@/data/retailerLinks';
+
 function CheckIcon() {
   return (
     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
       <path d="M2.5 6.5L4.5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
+  );
+}
+
+function ShopAtLink({ storeId, storeName, onShopAtClick }) {
+  const { label, url } = getRetailerLink({ id: storeId, name: storeName });
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={() => onShopAtClick?.({ chainId: storeId, url })}
+      className="mt-3 inline-flex items-center gap-1 text-[13px] font-medium text-[var(--sa-green-deep)] underline decoration-[var(--sa-green)] underline-offset-2 hover:opacity-80"
+    >
+      Shop at {label} &#8599;
+    </a>
   );
 }
 
@@ -26,15 +43,19 @@ function ProvenanceBadge({ provenance }) {
 }
 
 // One store's basket total in the compare grid. `isBest` renders the green
-// "Best total" ribbon (never orange -- accent stays reserved for the
-// primary Send-to-Instacart action, spec §3 rule 1 / §4.6).
+// "Best total" ribbon. Instacart's CTA does not live on this screen (spec:
+// the Instacart CTA and multi-retailer totals must never share a screen) --
+// the "Shop at [Retailer]" link below is a plain outbound link, no partner
+// approval required.
 export default function StoreCard({
   name,
+  storeId,
   total,
   deltaFromMostExpensive,
   availableCount,
   itemCount,
   isBest = false,
+  onShopAtClick,
   provenance = null,
   className = '',
 }) {
@@ -65,6 +86,8 @@ export default function StoreCard({
           {availableCount} of {itemCount} items priced
         </p>
       )}
+
+      {storeId && <ShopAtLink storeId={storeId} storeName={name} onShopAtClick={onShopAtClick} />}
     </div>
   );
 }

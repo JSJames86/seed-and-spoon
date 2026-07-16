@@ -1,18 +1,42 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePlan } from '@/components/spoonassist/PlanProvider';
 import PillButton from '@/components/spoonassist/PillButton';
 import LeverageBadge from '@/components/spoonassist/LeverageBadge';
 import EmptyState from '@/components/spoonassist/EmptyState';
+import InstacartCTA from '@/components/spoonassist/InstacartCTA';
+import ShareListButtons from '@/components/spoonassist/ShareListButtons';
 import { ListRowSkeleton } from '@/components/spoonassist/Skeleton';
 import { itemRowKey } from '@/lib/spoonassist/consolidateList';
+import { captureEvent } from '@/analytics/posthog';
+import { EVENTS } from '@/analytics/events';
+
+// Finalized shopping list (spec: List tab). Instacart-quarantine (Phase 2):
+// this is the ONLY place the Instacart CTA renders -- moved here from the
+// price comparison screen so it never shares a screen with multi-retailer
+// totals. This page must never render comparative pricing (no per-store
+// totals, no savings deltas, no "best total" copy) -- a single "your list"
+// context is fine.
 
 function formatQuantity(n) {
   if (n == null) return '';
   const rounded = Math.round(n * 100) / 100;
   return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
+}
+
+function downloadPlainCsv(items) {
+  const headers = ['Ingredient', 'Quantity', 'Unit'];
+  const rows = items.map((item) => [item.name, item.quantity ?? '', item.unit ?? '']);
+  const csv = [headers, ...rows].map((row) => row.map((c) => `"${c}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `spoonassist-list-${new Date().toISOString().slice(0, 10)}.csv`;
+  link.click();
+  URL.revokeObjectURL(url);
 }
 
 function ListRow({ item, rowKey, checked, onToggle, onDelete }) {
@@ -45,9 +69,78 @@ function ListRow({ item, rowKey, checked, onToggle, onDelete }) {
   );
 }
 
+function FulfillmentSection({ activeItems, instacartEnabled }) {
+  const [instacart, setInstacart] = useState({ loading: false, error: null, confirmed: false });
+
+  const handleSendToInstacart = async () => {
+    captureEvent(EVENTS.SPOONASSIST_V2_HANDOFF_CLICKED, {
+      item_count: activeItems.length,
+      // listId: this app has no server-side persisted shopping list.
+      listId: null,
+      source: 'list_page',
+    });
+    setInstacart({ loading: true, error: null, confirmed: false });
+    try {
+      const res = await fetch('/api/instacart_shopping_list', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: 'My SpoonAssist list',
+          ingredients: activeItems.map((i) => ({ name: i.name, quantity: i.quantity ?? 1, unit: i.unit ?? 'each' })),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'failed');
+      setInstacart({ loading: false, error: null, confirmed: true });
+      window.open(data.url, '_blank', 'noopener,noreferrer');
+    } catch (err) {
+      setInstacart({ loading: false, error: err.message, confirmed: false });
+    }
+  };
+
+  if (activeItems.length === 0) return null;
+
+  return (
+    <div className="mt-8 rounded-[var(--sa-radius-card)] bg-[var(--sa-surface)] p-5 shadow-[var(--sa-shadow-card)]">
+      {instacart.confirmed ? (
+        <p className="text-center text-[15px] font-semibold text-[var(--sa-ink)]">Your list is on its way!</p>
+      ) : (
+        <>
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+            <div>
+              <p className="text-[15px] font-semibold text-[var(--sa-ink)]">Ready to shop?</p>
+              <p className="text-[13px] text-[var(--sa-ink-soft)]">{activeItems.length} items on your list</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <ShareListButtons
+                ingredients={activeItems.map((i) => ({ name: i.name, amount: i.quantity, unit: i.unit }))}
+                listTitle="My SpoonAssist list"
+              />
+              <PillButton variant="secondary" size="sm" onClick={() => downloadPlainCsv(activeItems)}>
+                Export CSV
+              </PillButton>
+              {instacartEnabled && (
+                <InstacartCTA onClick={handleSendToInstacart} loading={instacart.loading} text="Shop ingredients" />
+              )}
+            </div>
+          </div>
+          {instacart.error && (
+            <p className="mt-2 text-center text-[13px] text-[var(--sa-warning)]">Could not create Instacart list. Please try again.</p>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function SpoonAssistListPage() {
   const plan = usePlan();
   const [manualName, setManualName] = useState('');
+  const [features, setFeatures] = useState({ instacart: false });
+
+  useEffect(() => {
+    fetch('/api/features/').then((r) => r.json()).then(setFeatures).catch(() => {});
+  }, []);
 
   const submitManual = (e) => {
     e.preventDefault();
@@ -85,6 +178,7 @@ export default function SpoonAssistListPage() {
     .map((group) => ({ ...group, items: group.items.filter((item) => !checkedRowKeys.has(itemRowKey(item))) }))
     .filter((group) => group.items.length > 0);
   const haveItItems = plan.consolidatedItems.filter((item) => checkedRowKeys.has(itemRowKey(item)));
+  const activeItems = plan.consolidatedItems.filter((item) => !checkedRowKeys.has(itemRowKey(item)));
 
   return (
     <div>
@@ -152,7 +246,9 @@ export default function SpoonAssistListPage() {
         </details>
       )}
 
-      <div className="mt-8 flex flex-col items-center gap-3">
+      <FulfillmentSection activeItems={activeItems} instacartEnabled={features.instacart} />
+
+      <div className="mt-6 flex flex-col items-center gap-3">
         <PillButton as={Link} href="/spoonassist/compare" size="lg">
           Compare prices &rarr;
         </PillButton>
