@@ -16,11 +16,14 @@ import { captureEvent } from '@/analytics/posthog';
 import { EVENTS } from '@/analytics/events';
 
 // Price comparison across stores (spec §4.6) + the Instacart handoff
-// (§4.7), reusing the pricing engine and Instacart integration the classic
-// wizard already uses (lib/spoonassist/priceEngine.js's calculateRecipeCost,
-// /api/instacart_shopping_list's server-side affiliate attribution) rather
-// than standing up a competing price_quotes table -- stores/store_skus/
-// price_snapshots/confirmed_prices (20260614000001) already cover that.
+// (§4.7). Reuses the same calc_recipe_cost API surface the classic wizard
+// used to use directly against priceEngine.js's tiered lookups; as of the
+// Phase 1 pricing-provider-abstraction refactor, calculateRecipeCost()
+// delegates to the pluggable provider registry in lib/pricing/ (see that
+// directory and /api/pricing/resolve), so every total here now traces to a
+// PriceQuote with source/confidence/asOf instead of an untyped tier string.
+// Still reuses /api/instacart_shopping_list's server-side affiliate
+// attribution for the handoff unchanged.
 
 function round2(n) {
   return Math.round((n + Number.EPSILON) * 100) / 100;
@@ -239,6 +242,7 @@ export default function SpoonAssistComparePage() {
                   availableCount={availableCount}
                   itemCount={activeItems.length}
                   isBest={store.name === summary.cheapestStore}
+                  provenance={summary.storeProvenance?.[store.name] ?? null}
                 />
               ))}
           </div>
