@@ -24,7 +24,13 @@ export const EVENTS = {
   SPOONASSIST_RECOMMENDATION_REJECTED: 'spoonassist_recommendation_rejected',
   SPOONASSIST_ERROR: 'spoonassist_error',
 
-  // SpoonAssist v2 (/spoonassist -- plan/list/compare/handoff funnel, spec Phase 5)
+  // SpoonAssist v2 (/spoonassist -- plan/list/handoff funnel, spec Phase 5).
+  // compare_viewed is an optional detour off the list page (a header link,
+  // not part of the list page's Instacart-adjacent action cluster) rather
+  // than a mandatory step -- don't assume compare_viewed precedes
+  // handoff_clicked in the same session, or that they're close together in
+  // time. handoff_clicked's `source` prop ('list_page') is the reliable
+  // signal for where the Instacart handoff was initiated.
   SPOONASSIST_V2_PLAN_CREATED: 'plan_created',
   SPOONASSIST_V2_LIST_BUILT: 'list_built',
   SPOONASSIST_V2_COMPARE_VIEWED: 'compare_viewed',
