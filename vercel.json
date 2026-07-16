@@ -18,6 +18,10 @@
     {
       "path": "/api/foodbanks",
       "schedule": "0 12 */4 * *"
+    },
+    {
+      "path": "/api/receipts/cleanup",
+      "schedule": "0 9 * * *"
     }
   ]
 }

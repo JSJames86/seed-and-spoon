@@ -11,6 +11,7 @@ import { useSpoonAssistTheme } from '@/components/spoonassist/ThemeProvider';
 const ROWS = [
   { label: 'Household settings', hint: '4 people · $85/week', href: '/spoonassist#household' },
   { label: 'Dietary & allergens', hint: 'Vegetarian', href: '/spoonassist#household' },
+  { label: 'Scan a receipt', hint: 'Help confirm real prices', href: '/spoonassist/receipts/scan' },
   { label: 'Pantry', hint: 'Coming soon' },
   { label: 'Saved recipes', hint: 'Coming soon' },
   { label: 'List history', hint: 'Coming soon' },
