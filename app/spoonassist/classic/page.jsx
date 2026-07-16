@@ -14,7 +14,6 @@ import DietaryFilters from '@/components/spoonassist/DietaryFilters';
 import CostResultsTable from '@/components/spoonassist/CostResultsTable';
 import CSVExportButton from '@/components/spoonassist/CSVExportButton';
 import PoweredBy from '@/components/spoonassist/PoweredBy';
-import InstacartCTA from '@/components/spoonassist/InstacartCTA';
 import ShareListButtons from '@/components/spoonassist/ShareListButtons';
 import GlassCard from '@/components/spoonassist/ui/GlassCard';
 import SpoonButton from '@/components/spoonassist/ui/Button';
@@ -47,7 +46,15 @@ export default function SpoonAssistPage() {
   const [costData, setCostData] = useState(null);
   const [summary, setSummary] = useState(null);
   const [zipCode, setZipCode] = useState('');
-  const [instacartUrl, setInstacartUrl] = useState(null);
+  // instacartRetailers/selectedRetailerKeys still power StoreFilterBar's
+  // retailer-name filter chips below -- that's a data lookup, not the
+  // Instacart checkout CTA, so it's out of scope for the Instacart
+  // quarantine (Phase 2 spec §3.1: only the CTA/handoff must be reduced to
+  // one render site). The CTA itself (InstacartCTA, the shopping-list
+  // handoff, and its cache/loading/error state) has been removed from this
+  // page since it used to render right next to per-store comparison totals
+  // below -- exactly the co-location Instacart's compliance rule forbids.
+  // The handoff now lives exclusively on /spoonassist/list.
   const [instacartRetailers, setInstacartRetailers] = useState([]);
   const [selectedRetailerKeys, setSelectedRetailerKeys] = useState([]);
   const [features, setFeatures] = useState({ kroger: false, instacart: false });
@@ -55,13 +62,11 @@ export default function SpoonAssistPage() {
     recipes: false,
     stores: false,
     calculation: false,
-    instacart: false,
     instacartRetailers: false,
   });
   const [recipeError, setRecipeError] = useState(null);
   const [storeError, setStoreError] = useState(null);
   const [costError, setCostError] = useState(null);
-  const [instacartError, setInstacartError] = useState(null);
 
   // Fetch recipes + feature flags on mount
   useEffect(() => {
@@ -213,106 +218,6 @@ export default function SpoonAssistPage() {
       });
     } finally {
       setLoading(prev => ({ ...prev, calculation: false }));
-    }
-  };
-
-  // Cache helpers — store generated Instacart URLs in localStorage keyed by
-  // recipe ID + ingredient fingerprint so we reuse them until they expire.
-  const CACHE_TTL_MS = 29 * 24 * 60 * 60 * 1000; // 29 days (Instacart expires at 30)
-
-  function instacartCacheKey(recipeId, ings) {
-    const fingerprint = ings.map(i => `${i.name}:${i.quantity}:${i.unit}`).sort().join('|');
-    return `instacart_url_${recipeId}_${fingerprint}`;
-  }
-
-  function readCachedUrl(key) {
-    try {
-      const raw = localStorage.getItem(key);
-      if (!raw) return null;
-      const { url, expiresAt } = JSON.parse(raw);
-      if (Date.now() > expiresAt) { localStorage.removeItem(key); return null; }
-      return url;
-    } catch { return null; }
-  }
-
-  function writeCachedUrl(key, url) {
-    try {
-      localStorage.setItem(key, JSON.stringify({ url, expiresAt: Date.now() + CACHE_TTL_MS }));
-    } catch { /* storage full or unavailable */ }
-  }
-
-  const handleShopOnInstacart = async () => {
-    captureEvent(EVENTS.SPOONASSIST_RECOMMENDATION_ACCEPTED, {
-      recommendation_type: 'instacart_shop',
-      confidence_score: 1,
-    });
-
-    setLoading(prev => ({ ...prev, instacart: true }));
-    setInstacartError(null);
-    setInstacartUrl(null);
-
-    const isRecipe = !!selectedRecipe;
-    const ingList  = ingredients.map(ing => ({ name: ing.name, quantity: ing.quantity, unit: ing.unit }));
-
-    // Check cache for recipe pages (shopping lists have no stable ID to key on)
-    if (isRecipe && selectedRecipe.id != null) {
-      const cacheKey = instacartCacheKey(selectedRecipe.id, ingList);
-      const cached   = readCachedUrl(cacheKey);
-      if (cached) {
-        setInstacartUrl(cached);
-        window.open(cached, '_blank', 'noopener,noreferrer');
-        setLoading(prev => ({ ...prev, instacart: false }));
-        return;
-      }
-    }
-
-    const endpoint = isRecipe
-      ? `${API_BASE_URL}/instacart_list/`
-      : `${API_BASE_URL}/instacart_shopping_list/`;
-
-    const payload = isRecipe
-      ? {
-          recipeTitle:    selectedRecipe.title,
-          recipeId:       selectedRecipe.id ?? null,
-          imageUrl:       selectedRecipe.instacartImage || selectedRecipe.image || null,
-          instructions:   selectedRecipe.instructions || [],
-          dietaryFilters: dietaryFilters,
-          retailerKey:    selectedRetailerKeys[0] ?? null,
-          ingredients:    ingList,
-        }
-      : {
-          title:          'My Ingredient List',
-          dietaryFilters: dietaryFilters,
-          retailerKey:    selectedRetailerKeys[0] ?? null,
-          ingredients:    ingList,
-        };
-
-    try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Failed to create shopping list');
-
-      setInstacartUrl(data.url);
-      window.open(data.url, '_blank', 'noopener,noreferrer');
-
-      // Persist for future clicks on the same recipe + ingredient set
-      if (isRecipe && selectedRecipe.id != null) {
-        writeCachedUrl(instacartCacheKey(selectedRecipe.id, ingList), data.url);
-      }
-    } catch (err) {
-      setInstacartError('Could not create Instacart shopping list. Please try again.');
-      console.error('Instacart list error:', err);
-      captureEvent(EVENTS.SPOONASSIST_ERROR, {
-        error_type: 'instacart_list_failed',
-        query_type: 'instacart_shop',
-      });
-    } finally {
-      setLoading(prev => ({ ...prev, instacart: false }));
     }
   };
 
@@ -511,14 +416,15 @@ export default function SpoonAssistPage() {
 
                 <CostResultsTable costData={costData} />
 
-                {/* Every way to walk away with this list — share, copy, export, or hand off to Instacart — grouped in one place */}
+                {/* Every way to walk away with this list — share, copy, or export.
+                    Instacart's handoff lives exclusively on /spoonassist/list now
+                    (Phase 2 Instacart-quarantine spec) -- it can't render here
+                    next to the per-store comparison totals above. */}
                 <div className="mt-6 p-5 spoon-glass-lite rounded-spoon-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
                     <p className="font-semibold text-spoon-ink">Ready to shop?</p>
                     <p className="text-sm text-spoon-subtext mt-0.5">
-                      {features.instacart
-                        ? <>Add this recipe&apos;s ingredients to your cart via the Instacart® service — delivery or pickup at local stores. Or share, copy, or export the list below.</>
-                        : 'Share, copy, or export this list to shop however you like.'}
+                      Share, copy, or export this list to shop however you like.
                     </p>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
@@ -527,19 +433,8 @@ export default function SpoonAssistPage() {
                       listTitle={selectedRecipe?.title || 'My Ingredient List'}
                     />
                     <CSVExportButton costData={costData} ingredients={ingredients} />
-                    {features.instacart && (
-                      <InstacartCTA
-                        onClick={handleShopOnInstacart}
-                        loading={loading.instacart}
-                        disabled={ingredients.length === 0}
-                        text="Shop ingredients"
-                      />
-                    )}
                   </div>
                 </div>
-                {instacartError && (
-                  <InlineError message={instacartError} onDismiss={() => setInstacartError(null)} />
-                )}
               </GlassCard>
             )}
           </>
@@ -552,8 +447,7 @@ export default function SpoonAssistPage() {
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <PoweredBy compact sources={[
-              ...(features.kroger    ? ['kroger']    : []),
-              ...(features.instacart ? ['instacart'] : []),
+              ...(features.kroger ? ['kroger'] : []),
               'usda',
             ]} />
           </div>
@@ -563,20 +457,6 @@ export default function SpoonAssistPage() {
         <footer className="mt-8 text-center text-sm text-spoon-subtext">
           <p>SpoonAssist is a service by Seed &amp; Spoon</p>
           <p className="mt-1">Helping you save money on healthy, delicious meals</p>
-          {features.instacart && (
-            <p className="mt-4 text-xs text-spoon-subtext max-w-2xl mx-auto">
-              Instacart® is a registered trademark of Maplebear Inc. d/b/a Instacart.
-              Instacart may not be available in all zip codes.{' '}
-              <a
-                href="https://www.instacart.com/terms"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-spoon-ink"
-              >
-                See Instacart Terms of Service for more details.
-              </a>
-            </p>
-          )}
         </footer>
       </div>
     </div>

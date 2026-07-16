@@ -6,21 +6,25 @@ import { usePlan } from '@/components/spoonassist/PlanProvider';
 import EmptyState from '@/components/spoonassist/EmptyState';
 import PillButton from '@/components/spoonassist/PillButton';
 import StoreCard from '@/components/spoonassist/StoreCard';
-import InstacartCTA from '@/components/spoonassist/InstacartCTA';
 import ShareListButtons from '@/components/spoonassist/ShareListButtons';
 import PoweredBy from '@/components/spoonassist/PoweredBy';
-import SavingsShareCard from '@/components/spoonassist/SavingsShareCard';
 import { Skeleton } from '@/components/spoonassist/Skeleton';
 import { itemRowKey } from '@/lib/spoonassist/consolidateList';
 import { captureEvent } from '@/analytics/posthog';
 import { EVENTS } from '@/analytics/events';
 
-// Price comparison across stores (spec §4.6) + the Instacart handoff
-// (§4.7), reusing the pricing engine and Instacart integration the classic
-// wizard already uses (lib/spoonassist/priceEngine.js's calculateRecipeCost,
-// /api/instacart_shopping_list's server-side affiliate attribution) rather
-// than standing up a competing price_quotes table -- stores/store_skus/
-// price_snapshots/confirmed_prices (20260614000001) already cover that.
+// Price comparison across stores (spec §4.6), reusing the pricing engine
+// the classic wizard already uses (lib/spoonassist/priceEngine.js's
+// calculateRecipeCost).
+//
+// Instacart-quarantine (Phase 2): the Instacart CTA does not render on this
+// screen. Instacart's compliance rule is that the CTA and multi-retailer
+// totals must never share a screen, scroll container, or be one tap apart
+// in a way that frames Instacart as the checkout for a comparison result --
+// so the handoff moved to the finalized list page (/spoonassist/list),
+// which shows no comparative pricing at all. This screen instead offers a
+// plain "Shop at [Retailer]" outbound link per store card (data/retailerLinks.js)
+// -- no API, no partner approval required.
 
 function round2(n) {
   return Math.round((n + Number.EPSILON) * 100) / 100;
@@ -78,7 +82,6 @@ export default function SpoonAssistComparePage() {
   const [stores, setStores] = useState([]);
   const [costData, setCostData] = useState([]);
   const [summary, setSummary] = useState(null);
-  const [instacart, setInstacart] = useState({ loading: false, url: null, error: null, confirmed: false });
 
   useEffect(() => {
     fetch('/api/features/').then((r) => r.json()).then(setFeatures).catch(() => {});
@@ -147,32 +150,17 @@ export default function SpoonAssistComparePage() {
     }
   };
 
-  const handleSendToInstacart = async () => {
-    captureEvent(EVENTS.SPOONASSIST_V2_HANDOFF_CLICKED, { item_count: activeItems.length });
-    setInstacart({ loading: true, url: null, error: null, confirmed: false });
-    try {
-      const res = await fetch('/api/instacart_shopping_list', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: 'My SpoonAssist list',
-          ingredients: activeItems.map((i) => ({ name: i.name, quantity: i.quantity ?? 1, unit: i.unit ?? 'each' })),
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'failed');
-      setInstacart({ loading: false, url: data.url, error: null, confirmed: true });
-      window.open(data.url, '_blank', 'noopener,noreferrer');
-      captureEvent(EVENTS.SPOONASSIST_V2_SAVINGS_SHOWN, {
-        savings: mostExpensive != null && summary ? round2(mostExpensive - summary.cheapestTotal) : null,
-        duplicate_items_avoided: sharedItemCount,
-      });
-    } catch (err) {
-      setInstacart({ loading: false, url: null, error: err.message, confirmed: false });
-    }
+  const handleShopAtClick = ({ chainId, url }, total) => {
+    captureEvent(EVENTS.SPOONASSIST_V2_RETAILER_DEEPLINK_CLICKED, {
+      chainId,
+      // This app has no server-side persisted shopping list -- lists live in
+      // PlanProvider's localStorage state, so there's no stable id to send.
+      listId: null,
+      total,
+      url,
+    });
   };
 
-  const sharedItemCount = plan.consolidatedItems.filter((i) => i.sourceRecipeIds.length > 1).length;
   const mostExpensive = summary ? Math.max(...Object.values(summary.storeTotals)) : null;
 
   return (
@@ -233,12 +221,14 @@ export default function SpoonAssistComparePage() {
               .map(({ store, total, availableCount }) => (
                 <StoreCard
                   key={store.id}
+                  storeId={store.id}
                   name={store.name}
                   total={total}
                   deltaFromMostExpensive={mostExpensive != null ? mostExpensive - total : null}
                   availableCount={availableCount}
                   itemCount={activeItems.length}
                   isBest={store.name === summary.cheapestStore}
+                  onShopAtClick={(link) => handleShopAtClick(link, total)}
                 />
               ))}
           </div>
@@ -260,39 +250,23 @@ export default function SpoonAssistComparePage() {
           />
 
           <div className="mt-8">
-            {instacart.confirmed ? (
-              <div className="text-center">
-                <p className="mb-4 text-[17px] font-semibold text-[var(--sa-ink)]">Your list is on its way!</p>
-                <SavingsShareCard
-                  savings={Math.max(0, round2(mostExpensive - summary.cheapestTotal))}
-                  duplicateItemsAvoided={sharedItemCount}
-                />
-              </div>
-            ) : (
-              <div className="rounded-[var(--sa-radius-card)] bg-[var(--sa-surface)] p-5 shadow-[var(--sa-shadow-card)]">
-                <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-                  <div>
-                    <p className="text-[15px] font-semibold text-[var(--sa-ink)]">Ready to shop?</p>
-                    <p className="text-[13px] text-[var(--sa-ink-soft)]">Best total: {summary.cheapestStore} &middot; ${summary.cheapestTotal.toFixed(2)}</p>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <ShareListButtons
-                      ingredients={activeItems.map((i) => ({ name: i.name, amount: i.quantity, unit: i.unit }))}
-                      listTitle="My SpoonAssist list"
-                    />
-                    <PillButton variant="secondary" size="sm" onClick={() => downloadCsv(costData)}>
-                      Export CSV
-                    </PillButton>
-                    {features.instacart && (
-                      <InstacartCTA onClick={handleSendToInstacart} loading={instacart.loading} text="Shop ingredients" />
-                    )}
-                  </div>
+            <div className="rounded-[var(--sa-radius-card)] bg-[var(--sa-surface)] p-5 shadow-[var(--sa-shadow-card)]">
+              <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+                <div>
+                  <p className="text-[15px] font-semibold text-[var(--sa-ink)]">Choose where to shop</p>
+                  <p className="text-[13px] text-[var(--sa-ink-soft)]">Best total: {summary.cheapestStore} &middot; ${summary.cheapestTotal.toFixed(2)}</p>
                 </div>
-                {instacart.error && (
-                  <p className="mt-2 text-center text-[13px] text-[var(--sa-warning)]">Could not create Instacart list. Please try again.</p>
-                )}
+                <div className="flex flex-wrap items-center gap-2">
+                  <ShareListButtons
+                    ingredients={activeItems.map((i) => ({ name: i.name, amount: i.quantity, unit: i.unit }))}
+                    listTitle="My SpoonAssist list"
+                  />
+                  <PillButton variant="secondary" size="sm" onClick={() => downloadCsv(costData)}>
+                    Export CSV
+                  </PillButton>
+                </div>
               </div>
-            )}
+            </div>
           </div>
         </>
       )}
