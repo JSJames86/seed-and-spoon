@@ -6,6 +6,25 @@ function CheckIcon() {
   );
 }
 
+// One badge per card, driven by the dominant PriceQuote source behind this
+// store's total (lib/pricing/resolve.ts classifyProvenance) -- spec §7. Not
+// per-line-item; that's more provenance detail than the card view needs.
+const PROVENANCE = {
+  live:      { label: 'Live',                bg: 'bg-[var(--sa-savings)]',    text: 'text-white' },
+  community: { label: 'Community-confirmed', bg: 'bg-[var(--sa-green)]',      text: 'text-[var(--sa-green-deep)]' },
+  estimated: { label: 'Estimated',           bg: 'bg-[var(--sa-surface-alt)]', text: 'text-[var(--sa-ink-soft)]' },
+};
+
+function ProvenanceBadge({ provenance }) {
+  const p = PROVENANCE[provenance];
+  if (!p) return null;
+  return (
+    <span className={`inline-flex items-center rounded px-1.5 py-0.5 text-[11px] font-medium ${p.bg} ${p.text}`}>
+      {p.label}
+    </span>
+  );
+}
+
 // One store's basket total in the compare grid. `isBest` renders the green
 // "Best total" ribbon (never orange -- accent stays reserved for the
 // primary Send-to-Instacart action, spec §3 rule 1 / §4.6).
@@ -16,6 +35,7 @@ export default function StoreCard({
   availableCount,
   itemCount,
   isBest = false,
+  provenance = null,
   className = '',
 }) {
   return (
@@ -28,7 +48,10 @@ export default function StoreCard({
         </span>
       )}
 
-      <p className="text-[15px] font-semibold text-[var(--sa-ink)]">{name}</p>
+      <div className="flex items-center gap-2">
+        <p className="text-[15px] font-semibold text-[var(--sa-ink)]">{name}</p>
+        <ProvenanceBadge provenance={provenance} />
+      </div>
       <p className="mt-1 text-[28px] font-semibold text-[var(--sa-ink)]">${total.toFixed(2)}</p>
 
       {!isBest && deltaFromMostExpensive != null && deltaFromMostExpensive > 0 && (

@@ -152,10 +152,13 @@ export default function SpoonAssistListPage() {
         </details>
       )}
 
-      <div className="mt-8 flex justify-center">
+      <div className="mt-8 flex flex-col items-center gap-3">
         <PillButton as={Link} href="/spoonassist/compare" size="lg">
           Compare prices &rarr;
         </PillButton>
+        <Link href="/spoonassist/receipts/scan" className="text-[13px] font-medium text-[var(--sa-ink-soft)] underline">
+          Scan a receipt to help confirm prices
+        </Link>
       </div>
     </div>
   );
