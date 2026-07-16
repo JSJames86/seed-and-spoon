@@ -2,7 +2,9 @@
 
 ## Stack
 
-Next.js 15 (App Router) · Supabase (Auth + Postgres + RLS) · Tailwind CSS · Bun runtime · Vercel edge deployment · Resend (transactional email) · Stripe (donations)
+Next.js 15 (App Router) · Supabase (Auth + Postgres + RLS) · Tailwind CSS · Vercel edge deployment · Resend (transactional email) · Stripe (donations)
+
+Package manager: **npm**. (Not Bun — Bun had compatibility conflicts with this Next.js setup. Some stray Bun-era files/docs may still be in the repo pending cleanup; npm is the source of truth.)
 
 ## Repository layout
 
@@ -21,7 +23,7 @@ emails/templates/       Resend email templates
 
 See `.env.example`. Required: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_URL`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `RESEND_API_KEY`.
 
-Build: `bun run build` · Dev: `bun run dev` · No test suite yet (SpoonAssist has `__tests__/spoonassist/`).
+Build: `npm run build` · Dev: `npm run dev` · No test suite yet (SpoonAssist has `__tests__/spoonassist/`).
 
 ---
 
