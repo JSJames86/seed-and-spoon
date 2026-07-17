@@ -9,7 +9,8 @@
     "lint": "next lint",
     "postbuild": "next-sitemap",
     "import:resources": "node scripts/import-resources.js",
-    "import:spoonassist-recipes": "node scripts/import-spoonassist-recipes.js"
+    "import:spoonassist-recipes": "node scripts/import-spoonassist-recipes.js",
+    "indexnow:submit-sitemap": "node scripts/indexnow-submit-sitemap.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.110.0",
