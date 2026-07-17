@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { submitToIndexNow } from "@/lib/indexnow";
 
-const SITEMAP_URL = "https://seedandspoon.org/sitemap.xml";
+const HOST = "seedandspoon.org";
 
 function authorized(token: string | null): boolean {
   return Boolean(process.env.INDEXNOW_ADMIN_TOKEN) && token === process.env.INDEXNOW_ADMIN_TOKEN;
@@ -9,6 +9,20 @@ function authorized(token: string | null): boolean {
 
 function extractLocs(xml: string): string[] {
   return [...xml.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)].map((m) => m[1]);
+}
+
+/**
+ * Rewrites a public seedandspoon.org URL to Vercel's own deployment origin
+ * so the fetch bypasses Cloudflare, which 403s server-to-server requests
+ * from Vercel's IPs. Only used for fetching sitemap XML — URLs submitted to
+ * IndexNow stay on the public domain.
+ */
+function toFetchOrigin(url: string): string {
+  if (!process.env.VERCEL_URL) return url;
+  const rewritten = new URL(url);
+  rewritten.protocol = "https:";
+  rewritten.host = process.env.VERCEL_URL;
+  return rewritten.toString();
 }
 
 /**
@@ -35,7 +49,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const res = await fetch(SITEMAP_URL, { cache: "no-store" });
+  const res = await fetch(toFetchOrigin(`https://${HOST}/sitemap.xml`), { cache: "no-store" });
   if (!res.ok) {
     return NextResponse.json(
       { ok: false, upstreamStatus: res.status, error: `Failed to fetch sitemap: HTTP ${res.status}` },
@@ -48,7 +62,7 @@ export async function GET(req: NextRequest) {
   let urls: string[] = [];
   if (xml.includes("<sitemapindex")) {
     for (const child of locs) {
-      const childRes = await fetch(child, { cache: "no-store" });
+      const childRes = await fetch(toFetchOrigin(child), { cache: "no-store" });
       if (childRes.ok) urls.push(...extractLocs(await childRes.text()));
     }
   } else {
