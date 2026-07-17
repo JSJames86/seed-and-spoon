@@ -38,8 +38,8 @@ export async function GET(req: NextRequest) {
   const res = await fetch(SITEMAP_URL, { cache: "no-store" });
   if (!res.ok) {
     return NextResponse.json(
-      { error: `Failed to fetch sitemap: HTTP ${res.status}` },
-      { status: 502 }
+      { ok: false, upstreamStatus: res.status, error: `Failed to fetch sitemap: HTTP ${res.status}` },
+      { status: 200 }
     );
   }
   const xml = await res.text();
@@ -58,8 +58,8 @@ export async function GET(req: NextRequest) {
 
   const result = await submitToIndexNow(urls);
   return NextResponse.json(
-    { mode: "sitemap", urlsFound: urls.length, ...result },
-    { status: result.ok ? 200 : 502 }
+    { mode: "sitemap", urlsFound: urls.length, ...result, upstreamStatus: result.status },
+    { status: 200 }
   );
 }
 
@@ -94,5 +94,5 @@ export async function POST(req: NextRequest) {
   }
 
   const result = await submitToIndexNow(body.urls);
-  return NextResponse.json(result, { status: result.ok ? 200 : 502 });
+  return NextResponse.json({ ...result, upstreamStatus: result.status }, { status: 200 });
 }
