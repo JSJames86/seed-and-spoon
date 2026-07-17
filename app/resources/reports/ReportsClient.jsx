@@ -236,6 +236,26 @@ const RESOURCES = [
     href: 'https://www.cnbc.com/2025/04/26/americans-groceries-buy-now-pay-later-loans.html',
     tag: 'News',
   },
+  {
+    category: 'National Data',
+    org: 'Bain & Company (with NielsenIQ)',
+    title: 'The U.S. Grocery Slowdown Is Real',
+    year: '2026',
+    description:
+      "Bain & Company's analysis of NielsenIQ data shows U.S. grocery unit sales fell 1.8% year-over-year in June 2026, with units down roughly 2% in most months since February — declines that price inflation of 2–3% can no longer offset. Bain identifies the late-2025 SNAP benefit reductions and tighter 2026 eligibility rules as key pressures on lower-income households, independently corroborating the SNAP-cut impacts documented in our Modernizing Hunger Relief white paper.",
+    href: 'https://www.bain.com/insights/the-us-grocery-slowdown-is-real-snap-chart/',
+    tag: 'Research',
+  },
+  {
+    category: 'National Data',
+    org: 'CNBC',
+    title: 'U.S. Grocery Slowdown Deepens as Shoppers Buy Fewer Items',
+    year: '2026',
+    description:
+      "CNBC's exclusive reporting on the Bain/NielsenIQ analysis. A Bain consumer survey found 80% of Americans are trying to spend less and 28% are actively cutting grocery spending — with 56% of those trading down to cheaper brands, 49% buying fewer items, and 44% relying more on coupons and promotions. Documents the household budget strain driving demand for community food programs like ours.",
+    href: 'https://www.cnbc.com/2026/07/16/us-grocery-spending-slows-in-hit-to-food-companies.html',
+    tag: 'News',
+  },
 ];
 
 // ─── Components ───────────────────────────────────────────────────────────────
