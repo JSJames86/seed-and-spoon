@@ -13,7 +13,7 @@ export async function GET() {
   const supabase = serviceClient()
 
   const [d, v, e] = await Promise.all([
-    supabase.from('donations').select('id, donor_name, donor_email, amount, donation_type, status, donated_at').order('donated_at', { ascending: false }).limit(20),
+    supabase.from('donations').select('id, donor_name, donor_email, amount, donation_type, status, donated_at, receipt_id, receipt_email_sent_at').order('donated_at', { ascending: false }).limit(20),
     supabase.from('volunteer_applications').select('id, name, email, interests, availability, status, created_at').order('created_at', { ascending: false }).limit(20),
     supabase.from('email_logs').select('id, recipient_email, subject, email_type, status, sent_at, error_message').order('sent_at', { ascending: false }).limit(20),
   ])

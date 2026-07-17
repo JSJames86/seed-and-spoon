@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
-import SendReceiptsButton from './SendReceiptsButton'
 import NotificationBell from '@/components/NotificationBell'
 import { useDemo } from '@/contexts/DemoContext'
 import { supabase } from '@/lib/supabase'
@@ -44,6 +43,8 @@ export default function AdminPage() {
   const [newDoc, setNewDoc] = useState({ title: '', description: '', category: 'governance', access_level: 'staff' })
   const [inviting, setInviting] = useState(false)
   const [inviteMsg, setInviteMsg] = useState('')
+  const [resendingId, setResendingId] = useState(null)
+  const [resendMsg, setResendMsg] = useState({})
 
   const isAdmin = user?.email === ADMIN_EMAIL || profile?.role === 'admin'
   const { setDemo } = useDemo()
@@ -190,6 +191,20 @@ export default function AdminPage() {
     setAdminDocs(prev => prev.filter(d => d.id !== doc.id))
   }
 
+  const resendReceipt = async (donationId) => {
+    setResendingId(donationId)
+    setResendMsg(prev => ({ ...prev, [donationId]: '' }))
+    try {
+      const res = await fetch(`/api/donations/${donationId}/resend-receipt`, { method: 'POST' })
+      const data = await res.json()
+      setResendMsg(prev => ({ ...prev, [donationId]: res.ok ? 'Sent ✓' : (data.error || 'Failed') }))
+    } catch (err) {
+      setResendMsg(prev => ({ ...prev, [donationId]: String(err) }))
+    } finally {
+      setResendingId(null)
+    }
+  }
+
   const openDocumentAdmin = async (doc) => {
     const res = await fetch(`/api/documents/url?path=${encodeURIComponent(doc.file_path)}`)
     const data = await res.json()
@@ -235,7 +250,6 @@ export default function AdminPage() {
             className="px-3 py-1.5 text-xs font-semibold border border-orange-300 text-orange-600 rounded-lg hover:bg-orange-50 transition-all">
             🎭 Demo
           </button>
-          <SendReceiptsButton />
         </div>
       </div>
 
@@ -416,7 +430,7 @@ export default function AdminPage() {
               <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                 <table className="w-full text-sm">
                   <thead><tr className="bg-gray-50 border-b border-gray-200">
-                    <Th>Donor</Th><Th>Email</Th><Th>Amount</Th><Th>Type</Th><Th>Status</Th><Th>Date</Th>
+                    <Th>Donor</Th><Th>Email</Th><Th>Amount</Th><Th>Type</Th><Th>Status</Th><Th>Date</Th><Th>Receipt</Th><Th>Actions</Th>
                   </tr></thead>
                   <tbody>
                     {filteredDonors.map(d => (
@@ -427,9 +441,29 @@ export default function AdminPage() {
                         <Td>{d.donation_type}</Td>
                         <Td><StatusBadge status={d.status} /></Td>
                         <Td>{d.donated_at ? new Date(d.donated_at).toLocaleDateString() : '—'}</Td>
+                        <Td>
+                          {d.receipt_email_sent_at
+                            ? <span className="text-xs text-green-700">Sent {new Date(d.receipt_email_sent_at).toLocaleDateString()}</span>
+                            : <span className="text-xs text-gray-400 italic">Not sent</span>}
+                        </Td>
+                        <Td>
+                          {d.donor_email && (
+                            <div className="flex flex-col items-start gap-1">
+                              <button
+                                onClick={() => resendReceipt(d.id)}
+                                disabled={resendingId === d.id}
+                                className="px-2 py-1 text-xs font-medium border border-green-300 text-green-700 rounded-md hover:bg-green-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all whitespace-nowrap">
+                                {resendingId === d.id ? 'Sending...' : 'Resend receipt'}
+                              </button>
+                              {resendMsg[d.id] && (
+                                <span className={`text-xs ${resendMsg[d.id] === 'Sent ✓' ? 'text-green-700' : 'text-red-600'}`}>{resendMsg[d.id]}</span>
+                              )}
+                            </div>
+                          )}
+                        </Td>
                       </tr>
                     ))}
-                    {filteredDonors.length === 0 && <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-400 text-sm italic">No records found</td></tr>}
+                    {filteredDonors.length === 0 && <tr><td colSpan={8} className="px-4 py-8 text-center text-gray-400 text-sm italic">No records found</td></tr>}
                   </tbody>
                 </table>
               </div>

@@ -21,7 +21,7 @@ const OFF_WHITE = '#F8F9F3'
 const DARK_TEXT = '#1B2A22'
 const MUTED = '#6B7B70'
 
-interface DonationReceiptProps {
+interface DonationDeterminationProps {
   firstName: string
   amount: number
   donationType: 'one-time' | 'monthly'
@@ -31,13 +31,21 @@ interface DonationReceiptProps {
   paymentMethod?: string
 }
 
-export function DonationReceiptEmail({ firstName, amount, donationType, date, transactionId, receiptId, paymentMethod = 'Card' }: DonationReceiptProps) {
+export function DonationDeterminationEmail({
+  firstName,
+  amount,
+  donationType,
+  date,
+  transactionId,
+  receiptId,
+  paymentMethod = 'Card',
+}: DonationDeterminationProps) {
   const formattedAmount = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)
 
   return (
     <Html lang="en">
       <Head />
-      <Preview>Your official donation receipt from Seed &amp; Spoon — and what happens next.</Preview>
+      <Preview>Our 501(c)(3) determination arrived. Here&rsquo;s your updated receipt.</Preview>
       <Body style={body}>
         <Section style={header}>
           <Container style={headerInner}>
@@ -47,29 +55,25 @@ export function DonationReceiptEmail({ firstName, amount, donationType, date, tr
         </Section>
 
         <Container style={container}>
-          <Text style={receiptLabel}>Donation Receipt</Text>
-          <Text style={amountDisplay}>{formattedAmount}</Text>
-          {donationType === 'monthly' && (
-            <Text style={recurringBadge}>Monthly Recurring</Text>
-          )}
+          <Text style={receiptLabel}>From Our Kitchen</Text>
           <Hr style={divider} />
-          <Heading style={h1}>Thank you, {firstName}.</Heading>
+          <Heading style={h1}>We have news, {firstName}.</Heading>
           <Text style={paragraph}>
-            Your gift goes directly toward closing the weekend nutrition gap for children in
-            Newark — the 60+ hours every week when school meals can&rsquo;t reach them.
+            The IRS has officially recognized Seed &amp; Spoon, Inc. as a 501(c)(3) tax-exempt
+            organization — retroactive to our incorporation on February 3, 2026.
           </Text>
           <Text style={paragraph}>
-            You&rsquo;re not funding a drive. You&rsquo;re funding infrastructure: allergen-matched
-            meal boxes, prepared in a licensed commercial kitchen under a formal food safety plan,
-            sealed, tracked, and delivered to enrolled families every single weekend.
+            That means the gift you made on {date} is now officially tax-deductible. Your updated
+            receipt is below (same details, now with our determination confirmed).
           </Text>
-          <Section style={ctaSection}>
-            <Button href="https://seedandspoon.org/impact" style={ctaButton}>
-              See where your gift goes
-            </Button>
-          </Section>
+          <Text style={paragraph}>
+            You believed in this before the government put a stamp on it. You were one of our
+            very first supporters — and when the first 5 Loaves meal boxes reach Newark families,
+            that will be partly your doing.
+          </Text>
+
           <Hr style={divider} />
-          <Heading style={h2}>Your official donation receipt</Heading>
+          <Heading style={h2}>Your updated donation receipt</Heading>
           <Section style={dataTable}>
             <Row label="Donor" value={firstName} />
             <Row label="Amount" value={formattedAmount} />
@@ -80,15 +84,22 @@ export function DonationReceiptEmail({ firstName, amount, donationType, date, tr
             <Row label="Transaction ID" value={transactionId} mono />
           </Section>
           <Text style={orgLine}>Seed &amp; Spoon, Inc. &bull; EIN 41-4059078</Text>
-          <Text style={boldNote}>No goods or services were provided in exchange for this contribution.</Text>
-          <Text style={muted}>
-            A note on deductibility: Seed &amp; Spoon has filed IRS Form 1023 and our 501(c)(3)
-            determination is pending. Because our application was filed within the IRS&rsquo;s
-            required window after incorporation, approval would generally make tax-exempt status
-            retroactive to our formation date — meaning this gift would become tax-deductible once
-            our determination arrives. We&rsquo;ll email you the moment it does. Please keep this
-            receipt and consult your tax advisor about your individual situation.
+          <Text style={boldNote}>
+            Seed &amp; Spoon, Inc. is a tax-exempt organization under Section 501(c)(3) of the
+            Internal Revenue Code. No goods or services were provided in exchange for this
+            contribution.
           </Text>
+          <Text style={muted}>
+            Your contribution is tax-deductible to the extent allowed by law. Please retain this
+            receipt for your records.
+          </Text>
+
+          <Section style={ctaSection}>
+            <Button href="https://seedandspoon.org/give" style={ctaButton}>
+              Help us reach the first weekend
+            </Button>
+          </Section>
+
           <Text style={signature}>
             With gratitude,<br />
             <strong>The Seed &amp; Spoon Team</strong>
@@ -103,7 +114,7 @@ export function DonationReceiptEmail({ firstName, amount, donationType, date, tr
               {' · '}
               <Link href="https://seedandspoon.org/unsubscribe" style={footerLink}>Unsubscribe</Link>
             </Text>
-            <Text style={footerText}>501(c)(3) Status Pending &bull; NJ Nonprofit Corporation</Text>
+            <Text style={footerText}>501(c)(3) Tax-Exempt Organization &bull; EIN 41-4059078</Text>
           </Container>
         </Section>
       </Body>
@@ -111,67 +122,11 @@ export function DonationReceiptEmail({ firstName, amount, donationType, date, tr
   )
 }
 
-export async function renderDonationReceiptEmail(props: DonationReceiptProps): Promise<string> {
-  return render(<DonationReceiptEmail {...props} />)
+export async function renderDonationDeterminationEmail(props: DonationDeterminationProps): Promise<string> {
+  return render(<DonationDeterminationEmail {...props} />)
 }
 
-export default DonationReceiptEmail
-
-// ─── Staff Notification ───────────────────────────────────────────────────────
-
-interface DonationInternalProps {
-  name: string
-  email: string
-  amount: number
-  donationType: 'one-time' | 'monthly'
-  date: string
-  transactionId: string
-}
-
-export function DonationInternalEmail({ name, email, amount, donationType, date, transactionId }: DonationInternalProps) {
-  const formattedAmount = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)
-  return (
-    <Html lang="en">
-      <Head />
-      <Preview>New {donationType} donation of {formattedAmount} from {name}</Preview>
-      <Body style={body}>
-        <Section style={header}>
-          <Container style={headerInner}>
-            <Img src="https://seedandspoon.org/assets/logo/seed-and-spoon-logo-full-compact.png" width="160" alt="Seed & Spoon" style={logoImg} />
-            <Text style={tagline}>Internal Notification</Text>
-          </Container>
-        </Section>
-        <Container style={container}>
-          <Text style={receiptLabel}>New Donation</Text>
-          <Text style={amountDisplay}>{formattedAmount}</Text>
-          {donationType === 'monthly' && <Text style={recurringBadge}>Monthly Recurring</Text>}
-          <Hr style={divider} />
-          <Heading style={h1}>A new donation just came in.</Heading>
-          <Section style={dataTable}>
-            <Row label="Donor" value={name} />
-            <Row label="Email" value={email} />
-            <Row label="Amount" value={formattedAmount} />
-            <Row label="Type" value={donationType === 'monthly' ? 'Monthly Recurring' : 'One-Time'} />
-            <Row label="Date" value={date} />
-            <Row label="Transaction ID" value={transactionId} mono />
-          </Section>
-          <Section style={ctaSection}>
-            <Button href={`mailto:${email}`} style={ctaButton}>Email Donor</Button>
-          </Section>
-        </Container>
-        <Section style={footer}>
-          <Container style={footerInner}>
-            <Text style={footerText}>Seed &amp; Spoon Internal &bull; Newark, NJ</Text>
-          </Container>
-        </Section>
-      </Body>
-    </Html>
-  )
-}
-
-export async function renderDonationInternalEmail(props: DonationInternalProps): Promise<string> {
-  return render(<DonationInternalEmail {...props} />)
-}
+export default DonationDeterminationEmail
 
 // ─── Row helper ───────────────────────────────────────────────────────────────
 
@@ -198,8 +153,6 @@ const container: React.CSSProperties = {
   padding: '40px 48px', borderLeft: `4px solid ${LIGHT_GREEN}`,
 }
 const receiptLabel: React.CSSProperties = { color: MUTED, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px', fontFamily: 'Arial, sans-serif', textAlign: 'center', margin: '0 0 4px 0' }
-const amountDisplay: React.CSSProperties = { color: BRAND_GREEN, fontSize: '42px', fontWeight: '400', fontFamily: "'Georgia', serif", textAlign: 'center', margin: '8px 0' }
-const recurringBadge: React.CSSProperties = { display: 'inline-block', backgroundColor: '#D8F3DC', color: BRAND_GREEN, fontSize: '12px', padding: '4px 12px', borderRadius: '20px', fontFamily: 'Arial, sans-serif', textAlign: 'center', margin: '0 auto 8px' }
 const h1: React.CSSProperties = { color: BRAND_GREEN, fontSize: '24px', fontWeight: 'bold', lineHeight: '1.3', margin: '0 0 16px 0' }
 const h2: React.CSSProperties = { color: BRAND_GREEN, fontSize: '16px', fontWeight: 'bold', lineHeight: '1.3', margin: '0 0 12px 0' }
 const paragraph: React.CSSProperties = { color: DARK_TEXT, fontSize: '15px', lineHeight: '1.7', margin: '0 0 16px 0' }
