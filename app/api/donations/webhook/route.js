@@ -20,29 +20,55 @@ function getServiceSupabase() {
   return createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
 }
 
+// A single one-time donation via Checkout fires both checkout.session.completed and
+// payment_intent.succeeded for the same payment intent — dedup on that (or the
+// transaction id, for events where no payment intent is available yet) so we never
+// insert a second donation row or send a second receipt for the same payment.
 async function recordDonation({ donorEmail, donorName, amountCents, isMonthly, transactionId, stripePaymentIntentId }) {
+  const supabase = getServiceSupabase();
+  if (!supabase) {
+    console.warn('[Stripe Webhook] Skipping DB record — service role key not configured');
+    return null;
+  }
   try {
-    const supabase = getServiceSupabase();
-    if (!supabase) {
-      console.warn('[Stripe Webhook] Skipping DB record — service role key not configured');
-      return;
+    const dedupColumn = stripePaymentIntentId ? 'stripe_payment_intent_id' : 'transaction_id';
+    const dedupValue = stripePaymentIntentId || transactionId;
+    if (dedupValue) {
+      const { data: existing } = await supabase
+        .from('donations')
+        .select('id, receipt_id, receipt_email_sent_at')
+        .eq(dedupColumn, dedupValue)
+        .maybeSingle();
+      if (existing) return existing;
     }
-    await supabase.from('donations').insert({
-      donor_email: donorEmail || null,
-      donor_name: donorName,
-      amount: amountCents / 100,
-      donation_type: isMonthly ? 'monthly' : 'one_time',
-      transaction_id: transactionId,
-      stripe_payment_intent_id: stripePaymentIntentId || null,
-      payment_method: 'stripe',
-      status: 'completed',
-    });
+
+    const { data: inserted, error } = await supabase
+      .from('donations')
+      .insert({
+        donor_email: donorEmail || null,
+        donor_name: donorName,
+        amount: amountCents / 100,
+        donation_type: isMonthly ? 'monthly' : 'one_time',
+        transaction_id: transactionId,
+        stripe_payment_intent_id: stripePaymentIntentId || null,
+        payment_method: 'stripe',
+        status: 'completed',
+      })
+      .select('id, receipt_id, receipt_email_sent_at')
+      .single();
+    if (error) throw error;
+    return inserted;
   } catch (err) {
     console.error('[Stripe Webhook] Failed to record donation (non-fatal):', err);
+    return null;
   }
 }
 
-async function sendDonationEmails({ name, email, amountCents, isMonthly, transactionId, createdAt }) {
+async function sendDonationEmails({ donationRow, name, email, amountCents, isMonthly, transactionId, createdAt }) {
+  // Idempotency guard — skip if this donation already had its receipt sent
+  // (e.g. this is the second of the two webhook events for the same payment).
+  if (!donationRow || donationRow.receipt_email_sent_at) return;
+
   const STAFF_EMAIL = process.env.STAFF_EMAIL || 'team@seedandspoon.org';
   const amountDollars = amountCents / 100;
   const donationType = isMonthly ? 'monthly' : 'one-time';
@@ -60,13 +86,24 @@ async function sendDonationEmails({ name, email, amountCents, isMonthly, transac
       donationType,
       date: dateStr,
       transactionId,
+      receiptId: donationRow.receipt_id,
+      paymentMethod: 'Card',
     });
-    await sendEmail({
+    const result = await sendEmail({
       to: email,
-      subject: 'Thank you for your donation to Seed & Spoon!',
+      subject: 'Your gift is already at work — receipt inside',
       html: receiptHtml,
       emailType: 'donation_receipt',
     });
+    if (result.success && donationRow.id) {
+      const supabase = getServiceSupabase();
+      if (supabase) {
+        await supabase
+          .from('donations')
+          .update({ receipt_email_sent_at: new Date().toISOString() })
+          .eq('id', donationRow.id);
+      }
+    }
   } catch (e) {
     console.error('[Stripe Webhook] Donor receipt failed:', e);
   }
@@ -149,7 +186,7 @@ export async function POST(request) {
         const donorEmail = session.customer_details?.email;
         const resolvedName = session.customer_details?.name || donorName || 'Friend';
 
-        await recordDonation({
+        const checkoutDonationRow = await recordDonation({
           donorEmail,
           donorName: resolvedName,
           amountCents: amount,
@@ -160,6 +197,7 @@ export async function POST(request) {
 
         if (donorEmail) {
           await sendDonationEmails({
+            donationRow: checkoutDonationRow,
             name: resolvedName,
             email: donorEmail,
             amountCents: amount,
@@ -189,7 +227,7 @@ export async function POST(request) {
         const donorEmail = intent.receipt_email;
         const resolvedName = intent.shipping?.name || donor_name || 'Friend';
 
-        await recordDonation({
+        const piDonationRow = await recordDonation({
           donorEmail,
           donorName: resolvedName,
           amountCents: amount,
@@ -200,6 +238,7 @@ export async function POST(request) {
 
         if (donorEmail) {
           await sendDonationEmails({
+            donationRow: piDonationRow,
             name: resolvedName,
             email: donorEmail,
             amountCents: amount,
