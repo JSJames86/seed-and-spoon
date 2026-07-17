@@ -22,7 +22,11 @@ function extractLocs(xml: string): string[] {
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   if (!authorized(searchParams.get("token"))) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // TEMPORARY: remove hasEnv once we've confirmed prod has INDEXNOW_ADMIN_TOKEN set
+    return NextResponse.json(
+      { error: "Unauthorized", hasEnv: Boolean(process.env.INDEXNOW_ADMIN_TOKEN) },
+      { status: 401 }
+    );
   }
   if (searchParams.get("mode") !== "sitemap") {
     return NextResponse.json(
@@ -68,7 +72,11 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
   if (!authorized(req.headers.get("x-admin-token"))) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // TEMPORARY: remove hasEnv once we've confirmed prod has INDEXNOW_ADMIN_TOKEN set
+    return NextResponse.json(
+      { error: "Unauthorized", hasEnv: Boolean(process.env.INDEXNOW_ADMIN_TOKEN) },
+      { status: 401 }
+    );
   }
 
   let body: { urls?: string[] };
