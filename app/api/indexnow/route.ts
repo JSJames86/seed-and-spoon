@@ -1,20 +1,73 @@
 import { NextRequest, NextResponse } from "next/server";
 import { submitToIndexNow } from "@/lib/indexnow";
 
+const SITEMAP_URL = "https://seedandspoon.org/sitemap.xml";
+
+function authorized(token: string | null): boolean {
+  return Boolean(process.env.INDEXNOW_ADMIN_TOKEN) && token === process.env.INDEXNOW_ADMIN_TOKEN;
+}
+
+function extractLocs(xml: string): string[] {
+  return [...xml.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)].map((m) => m[1]);
+}
+
+/**
+ * GET /api/indexnow?mode=sitemap&token=YOUR_ADMIN_TOKEN
+ *
+ * Server-side bulk submit: fetches the live sitemap (recursing into a
+ * sitemap index if needed) and submits every URL to IndexNow. Runs on
+ * Vercel, so no local terminal or egress access is required — it can be
+ * triggered from any browser.
+ */
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  if (!authorized(searchParams.get("token"))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (searchParams.get("mode") !== "sitemap") {
+    return NextResponse.json(
+      { error: "Use ?mode=sitemap&token=... to bulk-submit the sitemap" },
+      { status: 400 }
+    );
+  }
+
+  const res = await fetch(SITEMAP_URL, { cache: "no-store" });
+  if (!res.ok) {
+    return NextResponse.json(
+      { error: `Failed to fetch sitemap: HTTP ${res.status}` },
+      { status: 502 }
+    );
+  }
+  const xml = await res.text();
+  const locs = extractLocs(xml);
+
+  let urls: string[] = [];
+  if (xml.includes("<sitemapindex")) {
+    for (const child of locs) {
+      const childRes = await fetch(child, { cache: "no-store" });
+      if (childRes.ok) urls.push(...extractLocs(await childRes.text()));
+    }
+  } else {
+    urls = locs;
+  }
+  urls = [...new Set(urls)];
+
+  const result = await submitToIndexNow(urls);
+  return NextResponse.json(
+    { mode: "sitemap", urlsFound: urls.length, ...result },
+    { status: result.ok ? 200 : 502 }
+  );
+}
+
 /**
  * POST /api/indexnow
- * Body: { "urls": ["/blog/new-post", "https://seedandspoon.org/recipes/x"] }
+ * Body: { "urls": ["/blog/new-post"] }
  * Header: x-admin-token: <INDEXNOW_ADMIN_TOKEN>
  *
- * Protected by a shared token so outsiders can't spam submissions
- * against our key. Set INDEXNOW_ADMIN_TOKEN in Vercel env vars.
- *
- * Call this after publishing/updating a Knowledge Center post,
- * recipe, or any public page.
+ * On-demand submission of specific URLs after publishing.
  */
 export async function POST(req: NextRequest) {
-  const token = req.headers.get("x-admin-token");
-  if (!process.env.INDEXNOW_ADMIN_TOKEN || token !== process.env.INDEXNOW_ADMIN_TOKEN) {
+  if (!authorized(req.headers.get("x-admin-token"))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
