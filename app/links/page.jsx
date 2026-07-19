@@ -19,6 +19,7 @@ const LINKS = [
     external: true,
   },
   { emoji: '🛒', label: 'SpoonAssist', destination: '/spoonassist', external: false },
+  { emoji: '🧾', label: 'Send Us the Receipts', destination: '/receipts', external: false },
   { emoji: '📊', label: 'Impact Engine', destination: '/impact', external: false },
   { emoji: '🌐', label: 'Full Website', destination: '/', external: false },
 ];

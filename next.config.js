@@ -27,6 +27,13 @@ const nextConfig = {
         destination: '/resources/reports',
         permanent: true,
       },
+      // Campaign name said aloud ("go to seedandspoon.org slash send us the
+      // receipts") -- forward to the actual route.
+      {
+        source: '/send-us-the-receipts',
+        destination: '/receipts',
+        permanent: true,
+      },
       // Short links for social bios — forward to the UTM-tagged /links hub.
       // Not permanent: these are a marketing convenience, not a page move,
       // and the UTM scheme may change.

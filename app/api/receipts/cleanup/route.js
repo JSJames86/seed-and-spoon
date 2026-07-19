@@ -4,10 +4,61 @@ import { getServiceClient } from '@/lib/spoonassist/priceEngine';
 const RETENTION_DAYS = 30;
 const BATCH_SIZE = 200;
 
+// Purges expired storage objects for one table and nulls storage_path on
+// the rows that owned them. Shared by receipt_uploads (personal price
+// confirmation flow) and receipt_submissions (Send Us the Receipts) --
+// same 'receipts' bucket, same storage_path/image_deleted_at shape, same
+// 30-day retention promise, so one purge loop covers both instead of
+// duplicating it per table.
+async function purgeExpired(client, table, cutoff) {
+  const { data: expired, error: fetchError } = await client
+    .from(table)
+    .select('id, storage_path')
+    .not('storage_path', 'is', null)
+    .lt('created_at', cutoff)
+    .limit(BATCH_SIZE);
+
+  if (fetchError) {
+    console.error(`[/api/receipts/cleanup] ${table} fetch failed:`, fetchError.message);
+    return { deleted: 0, error: true };
+  }
+  if (!expired?.length) return { deleted: 0, error: false };
+
+  const paths = expired.map((r) => r.storage_path);
+  const { error: removeError } = await client.storage.from('receipts').remove(paths);
+  if (removeError) {
+    console.error(`[/api/receipts/cleanup] ${table} storage remove failed:`, removeError.message);
+    return { deleted: 0, error: true };
+  }
+
+  const ids = expired.map((r) => r.id);
+  const imageDeletedAt = new Date().toISOString();
+  const { error: updateError } = await client
+    .from(table)
+    .update({ storage_path: null, image_deleted_at: imageDeletedAt })
+    .in('id', ids);
+  if (updateError) console.error(`[/api/receipts/cleanup] ${table} row update failed:`, updateError.message);
+
+  if (table === 'receipt_submissions') {
+    // Still pending after 30 days means the extraction hand-off never
+    // picked it up -- move to 'purged' so it stops showing as a stuck
+    // queue item. Already-extracted/rejected rows keep their status.
+    const { error: statusError } = await client
+      .from(table)
+      .update({ status: 'purged' })
+      .eq('status', 'pending')
+      .in('id', ids);
+    if (statusError) console.error(`[/api/receipts/cleanup] ${table} status update failed:`, statusError.message);
+  }
+
+  return { deleted: expired.length, error: false };
+}
+
 // GET /api/receipts/cleanup -- deletes receipt photos older than 30 days
 // (spec §4: "Receipt images: retain 30 days for dispute/debug, then
-// auto-delete. Extracted price data persists; images don't."). Scheduled
-// via vercel.json `crons` (daily) -- Vercel sends
+// auto-delete. Extracted price data persists; images don't."). Covers both
+// receipt_uploads (personal flow) and receipt_submissions (Send Us the
+// Receipts). Scheduled via vercel.json `crons` (daily) -- Vercel sends
 // `Authorization: Bearer $CRON_SECRET` for cron-triggered requests when
 // CRON_SECRET is set; checked here since this deletes data (the repo's
 // other cron route, /api/foodbanks, is a read-only refresh and doesn't need
@@ -26,33 +77,14 @@ export async function GET(request) {
 
   const cutoff = new Date(Date.now() - RETENTION_DAYS * 24 * 60 * 60 * 1000).toISOString();
 
-  const { data: expired, error: fetchError } = await client
-    .from('receipt_uploads')
-    .select('id, storage_path')
-    .not('storage_path', 'is', null)
-    .lt('created_at', cutoff)
-    .limit(BATCH_SIZE);
+  const [uploads, submissions] = await Promise.all([
+    purgeExpired(client, 'receipt_uploads', cutoff),
+    purgeExpired(client, 'receipt_submissions', cutoff),
+  ]);
 
-  if (fetchError) {
-    console.error('[/api/receipts/cleanup] fetch failed:', fetchError.message);
-    return NextResponse.json({ error: 'Cleanup failed' }, { status: 500 });
-  }
-  if (!expired?.length) return NextResponse.json({ deleted: 0 });
-
-  const paths = expired.map((r) => r.storage_path);
-  const { error: removeError } = await client.storage.from('receipts').remove(paths);
-  if (removeError) {
-    console.error('[/api/receipts/cleanup] storage remove failed:', removeError.message);
+  if (uploads.error || submissions.error) {
     return NextResponse.json({ error: 'Cleanup failed' }, { status: 500 });
   }
 
-  const ids = expired.map((r) => r.id);
-  const { error: updateError } = await client
-    .from('receipt_uploads')
-    .update({ storage_path: null, image_deleted_at: new Date().toISOString() })
-    .in('id', ids);
-
-  if (updateError) console.error('[/api/receipts/cleanup] row update failed:', updateError.message);
-
-  return NextResponse.json({ deleted: expired.length });
+  return NextResponse.json({ deleted: uploads.deleted + submissions.deleted });
 }
