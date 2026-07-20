@@ -34,6 +34,19 @@ const nextConfig = {
         destination: '/receipts',
         permanent: true,
       },
+      // No-hyphen variant of the campaign name.
+      {
+        source: '/sendusthereceipts',
+        destination: '/receipts',
+        permanent: true,
+      },
+      // A printed flyer went out with the URL cropped to "receipt" (singular)
+      // -- urgent, flyers are already in hand.
+      {
+        source: '/receipt',
+        destination: '/receipts',
+        permanent: true,
+      },
       // Short links for social bios — forward to the UTM-tagged /links hub.
       // Not permanent: these are a marketing convenience, not a page move,
       // and the UTM scheme may change.
