@@ -139,7 +139,6 @@ export default function SendUsTheReceiptsPage() {
               ref={fileInput}
               type="file"
               accept="image/*"
-              capture="environment"
               className="sr-only"
               onChange={(e) => onPickFile(e.target.files?.[0] ?? null)}
             />
