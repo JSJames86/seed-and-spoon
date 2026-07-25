@@ -6,7 +6,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { verifyWebhookSignature } from '@/lib/stripe-helpers';
+import { verifyWebhookSignature, stripe } from '@/lib/stripe-helpers';
 import { captureServerEvent } from '@/lib/posthog-server';
 import { EVENTS } from '@/analytics/events';
 import { createClient } from '@supabase/supabase-js';
@@ -14,6 +14,7 @@ import { sendEmail } from '@/lib/email-service';
 import { renderDonationReceiptEmail, renderDonationInternalEmail } from '@/emails/templates/donation';
 import { sendTransactional, FROM } from '@/lib/email';
 import DonorThankYou from '@/emails/DonorThankYou';
+import PaymentFailed from '@/emails/PaymentFailed';
 
 function getServiceSupabase() {
   const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -329,6 +330,38 @@ export async function POST(request) {
           tier: null,
           amount: (invoice.amount_due || 0) / 100,
         });
+
+        const donorEmail = invoice.customer_email;
+        if (donorEmail) {
+          let updateUrl;
+          try {
+            const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://seedandspoon.org';
+            const portalSession = await stripe.billingPortal.sessions.create({
+              customer: customerId,
+              return_url: `${baseUrl}/donate`,
+            });
+            updateUrl = portalSession.url;
+          } catch (e) {
+            console.error('[Stripe Webhook] Billing portal session failed (non-fatal):', e);
+          }
+
+          try {
+            await sendTransactional({
+              type: 'payment_failed',
+              to: donorEmail,
+              subject: "Your monthly gift didn't go through",
+              from: FROM.donations,
+              react: PaymentFailed({
+                firstName: invoice.customer_name || 'Friend',
+                amount: `$${((invoice.amount_due || 0) / 100).toFixed(2)}`,
+                updateUrl,
+              }),
+              metadata: { subscription_id: subscriptionId, invoice_id: invoice.id },
+            });
+          } catch (e) {
+            console.error('[Stripe Webhook] Payment-failed email failed (non-fatal):', e);
+          }
+        }
         break;
       }
 
