@@ -17,3 +17,9 @@ export const resend = new Proxy({} as Resend, {
     return getResend()[prop as keyof Resend]
   },
 })
+
+export const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID
+
+export const NEWSLETTER_FROM =
+  process.env.NEWSLETTER_FROM ||
+  `${process.env.RESEND_FROM_NAME || 'Seed & Spoon'} <${process.env.RESEND_FROM_EMAIL || 'hello@seedandspoon.org'}>`

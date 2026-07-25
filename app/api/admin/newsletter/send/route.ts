@@ -1,85 +1,84 @@
-import { NextRequest, NextResponse } from 'next/server'
-import * as React from 'react'
-import { getResend } from '@/lib/resend'
-import Newsletter, { Story } from '@/emails/Newsletter'
+import { NextRequest, NextResponse } from "next/server";
+import { resend, AUDIENCE_ID, NEWSLETTER_FROM } from "@/lib/resend";
+import Newsletter, { type NewsletterProps } from "@/emails/Newsletter";
 
-function authorized(request: NextRequest) {
-  const token = process.env.ADMIN_SERVICE_TOKEN
-  if (!token) return true // unset -- fine for local dev, set in production
-  return request.headers.get('authorization') === `Bearer ${token}`
-}
-
-interface NewsletterContent {
-  previewText?: string
-  headline: string
-  intro?: string
-  stories?: Story[]
-  ctaLabel?: string
-  ctaHref?: string
-}
+/**
+ * POST /api/admin/newsletter/send
+ *
+ * Body = the newsletter content for this issue (matches NewsletterProps) plus a
+ * couple of send options. Creates the Broadcast against your Audience and,
+ * unless you pass draft:true, sends it in one call.
+ *
+ * The Node SDK lets you pass the React component directly as `react` — Resend
+ * renders it server-side, so you never ship raw HTML.
+ *
+ *   curl -X POST https://backend.vercel.app/api/admin/newsletter/send \
+ *     -H "Authorization: Bearer $ADMIN_SERVICE_TOKEN" \
+ *     -H "Content-Type: application/json" \
+ *     -d '{
+ *           "subject": "November at Seed & Spoon",
+ *           "name": "nov-2026-issue",
+ *           "content": { "previewText": "...", "headline": "...",
+ *                        "intro": "...", "stories": [ ... ] },
+ *           "scheduledAt": "in 1 hour"   // optional; omit to send now
+ *         }'
+ */
 
 interface SendBody {
-  subject: string
-  name: string
-  content: NewsletterContent
-  scheduledAt?: string
-  draft?: boolean
+  subject: string;
+  name: string; // internal reference only, e.g. "nov-2026-issue"
+  content: NewsletterProps;
+  scheduledAt?: string; // ISO 8601 or natural language ("tomorrow at 9am")
+  draft?: boolean; // true = create but don't send, review in dashboard first
 }
 
-// POST /api/admin/newsletter/send -- creates a Resend Broadcast from
-// Newsletter.tsx and, unless `draft` is set, sends it to the synced
-// Audience. Run sync-audience first so the Audience reflects the current
-// email_subscribers list.
-export async function POST(request: NextRequest) {
-  if (!authorized(request)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+function authorized(req: NextRequest): boolean {
+  const header = req.headers.get("authorization") ?? "";
+  const token = header.replace(/^Bearer\s+/i, "");
+  return Boolean(token) && token === process.env.ADMIN_SERVICE_TOKEN;
+}
+
+export async function POST(req: NextRequest) {
+  if (!authorized(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const audienceId = process.env.RESEND_AUDIENCE_ID
-  if (!audienceId) {
-    return NextResponse.json({ error: 'Missing RESEND_AUDIENCE_ID environment variable' }, { status: 500 })
-  }
-
-  const from = process.env.NEWSLETTER_FROM
-  if (!from) {
-    return NextResponse.json({ error: 'Missing NEWSLETTER_FROM environment variable' }, { status: 500 })
-  }
-
-  let body: SendBody
+  let payload: SendBody;
   try {
-    body = await request.json()
+    payload = (await req.json()) as SendBody;
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { subject, name, content, scheduledAt, draft } = body
+  const { subject, name, content, scheduledAt, draft } = payload;
 
-  if (!subject || !name || !content?.headline) {
-    return NextResponse.json({ error: 'subject, name, and content.headline are required' }, { status: 422 })
+  if (!subject || !name || !content) {
+    return NextResponse.json(
+      { error: "subject, name, and content are required" },
+      { status: 400 }
+    );
   }
-
-  const resend = getResend()
 
   const { data, error } = await resend.broadcasts.create({
-    audienceId,
-    name,
-    from,
+    audienceId: AUDIENCE_ID,
+    from: NEWSLETTER_FROM,
     subject,
-    previewText: content.previewText,
-    react: React.createElement(Newsletter, {
-      previewText: content.previewText,
-      headline: content.headline,
-      intro: content.intro,
-      stories: content.stories,
-      ctaLabel: content.ctaLabel,
-      ctaHref: content.ctaHref,
-    }),
-    ...(draft ? { send: false } : { send: true, scheduledAt }),
-  })
+    name,
+    react: Newsletter(content),
+    // send + scheduledAt are honored together: schedule if a time is given,
+    // send now if not. draft:true overrides both and leaves it unsent.
+    ...(draft
+      ? { send: false as const }
+      : { send: true as const, ...(scheduledAt ? { scheduledAt } : {}) }),
+  });
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ success: true, broadcastId: data?.id, draft: !!draft })
+  return NextResponse.json({
+    ok: true,
+    broadcastId: data?.id,
+    status: draft ? "draft" : scheduledAt ? "scheduled" : "sending",
+  });
 }
