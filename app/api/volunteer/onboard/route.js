@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { sendTransactional, FROM } from '@/lib/email';
+import VolunteerWelcome from '@/emails/VolunteerWelcome';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -392,6 +394,19 @@ export async function POST(request) {
         role_preferences,
         needs_bg_check: needsBgCheck,
       });
+
+      try {
+        await sendTransactional({
+          type: 'volunteer_welcome',
+          to: personal.email.trim().toLowerCase(),
+          subject: 'Thanks for signing up to volunteer',
+          from: FROM.volunteer,
+          react: VolunteerWelcome({ firstName: personal.first_name.trim() }),
+          metadata: { volunteer_id },
+        });
+      } catch (emailErr) {
+        console.error('[Volunteer Onboard] Welcome email failed (non-fatal):', emailErr);
+      }
 
       return NextResponse.json({
         success: true,
