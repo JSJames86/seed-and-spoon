@@ -12,6 +12,8 @@ import { EVENTS } from '@/analytics/events';
 import { createClient } from '@supabase/supabase-js';
 import { sendEmail } from '@/lib/email-service';
 import { renderDonationReceiptEmail, renderDonationInternalEmail } from '@/emails/templates/donation';
+import { sendTransactional, FROM } from '@/lib/email';
+import DonorThankYou from '@/emails/DonorThankYou';
 
 function getServiceSupabase() {
   const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -254,6 +256,60 @@ export async function POST(request) {
         const invoice = event.data.object;
         const subscriptionId = invoice.subscription;
         const amount = invoice.amount_paid;
+
+        // The subscription's first invoice (billing_reason 'subscription_create')
+        // is already recorded and receipted via checkout.session.completed --
+        // only renewals need handling here.
+        if (invoice.billing_reason !== 'subscription_cycle') break;
+
+        const donorEmail = invoice.customer_email;
+        const resolvedName = invoice.customer_name || 'Friend';
+
+        const renewalDonationRow = await recordDonation({
+          donorEmail,
+          donorName: resolvedName,
+          amountCents: amount,
+          isMonthly: true,
+          transactionId: invoice.id,
+          stripePaymentIntentId: invoice.payment_intent || null,
+        });
+
+        if (donorEmail && renewalDonationRow && !renewalDonationRow.receipt_email_sent_at) {
+          const dateStr = new Date(invoice.created * 1000).toLocaleDateString('en-US', {
+            timeZone: 'America/New_York',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          });
+          try {
+            await sendTransactional({
+              type: 'donor_thank_you',
+              to: donorEmail,
+              subject: 'Thank you for your gift',
+              from: FROM.donations,
+              react: DonorThankYou({
+                firstName: resolvedName,
+                amount: `$${(amount / 100).toFixed(2)}`,
+                date: dateStr,
+                isRecurring: true,
+                taxNote: true,
+                ein: '41-4059078',
+              }),
+              metadata: { subscription_id: subscriptionId, invoice_id: invoice.id },
+            });
+            if (renewalDonationRow.id) {
+              const supabase = getServiceSupabase();
+              if (supabase) {
+                await supabase
+                  .from('donations')
+                  .update({ receipt_email_sent_at: new Date().toISOString() })
+                  .eq('id', renewalDonationRow.id);
+              }
+            }
+          } catch (e) {
+            console.error('[Stripe Webhook] Recurring donor thank-you failed:', e);
+          }
+        }
 
         break;
       }
