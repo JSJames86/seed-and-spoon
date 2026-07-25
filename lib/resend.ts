@@ -18,8 +18,10 @@ export const resend = new Proxy({} as Resend, {
   },
 })
 
-export const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID
+// The Audience (Resend now calls these "Segments" in the dashboard; the SDK
+// keeps the `audiences` alias, so this ID works for both).
+export const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID!
 
-export const NEWSLETTER_FROM =
-  process.env.NEWSLETTER_FROM ||
-  `${process.env.RESEND_FROM_NAME || 'Seed & Spoon'} <${process.env.RESEND_FROM_EMAIL || 'hello@seedandspoon.org'}>`
+// Must be an address on a domain you've verified in Resend, e.g.
+// "Seed & Spoon <hello@seedandspoon.org>"
+export const NEWSLETTER_FROM = process.env.NEWSLETTER_FROM!
