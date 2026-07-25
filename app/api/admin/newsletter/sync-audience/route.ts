@@ -1,68 +1,80 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-import { getResend } from '@/lib/resend'
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+import { resend, AUDIENCE_ID } from "@/lib/resend";
 
-function serviceClient() {
-  return createClient(
-    process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { autoRefreshToken: false, persistSession: false } }
-  )
+/**
+ * POST /api/admin/newsletter/sync-audience
+ *
+ * Pulls your subscriber list out of Supabase (the source of truth) and pushes
+ * it into the Resend Audience that Broadcasts send against. Idempotent: safe to
+ * run before every send. Contacts already in the audience are skipped.
+ *
+ * Protected by the same ADMIN_SERVICE_TOKEN pattern as the rest of your admin
+ * API — no public exposure.
+ *
+ *   curl -X POST https://backend.vercel.app/api/admin/newsletter/sync-audience \
+ *     -H "Authorization: Bearer $ADMIN_SERVICE_TOKEN"
+ */
+
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+function authorized(req: NextRequest): boolean {
+  const header = req.headers.get("authorization") ?? "";
+  const token = header.replace(/^Bearer\s+/i, "");
+  return Boolean(token) && token === process.env.ADMIN_SERVICE_TOKEN;
 }
 
-function authorized(request: NextRequest) {
-  const token = process.env.ADMIN_SERVICE_TOKEN
-  if (!token) return true // unset -- fine for local dev, set in production
-  return request.headers.get('authorization') === `Bearer ${token}`
-}
-
-// POST /api/admin/newsletter/sync-audience -- upserts every subscribed row
-// from the `email_subscribers` table into the Resend Audience. Resend's
-// contacts.create is an upsert keyed on email, so re-running this is always
-// safe and existing contacts are simply refreshed, not duplicated.
-export async function POST(request: NextRequest) {
-  if (!authorized(request)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+export async function POST(req: NextRequest) {
+  if (!authorized(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const audienceId = process.env.RESEND_AUDIENCE_ID
-  if (!audienceId) {
-    return NextResponse.json({ error: 'Missing RESEND_AUDIENCE_ID environment variable' }, { status: 500 })
-  }
-
-  const supabase = serviceClient()
+  // email_subscribers is the table app/api/email/subscribe and /unsubscribe
+  // read and write. Columns: email (text), first_name (text, nullable),
+  // status (text: 'subscribed' | 'unsubscribed').
   const { data: subscribers, error } = await supabase
-    .from('email_subscribers')
-    .select('email, first_name')
-    .eq('status', 'subscribed')
+    .from("email_subscribers")
+    .select("email, first_name, status")
+    .eq("status", "subscribed");
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  const resend = getResend()
-  let synced = 0
-  const failed: { email: string; error: string }[] = []
+  const results = { added: 0, skipped: 0, failed: 0 };
+  const failures: { email: string; reason: string }[] = [];
 
-  for (const subscriber of subscribers ?? []) {
-    const { error: contactError } = await resend.contacts.create({
-      audienceId,
-      email: subscriber.email,
-      firstName: subscriber.first_name ?? undefined,
-      unsubscribed: false,
-    })
+  for (const sub of subscribers ?? []) {
+    try {
+      const { error: contactError } = await resend.contacts.create({
+        audienceId: AUDIENCE_ID,
+        email: sub.email,
+        firstName: sub.first_name ?? undefined,
+        unsubscribed: false,
+      });
 
-    if (contactError) {
-      failed.push({ email: subscriber.email, error: contactError.message })
-    } else {
-      synced++
+      if (contactError) {
+        // Resend returns an error (not a throw) when the contact already exists.
+        results.skipped++;
+      } else {
+        results.added++;
+      }
+    } catch (e) {
+      results.failed++;
+      failures.push({
+        email: sub.email,
+        reason: e instanceof Error ? e.message : "unknown",
+      });
     }
   }
 
   return NextResponse.json({
-    success: true,
+    ok: true,
     total: subscribers?.length ?? 0,
-    synced,
-    failed,
-  })
+    ...results,
+    failures,
+  });
 }
