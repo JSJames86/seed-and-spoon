@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import * as React from 'react'
 import { getResend } from '@/lib/resend'
-import Newsletter, { NewsletterStory } from '@/emails/Newsletter'
+import Newsletter, { Story } from '@/emails/Newsletter'
 
 function authorized(request: NextRequest) {
   const token = process.env.ADMIN_SERVICE_TOKEN
@@ -13,7 +13,7 @@ interface NewsletterContent {
   previewText?: string
   headline: string
   intro?: string
-  stories?: NewsletterStory[]
+  stories?: Story[]
   ctaLabel?: string
   ctaHref?: string
 }
