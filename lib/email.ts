@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { createClient } from "@supabase/supabase-js";
+import { createServiceClient } from "./supabase-server";
 import { resend } from "./resend";
 
 /**
@@ -37,13 +37,6 @@ interface SendArgs {
   metadata?: Record<string, unknown>;
 }
 
-function getServiceSupabase() {
-  const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) throw new Error("Missing Supabase service role environment variables");
-  return createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
-}
-
 async function log(row: {
   type: string;
   recipient: string;
@@ -54,7 +47,8 @@ async function log(row: {
   metadata?: Record<string, unknown>;
 }) {
   try {
-    const supabase = getServiceSupabase();
+    const supabase = createServiceClient();
+    if (!supabase) return;
     await supabase.from("email_logs").insert({
       recipient_email: row.recipient,
       subject: row.subject,
