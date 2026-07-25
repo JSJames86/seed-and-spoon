@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     firstName?: string;
     lastName?: string;
     phone?: string;
-    interests?: string;
+    interests?: string | string[];
   };
   try {
     body = await req.json();
@@ -37,7 +37,15 @@ export async function POST(req: NextRequest) {
   const email = body.email?.trim().toLowerCase();
   const firstName = body.firstName?.trim() || null;
   const lastName = body.lastName?.trim() || null;
-  const name = [firstName, lastName].filter(Boolean).join(" ") || null;
+  // volunteer_applications.name is NOT NULL -- email alone is all this route requires.
+  const name = [firstName, lastName].filter(Boolean).join(" ") || "Volunteer";
+  // volunteer_applications.interests is a text[] column -- accept either an
+  // array (checkbox form) or a comma-separated string and normalize to one.
+  const interests = Array.isArray(body.interests)
+    ? body.interests.map((i) => i.trim()).filter(Boolean)
+    : body.interests?.trim()
+      ? body.interests.split(",").map((i) => i.trim()).filter(Boolean)
+      : null;
 
   if (!email || !EMAIL_RE.test(email)) {
     return NextResponse.json({ error: "A valid email is required" }, { status: 400 });
@@ -54,7 +62,7 @@ export async function POST(req: NextRequest) {
     first_name: firstName,
     last_name: lastName,
     phone: body.phone?.trim() || null,
-    interests: body.interests?.trim() || null,
+    interests,
     status: "pending",
   });
 
