@@ -1,76 +1,133 @@
-import { Body, Container, Head, Html, Link, Preview, Section, Text } from '@react-email/components'
-import * as React from 'react'
+import type { CSSProperties, ReactNode } from "react";
+import {
+  Html,
+  Head,
+  Preview,
+  Body,
+  Container,
+  Section,
+  Text,
+  Hr,
+  Link,
+} from "@react-email/components";
 
 /**
- * Shared chrome (header/footer/container) for one-off transactional emails
- * that don't need a full bespoke layout -- application decisions, program
- * notices, etc. `s` is the matching content stylesheet: h1/p/card/button/
- * link/hr, ready to drop onto whatever you put inside <Layout>.
+ * Shared shell for every Seed & Spoon email. Header, footer, and the style
+ * tokens live here so the individual templates stay short and consistent.
+ *
+ * `unsubscribeUrl` is optional and only relevant for list mail. Transactional
+ * emails (welcome, donor thank-you, volunteer, application decisions) should
+ * leave it out — they're triggered by an action, not a subscription, so they
+ * don't need an unsubscribe line, and the Broadcast token wouldn't render here
+ * anyway. Pass a real preferences URL only if you want one.
  */
 
-const BRAND_GREEN = '#2D6A4F'
-const LIGHT_GREEN = '#52B788'
-const OFF_WHITE = '#F8F9F3'
-const DARK_TEXT = '#1B2A22'
-const MUTED = '#6B7B70'
-
-interface LayoutProps {
-  preview: string
-  children: React.ReactNode
+export interface LayoutProps {
+  preview: string;
+  children: ReactNode;
+  unsubscribeUrl?: string;
 }
 
-export default function Layout({ preview, children }: LayoutProps) {
+export default function Layout({ preview, children, unsubscribeUrl }: LayoutProps) {
   return (
-    <Html lang="en">
+    <Html>
       <Head />
       <Preview>{preview}</Preview>
-      <Body style={chrome.body}>
-        <Section style={chrome.header}>
-          <Container style={chrome.headerInner}>
-            <Text style={chrome.logoText}>🌱 Seed &amp; Spoon</Text>
-            <Text style={chrome.tagline}>Nourishing Newark, One Family at a Time</Text>
-          </Container>
-        </Section>
+      <Body style={s.body}>
+        <Container style={s.container}>
+          <Section style={{ padding: "8px 0 20px" }}>
+            <Text style={s.brand}>SEED &amp; SPOON</Text>
+          </Section>
 
-        <Container style={chrome.container}>{children}</Container>
+          {children}
 
-        <Section style={chrome.footer}>
-          <Container style={chrome.footerInner}>
-            <Text style={chrome.footerText}>Seed &amp; Spoon &bull; Newark, NJ</Text>
-            <Text style={chrome.footerText}>
-              <Link href="https://seedandspoon.org" style={chrome.footerLink}>seedandspoon.org</Link>
-              {' · '}
-              <Link href="https://seedandspoon.org/unsubscribe" style={chrome.footerLink}>Unsubscribe</Link>
-            </Text>
-          </Container>
-        </Section>
+          <Hr style={s.hr} />
+          <Text style={s.footer}>
+            Seed &amp; Spoon, Inc. · Newark, NJ
+            {unsubscribeUrl ? (
+              <>
+                <br />
+                <Link href={unsubscribeUrl} style={s.footerLink}>
+                  Manage your email preferences
+                </Link>
+              </>
+            ) : null}
+          </Text>
+        </Container>
       </Body>
     </Html>
-  )
+  );
 }
 
-// ─── Content stylesheet (for children of <Layout>) ─────────────────────────
-
+/* Shared, inline-only style tokens. Import these in any template. */
 export const s = {
-  h1: { color: BRAND_GREEN, fontSize: '24px', fontWeight: 'bold', lineHeight: '1.3', margin: '0 0 20px 0' } as React.CSSProperties,
-  p: { color: DARK_TEXT, fontSize: '16px', lineHeight: '1.7', margin: '0 0 16px 0' } as React.CSSProperties,
-  card: { backgroundColor: OFF_WHITE, borderRadius: '8px', padding: '16px 20px', margin: '0 0 24px 0' } as React.CSSProperties,
-  button: { backgroundColor: BRAND_GREEN, color: '#FFFFFF', borderRadius: '6px', fontSize: '15px', fontWeight: 'bold', padding: '14px 32px', textDecoration: 'none', display: 'inline-block' } as React.CSSProperties,
-  link: { color: BRAND_GREEN, fontWeight: 600, textDecoration: 'underline' } as React.CSSProperties,
-  hr: { borderColor: '#E0ECD5', margin: '24px 0' } as React.CSSProperties,
-}
-
-// ─── Layout chrome (header/footer/container only) ──────────────────────────
-
-const chrome = {
-  body: { backgroundColor: OFF_WHITE, fontFamily: "'Georgia', 'Times New Roman', serif", margin: 0, padding: 0 } as React.CSSProperties,
-  header: { backgroundColor: BRAND_GREEN, padding: '24px 0' } as React.CSSProperties,
-  headerInner: { maxWidth: '560px', margin: '0 auto', textAlign: 'center' } as React.CSSProperties,
-  logoText: { color: '#FFFFFF', fontSize: '24px', fontWeight: 'bold', margin: '0 0 4px 0', letterSpacing: '0.5px' } as React.CSSProperties,
-  tagline: { color: '#B7E4C7', fontSize: '13px', margin: 0, fontStyle: 'italic' } as React.CSSProperties,
-  container: { backgroundColor: '#FFFFFF', maxWidth: '560px', margin: '0 auto', padding: '40px 48px', borderLeft: `4px solid ${LIGHT_GREEN}` } as React.CSSProperties,
-  footer: { backgroundColor: '#E8F0E9', padding: '20px 0' } as React.CSSProperties,
-  footerInner: { maxWidth: '560px', margin: '0 auto', textAlign: 'center' } as React.CSSProperties,
-  footerText: { color: MUTED, fontSize: '12px', lineHeight: '1.6', margin: '0 0 4px 0' } as React.CSSProperties,
-  footerLink: { color: BRAND_GREEN, textDecoration: 'underline' } as React.CSSProperties,
-}
+  body: {
+    backgroundColor: "#f4f4ef",
+    fontFamily:
+      "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+    margin: 0,
+    padding: 0,
+  } as CSSProperties,
+  container: {
+    backgroundColor: "#ffffff",
+    margin: "0 auto",
+    padding: "32px 28px",
+    maxWidth: 560,
+    borderRadius: 8,
+  } as CSSProperties,
+  brand: {
+    fontSize: 13,
+    letterSpacing: 2,
+    fontWeight: 700,
+    color: "#3f7d5c",
+    margin: 0,
+  } as CSSProperties,
+  h1: {
+    fontSize: 23,
+    lineHeight: "31px",
+    color: "#1c2b23",
+    margin: "0 0 12px",
+  } as CSSProperties,
+  h2: {
+    fontSize: 17,
+    lineHeight: "23px",
+    color: "#1c2b23",
+    margin: "0 0 6px",
+  } as CSSProperties,
+  p: {
+    fontSize: 15,
+    lineHeight: "24px",
+    color: "#3a3a3a",
+    margin: "0 0 14px",
+  } as CSSProperties,
+  link: {
+    color: "#3f7d5c",
+    fontWeight: 600,
+    textDecoration: "none",
+  } as CSSProperties,
+  button: {
+    backgroundColor: "#3f7d5c",
+    color: "#ffffff",
+    fontSize: 15,
+    fontWeight: 600,
+    textDecoration: "none",
+    padding: "12px 24px",
+    borderRadius: 6,
+    display: "inline-block",
+  } as CSSProperties,
+  // Softer, non-alarming callout for the sensitive decision emails.
+  card: {
+    backgroundColor: "#f4f4ef",
+    borderRadius: 6,
+    padding: "16px 18px",
+    margin: "0 0 16px",
+  } as CSSProperties,
+  hr: { borderColor: "#e6e6e0", margin: "24px 0" } as CSSProperties,
+  footer: {
+    fontSize: 12,
+    lineHeight: "18px",
+    color: "#8a8a8a",
+    textAlign: "center",
+  } as CSSProperties,
+  footerLink: { color: "#8a8a8a", textDecoration: "underline" } as CSSProperties,
+};
