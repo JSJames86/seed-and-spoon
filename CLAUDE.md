@@ -119,6 +119,7 @@ Per-role eligibility model. `volunteers.status` = account lifecycle (invited →
 |----------|----------|-------|
 | Capability statement | `public/documents/seed-and-spoon-capability-statement.pdf` | Org overview for funders/partners |
 | Research paper | `public/documents/SeedAndSpoon ModernizingHungerRelief 2026.pdf` | Zenodo DOI: 10.5281/zenodo.20299779 |
+| Windfall readiness doctrine | `public/documents/windfall-readiness-doctrine.md` | Board/staff-facing ethos for a large unrestricted gift; upload to the Admin CRM Document Library (`governance` category, `staff`+ access) via `/admin/documents` |
 | Food safety waiver | `app/legal/food-waiver/page.jsx` | Good Samaritan Act, allergen risks, emergency procedures |
 | Non-discrimination | `app/legal/non-discrimination/page.jsx` | Title VI/IX, Section 504, ADA, NJ LAD |
 | Privacy policy | `app/legal/privacy/page.jsx` | Data retention: 7yr donations, 3yr volunteers |
