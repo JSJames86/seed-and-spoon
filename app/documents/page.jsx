@@ -61,19 +61,17 @@ export default function DocumentsPage() {
     fetchDocuments()
   }
 
-  const openDocument = async (doc) => {
+  const openDocument = (doc) => {
     setDownloading(doc.id)
-    const res = await fetch(`/api/documents/url?path=${encodeURIComponent(doc.file_path)}`)
-    const data = await res.json()
-    if (data.url) {
-        const a = document.createElement('a')
-        a.href = data.url
-        a.target = '_blank'
-        a.rel = 'noopener noreferrer'
-        document.body.appendChild(a)
-        a.click()
-        document.body.removeChild(a)
-      }
+    // /api/documents/url redirects to a signed Supabase URL — navigate directly
+    // rather than fetch()'ing it, since fetch would try to parse the file itself as JSON.
+    const a = document.createElement('a')
+    a.href = `/api/documents/url?path=${encodeURIComponent(doc.file_path)}`
+    a.target = '_blank'
+    a.rel = 'noopener noreferrer'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
     setDownloading(null)
   }
 
