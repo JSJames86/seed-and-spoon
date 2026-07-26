@@ -37,8 +37,10 @@ export async function POST(req: NextRequest) {
   try {
     await sendTeamAlert({ table: body.table, record: body.record })
   } catch (err) {
+    // Ack with 200 even on failure -- a 500 here just makes the DB trigger
+    // (or a Dashboard database webhook) retry-storm over an email hiccup.
     console.error('[notify] failed to send team alert:', err)
-    return NextResponse.json({ error: 'Alert send failed' }, { status: 500 })
+    return NextResponse.json({ ok: false, error: 'Alert send failed' }, { status: 200 })
   }
 
   return NextResponse.json({ ok: true })

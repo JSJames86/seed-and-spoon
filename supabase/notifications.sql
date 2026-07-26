@@ -31,6 +31,7 @@ begin
       'x-notify-secret', 'REPLACE-WITH-YOUR-NOTIFY_SECRET'
     ),
     body := jsonb_build_object(
+      'type', TG_OP,
       'table', TG_TABLE_NAME,
       'record', to_jsonb(NEW)
     )
