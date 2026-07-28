@@ -16,7 +16,7 @@ Disallow: /thank-you
 Disallow: /admin
 Disallow: /admin/*
 Disallow: /messages
-Disallow: /documents
+Disallow: /documents$
 Disallow: /volunteer/admin
 Disallow: /governance/*
 Disallow: /invite
