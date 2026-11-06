@@ -1,4 +1,4 @@
-import { CAPABILITY_STATEMENT_PATH } from '@/lib/org';
+import { CAPABILITY_STATEMENT_PATH, ORG_TAX_STATUS, NJ_CHARITY_REG_NO } from '@/lib/org';
 
 export const metadata = {
   title: 'Corporate Partnerships – Seed & Spoon',
@@ -143,8 +143,8 @@ export default function CorporatePartnersPage() {
                 </h3>
                 <ul className="space-y-1">
                   <li className="text-sm text-gray-600">✓ Woman-Owned Organization</li>
-                  <li className="text-sm text-gray-600">✓ Nonprofit Organization — 501(c)(3) Pending</li>
-                  <li className="text-sm text-gray-600">✓ Registered New Jersey Charity — Pending</li>
+                  <li className="text-sm text-gray-600">✓ Nonprofit Organization — {ORG_TAX_STATUS}</li>
+                  <li className="text-sm text-gray-600">✓ Registered New Jersey Charity — Reg. No. {NJ_CHARITY_REG_NO}</li>
                 </ul>
               </div>
             </div>
