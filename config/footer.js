@@ -1,8 +1,10 @@
+import { AMAZON_WISHLIST_URL, ORG_EIN } from "@/lib/org";
+
 export const org = {
   name: "Seed & Spoon",
   phone: "+17327071769",
   email: "seedandspoonnj@gmail.com",
-  ein: "TBD",
+  ein: ORG_EIN,
 };
 
 export const cta = [
@@ -10,7 +12,7 @@ export const cta = [
   { label: "Ways to Give", href: "/give" },
   { label: "Donate", href: "/donate" },
   { label: "Volunteer", href: "/volunteer" },
-  { label: "Amazon Wishlist", href: "https://www.amazon.com/hz/wishlist/ls/1ZC494TKCOAHJ?ref_=wl_share", external: true },
+  { label: "Amazon Wishlist", href: AMAZON_WISHLIST_URL, external: true },
   { label: "Become an Affiliate", href: "/affiliate" },
 ];
 
@@ -46,7 +48,7 @@ export const columns = [
       { label: "Community Partnerships", href: "/partners/community" },
       { label: "Host a Food Drive", href: "/get-involved/food-drive" },
       { label: "Become an Affiliate", href: "/affiliate" },
-      { label: "Amazon Wishlist", href: "https://www.amazon.com/hz/wishlist/ls/1ZC494TKCOAHJ?ref_=wl_share", external: true },
+      { label: "Amazon Wishlist", href: AMAZON_WISHLIST_URL, external: true },
     ],
   },
   {
