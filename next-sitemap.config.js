@@ -36,6 +36,11 @@ const nonPublicPaths = [
   '/links',
 ];
 
+// robots.txt matches by prefix, so a bare '/documents' would also block the
+// public funder PDFs under /documents/*.pdf (capability statement, research
+// paper). Anchor it so only the auth-gated document library page is blocked.
+const robotsDisallow = nonPublicPaths.map((p) => (p === '/documents' ? '/documents$' : p));
+
 module.exports = {
   siteUrl: 'https://seedandspoon.org',
   generateRobotsTxt: true,
@@ -48,7 +53,7 @@ module.exports = {
       {
         userAgent: '*',
         allow: '/',
-        disallow: nonPublicPaths,
+        disallow: robotsDisallow,
       },
     ],
   },
