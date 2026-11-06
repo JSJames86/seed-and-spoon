@@ -1,5 +1,15 @@
 import FAQAccordion from './FAQAccordion';
 import CapabilityStatementViewer from '@/components/CapabilityStatementViewer';
+import {
+  ORG_EIN,
+  ORG_TAX_STATUS,
+  ORG_INCORPORATION_DATE,
+  IRS_EXEMPTION_EFFECTIVE_DATE,
+  NJ_CHARITY_REG_NO,
+  SAM_UEI,
+  SAM_CAGE,
+  TAX_DEDUCTIBILITY_FAQ_ANSWER,
+} from '@/lib/org';
 
 // ============================================================================
 // EDITABLE CONTENT OBJECT
@@ -48,6 +58,7 @@ const CONTENT = {
         'I grew up in Elizabeth, New Jersey, and I know what it means when the food runs out before the week does. After two decades away — building companies, leading teams, learning to write software — I came home to build the thing I wish had existed for families like mine: not another drive, not another pantry, but a system a family can count on every single weekend.',
         'Seed & Spoon is built from lived experience and run like infrastructure. That’s not a contradiction. It’s the whole point.',
       ],
+      // ⚠️ Name to be confirmed by Janelle before changing (README/research paper use 'Janelle Glanville').
       signature: '— Janelle James, Founder & Executive Director',
     },
   },
@@ -112,15 +123,16 @@ const CONTENT = {
   whereWeAre: {
     title: 'Where we are right now',
     items: [
-      { done: true, text: 'Incorporated in New Jersey (February 3, 2026)' },
-      { done: true, text: 'EIN issued · SAM.gov active (UEI: JZQRPU1GRRM6 · CAGE: 207U1)' },
-      { done: true, text: 'IRS Form 1023 filed — 501(c)(3) determination pending', bold: true },
-      { done: false, text: 'NJ charity registration in progress' },
+      { done: true, text: `Incorporated in New Jersey (${ORG_INCORPORATION_DATE})` },
+      { done: true, text: `EIN issued · SAM.gov active (UEI: ${SAM_UEI} · CAGE: ${SAM_CAGE})` },
+      { done: true, text: `IRS 501(c)(3) determination received (September 2026), effective ${IRS_EXEMPTION_EFFECTIVE_DATE}`, bold: true },
+      { done: true, text: `NJ charity registration approved (Reg. No. ${NJ_CHARITY_REG_NO})` },
       { done: true, text: 'Food safety plan, SOPs, and cost model complete' },
       { done: false, text: '5 Loaves pilot: launching as funding is secured' },
+      // ⚠️ Left as-is until Janelle confirms on kitchen selection.
       { done: false, text: 'Commercial kitchen partnership: in final selection' },
     ],
-    footnote: 'This page will be updated as each milestone lands. Last updated July 2026.',
+    footnote: 'This page will be updated as each milestone lands. Last updated November 2026.',
   },
 
   getInvolved: {
@@ -159,8 +171,7 @@ const CONTENT = {
     questions: [
       {
         question: 'Are donations tax-deductible?',
-        answer:
-          'Seed & Spoon, Inc. has filed IRS Form 1023 and our 501(c)(3) determination is currently pending. Because our application was filed within the IRS’s required window after incorporation, approval would generally make tax-exempt status retroactive to our formation date — meaning donations made now would become tax-deductible once the determination arrives. We will notify all donors the moment our letter is issued, and we provide receipts for every contribution. Please consult your tax advisor about your individual situation.',
+        answer: TAX_DEDUCTIBILITY_FAQ_ANSWER,
       },
       {
         question: 'Who can receive food from Seed & Spoon?',
@@ -579,7 +590,8 @@ function CredentialsSection() {
     'CAGE: 207U1',
     'SAM.gov Active',
     'Woman-Owned',
-    '501(c)(3) Pending',
+    ORG_TAX_STATUS,
+    `EIN: ${ORG_EIN}`,
   ];
 
   return (
