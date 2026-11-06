@@ -1,3 +1,5 @@
+import { ORG_EIN, ORG_TAX_STATUS, NJ_CHARITY_REG_NO } from '@/lib/org';
+
 export const metadata = {
   title: 'Press & Media Kit – Seed & Spoon',
   description:
@@ -26,7 +28,9 @@ const pressContacts = [
 const quickFacts = [
   { label: 'Founded', value: '2026' },
   { label: 'Location', value: 'Newark, New Jersey' },
-  { label: 'Structure', value: 'Nonprofit — 501(c)(3) Pending' },
+  { label: 'Structure', value: ORG_TAX_STATUS },
+  { label: 'EIN', value: ORG_EIN },
+  { label: 'NJ Charity Reg. No.', value: NJ_CHARITY_REG_NO },
   { label: 'Focus Area', value: 'Youth Food Insecurity' },
   { label: 'Phone', value: '1 (732) 707-1769' },
   { label: 'Website', value: 'seedandspoon.org' },
@@ -75,7 +79,7 @@ export default function PressPage() {
                 </p>
               </div>
 
-              {/* Mission statement */}
+              {/* Mission statement — ⚠️ wording under revision; Janelle to supply final text. */}
               <div className="border border-gray-200 rounded-2xl p-6 bg-white">
                 <h2 className="font-semibold text-gray-900 mb-3">Mission Statement</h2>
                 <blockquote className="text-sm text-gray-600 leading-relaxed border-l-4 border-[#2d5a27] pl-4 italic">
