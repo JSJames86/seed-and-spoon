@@ -14,6 +14,7 @@ import {
 } from '@react-email/components'
 import { render } from '@react-email/components'
 import * as React from 'react'
+import { ORG_LEGAL_NAME, ORG_EIN, ORG_TAX_STATUS_LINE, ORG_TAX_STATUS_SHORT, NO_GOODS_OR_SERVICES_LINE } from '@/lib/org'
 
 const BRAND_GREEN = '#2D6A4F'
 const LIGHT_GREEN = '#52B788'
@@ -79,15 +80,11 @@ export function DonationReceiptEmail({ firstName, amount, donationType, date, tr
             {receiptId && <Row label="Receipt No." value={receiptId} mono />}
             <Row label="Transaction ID" value={transactionId} mono />
           </Section>
-          <Text style={orgLine}>Seed &amp; Spoon, Inc. &bull; EIN 41-4059078</Text>
-          <Text style={boldNote}>No goods or services were provided in exchange for this contribution.</Text>
+          <Text style={orgLine}>{ORG_LEGAL_NAME} &bull; EIN {ORG_EIN}</Text>
+          <Text style={boldNote}>{NO_GOODS_OR_SERVICES_LINE}</Text>
           <Text style={muted}>
-            A note on deductibility: Seed &amp; Spoon has filed IRS Form 1023 and our 501(c)(3)
-            determination is pending. Because our application was filed within the IRS&rsquo;s
-            required window after incorporation, approval would generally make tax-exempt status
-            retroactive to our formation date — meaning this gift would become tax-deductible once
-            our determination arrives. We&rsquo;ll email you the moment it does. Please keep this
-            receipt and consult your tax advisor about your individual situation.
+            {ORG_TAX_STATUS_LINE} Please keep this receipt for your records and consult your tax
+            advisor about your individual situation.
           </Text>
           <Text style={signature}>
             With gratitude,<br />
@@ -97,13 +94,13 @@ export function DonationReceiptEmail({ firstName, amount, donationType, date, tr
 
         <Section style={footer}>
           <Container style={footerInner}>
-            <Text style={footerText}>Seed &amp; Spoon &bull; Newark, NJ</Text>
+            <Text style={footerText}>{ORG_LEGAL_NAME} &bull; Newark, NJ</Text>
             <Text style={footerText}>
               <Link href="https://seedandspoon.org" style={footerLink}>seedandspoon.org</Link>
               {' · '}
               <Link href="https://seedandspoon.org/unsubscribe" style={footerLink}>Unsubscribe</Link>
             </Text>
-            <Text style={footerText}>501(c)(3) Status Pending &bull; NJ Nonprofit Corporation</Text>
+            <Text style={footerText}>{ORG_TAX_STATUS_SHORT}</Text>
           </Container>
         </Section>
       </Body>

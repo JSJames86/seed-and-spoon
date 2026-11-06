@@ -14,6 +14,7 @@ import {
 } from '@react-email/components'
 import { render } from '@react-email/components'
 import * as React from 'react'
+import { ORG_LEGAL_NAME, ORG_EIN, ORG_TAX_STATUS_LINE, ORG_TAX_STATUS_SHORT, NO_GOODS_OR_SERVICES_LINE } from '@/lib/org'
 
 const BRAND_GREEN = '#2D6A4F'
 const LIGHT_GREEN = '#52B788'
@@ -83,15 +84,10 @@ export function DonationDeterminationEmail({
             {receiptId && <Row label="Receipt No." value={receiptId} mono />}
             <Row label="Transaction ID" value={transactionId} mono />
           </Section>
-          <Text style={orgLine}>Seed &amp; Spoon, Inc. &bull; EIN 41-4059078</Text>
-          <Text style={boldNote}>
-            Seed &amp; Spoon, Inc. is a tax-exempt organization under Section 501(c)(3) of the
-            Internal Revenue Code. No goods or services were provided in exchange for this
-            contribution.
-          </Text>
+          <Text style={orgLine}>{ORG_LEGAL_NAME} &bull; EIN {ORG_EIN}</Text>
+          <Text style={boldNote}>{NO_GOODS_OR_SERVICES_LINE}</Text>
           <Text style={muted}>
-            Your contribution is tax-deductible to the extent allowed by law. Please retain this
-            receipt for your records.
+            {ORG_TAX_STATUS_LINE} Please retain this receipt for your records.
           </Text>
 
           <Section style={ctaSection}>
@@ -114,7 +110,7 @@ export function DonationDeterminationEmail({
               {' · '}
               <Link href="https://seedandspoon.org/unsubscribe" style={footerLink}>Unsubscribe</Link>
             </Text>
-            <Text style={footerText}>501(c)(3) Tax-Exempt Organization &bull; EIN 41-4059078</Text>
+            <Text style={footerText}>{ORG_TAX_STATUS_SHORT}</Text>
           </Container>
         </Section>
       </Body>

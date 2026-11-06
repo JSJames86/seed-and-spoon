@@ -14,6 +14,7 @@ import {
 } from '@react-email/components'
 import { render } from '@react-email/components'
 import * as React from 'react'
+import { ORG_TAX_STATUS_SHORT } from '@/lib/org'
 
 const BRAND_GREEN = '#2D6A4F'
 const LIGHT_GREEN = '#52B788'
@@ -84,7 +85,7 @@ export function VolunteerConfirmationEmail({ firstName, interests, availability 
               {' · '}
               <Link href="https://seedandspoon.org/unsubscribe" style={footerLink}>Unsubscribe</Link>
             </Text>
-            <Text style={footerText}>501(c)(3) Status Pending &bull; NJ Nonprofit Corporation</Text>
+            <Text style={footerText}>{ORG_TAX_STATUS_SHORT}</Text>
           </Container>
         </Section>
       </Body>

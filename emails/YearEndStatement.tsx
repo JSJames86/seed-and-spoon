@@ -1,5 +1,6 @@
 import { Section, Heading, Text, Hr } from "@react-email/components";
 import Layout, { s } from "./components/Layout";
+import { ORG_TAX_STATUS_LINE } from "@/lib/org";
 
 export interface GiftLine {
   date: string; // "Mar 3, 2026"
@@ -12,7 +13,8 @@ export interface YearEndStatementProps {
   total: string; // "$300.00"
   giftCount?: number;
   gifts?: GiftLine[]; // optional itemized list
-  ein?: string; // "41-4059078"
+  /** @deprecated EIN now comes from lib/org.ts. */
+  ein?: string;
 }
 
 export default function YearEndStatement({
@@ -21,7 +23,6 @@ export default function YearEndStatement({
   total,
   giftCount,
   gifts,
-  ein,
 }: YearEndStatementProps) {
   const hi = firstName ? `${firstName},` : "Hello,";
 
@@ -66,10 +67,9 @@ export default function YearEndStatement({
       </Section>
 
       <Text style={{ ...s.p, fontSize: 13, color: "#6a6a6a" }}>
-        Seed &amp; Spoon, Inc. is a 501(c)(3) tax-exempt organization
-        {ein ? <> (EIN {ein})</> : null}. No goods or services were provided in
-        exchange for these contributions. Please retain this statement for your
-        records; consult your tax advisor with any questions.
+        {ORG_TAX_STATUS_LINE} No goods or services were provided in exchange
+        for these contributions. Please retain this statement for your records;
+        consult your tax advisor with any questions.
       </Text>
 
       <Text style={s.p}>
