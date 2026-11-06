@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { CAPABILITY_STATEMENT_PATH } from '@/lib/org';
 
-const PDF_URL = 'https://seedandspoon.org/documents/seed-and-spoon-capability-statement.pdf';
-const PDF_PATH = '/documents/seed-and-spoon-capability-statement.pdf';
+const PDF_PATH = CAPABILITY_STATEMENT_PATH;
+const PDF_URL = `https://seedandspoon.org${CAPABILITY_STATEMENT_PATH}`;
 const DOWNLOAD_NAME = 'Seed-and-Spoon-Capability-Statement.pdf';
 const GDOCS_VIEWER = `https://docs.google.com/viewer?url=${encodeURIComponent(PDF_URL)}&embedded=true`;
 

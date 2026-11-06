@@ -1,4 +1,4 @@
-import { ORG_EIN, ORG_TAX_STATUS, NJ_CHARITY_REG_NO } from '@/lib/org';
+import { ORG_EIN, ORG_TAX_STATUS, NJ_CHARITY_REG_NO, CAPABILITY_STATEMENT_PATH } from '@/lib/org';
 
 export const metadata = {
   title: 'Press & Media Kit – Seed & Spoon',
@@ -117,7 +117,7 @@ export default function PressPage() {
                 </div>
 
                 <a
-                  href="/documents/capability-statement.pdf"
+                  href={CAPABILITY_STATEMENT_PATH}
                   download
                   className="inline-flex items-center gap-2 text-sm text-[#2d5a27] font-semibold hover:underline"
                 >
@@ -188,7 +188,7 @@ export default function PressPage() {
                   <div className="bg-[#f9f6f0] rounded-xl p-4 flex items-center justify-between">
                     <span className="text-sm text-gray-700">Capability Statement</span>
                     <a
-                      href="/documents/capability-statement.pdf"
+                      href={CAPABILITY_STATEMENT_PATH}
                       download
                       className="text-xs text-[#2d5a27] font-semibold hover:underline"
                     >

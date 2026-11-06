@@ -1,3 +1,5 @@
+import { CAPABILITY_STATEMENT_PATH } from '@/lib/org';
+
 export const metadata = {
   title: 'Corporate Partnerships – Seed & Spoon',
   description:
@@ -148,7 +150,7 @@ export default function CorporatePartnersPage() {
             </div>
 
             <a
-              href="/documents/capability-statement.pdf"
+              href={CAPABILITY_STATEMENT_PATH}
               download
               className="inline-flex items-center gap-2 bg-[#2d5a27] text-white px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#1f3f1b] transition"
             >
