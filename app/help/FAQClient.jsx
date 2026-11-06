@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { TAX_DEDUCTIBILITY_FAQ_ANSWER } from '@/lib/org';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -97,7 +98,7 @@ export const FAQ_DATA = [
       {
         id: 'donations-3',
         q: 'Is my donation tax-deductible?',
-        a: 'We are currently completing our nonprofit registration. Tax-deductibility status will be updated here once finalized. Thank you for your patience and support.',
+        a: TAX_DEDUCTIBILITY_FAQ_ANSWER,
       },
     ],
   },
