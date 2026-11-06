@@ -22,5 +22,10 @@ export const metadata = {
 import DonatePageClient from "@/components/donate/DonatePageClient";
 
 export default function DonatePage() {
-  return <DonatePageClient />;
+  // Show the NJ disclosure placeholder on Vercel previews and local dev, never
+  // on production. Once lib/org.ts has the real wording this has no effect.
+  const showDisclosurePlaceholder = process.env.VERCEL_ENV
+    ? process.env.VERCEL_ENV !== 'production'
+    : process.env.NODE_ENV !== 'production';
+  return <DonatePageClient showDisclosurePlaceholder={showDisclosurePlaceholder} />;
 }

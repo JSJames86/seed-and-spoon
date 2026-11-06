@@ -4,17 +4,17 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { captureEvent } from '@/analytics/posthog';
 import { EVENTS } from '@/analytics/events';
+import { ORG_TAX_STATUS_LINE, NJ_SOLICITATION_DISCLOSURE } from '@/lib/org';
 
 const presetAmounts = [2500, 5000, 10000, 25000]; // $25, $50, $100, $250
 
-export default function DonatePage() {
+export default function DonatePage({ showDisclosurePlaceholder = false }) {
   const [frequency, setFrequency] = useState('one_time');
   const [selectedAmount, setSelectedAmount] = useState(5000); // Default $50
   const [customAmount, setCustomAmount] = useState('');
   const [isCustom, setIsCustom] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [taxAcknowledged, setTaxAcknowledged] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -240,26 +240,12 @@ export default function DonatePage() {
               </motion.div>
             )}
 
-            {/* Tax Status Acknowledgment */}
-            <label className="flex items-start gap-3 mb-6 cursor-pointer group">
-              <input
-                type="checkbox"
-                checked={taxAcknowledged}
-                onChange={(e) => setTaxAcknowledged(e.target.checked)}
-                className="mt-1 h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer shrink-0"
-              />
-              <span className="text-sm text-gray-600 group-hover:text-gray-800 transition-colors">
-                I understand that Seed & Spoon Incorporated&apos;s 501(c)(3) status is
-                pending and contributions are not currently tax-deductible.
-              </span>
-            </label>
-
             {/* Donate Button */}
             <button
               onClick={handleDonate}
-              disabled={isLoading || !taxAcknowledged}
+              disabled={isLoading}
               className={`w-full py-6 rounded-xl font-bold text-xl transition-all ${
-                isLoading || !taxAcknowledged
+                isLoading
                   ? 'bg-gray-400 cursor-not-allowed'
                   : 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-xl hover:shadow-2xl hover:scale-105'
               }`}
@@ -339,18 +325,29 @@ export default function DonatePage() {
             </div>
           </motion.div>
 
-          {/* Tax Status Notice */}
+          {/* Tax-deductibility + NJ disclosure */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.4 }}
             className="mt-8 text-center text-sm text-gray-500"
           >
-            <p>
-              Seed & Spoon Incorporated is a nonprofit organization with 501(c)(3)
-              status pending. Contributions are not currently tax-deductible but may
-              become deductible upon approval.
-            </p>
+            <p>{ORG_TAX_STATUS_LINE}</p>
+
+            {/* NJ charitable solicitation disclosure — exact wording lives in lib/org.ts */}
+            {NJ_SOLICITATION_DISCLOSURE ? (
+              <p className="mt-3 text-xs text-gray-500">{NJ_SOLICITATION_DISCLOSURE}</p>
+            ) : showDisclosurePlaceholder ? (
+              <p
+                className="mt-3 mx-auto max-w-xl rounded-lg border-2 border-dashed border-amber-400 bg-amber-50 p-3 text-xs font-semibold text-amber-800"
+                data-placeholder="nj-solicitation-disclosure"
+              >
+                [PLACEHOLDER: NJ charitable solicitation disclosure. Paste the exact
+                wording from the NJ registration approval notice into
+                NJ_SOLICITATION_DISCLOSURE in lib/org.ts. This box is shown on
+                preview builds only.]
+              </p>
+            ) : null}
           </motion.div>
         </motion.div>
       </div>
