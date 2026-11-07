@@ -1,23 +1,23 @@
 import { createClient } from '@supabase/supabase-js'
+import {
+  ORGANIZATION_TYPES,
+  PARTNERSHIP_ROLE_VALUES,
+  LEGACY_PARTNERSHIP_VALUES,
+} from '@/data/partnerships'
 
 export const runtime = 'edge'
 
-const ORGANIZATION_TYPES = [
-  'Church / Faith community',
-  'Community center',
-  'Youth group',
-  'Social / Civic group',
-  'Educational institution',
-  'Other',
-]
+// Options are shared with the form; see data/partnerships.js.
+const LEGACY_VALUES: Record<string, string> = LEGACY_PARTNERSHIP_VALUES
+// 'Educational institution' was the only school option before the partnership kit.
+const ACCEPTED_ORGANIZATION_TYPES = [...ORGANIZATION_TYPES, 'Educational institution']
 
-const PARTNERSHIP_INTERESTS = [
-  'Host a pickup site',
-  'Refer families',
-  'Offer commercial kitchen space',
-  'Provide volunteers',
-  'Funding collaboration',
-]
+// Which page the form was submitted from, recorded in `source`.
+const FORM_SOURCES: Record<string, string> = {
+  partners: 'partners_hub_form',
+  'partners/community': 'community_partner_form',
+  'partners/corporate': 'business_partner_form',
+}
 
 interface CommunityPartnerRow {
   organization_name: string
@@ -33,7 +33,7 @@ interface CommunityPartnerRow {
   website: string | null
   consent: boolean
   status: 'new'
-  source: 'community_partner_form'
+  source: string
   created_at: string
 }
 
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
     if (!body.organizationName || String(body.organizationName).trim() === '') {
       return Response.json({ error: 'Missing required field: organizationName' }, { status: 400 })
     }
-    if (!body.organizationType || !ORGANIZATION_TYPES.includes(String(body.organizationType))) {
+    if (!body.organizationType || !ACCEPTED_ORGANIZATION_TYPES.includes(String(body.organizationType))) {
       return Response.json({ error: 'Missing or invalid field: organizationType' }, { status: 400 })
     }
     if (!body.contactName || String(body.contactName).trim() === '') {
@@ -72,7 +72,13 @@ export async function POST(request: Request) {
     }
 
     const interests = Array.isArray(body.partnershipInterests)
-      ? body.partnershipInterests.filter((i) => PARTNERSHIP_INTERESTS.includes(String(i)))
+      ? Array.from(
+          new Set(
+            body.partnershipInterests
+              .map((i) => LEGACY_VALUES[String(i)] ?? String(i))
+              .filter((i) => PARTNERSHIP_ROLE_VALUES.includes(i))
+          )
+        )
       : []
     if (interests.length === 0) {
       return Response.json({ error: 'Select at least one way to partner' }, { status: 400 })
@@ -94,7 +100,7 @@ export async function POST(request: Request) {
       website: body.website ? String(body.website).trim().slice(0, 300) : null,
       consent: true,
       status: 'new',
-      source: 'community_partner_form',
+      source: FORM_SOURCES[String(body.page)] ?? 'community_partner_form',
       created_at: new Date().toISOString(),
     }
 

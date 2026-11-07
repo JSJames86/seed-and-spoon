@@ -35,6 +35,9 @@ export default function SitemapPage() {
     { url: "/get-help", title: "Get Help", priority: "High" },
     { url: "/donate", title: "Donate", priority: "High" },
     { url: "/volunteer", title: "Volunteer", priority: "High" },
+    { url: "/partners", title: "Partner With Us", priority: "High" },
+    { url: "/partners/community", title: "Community Partnerships", priority: "Medium" },
+    { url: "/partners/corporate", title: "Business & Corporate Partners", priority: "Medium" },
   ];
 
   const causePages = [

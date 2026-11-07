@@ -12,11 +12,6 @@ const nextConfig = {
   },
   async redirects() {
     return [
-      {
-        source: '/partners/corporate',
-        destination: '/causes/pantry-partners',
-        permanent: true,
-      },
       // Capability statement consolidated to one file (Nov 2026). The old
       // press-kit path forwards so existing links don't 404.
       {
