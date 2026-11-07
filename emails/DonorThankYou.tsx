@@ -1,13 +1,16 @@
 import { Section, Heading, Text, Button } from "@react-email/components";
 import Layout, { s } from "./components/Layout";
+import { ORG_TAX_STATUS_LINE, NO_GOODS_OR_SERVICES_LINE } from "@/lib/org";
 
 export interface DonorThankYouProps {
   firstName?: string;
   amount?: string; // preformatted, e.g. "$50.00"
   date?: string; // preformatted, e.g. "November 3, 2026"
   isRecurring?: boolean;
-  taxNote?: boolean; // include the 501(c)(3) tax-receipt line
-  ein?: string; // e.g. "41-4059078"
+  /** @deprecated The tax-receipt block is now always included. */
+  taxNote?: boolean;
+  /** @deprecated EIN now comes from lib/org.ts. */
+  ein?: string;
 }
 
 export default function DonorThankYou({
@@ -15,8 +18,6 @@ export default function DonorThankYou({
   amount,
   date,
   isRecurring,
-  taxNote,
-  ein,
 }: DonorThankYouProps = {}) {
   const hi = firstName ? `${firstName},` : "Thank you,";
 
@@ -50,14 +51,12 @@ export default function DonorThankYou({
         </Section>
       )}
 
-      {taxNote ? (
-        <Text style={{ ...s.p, fontSize: 13, color: "#6a6a6a" }}>
-          Seed &amp; Spoon, Inc. is a 501(c)(3) nonprofit
-          {ein ? <> (EIN {ein})</> : null}. No goods or services were provided in
-          exchange for this contribution. Please keep this email for your tax
-          records.
-        </Text>
-      ) : null}
+      {/* Every receipt carries the legal name, EIN, tax-deductibility line, and
+          the IRS written-acknowledgment statement. */}
+      <Text style={{ ...s.p, fontSize: 13, color: "#6a6a6a" }}>
+        {ORG_TAX_STATUS_LINE} {NO_GOODS_OR_SERVICES_LINE} Please keep this email
+        for your tax records.
+      </Text>
 
       <Section style={{ margin: "24px 0" }}>
         <Button href="https://seedandspoon.org/impact" style={s.button}>

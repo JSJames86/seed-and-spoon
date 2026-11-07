@@ -3,7 +3,7 @@ import FAQClient from './FAQClient';
 export const metadata = {
   title: 'FAQs – Seed & Spoon NJ',
   description:
-    'Answers to common questions about Seed & Spoon NJ: how to receive free meals, donate, volunteer, and more. Serving youth ages 16–25 in Newark, NJ.',
+    'Answers to common questions about Seed & Spoon NJ: how to receive free meals, donate, volunteer, and more. Serving children under 18 and their families in Newark and Essex County, NJ.',
   openGraph: {
     title: 'FAQs – Seed & Spoon NJ',
     description:
@@ -16,7 +16,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'FAQs – Seed & Spoon NJ',
     description:
-      'How to receive meals, donate, and volunteer with Seed & Spoon NJ. Serving at-risk youth in Newark.',
+      'How to receive meals, donate, and volunteer with Seed & Spoon NJ. Serving children and families in Newark and Essex County.',
   },
 };
 

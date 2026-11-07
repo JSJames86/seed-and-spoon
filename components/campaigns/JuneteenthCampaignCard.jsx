@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { ArrowRight, Heart, Share2 } from "lucide-react";
+import { ORG_LEGAL_NAME, ORG_EIN } from "@/lib/org";
 
 const TOKENS = {
   forestDeep: "#102A22",
@@ -26,7 +27,7 @@ const DEFAULT_CAMPAIGN = {
   donate_url: "/donate?campaign=juneteenth-2026",
   share_url: "",
   hero_image_url: "",
-  org_line: "Seed & Spoon, Inc. · EIN 41-4059078 · 501(c)(3) status pending",
+  org_line: `${ORG_LEGAL_NAME} · EIN ${ORG_EIN} · 501(c)(3) public charity`,
 };
 
 function usd(n) {

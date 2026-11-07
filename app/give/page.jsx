@@ -1,3 +1,5 @@
+import { AMAZON_WISHLIST_URL, ORG_TAX_STATUS_LINE } from '@/lib/org';
+
 const CONTENT = {
   meta: {
     title: 'Ways to Give',
@@ -42,7 +44,7 @@ const CONTENT = {
     email: 'donors@seedandspoon.org',
     pickupEmail: 'hello@seedandspoon.org',
   },
-  wishlistUrl: '#TODO-REPLACE-WITH-AMAZON-WISHLIST-URL',
+  wishlistUrl: AMAZON_WISHLIST_URL,
   cannotAccept: {
     title: "What We Can't Accept",
     body:
@@ -190,6 +192,9 @@ export default function GivePage() {
                 </article>
               ))}
             </div>
+            <p className="max-w-3xl mx-auto mt-8 text-center text-sm text-gray-500">
+              {ORG_TAX_STATUS_LINE}
+            </p>
           </div>
         </section>
 
@@ -274,7 +279,6 @@ export default function GivePage() {
                 Shop our Amazon Wishlist for supplies our kitchen and delivery teams need
                 most.
               </p>
-              {/* TODO: replace CONTENT.wishlistUrl above with the real Amazon Wishlist URL */}
               <a
                 href={CONTENT.wishlistUrl}
                 target="_blank"
@@ -283,9 +287,6 @@ export default function GivePage() {
               >
                 View Our Amazon Wishlist
               </a>
-              <p className="mt-3 text-sm text-gray-400">
-                (Placeholder link&mdash;TODO: swap in the live wishlist URL.)
-              </p>
             </div>
           </div>
         </section>

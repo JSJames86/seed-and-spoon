@@ -293,8 +293,6 @@ export async function POST(request) {
                 amount: `$${(amount / 100).toFixed(2)}`,
                 date: dateStr,
                 isRecurring: true,
-                taxNote: true,
-                ein: '41-4059078',
               }),
               metadata: { subscription_id: subscriptionId, invoice_id: invoice.id },
             });

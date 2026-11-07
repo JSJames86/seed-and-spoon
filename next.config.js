@@ -17,6 +17,13 @@ const nextConfig = {
         destination: '/causes/pantry-partners',
         permanent: true,
       },
+      // Capability statement consolidated to one file (Nov 2026). The old
+      // press-kit path forwards so existing links don't 404.
+      {
+        source: '/documents/capability-statement.pdf',
+        destination: '/documents/seed-and-spoon-capability-statement.pdf',
+        permanent: true,
+      },
       {
         source: '/reports/seed-spoon-impact-2024.pdf',
         destination: '/resources/reports',

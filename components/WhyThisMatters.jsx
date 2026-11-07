@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import { AMAZON_WISHLIST_URL } from "@/lib/org";
 import { useAnimatedCounter } from "@/hooks/useAnimatedCounter";
 import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
 import Link from "next/link";
@@ -239,7 +240,7 @@ export default function WhyThisMatters() {
             </p>
           </div>
           <Link
-            href="https://www.amazon.com/hz/wishlist/ls/1ZC494TKCOAHJ?ref_=wl_share"
+            href={AMAZON_WISHLIST_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 bg-[var(--green-primary)] text-white px-6 py-3 rounded-full font-bold body-md hover:bg-[var(--leaf-mid)] transition-colors shadow-sm whitespace-nowrap"

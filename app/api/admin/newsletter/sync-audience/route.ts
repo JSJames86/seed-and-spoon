@@ -16,10 +16,15 @@ import { resend, AUDIENCE_ID } from "@/lib/resend";
  *     -H "Authorization: Bearer $ADMIN_SERVICE_TOKEN"
  */
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Created per request, not at module load: a top-level createClient() throws
+// "supabaseUrl is required" during `next build` page-data collection whenever
+// SUPABASE_URL isn't set (CI, preview projects without secrets).
+function getSupabase() {
+  return createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 function authorized(req: NextRequest): boolean {
   const header = req.headers.get("authorization") ?? "";
@@ -35,6 +40,7 @@ export async function POST(req: NextRequest) {
   // email_subscribers is the table app/api/email/subscribe and /unsubscribe
   // read and write. Columns: email (text), first_name (text, nullable),
   // status (text: 'subscribed' | 'unsubscribed').
+  const supabase = getSupabase();
   const { data: subscribers, error } = await supabase
     .from("email_subscribers")
     .select("email, first_name, status")
