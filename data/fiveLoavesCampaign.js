@@ -24,7 +24,7 @@ export const START_THRESHOLD = 0.75;
  *    generic description.
  */
 export const LAUNCH = {
-  launched: false,
+  launched: true,
   schoolNameApproved: false,
 };
 
