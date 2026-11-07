@@ -51,9 +51,9 @@ export const formula = {
   safety: {
     heading: 'Safety',
     items: [
-      'We provide only new, sealed, unexpired cans bought from suppliers.',
-      'We do not accept donated cans, opened containers, or homemade formula.',
-      'We check every product against current recall notices before it goes out.',
+      'We provide only unopened, factory-sealed, unexpired formula in undamaged packaging, purchased from or donated directly by manufacturers, authorized distributors, or established retailers.',
+      'We welcome direct formula donations from these sources. We do not accept formula donations from individuals, opened containers, or homemade formula.',
+      'We check each product’s lot number against current recall notices before distribution.',
     ],
   },
   gift: {
