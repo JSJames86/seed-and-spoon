@@ -203,9 +203,8 @@ export async function POST(req: NextRequest) {
 
   if (!firstName) return bad("Please enter your first name.");
   if (!phone) return bad("Please enter a phone number.");
-  if (email && !EMAIL_RE.test(email)) return bad("Please check your email address.");
+  if (!email || !EMAIL_RE.test(email)) return bad("Please enter a valid email address. We send updates and documents by email.");
   if (!keys(CONTACT_METHODS).includes(preferredContact)) return bad("Please choose how we should contact you.");
-  if (preferredContact === "email" && !email) return bad("Please add an email address, or choose another way to reach you.");
   if (preferredLanguage && !keys(LANGUAGES).includes(preferredLanguage)) return bad("Unknown language.");
 
   const zip = str(body.zip, 10);
@@ -283,7 +282,7 @@ export async function POST(req: NextRequest) {
 
   const { error: dbError } = await supabase.from("applications").insert({
     id,
-    email: email || null,
+    email,
     first_name: firstName,
     last_name: lastName || null,
     phone,
@@ -329,7 +328,7 @@ export async function POST(req: NextRequest) {
     return bad("We couldn’t save your form. Please try again, or call or text us.", 500);
   }
 
-  if (email) {
+  {
     try {
       await sendTransactional({
         type: "application_received",

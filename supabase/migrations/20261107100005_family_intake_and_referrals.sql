@@ -15,9 +15,8 @@
 -- All changes are additive. RLS stays service-role only.
 
 -- ── applications: intake fields ────────────────────────────────────────────
-alter table public.applications
-  alter column email drop not null;
-
+-- email stays required: Seed & Spoon documents and communicates with families
+-- by email (paperless) and text.
 alter table public.applications
   add column if not exists preferred_contact   text,
   add column if not exists preferred_language  text,

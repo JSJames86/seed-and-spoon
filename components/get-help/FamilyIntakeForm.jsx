@@ -131,7 +131,7 @@ export default function FamilyIntakeForm({ onSuccess, onScrollToMap }) {
   const validate = () => {
     if (!contact.firstName.trim()) return 'Please enter your first name.';
     if (!contact.phone.trim()) return 'Please enter a phone number.';
-    if (contact.preferredContact === 'email' && !contact.email.trim()) return 'Please add an email, or choose another way to reach you.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email.trim())) return 'Please enter a valid email address. We send updates and documents by email.';
     if (!/^\d{5}$/.test(contact.zip.trim())) return 'Please enter a 5-digit ZIP code.';
     if (!contact.essexCounty) return 'Please tell us whether you live in Essex County.';
     if (!(Number(adultsInHome) >= 1)) return 'Please enter how many adults live in your home.';
@@ -310,8 +310,9 @@ export default function FamilyIntakeForm({ onSuccess, onScrollToMap }) {
             <input id="fi-phone" type="tel" className={inputClass} value={contact.phone} onChange={setContactField('phone')} autoComplete="tel" placeholder="(973) 555-0123" />
           </div>
           <div>
-            <label className={labelClass} htmlFor="fi-email">Email (optional)</label>
+            <label className={labelClass} htmlFor="fi-email">Email *</label>
             <input id="fi-email" type="email" className={inputClass} value={contact.email} onChange={setContactField('email')} autoComplete="email" />
+            <p className={helpClass}>We’re paperless: we send updates and documents by email and text.</p>
           </div>
           <div>
             <label className={labelClass} htmlFor="fi-contact">Best way to reach you *</label>
