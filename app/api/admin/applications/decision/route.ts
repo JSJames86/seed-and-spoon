@@ -102,7 +102,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: updateError.message }, { status: 500 });
   }
 
-  // 3. Notify the applicant. If this fails, the decision is already recorded —
+  // 3. Notify the applicant. Families may apply without an email (phone/text
+  // only); then the decision is recorded and staff contact them directly.
+  if (!application.email) {
+    return NextResponse.json({
+      ok: true,
+      applicationId,
+      decision,
+      previousStatus,
+      emailSent: false,
+      note: "Decision recorded. This family gave no email, so contact them by phone or text.",
+    });
+  }
+
+  // If the send fails, the decision is already recorded —
   // report it so you can resend rather than silently losing the notification.
   try {
     const result = await sendTransactional({

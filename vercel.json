@@ -24,6 +24,10 @@
       "schedule": "0 9 * * *"
     },
     {
+      "path": "/api/applications/cleanup",
+      "schedule": "30 9 * * *"
+    },
+    {
       "path": "/api/receipts/submissions/process",
       "schedule": "0 8 * * *"
     }

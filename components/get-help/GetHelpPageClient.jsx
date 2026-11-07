@@ -8,7 +8,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import ClientIntakeForm from '@/components/get-help/ClientIntakeForm';
+import FamilyIntakeForm from '@/components/get-help/FamilyIntakeForm';
 import ReferralIntakeForm from '@/components/get-help/ReferralIntakeForm';
 import ResourceMap from '@/components/get-help/ResourceMap';
 import CountyDirectory from '@/components/get-help/CountyDirectory';
@@ -46,7 +46,7 @@ export default function GetHelpPage() {
             Get Help with Food
           </h1>
           <p className="text-xl md:text-2xl text-green-50 mb-12">
-            Apply for assistance, refer a client, or find local pantries
+            Start a family intake, send a referral, or find local pantries
           </p>
 
           {/* Primary Action Buttons */}
@@ -59,7 +59,7 @@ export default function GetHelpPage() {
               className="px-6 py-4 bg-white text-green-800 rounded-lg hover:bg-green-50 transition-colors font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
             >
               <span className="text-2xl mb-2 block">🙋</span>
-              I need food assistance
+              My family needs food
             </button>
 
             <button
@@ -70,7 +70,7 @@ export default function GetHelpPage() {
               className="px-6 py-4 bg-white text-blue-800 rounded-lg hover:bg-blue-50 transition-colors font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
             >
               <span className="text-2xl mb-2 block">🤝</span>
-              I'm referring someone
+              I'm referring a family
             </button>
 
             <button
@@ -108,7 +108,7 @@ export default function GetHelpPage() {
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
                 }`}
               >
-                Client Application
+                Family Intake
               </button>
               <button
                 onClick={() => setActiveForm('referral')}
@@ -131,14 +131,14 @@ export default function GetHelpPage() {
           >
             <div className="max-w-3xl mx-auto mb-8 text-center">
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                Apply for Food Assistance
+                Family Intake Form
               </h2>
               <p className="text-lg text-gray-600 dark:text-gray-400">
-                Complete this form and we'll connect you with food resources that meet your needs.
-                We'll contact you within 48 hours.
+                Tell us about your children, their allergies, and where you&apos;d like meals dropped off.
+                Every family who sends this form hears back from us.
               </p>
             </div>
-            <ClientIntakeForm
+            <FamilyIntakeForm
               onSuccess={() => {
                 // Could show success state or redirect
               }}
@@ -154,10 +154,10 @@ export default function GetHelpPage() {
           >
             <div className="max-w-3xl mx-auto mb-8 text-center">
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                Refer a Client for Food Assistance
+                Refer a Family
               </h2>
               <p className="text-lg text-gray-600 dark:text-gray-400">
-                Partner organizations can use this form to refer clients to our food assistance program.
+                For school staff, parent advocates, faith leaders, and WIC or social service staff.
               </p>
             </div>
             <ReferralIntakeForm
