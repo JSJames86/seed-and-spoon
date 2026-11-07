@@ -1,15 +1,15 @@
-import { Sora, Inter } from 'next/font/google';
+import localFont from 'next/font/local';
 
-const sora = Sora({
-  subsets: ['latin'],
-  weight: ['600', '700', '800'],
+const sora = localFont({
+  src: '../../fonts/sora-600-800.woff2',
+  weight: '600 800',
   variable: '--font-sora',
   display: 'swap',
 });
 
-const interFont = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
+const interFont = localFont({
+  src: '../../fonts/inter-400-600.woff2',
+  weight: '400 600',
   variable: '--font-spoon-inter',
   display: 'swap',
 });
