@@ -1,18 +1,57 @@
 import { CAPABILITY_STATEMENT_PATH, ORG_TAX_STATUS, NJ_CHARITY_REG_NO } from '@/lib/org';
+import PartnerInterestForm from '@/components/partners/PartnerInterestForm';
+import { campaignDonateHref } from '@/data/campaignShared';
+import { FIVE_LOAVES_SLUG, KIT_COST, TOTAL_KITS } from '@/data/fiveLoavesCampaign';
+import {
+  SMALL_BUSINESS_IDEAS,
+  CORPORATE_CHANNELS,
+  SPONSOR_RECOGNITION,
+  PARTNER_PRIVACY_POINTS,
+} from '@/data/partnerships';
+
+const DESCRIPTION =
+  'Sponsor weekend meals for Newark children, host a give-back event, match employee gifts, or donate goods and services. Business partnerships with Seed & Spoon.';
 
 export const metadata = {
-  title: 'Corporate Partnerships – Seed & Spoon',
-  description:
-    'Partner with Seed & Spoon to fight youth food insecurity in New Jersey. Explore corporate giving, employee engagement, and federal grant opportunities.',
+  title: 'Business & Corporate Partners – Seed & Spoon',
+  description: DESCRIPTION,
   openGraph: {
-    title: 'Corporate Partnerships – Seed & Spoon',
-    description:
-      'Partner with Seed & Spoon to fight youth food insecurity in New Jersey. Explore corporate giving, employee engagement, and federal grant opportunities.',
+    title: 'Business & Corporate Partners – Seed & Spoon',
+    description: DESCRIPTION,
     url: 'https://seedandspoon.org/partners/corporate',
     siteName: 'Seed & Spoon',
     type: 'website',
   },
 };
+
+const CHILDREN = 25;
+const WEEKENDS = TOTAL_KITS / CHILDREN;
+
+// Sponsorship menu, priced from the 5 Loaves kit cost so it stays in step with the campaign.
+const SPONSOR_LEVELS = [
+  { amount: KIT_COST, label: 'One child’s weekend', note: 'Eight prepared meals and five snacks' },
+  { amount: KIT_COST * 5, label: 'One child for five weekends', note: 'A third of the pilot for one child' },
+  { amount: KIT_COST * WEEKENDS, label: 'One child for the whole pilot', note: `All ${WEEKENDS} weekends` },
+  { amount: KIT_COST * CHILDREN, label: 'A weekend for every child', note: `Every kit for one Friday, all ${CHILDREN} children` },
+].map((level) => ({
+  ...level,
+  href: campaignDonateHref(FIVE_LOAVES_SLUG, level.amount, { source: 'business_partners' }),
+}));
+
+const usd = (n) => `$${n.toLocaleString('en-US')}`;
+
+function CardGrid({ items }) {
+  return (
+    <div className="grid sm:grid-cols-2 gap-6">
+      {items.map((item) => (
+        <div key={item.title} className="bg-white border border-gray-100 rounded-2xl p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">{item.title}</h3>
+          <p className="text-sm text-gray-600 leading-relaxed">{item.body}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function CorporatePartnersPage() {
   return (
@@ -22,70 +61,108 @@ export default function CorporatePartnersPage() {
         {/* Sentinel observed by Header to detect when hero is in view */}
         <div id="hero-sentinel" className="absolute bottom-0 h-px w-full pointer-events-none" />
         <div className="container mx-auto px-6 max-w-4xl text-center">
+          <p className="text-sm font-semibold uppercase tracking-widest text-green-200 mb-4">
+            Business &amp; Corporate Partners
+          </p>
           <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-            Partner With Seed & Spoon
+            Put your business behind Newark kids’ weekend meals
           </h1>
           <p className="text-xl text-green-100 leading-relaxed max-w-2xl mx-auto">
-            Together we can ensure every child in New Jersey has access to nutritious food.
-            Corporate partnerships amplify our reach, deepen our impact, and strengthen communities.
+            {usd(KIT_COST)} covers the food in one child’s weekend kit. Whether you run a corner shop or a
+            national company, there’s a clear way to help.
           </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-4">
+            <a
+              href="#sponsor"
+              className="inline-block bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold py-4 px-8 rounded-full transition text-lg"
+            >
+              Sponsor Meals
+            </a>
+            <a
+              href="#interest-form"
+              className="inline-block border border-white/40 hover:bg-white/10 text-white font-semibold py-4 px-8 rounded-full transition text-lg"
+            >
+              Start a Conversation
+            </a>
+          </div>
         </div>
       </section>
 
-      {/* Partnership tiers */}
-      <section className="py-20 bg-white">
+      {/* Sponsorship menu */}
+      <section id="sponsor" className="py-20 bg-white scroll-mt-24">
         <div className="container mx-auto px-6 max-w-5xl">
-          <header className="text-center mb-14">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Ways to Partner</h2>
-            <p className="text-gray-500 max-w-2xl mx-auto">
-              Whether you&apos;re a small business or a national brand, there&apos;s a partnership model
-              that fits your goals and capacity.
+          <header className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Sponsor the 5 Loaves pilot</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Every level funds food for real weekend meal kits. Gifts go to the 5 Loaves campaign and are
+              tax-deductible as allowed by law.
             </p>
           </header>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: 'Corporate Giving',
-                icon: '💚',
-                description:
-                  'Make a direct financial contribution to fund meals, kitchen operations, and delivery logistics. Receive full tax documentation and impact reports.',
-                cta: 'Donate as a Business',
-                href: '/donate',
-              },
-              {
-                title: 'Employee Engagement',
-                icon: '🤝',
-                description:
-                  'Bring your team to our kitchens and distribution events. Volunteer days, team-building, and skills-based volunteering all available.',
-                cta: 'Plan a Volunteer Day',
-                href: '/contact?subject=volunteer-day',
-              },
-              {
-                title: 'In-Kind Donations',
-                icon: '📦',
-                description:
-                  'Donate surplus food, packaging materials, equipment, or professional services. We handle logistics and provide donation receipts.',
-                cta: 'Discuss In-Kind Giving',
-                href: '/contact?subject=in-kind',
-              },
-            ].map((tier) => (
-              <div
-                key={tier.title}
-                className="border border-gray-100 rounded-2xl p-8 hover:shadow-lg transition-shadow"
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {SPONSOR_LEVELS.map((level) => (
+              <a
+                key={level.amount}
+                href={level.href}
+                className="group flex flex-col rounded-2xl border border-gray-200 p-6 hover:border-[#2d5a27] hover:shadow-lg transition"
               >
-                <div className="text-4xl mb-4">{tier.icon}</div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">{tier.title}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed mb-6">{tier.description}</p>
-                <a
-                  href={tier.href}
-                  className="text-sm font-semibold text-[#2d5a27] hover:underline"
-                >
-                  {tier.cta} →
-                </a>
-              </div>
+                <span className="text-3xl font-bold text-[#2d5a27] mb-2">{usd(level.amount)}</span>
+                <span className="font-semibold text-gray-900">{level.label}</span>
+                <span className="text-sm text-gray-500 mt-1 flex-1">{level.note}</span>
+                <span className="mt-4 text-sm font-semibold text-[#2d5a27] group-hover:underline">Sponsor →</span>
+              </a>
             ))}
           </div>
+          <div className="mt-10 grid md:grid-cols-2 gap-6">
+            <div className="rounded-2xl bg-[#f9f6f0] p-6">
+              <h3 className="font-semibold text-gray-900 mb-3">How we thank sponsors</h3>
+              <ul className="space-y-2 text-sm text-gray-700">
+                {SPONSOR_RECOGNITION.map((item) => (
+                  <li key={item} className="flex gap-2">
+                    <span className="text-[#2d5a27]" aria-hidden="true">✓</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-2xl bg-[#f9f6f0] p-6">
+              <h3 className="font-semibold text-gray-900 mb-3">What we never share</h3>
+              <ul className="space-y-2 text-sm text-gray-700">
+                {PARTNER_PRIVACY_POINTS.filter((_, i) => i !== 1).map((item) => (
+                  <li key={item} className="flex gap-2">
+                    <span className="text-[#2d5a27]" aria-hidden="true">✓</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Small business */}
+      <section className="py-20 bg-[#f9f6f0]">
+        <div className="container mx-auto px-6 max-w-5xl">
+          <header className="mb-10">
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">For small businesses</h2>
+            <p className="text-gray-600 max-w-2xl">
+              Local businesses can say yes quickly, and your customers want to help too. Pick one idea to start.
+            </p>
+          </header>
+          <CardGrid items={SMALL_BUSINESS_IDEAS} />
+        </div>
+      </section>
+
+      {/* Corporations */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-6 max-w-5xl">
+          <header className="mb-10">
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">For corporations</h2>
+            <p className="text-gray-600 max-w-2xl">
+              We’ll match your giving program, employee engagement goals, or grant cycle to a defined need in
+              the pilot.
+            </p>
+          </header>
+          <CardGrid items={CORPORATE_CHANNELS} />
         </div>
       </section>
 
@@ -160,20 +237,18 @@ export default function CorporatePartnersPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-6 max-w-3xl text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to Make an Impact?</h2>
-          <p className="text-gray-500 mb-8">
-            Reach out to discuss how your organization can partner with Seed &amp; Spoon.
-            We&apos;ll tailor a plan that meets your CSR goals and drives real community change.
-          </p>
-          <a
-            href="/contact?subject=corporate-partnership"
-            className="inline-flex items-center gap-2 bg-[#2d5a27] text-white px-8 py-4 rounded-full font-semibold hover:bg-[#1f3f1b] transition"
-          >
-            Get in Touch
-          </a>
+      {/* Interest form */}
+      <section id="interest-form" className="py-20 bg-white scroll-mt-24">
+        <div className="container mx-auto px-6 max-w-2xl">
+          <header className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to talk?</h2>
+            <p className="text-gray-600">
+              Tell us what you’d like to offer and we’ll follow up to shape a plan that fits your business.
+            </p>
+          </header>
+          <div className="bg-[#f9f6f0] rounded-2xl p-8 sm:p-10">
+            <PartnerInterestForm page="partners/corporate" defaultType="Small business" />
+          </div>
         </div>
       </section>
     </div>

@@ -13,17 +13,25 @@ const LOGO_DIMENSIONS = {
   "/assets/new-logos/logo-compact.png": { width: 412, height: 129 },
 };
 
+// Grouped under "Get Involved" in both the desktop dropdown and the mobile menu.
+const GET_INVOLVED_LINKS = [
+  { href: "/volunteer", label: "Volunteer", blurb: "Give your time and skills" },
+  { href: "/partners", label: "Partner With Us", blurb: "Organizations, schools, and businesses" },
+  { href: "/give", label: "Ways to Give", blurb: "Donations, sponsorships, and in-kind gifts" },
+];
+
 export default function Header() {
   const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isCausesOpen, setIsCausesOpen] = useState(false);
+  const [isInvolvedOpen, setIsInvolvedOpen] = useState(false);
   const hamburgerRef = useRef(null);
   const menuRef = useRef(null);
 
   // Helper function for dynamic navigation link styling
   const getNavLinkClass = (isScrolled) => {
-    return `body-sm font-bold transition-colors ${
+    return `body-sm font-bold whitespace-nowrap transition-colors ${
       isScrolled
         ? "text-charcoal hover:text-primary-soil"
         : "text-white hover:text-cream drop-shadow-lg"
@@ -263,19 +271,68 @@ export default function Header() {
               Impact
             </Link>
 
-            <Link href="/give" className={getNavLinkClass(isScrolled)}>
-              Ways to Give
-            </Link>
+            {/* Get Involved dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => setIsInvolvedOpen(true)}
+              onMouseLeave={() => setIsInvolvedOpen(false)}
+              onBlur={(e) => {
+                if (!e.currentTarget.contains(e.relatedTarget)) setIsInvolvedOpen(false);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") setIsInvolvedOpen(false);
+              }}
+            >
+              <button
+                type="button"
+                aria-haspopup="true"
+                aria-expanded={isInvolvedOpen}
+                onClick={() => setIsInvolvedOpen((open) => !open)}
+                className={`inline-flex items-center gap-1 ${getNavLinkClass(isScrolled)}`}
+              >
+                <span>Get Involved</span>
+                <span
+                  aria-hidden="true"
+                  className={`transition-transform duration-200 ${
+                    isInvolvedOpen ? "rotate-180" : "rotate-0"
+                  }`}
+                >
+                  ▾
+                </span>
+              </button>
+
+              <AnimatePresence>
+                {isInvolvedOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute left-0 mt-2 w-64 rounded-xl bg-white/95 shadow-2xl border border-white/40 backdrop-blur-md py-2"
+                  >
+                    {GET_INVOLVED_LINKS.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setIsInvolvedOpen(false)}
+                        className="block px-4 py-2.5 hover:bg-[#eaf6e5] group"
+                      >
+                        <span className="block body-sm font-bold text-[var(--charcoal)] group-hover:text-[var(--green-primary)]">
+                          {item.label}
+                        </span>
+                        <span className="block text-xs text-gray-500">{item.blurb}</span>
+                      </Link>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
             <Button variant="secondary" href="/donate">
               Donate
             </Button>
 
-            <Link href="/volunteer" className={getNavLinkClass(isScrolled)}>
-              Volunteer
-            </Link>
-
-            <div className="flex gap-2 lg:gap-3 ml-2 lg:ml-4">
+            <div className="hidden 2xl:flex gap-2 lg:gap-3 ml-2 lg:ml-4">
               <a
                 href="https://instagram.com/seedandspoon_nj"
                 target="_blank"
@@ -344,7 +401,7 @@ export default function Header() {
                 <>
                   <Link
                     href="/login"
-                    className={`body-sm font-bold px-4 py-2 rounded-lg transition-all border ${
+                    className={`body-sm font-bold whitespace-nowrap px-4 py-2 rounded-lg transition-all border ${
                       isScrolled
                         ? "border-charcoal/30 text-charcoal hover:bg-charcoal/5"
                         : "border-white/30 text-white hover:bg-white/10 drop-shadow-lg"
@@ -354,7 +411,7 @@ export default function Header() {
                   </Link>
                   <Link
                     href="/signup"
-                    className={`body-sm font-bold px-4 py-2 rounded-lg transition-all ${
+                    className={`body-sm font-bold whitespace-nowrap px-4 py-2 rounded-lg transition-all ${
                       isScrolled
                         ? "bg-primary-soil text-white hover:bg-primary-soil/90 shadow-md"
                         : "bg-cream text-charcoal hover:bg-cream/90 drop-shadow-lg shadow-md"
@@ -456,20 +513,21 @@ export default function Header() {
               >
                 Impact
               </Link>
-              <Link
-                href="/give"
-                onClick={closeMenu}
-                className="body-md font-bold text-white hover:text-[var(--leaf-mid)] text-3xl"
-              >
-                Ways to Give
-              </Link>
-              <Link
-                href="/volunteer"
-                onClick={closeMenu}
-                className="body-md font-bold text-white hover:text-[var(--leaf-mid)] text-3xl"
-              >
-                Volunteer
-              </Link>
+              <div className="space-y-2">
+                <p className="body-md font-bold text-white text-3xl">Get Involved</p>
+                <div className="flex flex-wrap justify-center gap-x-5 gap-y-2">
+                  {GET_INVOLVED_LINKS.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={closeMenu}
+                      className="body-md font-semibold text-white/90 hover:text-[var(--leaf-mid)] text-xl underline-offset-4 hover:underline"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
 
               {/* Authentication options */}
               <div className="border-t border-white/30 pt-6 space-y-4">

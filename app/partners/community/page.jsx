@@ -3,11 +3,11 @@ import CommunityPartnersClient from './CommunityPartnersClient';
 export const metadata = {
   title: 'Community Partnerships – Seed & Spoon',
   description:
-    'Partner with Seed & Spoon as a church, community center, youth group, or educational institution to help Essex County families access food with dignity.',
+    'Schools, agencies, universities, municipalities, and faith and community groups: choose one clear way to help Seed & Spoon feed Newark children.',
   openGraph: {
     title: 'Community Partnerships – Seed & Spoon',
     description:
-      'Partner with Seed & Spoon as a church, community center, youth group, or educational institution to help Essex County families access food with dignity.',
+      'Schools, agencies, universities, municipalities, and faith and community groups: choose one clear way to help Seed & Spoon feed Newark children.',
     url: 'https://seedandspoon.org/partners/community',
     siteName: 'Seed & Spoon',
     type: 'website',
