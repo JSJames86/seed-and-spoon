@@ -1,16 +1,18 @@
-import { Playfair_Display, DM_Sans } from 'next/font/google';
+import localFont from 'next/font/local';
 
-const playfairFont = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['400', '700', '900'],
-  style: ['normal', 'italic'],
+const playfairFont = localFont({
+  src: [
+    { path: '../fonts/playfair-display-400-900.woff2', weight: '400 900', style: 'normal' },
+    { path: '../fonts/playfair-display-400-900-italic.woff2', weight: '400 900', style: 'italic' },
+  ],
+  adjustFontFallback: 'Times New Roman',
   variable: '--font-playfair',
   display: 'swap',
 });
 
-const dmSansFont = DM_Sans({
-  subsets: ['latin'],
-  weight: ['300', '400', '500'],
+const dmSansFont = localFont({
+  src: '../fonts/dm-sans-300-500.woff2',
+  weight: '300 500',
   variable: '--font-dm-sans',
   display: 'swap',
 });

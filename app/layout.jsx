@@ -7,40 +7,43 @@ import CookieSettingsModal from "@/components/CookieSettingsModal";
 import AnalyticsLoader from "@/components/AnalyticsLoader";
 import Providers from "@/components/Providers";
 import { SubscribePopupTrigger } from "@/components/email/SubscribeModal";
-import { Libre_Franklin, Roboto_Slab, Crimson_Text, Fraunces, Hanken_Grotesk } from 'next/font/google';
+import localFont from 'next/font/local';
 import { SOCIAL_LINKS } from "@/data/socialLinks";
 
-const libreFranklin = Libre_Franklin({
-  subsets: ['latin'],
-  weight: ['400', '500', '700'],
+const libreFranklin = localFont({
+  src: './fonts/libre-franklin-400-700.woff2',
+  weight: '400 700',
   variable: '--font-libre-franklin',
   display: 'swap',
 });
 
-const robotoSlab = Roboto_Slab({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
+const robotoSlab = localFont({
+  src: './fonts/roboto-slab-400-600.woff2',
+  weight: '400 600',
+  adjustFontFallback: 'Times New Roman',
   variable: '--font-roboto-slab',
   display: 'swap',
 });
 
-const crimsonText = Crimson_Text({
-  subsets: ['latin'],
-  weight: ['400'],
+const crimsonText = localFont({
+  src: './fonts/crimson-text-400.woff2',
+  weight: '400',
+  adjustFontFallback: 'Times New Roman',
   variable: '--font-crimson-text',
   display: 'swap',
 });
 
-const fraunces = Fraunces({
-  subsets: ['latin'],
-  weight: ['500', '600'],
+const fraunces = localFont({
+  src: './fonts/fraunces-500-600.woff2',
+  weight: '500 600',
+  adjustFontFallback: 'Times New Roman',
   variable: '--font-fraunces',
   display: 'swap',
 });
 
-const hankenGrotesk = Hanken_Grotesk({
-  subsets: ['latin'],
-  weight: ['500', '600', '700'],
+const hankenGrotesk = localFont({
+  src: './fonts/hanken-grotesk-500-700.woff2',
+  weight: '500 700',
   variable: '--font-hanken-grotesk',
   display: 'swap',
 });
