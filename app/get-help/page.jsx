@@ -1,11 +1,11 @@
 export const metadata = {
-  title: "Get Food Help | Seed & Spoon NJ - Apply for Assistance",
+  title: "Get Food Help | Seed & Spoon NJ - Family Intake",
   description:
-    "Need food assistance in New Jersey? Apply for help, refer a client, or find local food pantries and meal sites. Seed & Spoon NJ connects families with dignity-centered food resources.",
+    "Need food help in Essex County? Start a family intake, send a referral, or find local food pantries and meal sites. We never ask for income or Social Security numbers.",
   openGraph: {
     title: "Get Food Help | Seed & Spoon NJ - Connecting Families with Resources",
     description:
-      "Find food assistance in New Jersey. Apply for help, explore our resource map, and connect with pantries, meal programs, and community support.",
+      "Find food assistance in New Jersey. Start a family intake, explore our resource map, and connect with pantries, meal programs, and community support.",
     url: "https://seedandspoon.org/get-help",
     images: ["/og-image.jpg"],
     type: "website",
