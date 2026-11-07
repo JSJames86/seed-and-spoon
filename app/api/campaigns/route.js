@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { getCashRaisedByCampaignIds } from "@/lib/campaignTotals";
 
 function serviceClient() {
   return createClient(
@@ -38,7 +39,14 @@ export async function GET() {
     .order("created_at", { ascending: false });
 
   if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
-  return NextResponse.json({ ok: true, data });
+
+  // Nothing keeps campaigns.amount_raised in sync with donations, so report the
+  // live total of completed cash gifts instead (stored value is the fallback).
+  const totals = await getCashRaisedByCampaignIds((data ?? []).map((c) => c.id));
+  const withTotals = (data ?? []).map((c) =>
+    c.id in totals ? { ...c, amount_raised: totals[c.id] } : c
+  );
+  return NextResponse.json({ ok: true, data: withTotals });
 }
 
 export async function POST(request) {
