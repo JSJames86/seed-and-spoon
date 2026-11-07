@@ -128,6 +128,20 @@ Public fundraising page for the 5 Loaves pilot (25 children, 15 weekends, 375 ki
 
 **Attribution:** `/donate?campaign=<slug>` → checkout metadata `campaign` → webhook resolves the slug to `donations.campaign_id`. An unknown slug records the gift unattributed and never drops it.
 
+### 6. Formula Supplement Pilot campaign page
+
+Supplemental weekend infant formula for 5 to 10 babies over the same 15 weekends as 5 Loaves. Goal = cans x `price_per_can_cents` + shipping + tax.
+
+| Layer | Path |
+|-------|------|
+| Page | `app/campaigns/formula-supplement-pilot/page.jsx` (noindex unless the row is `active`) |
+| Copy + defaults | `data/formulaSupplementCampaign.js` (fallback config if the DB row is unreachable) |
+| Budget config | `campaigns.config` jsonb. The `campaigns_apply_can_goal` trigger recomputes `goal_cents`/`goal_amount` when config changes. A null price means "goal pending". |
+| Migration | `supabase/migrations/20261107100004_campaign_config_and_formula_pilot.sql` (row seeded `draft`) |
+| Causes card | `app/causes/page.jsx` (shown only when the row is `active`) |
+
+**Shared campaign parts:** `components/campaigns/{CampaignProgress,CampaignGiftOptions,CampaignPrivacy,CampaignFooter}.jsx`, `data/campaignShared.js`. Campaign pages enter the sitemap (`next-sitemap.config.js`) only while their row is `active`.
+
 ---
 
 ## Operational documents

@@ -117,14 +117,6 @@ export const fiveLoaves = {
       'Gifts to this campaign support 5 Loaves. Funds raised beyond the pilot’s needs will support future 5 Loaves cohorts and related Seed & Spoon youth hunger programs.',
   },
 
-  privacy: {
-    heading: 'Our privacy commitment',
-    paragraphs: [
-      'We protect the privacy of every family we serve. We never share names, photos, or personal details of the families or children in our programs, and we report only combined totals.',
-      'This applies to everyone, including our largest donors. We share a family’s information only when that family has given us written permission, and only what they agreed to. A family’s decision to share or not never affects their place in the program.',
-    ],
-  },
-
   measure: {
     heading: 'What we’ll measure',
     intro:

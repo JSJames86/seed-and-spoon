@@ -6,11 +6,13 @@ import { captureEvent } from '@/analytics/posthog';
 import { EVENTS } from '@/analytics/events';
 import { ORG_TAX_STATUS_LINE, NJ_SOLICITATION_DISCLOSURE } from '@/lib/org';
 import { FIVE_LOAVES_SLUG, fiveLoaves } from '@/data/fiveLoavesCampaign';
+import { FORMULA_SLUG, formula } from '@/data/formulaSupplementCampaign';
 
 // Campaigns with a named banner on the donate page. Unknown slugs are still
 // passed through to Stripe metadata; they just don't get a banner.
 const CAMPAIGN_BANNERS = {
   [FIVE_LOAVES_SLUG]: { title: fiveLoaves.title, note: fiveLoaves.gift.giftUse },
+  [FORMULA_SLUG]: { title: formula.title, note: formula.gift.giftUse },
 };
 
 const presetAmounts = [2500, 5000, 10000, 25000]; // $25, $50, $100, $250

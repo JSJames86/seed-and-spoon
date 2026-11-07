@@ -36,6 +36,8 @@ const nonPublicPaths = [
   '/links',
 ];
 
+const statusGatedCampaignPaths = ['/campaigns/five-loaves', '/campaigns/formula-supplement-pilot'];
+
 // robots.txt matches by prefix, so a bare '/documents' would also block the
 // public funder PDFs under /documents/*.pdf (capability statement, research
 // paper). Anchor it so only the auth-gated document library page is blocked.
@@ -47,7 +49,7 @@ module.exports = {
   changefreq: 'weekly',
   priority: 0.7,
   sitemapSize: 5000,
-  exclude: nonPublicPaths,
+  exclude: [...nonPublicPaths, ...statusGatedCampaignPaths],
   robotsTxtOptions: {
     policies: [
       {
@@ -75,24 +77,33 @@ module.exports = {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     if (!url || !anonKey) return [];
+    const headers = { apikey: anonKey, Authorization: `Bearer ${anonKey}` };
 
-    try {
-      const res = await fetch(
-        `${url}/rest/v1/posts?select=slug,updated_at&status=eq.published`,
-        { headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` } }
-      );
-      if (!res.ok) return [];
-      const posts = await res.json();
-      return Promise.all(
-        posts.map((post) =>
-          config.transform(config, `/blog/${post.slug}`).then((entry) => ({
-            ...entry,
-            lastmod: post.updated_at || entry.lastmod,
-          }))
-        )
-      );
-    } catch {
-      return [];
-    }
+    const fetchRows = async (query) => {
+      try {
+        const res = await fetch(`${url}/rest/v1/${query}`, { headers });
+        return res.ok ? await res.json() : [];
+      } catch {
+        return [];
+      }
+    };
+
+    const [posts, campaigns] = await Promise.all([
+      fetchRows('posts?select=slug,updated_at&status=eq.published'),
+      fetchRows('campaigns?select=slug,updated_at&status=eq.active'),
+    ]);
+
+    const entries = [
+      ...posts.map((p) => ({ path: `/blog/${p.slug}`, updated_at: p.updated_at })),
+      ...campaigns.map((c) => ({ path: `/campaigns/${c.slug}`, updated_at: c.updated_at })),
+    ];
+    return Promise.all(
+      entries.map(({ path, updated_at }) =>
+        config.transform(config, path).then((entry) => ({
+          ...entry,
+          lastmod: updated_at || entry.lastmod,
+        }))
+      )
+    );
   },
 };
