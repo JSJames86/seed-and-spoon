@@ -23,11 +23,26 @@ function getServiceSupabase() {
   return createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
 }
 
+// Resolve a campaign slug from Stripe metadata to campaigns.id. Never throws:
+// an unknown or missing slug just means the gift isn't attributed, so a typo
+// in a link can't cost us a donation record.
+async function resolveCampaignId(supabase, slug) {
+  if (!slug || typeof slug !== 'string') return null;
+  try {
+    const { data } = await supabase.from('campaigns').select('id').eq('slug', slug).maybeSingle();
+    if (!data) console.warn(`[Stripe Webhook] Unknown campaign slug "${slug}" — recording gift unattributed`);
+    return data?.id || null;
+  } catch (err) {
+    console.warn('[Stripe Webhook] Campaign lookup failed (non-fatal):', err);
+    return null;
+  }
+}
+
 // A single one-time donation via Checkout fires both checkout.session.completed and
 // payment_intent.succeeded for the same payment intent — dedup on that (or the
 // transaction id, for events where no payment intent is available yet) so we never
 // insert a second donation row or send a second receipt for the same payment.
-async function recordDonation({ donorEmail, donorName, amountCents, isMonthly, transactionId, stripePaymentIntentId }) {
+async function recordDonation({ donorEmail, donorName, amountCents, isMonthly, transactionId, stripePaymentIntentId, campaignSlug }) {
   const supabase = getServiceSupabase();
   if (!supabase) {
     console.warn('[Stripe Webhook] Skipping DB record — service role key not configured');
@@ -45,6 +60,8 @@ async function recordDonation({ donorEmail, donorName, amountCents, isMonthly, t
       if (existing) return existing;
     }
 
+    const campaignId = await resolveCampaignId(supabase, campaignSlug);
+
     const { data: inserted, error } = await supabase
       .from('donations')
       .insert({
@@ -56,6 +73,7 @@ async function recordDonation({ donorEmail, donorName, amountCents, isMonthly, t
         stripe_payment_intent_id: stripePaymentIntentId || null,
         payment_method: 'stripe',
         status: 'completed',
+        ...(campaignId ? { campaign_id: campaignId } : {}),
       })
       .select('id, receipt_id, receipt_email_sent_at')
       .single();
@@ -196,6 +214,7 @@ export async function POST(request) {
           isMonthly,
           transactionId: session.id,
           stripePaymentIntentId: session.payment_intent || null,
+          campaignSlug: session.metadata?.campaign,
         });
 
         if (donorEmail) {
@@ -237,6 +256,7 @@ export async function POST(request) {
           isMonthly,
           transactionId: intent.id,
           stripePaymentIntentId: intent.id,
+          campaignSlug: intent.metadata?.campaign,
         });
 
         if (donorEmail) {
@@ -273,6 +293,11 @@ export async function POST(request) {
           isMonthly: true,
           transactionId: invoice.id,
           stripePaymentIntentId: invoice.payment_intent || null,
+          // Subscription metadata is copied onto renewal invoices; its location
+          // depends on the Stripe API version.
+          campaignSlug:
+            invoice.subscription_details?.metadata?.campaign ||
+            invoice.parent?.subscription_details?.metadata?.campaign,
         });
 
         if (donorEmail && renewalDonationRow && !renewalDonationRow.receipt_email_sent_at) {

@@ -113,6 +113,22 @@ Per-role eligibility model. `volunteers.status` = account lifecycle (invited →
 
 ---
 
+### 5. 5 Loaves Weekend Meals campaign page
+
+Public fundraising page for the 5 Loaves pilot (25 children, 15 weekends, 375 kits at $50 each = $18,750 Phase 1 food goal).
+
+| Layer | Path |
+|-------|------|
+| Page | `app/campaigns/five-loaves/page.jsx` (static route, overrides `[slug]`) |
+| Copy + config | `data/fiveLoavesCampaign.js`: all copy, the `LAUNCH` gates (`launched`, `schoolNameApproved`), and `LIVE_PROGRESS` (weekly combined totals, edited by staff) |
+| Totals | `lib/campaignTotals.js`: server-only sum of completed, non-in-kind donations by `campaign_id` |
+| Causes card | `app/causes/page.jsx` (shown only when `LAUNCH.launched`) |
+| Seed row | `supabase/migrations/20261107100003_seed_five_loaves_campaign.sql` (`draft` until launch) |
+
+**Attribution:** `/donate?campaign=<slug>` → checkout metadata `campaign` → webhook resolves the slug to `donations.campaign_id`. An unknown slug records the gift unattributed and never drops it.
+
+---
+
 ## Operational documents
 
 | Document | Location | Notes |

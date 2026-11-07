@@ -37,7 +37,7 @@ export async function POST(request) {
       );
     }
 
-    const { amount, currency, interval, email, name, source } = validation.data;
+    const { amount, currency, interval, email, name, source, campaign } = validation.data;
 
     // Get URLs
     const { successUrl, cancelUrl } = getDonationUrls();
@@ -49,6 +49,8 @@ export async function POST(request) {
     const metadata = {
       source: source || 'donate_page',
       donorName: name || undefined,
+      // Campaign slug; the webhook resolves it to donations.campaign_id.
+      campaign: campaign || undefined,
     };
 
     let session;
