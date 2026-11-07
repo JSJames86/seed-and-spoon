@@ -15,6 +15,7 @@ import CampaignProgress from '@/components/campaigns/CampaignProgress';
 import CampaignGiftOptions from '@/components/campaigns/CampaignGiftOptions';
 import CampaignPrivacy from '@/components/campaigns/CampaignPrivacy';
 import CampaignFooter from '@/components/campaigns/CampaignFooter';
+import CampaignPhoto from '@/components/campaigns/CampaignPhoto';
 
 // Static route; takes precedence over app/campaigns/[slug] for this slug.
 // Totals refresh every 5 minutes.
@@ -30,14 +31,14 @@ export const metadata = {
     title: `${c.title} | Seed & Spoon NJ`,
     description: c.metaDescription,
     url,
-    images: ['/og-image.jpg'],
+    images: [c.image.src],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
     title: `${c.title} | Seed & Spoon NJ`,
     description: c.metaDescription,
-    images: ['/og-image.jpg'],
+    images: [c.image.src],
   },
 };
 
@@ -76,9 +77,14 @@ export default async function FiveLoavesCampaignPage() {
           <Link href="/campaigns" className="inline-flex items-center text-white/80 hover:text-white text-sm mb-6">
             ← All campaigns
           </Link>
-          <p className="text-sm uppercase tracking-[0.16em] font-semibold text-white/80 mb-3">{c.title}</p>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight max-w-4xl">{c.hero.headline}</h1>
-          <p className="mt-6 text-lg md:text-xl leading-relaxed opacity-95 max-w-3xl">{c.hero.body}</p>
+          <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-10 lg:items-center">
+            <div>
+              <p className="text-sm uppercase tracking-[0.16em] font-semibold text-white/80 mb-3">{c.title}</p>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight max-w-4xl">{c.hero.headline}</h1>
+              <p className="mt-6 text-lg md:text-xl leading-relaxed opacity-95 max-w-3xl">{c.hero.body}</p>
+            </div>
+            <CampaignPhoto image={c.image} priority className="mt-10 lg:mt-0 max-w-md mx-auto lg:max-w-none" />
+          </div>
 
           <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4">
             {c.hero.stats.map((block) => (

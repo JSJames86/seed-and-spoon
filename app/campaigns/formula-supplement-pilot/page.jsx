@@ -13,6 +13,7 @@ import CampaignProgress from '@/components/campaigns/CampaignProgress';
 import CampaignGiftOptions from '@/components/campaigns/CampaignGiftOptions';
 import CampaignPrivacy from '@/components/campaigns/CampaignPrivacy';
 import CampaignFooter from '@/components/campaigns/CampaignFooter';
+import CampaignPhoto from '@/components/campaigns/CampaignPhoto';
 
 export const revalidate = 300;
 
@@ -32,8 +33,8 @@ export async function generateMetadata() {
     title,
     description: c.metaDescription,
     robots: record?.status === 'active' ? undefined : { index: false, follow: false },
-    openGraph: { title, description: c.metaDescription, url, images: ['/og-image.jpg'], type: 'website' },
-    twitter: { card: 'summary_large_image', title, description: c.metaDescription, images: ['/og-image.jpg'] },
+    openGraph: { title, description: c.metaDescription, url, images: [c.image.src], type: 'website' },
+    twitter: { card: 'summary_large_image', title, description: c.metaDescription, images: [c.image.src] },
   };
 }
 
@@ -107,11 +108,16 @@ export default async function FormulaSupplementPilotPage() {
           <Link href="/campaigns" className="inline-flex items-center text-white/80 hover:text-white text-sm mb-6">
             ← All campaigns
           </Link>
-          <p className="text-sm uppercase tracking-[0.16em] font-semibold text-white/80 mb-3">{c.title}</p>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight max-w-4xl">{c.hero.headline}</h1>
-          {c.hero.paragraphs.map((t) => (
-            <p key={t} className="mt-6 text-lg md:text-xl leading-relaxed opacity-95 max-w-3xl">{t}</p>
-          ))}
+          <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-10 lg:items-center">
+            <div>
+              <p className="text-sm uppercase tracking-[0.16em] font-semibold text-white/80 mb-3">{c.title}</p>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight max-w-4xl">{c.hero.headline}</h1>
+              {c.hero.paragraphs.map((t) => (
+                <p key={t} className="mt-6 text-lg md:text-xl leading-relaxed opacity-95 max-w-3xl">{t}</p>
+              ))}
+            </div>
+            <CampaignPhoto image={c.image} priority sizes="(min-width: 1024px) 400px, 100vw" className="mt-10 lg:mt-0" />
+          </div>
           <Link
             href="#give"
             className="mt-10 inline-flex items-center justify-center px-10 py-4 bg-[#EA802F] hover:bg-[#d6722a] text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all text-lg"
