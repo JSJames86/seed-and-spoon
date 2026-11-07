@@ -1,7 +1,8 @@
 /**
  * 5 Loaves Weekend Meals — pilot campaign page copy and configuration.
  *
- * Source: "5 Loaves Pilot Page — Copy" (Nov 6, 2026, Janelle).
+ * Source of truth: docs/campaigns/five-loaves-pilot-page-copy.md (final copy, Janelle).
+ * Copy changes go in that doc first; then update the strings here to match.
  * Rendered by app/campaigns/five-loaves/page.jsx and the card on app/causes/page.jsx.
  * Edit the copy here, not in the components.
  */

@@ -120,6 +120,7 @@ Public fundraising page for the 5 Loaves pilot (25 children, 15 weekends, 375 ki
 | Layer | Path |
 |-------|------|
 | Page | `app/campaigns/five-loaves/page.jsx` (static route, overrides `[slug]`) |
+| Final copy | `docs/campaigns/five-loaves-pilot-page-copy.md` (approved source text) |
 | Copy + config | `data/fiveLoavesCampaign.js`: all copy, the `LAUNCH` gates (`launched`, `schoolNameApproved`), and `LIVE_PROGRESS` (weekly combined totals, edited by staff) |
 | Totals | `lib/campaignTotals.js`: server-only sum of completed, non-in-kind donations by `campaign_id` |
 | Causes card | `app/causes/page.jsx` (shown only when `LAUNCH.launched`) |
