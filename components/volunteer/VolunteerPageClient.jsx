@@ -1,10 +1,12 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { VOLUNTEER_ROLES, VOLUNTEER_CATEGORIES, VOLUNTEER_LOCATIONS } from '@/data/volunteerRoles';
 
 export default function VolunteerPage() {
   const [selectedFilters, setSelectedFilters] = useState({
     day: 'all',
     category: 'all',
+    where: 'all',
     type: 'all'
   });
   const [formData, setFormData] = useState({
@@ -31,231 +33,8 @@ export default function VolunteerPage() {
     setVisible(true);
   }, []);
 
-  const roles = [
-    {
-      id: 1,
-      title: 'Planners / Admins',
-      emoji: '📋',
-      days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-      schedule: 'Mon–Fri (few hrs/day)',
-      duties: [
-        'Manage rosters and volunteer schedules',
-        'Handle donor communication and outreach',
-        'Maintain data systems and records',
-        'Coordinate weekly meal plans',
-        'Support program operations'
-      ],
-      idealFor: 'Detail-oriented organizers who love systems',
-      summary: 'Keeps the mission running smoothly behind the scenes.',
-      category: 'Admin'
-    },
-    {
-      id: 2,
-      title: 'Shoppers',
-      emoji: '🛒',
-      days: ['Tuesday', 'Friday'],
-      schedule: 'Tues & Fri',
-      duties: [
-        'Pick up food donations from partners',
-        'Purchase needed ingredients',
-        'Load and transport items safely',
-        'Unload at storage sites',
-        'Track inventory and receipts'
-      ],
-      idealFor: 'Drivers with reliable vehicles',
-      summary: 'Brings the ingredients that start every meal.',
-      category: 'Logistics'
-    },
-    {
-      id: 3,
-      title: 'Preppers',
-      emoji: '🥕',
-      days: ['Wednesday'],
-      schedule: 'Wed',
-      duties: [
-        'Wash and sanitize produce',
-        'Chop and prep ingredients',
-        'Label and organize items',
-        'Set up cooking stations',
-        'Follow food safety protocols'
-      ],
-      idealFor: 'Team players who enjoy prep work',
-      summary: "Light teamwork that fuels Thursday's cook day.", // Fixed: added comma, used double quotes
-      category: 'Kitchen'
-    },
-    {
-      id: 4,
-      title: 'Cooks',
-      emoji: '👨‍🍳',
-      days: ['Thursday'],
-      schedule: 'Thurs',
-      duties: [
-        'Cook large-batch meals from recipes',
-        'Monitor food temperatures and quality',
-        'Portion meals into containers',
-        'Label with dates and contents',
-        'Maintain kitchen cleanliness'
-      ],
-      idealFor: 'Anyone who loves cooking with purpose',
-      summary: 'The heart of Seed & Spoon — where food becomes care.',
-      category: 'Kitchen'
-    },
-    {
-      id: 5,
-      title: 'Drivers / Delivery Team',
-      emoji: '🚐',
-      days: ['Friday'],
-      schedule: 'Fri',
-      duties: [
-        'Load meal boxes into delivery vehicles',
-        'Follow delivery routes and schedules',
-        'Deliver boxes safely to families',
-        'Maintain friendly, professional contact',
-        'Report any delivery issues'
-      ],
-      idealFor: 'Licensed drivers with clean records',
-      summary: 'The bridge between kitchen and doorstep.',
-      category: 'Logistics'
-    },
-    {
-      id: 6,
-      title: 'Cleaners / Sanitation Team',
-      emoji: '🧼',
-      days: ['Wednesday', 'Thursday', 'Friday'],
-      schedule: 'Wed–Fri',
-      duties: [
-        'Sanitize cooking areas and equipment',
-        'Monitor food safety temperatures',
-        'Manage cleaning supplies inventory',
-        'Follow health department standards',
-        'Support kitchen and storage cleanliness'
-      ],
-      idealFor: 'Detail-focused individuals',
-      summary: 'The backbone of safety and hygiene.',
-      category: 'Support',
-      paid: true
-    },
-    {
-      id: 7,
-      title: 'Youth Trainees (Seed Track)',
-      emoji: '🌱',
-      days: ['Wednesday', 'Thursday'],
-      schedule: 'Wed–Thurs',
-      duties: [
-        'Learn regenerative farming techniques',
-        'Assist with food preparation',
-        'Practice kitchen safety skills',
-        'Participate in mentorship sessions',
-        'Build professional experience'
-      ],
-      idealFor: 'Ages 16-24 seeking job skills and purpose',
-      summary: 'Future farmers gaining purpose and skill.',
-      category: 'Youth'
-    },
-    {
-      id: 8,
-      title: 'Intake & Care Desk Volunteers',
-      emoji: '💁',
-      days: ['Wednesday', 'Thursday', 'Friday'],
-      schedule: 'Wed–Fri',
-      duties: [
-        'Greet families warmly and professionally',
-        'Check registration and eligibility',
-        'Share community resource information',
-        'Maintain confidential records',
-        'Answer questions with compassion'
-      ],
-      idealFor: 'Friendly, empathetic communicators',
-      summary: 'The first friendly face for every guest.',
-      category: 'Outreach'
-    },
-    {
-      id: 9,
-      title: 'Volunteer Case Managers',
-      emoji: '📱',
-      days: ['Flexible'],
-      schedule: 'Flexible (monthly check-ins)',
-      duties: [
-        'Assess needs of new clients',
-        'Review progress toward goals',
-        'Maintain regular contact with families',
-        'Connect clients to resources',
-        'Document case notes securely'
-      ],
-      idealFor: 'Social work students or caring mentors',
-      summary: 'The lifeline between families and Seed & Spoon.',
-      category: 'Support',
-      paid: true
-    },
-    {
-      id: 10,
-      title: 'Community Meals Crew',
-      emoji: '🍽️',
-      days: ['Saturday'],
-      schedule: 'Sat (scheduled)',
-      duties: [
-        'Set up dining spaces for events',
-        'Serve meals to community members',
-        'Connect and build relationships',
-        'Clean up after service',
-        'Help create joyful atmosphere'
-      ],
-      idealFor: 'People-lovers and relationship-builders',
-      summary: 'Turns service into shared joy.',
-      category: 'Outreach'
-    },
-    {
-      id: 11,
-      title: 'Content & Storytelling Helpers',
-      emoji: '📸',
-      days: ['Flexible'],
-      schedule: 'Flexible',
-      duties: [
-        'Capture photos during events (with consent)',
-        'Document success stories',
-        'Help with social media content',
-        'Interview volunteers and families',
-        'Share impact with the community'
-      ],
-      idealFor: 'Photographers, writers, and creatives',
-      summary: 'Gives voice to the mission.',
-      category: 'Outreach'
-    },
-    {
-      id: 12,
-      title: 'Corporate / Group Volunteers',
-      emoji: '👥',
-      days: ['Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-      schedule: 'Tues–Sat (scheduled)',
-      duties: [
-        'Participate in group packing events',
-        'Prepare meal kits as a team',
-        'Sort and organize donations',
-        'Build team spirit through service',
-        'Custom projects based on needs'
-      ],
-      idealFor: 'Corporate teams and community groups',
-      summary: 'Turns teamwork into tangible impact.',
-      category: 'Outreach'
-    },
-    {
-      id: 13,
-      title: 'Super Fundraiser',
-      emoji: '💰',
-      days: ['Flexible'],
-      schedule: 'Flexible (4–8 hrs/week)',
-      duties: [
-        'Write compelling donor emails and appeals',
-        'Negotiate surplus agreements with stores',
-        'Organize food and clothing drives',
-        'Build relationships with corporate sponsors',
-        'Track fundraising metrics and goals'
-      ],
-      idealFor: 'Charismatic communicators and negotiators',
-      summary: 'Keeps the mission funded and flowing.',
-      category: 'Fundraising'
-    }
-  ];
+  const roles = VOLUNTEER_ROLES;
+  const [rolesError, setRolesError] = useState(null);
 
   const smoothScroll = (id) => {
     const element = document.getElementById(id);
@@ -267,11 +46,12 @@ export default function VolunteerPage() {
   const filteredRoles = roles.filter(role => {
     const dayMatch = selectedFilters.day === 'all' || role.days.map(d => d.toLowerCase()).includes(selectedFilters.day);
     const categoryMatch = selectedFilters.category === 'all' || role.category === selectedFilters.category;
+    const whereMatch = selectedFilters.where === 'all' || role.where === selectedFilters.where;
     const typeMatch = selectedFilters.type === 'all' ||
       (selectedFilters.type === 'paid' && role.paid) ||
       (selectedFilters.type === 'volunteer' && !role.paid);
 
-    return dayMatch && categoryMatch && typeMatch;
+    return dayMatch && categoryMatch && whereMatch && typeMatch;
   });
 
   const handleFormChange = (e) => {
@@ -280,16 +60,36 @@ export default function VolunteerPage() {
       setFormData(prev => ({ ...prev, [name]: checked }));
     } else if (type === 'file') {
       setFormData(prev => ({ ...prev, [name]: files[0] }));
-    } else if (name === 'roles') {
-      const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-      setFormData(prev => ({ ...prev, roles: selectedOptions }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
 
+  const toggleRole = (title) => {
+    setRolesError(null);
+    setFormData(prev => ({
+      ...prev,
+      roles: prev.roles.includes(title)
+        ? prev.roles.filter(r => r !== title)
+        : [...prev.roles, title],
+    }));
+  };
+
+  const applyForRole = (title) => {
+    setRolesError(null);
+    setFormData(prev => (
+      prev.roles.includes(title) ? prev : { ...prev, roles: [...prev.roles, title] }
+    ));
+    smoothScroll('signup');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formData.roles.length === 0) {
+      setRolesError('Please choose at least one role.');
+      document.getElementById('roles-group')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
     setIsSubmitting(true);
     setSubmitError(null);
 
@@ -302,7 +102,7 @@ export default function VolunteerPage() {
           email: formData.email,
           phone: formData.phone || undefined,
           availability: formData.availability || undefined,
-          interests: formData.roles.length > 0 ? formData.roles : undefined,
+          interests: formData.roles,
         }),
       });
 
@@ -334,7 +134,7 @@ export default function VolunteerPage() {
             Volunteer with Seed & Spoon
           </h1>
           <p className="text-xl md:text-2xl mb-12 max-w-3xl mx-auto">
-            Join a movement that nourishes Newark with dignity and community.
+            Cook, drive, create, research, raise funds, or lead. Help Newark kids eat well, with dignity.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
@@ -405,8 +205,10 @@ export default function VolunteerPage() {
         </div>
       </section>
 
+      {/* Filter bar + roles grid share a wrapper so the bar only stays pinned while browsing roles */}
+      <div>
       {/* Filter Bar */}
-      <section id="roles" className="py-8 bg-gray-50 sticky top-16 md:top-40 z-30 shadow-md">
+      <section id="roles" className="py-6 bg-gray-50 sticky top-14 md:top-16 lg:top-[72px] z-30 shadow-md scroll-mt-16">
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-center flex-wrap">
             <div>
@@ -437,13 +239,24 @@ export default function VolunteerPage() {
                 className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
               >
                 <option value="all">All Categories</option>
-                <option value="Kitchen">Kitchen</option>
-                <option value="Logistics">Logistics</option>
-                <option value="Outreach">Outreach</option>
-                <option value="Admin">Admin</option>
-                <option value="Youth">Youth</option>
-                <option value="Fundraising">Fundraising</option>
-                <option value="Support">Support</option>
+                {VOLUNTEER_CATEGORIES.map((category) => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="where-filter" className="mr-2 font-semibold text-gray-700">Where:</label>
+              <select
+                id="where-filter"
+                value={selectedFilters.where}
+                onChange={(e) => setSelectedFilters({...selectedFilters, where: e.target.value})}
+                className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+              >
+                <option value="all">Anywhere</option>
+                {VOLUNTEER_LOCATIONS.map((where) => (
+                  <option key={where} value={where}>{where === 'Remote' ? 'Remote-friendly' : where}</option>
+                ))}
               </select>
             </div>
 
@@ -462,7 +275,7 @@ export default function VolunteerPage() {
             </div>
 
             <button
-              onClick={() => setSelectedFilters({ day: 'all', category: 'all', type: 'all' })}
+              onClick={() => setSelectedFilters({ day: 'all', category: 'all', where: 'all', type: 'all' })}
               className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
             >
               Clear Filters
@@ -478,7 +291,7 @@ export default function VolunteerPage() {
             Volunteer Opportunities
           </h2>
           <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
-            Find the perfect role that fits your schedule, skills, and passion for serving the community.
+            From the kitchen to the camera to the boardroom, find a role that fits your skills and schedule. Many can be done remotely.
           </p>
 
           {filteredRoles.length === 0 ? (
@@ -490,8 +303,8 @@ export default function VolunteerPage() {
               {filteredRoles.map((role, index) => (
                 <div
                   key={role.id}
-                  className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 opacity-0 animate-fadeIn"
-                  style={{ animationDelay: `${index * 0.1}s`, animationFillMode: 'forwards' }}
+                  className="flex flex-col bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 opacity-0 animate-fadeIn"
+                  style={{ animationDelay: `${Math.min(index, 8) * 0.08}s`, animationFillMode: 'forwards' }}
                   aria-label={`${role.title} volunteer role`}
                 >
                   <div className="flex items-center mb-4">
@@ -511,7 +324,7 @@ export default function VolunteerPage() {
                       📅 {role.schedule}
                     </p>
                     <p className="text-sm text-gray-500 mb-2">
-                      Category: {role.category}
+                      {role.category} · {role.where}
                     </p>
                   </div>
 
@@ -539,9 +352,14 @@ export default function VolunteerPage() {
                     </p>
                   </div>
 
+                  {role.note && (
+                    <p className="text-xs text-gray-500 mb-4">ℹ️ {role.note}</p>
+                  )}
+
                   <button
-                    onClick={() => smoothScroll('signup')}
-                    className="w-full bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                    onClick={() => applyForRole(role.title)}
+                    aria-label={`Sign up as ${role.title}`}
+                    className="mt-auto w-full bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                   >
                     Sign Up
                   </button>
@@ -551,6 +369,8 @@ export default function VolunteerPage() {
           )}
         </div>
       </section>
+
+      </div>
 
       {/* Sign-Up Form Section */}
       <section id="signup" className="py-20 bg-white">
@@ -668,39 +488,57 @@ export default function VolunteerPage() {
                 </div>
 
                 {/* Volunteer Roles */}
-                <div className="mb-6">
-                  <label htmlFor="roles" className="block text-gray-700 font-semibold mb-2">
+                <fieldset id="roles-group" className="mb-6">
+                  <legend className="block text-gray-700 font-semibold mb-1">
                     Volunteer Role(s) Interested In <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    id="roles"
-                    name="roles"
-                    multiple
-                    required
-                    value={formData.roles}
-                    onChange={handleFormChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 min-h-[120px]"
-                  >
-                    {roles.map(role => (
-                      <option key={role.id} value={role.title}>{role.title}</option>
-                    ))}
-                  </select>
-                  <p className="text-sm text-gray-500 mt-1">Hold Ctrl (Windows) or Cmd (Mac) to select multiple roles</p>
-                </div>
+                  </legend>
+                  <p className="text-sm text-gray-500 mb-3">Choose as many as you like.</p>
+                  <div className="space-y-4">
+                    {VOLUNTEER_CATEGORIES.map((category) => {
+                      const inCategory = roles.filter((role) => role.category === category);
+                      if (inCategory.length === 0) return null;
+                      return (
+                        <div key={category}>
+                          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">{category}</p>
+                          <div className="grid sm:grid-cols-2 gap-2">
+                            {inCategory.map((role) => (
+                              <label
+                                key={role.id}
+                                className="flex items-center gap-3 cursor-pointer select-none bg-white border border-gray-200 rounded-lg px-3 py-2 hover:border-green-400"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={formData.roles.includes(role.title)}
+                                  onChange={() => toggleRole(role.title)}
+                                  className="w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                                />
+                                <span className="text-sm text-gray-700">{role.emoji} {role.title}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {rolesError && (
+                    <p className="mt-2 text-sm text-red-600" role="alert">{rolesError}</p>
+                  )}
+                </fieldset>
 
                 {/* Availability */}
                 <div className="mb-6">
                   <label htmlFor="availability" className="block text-gray-700 font-semibold mb-2">
-                    Availability (days/times)
+                    Availability (days/times) <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     id="availability"
                     name="availability"
+                    required
                     rows="3"
                     value={formData.availability}
                     onChange={handleFormChange}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    placeholder="e.g., Tuesdays and Thursdays, 10am-2pm"
+                    placeholder="e.g., Tuesdays and Thursdays, 10am-2pm, or a few hours a week remotely"
                   ></textarea>
                 </div>
 

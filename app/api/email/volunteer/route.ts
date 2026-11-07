@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
   }
 
-  const { name, email, interests, availability } = body as Record<string, string | string[]>
+  const { name, email, phone, interests, availability } = body as Record<string, string | string[]>
 
   if (!name || !email || !interests || !availability) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 422 })
@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
     .insert({
       name,
       email: (email as string).toLowerCase().trim(),
+      phone: typeof phone === 'string' && phone.trim() ? phone.trim().slice(0, 30) : null,
       interests,
       availability,
       status: 'pending',
