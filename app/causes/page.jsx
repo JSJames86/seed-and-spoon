@@ -29,6 +29,12 @@ import {
   LAUNCH,
 } from "@/data/fiveLoavesCampaign";
 import { getCampaignCashRaised } from "@/lib/campaignTotals";
+import { getCampaignRecord, computeCanGoal } from "@/lib/campaignRecords";
+import {
+  formula,
+  FORMULA_SLUG,
+  FORMULA_DEFAULT_CONFIG,
+} from "@/data/formulaSupplementCampaign";
 
 // Featured campaign card shows a live kit count; refresh every 5 minutes.
 export const revalidate = 300;
@@ -138,12 +144,30 @@ export default async function CausesPage() {
   const kitsFunded = Math.min(Math.floor(raised / KIT_COST), TOTAL_KITS);
   const card = fiveLoaves.causesCard;
 
+  const formulaRecord = await getCampaignRecord(FORMULA_SLUG);
+  const formulaActive = formulaRecord?.status === "active";
+  let formulaProgress = null;
+  if (formulaActive) {
+    const goal = computeCanGoal(
+      formulaRecord.config && Object.keys(formulaRecord.config).length
+        ? formulaRecord.config
+        : FORMULA_DEFAULT_CONFIG
+    );
+    if (goal.pending) {
+      formulaProgress = formula.causesCard.pending;
+    } else {
+      const { raised: formulaRaised } = await getCampaignCashRaised(FORMULA_SLUG);
+      const cans = Math.min(Math.floor((formulaRaised * 100) / goal.priceCents), goal.cansMax);
+      formulaProgress = `${cans.toLocaleString("en-US")} of ${goal.cansMax.toLocaleString("en-US")} ${formula.gift.progressLabel}`;
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[#F9EED4] pt-16 md:pt-20 lg:pt-24">
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-[#0B88C2] to-[#02538A] text-white py-20 px-4">
         {/* Sentinel observed by Header to detect when hero is in view */}
-        <div id="hero-sentinel" className="absolute bottom-0 h-px w-full pointer-events-none" />
+        <div id="hero-sentinel" className="absolute bottom-0 left-0 h-px w-full pointer-events-none" />
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
             Our Causes
@@ -183,6 +207,28 @@ export default async function CausesPage() {
               className="inline-flex items-center justify-center px-10 py-4 bg-[#EA802F] hover:bg-[#d6722a] text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all text-lg"
             >
               {card.cta}
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {formulaActive && (
+        <section className="max-w-7xl mx-auto px-4 pt-8">
+          <div className="rounded-2xl bg-white shadow-xl border-l-8 border-[#77A462] p-8 md:p-10 flex flex-col md:flex-row md:items-center gap-6">
+            <div className="flex-1 space-y-3">
+              <h2 className="text-3xl md:text-4xl font-bold text-[#02538A]">
+                <Link href={`/campaigns/${FORMULA_SLUG}`} className="hover:underline underline-offset-4">
+                  {formula.causesCard.title}
+                </Link>
+              </h2>
+              <p className="text-lg text-gray-800 leading-relaxed">{formula.causesCard.body}</p>
+              <p className="text-gray-700 font-semibold">{formulaProgress}</p>
+            </div>
+            <Link
+              href={`/campaigns/${FORMULA_SLUG}#give`}
+              className="inline-flex items-center justify-center px-10 py-4 bg-[#EA802F] hover:bg-[#d6722a] text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all text-lg"
+            >
+              {formula.causesCard.cta}
             </Link>
           </div>
         </section>
