@@ -5,6 +5,13 @@ import { motion } from 'framer-motion';
 import { captureEvent } from '@/analytics/posthog';
 import { EVENTS } from '@/analytics/events';
 import { ORG_TAX_STATUS_LINE, NJ_SOLICITATION_DISCLOSURE } from '@/lib/org';
+import { FIVE_LOAVES_SLUG, fiveLoaves } from '@/data/fiveLoavesCampaign';
+
+// Campaigns with a named banner on the donate page. Unknown slugs are still
+// passed through to Stripe metadata; they just don't get a banner.
+const CAMPAIGN_BANNERS = {
+  [FIVE_LOAVES_SLUG]: { title: fiveLoaves.title, note: fiveLoaves.gift.giftUse },
+};
 
 const presetAmounts = [2500, 5000, 10000, 25000]; // $25, $50, $100, $250
 
@@ -15,6 +22,7 @@ export default function DonatePage({ showDisclosurePlaceholder = false }) {
   const [isCustom, setIsCustom] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [campaign, setCampaign] = useState(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -23,6 +31,11 @@ export default function DonatePage({ showDisclosurePlaceholder = false }) {
       source: params.get('source') || 'direct',
       referrer: document.referrer || '',
     });
+
+    const campaignParam = params.get('campaign');
+    if (campaignParam && /^[a-z0-9-]{1,100}$/.test(campaignParam)) {
+      setCampaign(campaignParam);
+    }
 
     if (params.get('interval') === 'month') {
       setFrequency('month');
@@ -98,6 +111,7 @@ export default function DonatePage({ showDisclosurePlaceholder = false }) {
           currency: 'usd',
           interval: frequency,
           source: 'donate_page',
+          ...(campaign ? { campaign } : {}),
         }),
       });
 
@@ -134,6 +148,15 @@ export default function DonatePage({ showDisclosurePlaceholder = false }) {
               need across New Jersey. Every dollar makes a real impact.
             </p>
           </div>
+
+          {campaign && CAMPAIGN_BANNERS[campaign] && (
+            <div className="mb-6 rounded-2xl border border-green-200 bg-green-50 px-6 py-4 text-center">
+              <p className="font-semibold text-green-900">
+                Your gift supports {CAMPAIGN_BANNERS[campaign].title}
+              </p>
+              <p className="mt-1 text-sm text-green-800">{CAMPAIGN_BANNERS[campaign].note}</p>
+            </div>
+          )}
 
           {/* Donation Card */}
           <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12">

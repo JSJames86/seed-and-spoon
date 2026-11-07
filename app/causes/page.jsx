@@ -21,6 +21,17 @@ export const metadata = {
 
 import Image from "next/image";
 import Link from "next/link";
+import {
+  fiveLoaves,
+  FIVE_LOAVES_SLUG,
+  KIT_COST,
+  TOTAL_KITS,
+  LAUNCH,
+} from "@/data/fiveLoavesCampaign";
+import { getCampaignCashRaised } from "@/lib/campaignTotals";
+
+// Featured campaign card shows a live kit count; refresh every 5 minutes.
+export const revalidate = 300;
 
 // Causes hub data
 const causesData = [
@@ -120,7 +131,13 @@ const causesData = [
   },
 ];
 
-export default function CausesPage() {
+export default async function CausesPage() {
+  const { raised } = LAUNCH.launched
+    ? await getCampaignCashRaised(FIVE_LOAVES_SLUG)
+    : { raised: 0 };
+  const kitsFunded = Math.min(Math.floor(raised / KIT_COST), TOTAL_KITS);
+  const card = fiveLoaves.causesCard;
+
   return (
     <div className="min-h-screen bg-[#F9EED4] pt-16 md:pt-20 lg:pt-24">
       {/* Hero Section */}
@@ -142,6 +159,34 @@ export default function CausesPage() {
           </p>
         </div>
       </section>
+
+      {/* Featured campaign: 5 Loaves (hidden until LAUNCH.launched) */}
+      {LAUNCH.launched && (
+        <section className="max-w-7xl mx-auto px-4 pt-16">
+          <div className="rounded-2xl bg-white shadow-xl border-l-8 border-[#EA802F] p-8 md:p-10 flex flex-col md:flex-row md:items-center gap-6">
+            <div className="flex-1 space-y-3">
+              <p className="text-sm uppercase tracking-[0.16em] text-[#EA802F] font-semibold">
+                Featured campaign
+              </p>
+              <h2 className="text-3xl md:text-4xl font-bold text-[#02538A]">
+                <Link href={`/campaigns/${FIVE_LOAVES_SLUG}`} className="hover:underline underline-offset-4">
+                  {card.title}
+                </Link>
+              </h2>
+              <p className="text-lg text-gray-800 leading-relaxed">{card.body}</p>
+              <p className="text-gray-700 font-semibold">
+                {kitsFunded.toLocaleString("en-US")} of {TOTAL_KITS} weekend kits funded
+              </p>
+            </div>
+            <Link
+              href={`/campaigns/${FIVE_LOAVES_SLUG}`}
+              className="inline-flex items-center justify-center px-10 py-4 bg-[#EA802F] hover:bg-[#d6722a] text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all text-lg"
+            >
+              {card.cta}
+            </Link>
+          </div>
+        </section>
+      )}
 
       {/* Causes Sections */}
       <div className="max-w-7xl mx-auto px-4 py-16 space-y-24">
