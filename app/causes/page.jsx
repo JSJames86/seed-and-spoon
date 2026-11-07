@@ -188,6 +188,16 @@ export default async function CausesPage() {
       {LAUNCH.launched && (
         <section className="max-w-7xl mx-auto px-4 pt-16">
           <div className="rounded-2xl bg-white shadow-xl border-l-8 border-[#EA802F] p-8 md:p-10 flex flex-col md:flex-row md:items-center gap-6">
+            <Link href={`/campaigns/${FIVE_LOAVES_SLUG}`} className="block w-full md:w-48 flex-shrink-0">
+              <Image
+                src={fiveLoaves.image.src}
+                alt={fiveLoaves.image.alt}
+                width={fiveLoaves.image.width}
+                height={fiveLoaves.image.height}
+                sizes="(min-width: 768px) 192px, 100vw"
+                className="w-full h-48 md:h-40 object-cover rounded-xl shadow-md"
+              />
+            </Link>
             <div className="flex-1 space-y-3">
               <p className="text-sm uppercase tracking-[0.16em] text-[#EA802F] font-semibold">
                 Featured campaign
@@ -215,6 +225,16 @@ export default async function CausesPage() {
       {formulaActive && (
         <section className="max-w-7xl mx-auto px-4 pt-8">
           <div className="rounded-2xl bg-white shadow-xl border-l-8 border-[#77A462] p-8 md:p-10 flex flex-col md:flex-row md:items-center gap-6">
+            <Link href={`/campaigns/${FORMULA_SLUG}`} className="block w-full md:w-48 flex-shrink-0">
+              <Image
+                src={formula.image.src}
+                alt={formula.image.alt}
+                width={formula.image.width}
+                height={formula.image.height}
+                sizes="(min-width: 768px) 192px, 100vw"
+                className="w-full h-48 md:h-40 object-cover rounded-xl shadow-md"
+              />
+            </Link>
             <div className="flex-1 space-y-3">
               <h2 className="text-3xl md:text-4xl font-bold text-[#02538A]">
                 <Link href={`/campaigns/${FORMULA_SLUG}`} className="hover:underline underline-offset-4">

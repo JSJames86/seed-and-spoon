@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 /**
  * CampaignsListClient
@@ -115,7 +116,7 @@ export default function CampaignsListClient() {
 }
 
 function CampaignCard({ campaign, featured = false }) {
-  const progress = Math.min((campaign.amount_raised / campaign.goal_amount) * 100, 100);
+  const progress = campaign.goal_amount > 0 ? Math.min((campaign.amount_raised / campaign.goal_amount) * 100, 100) : 0;
 
   const formatCurrency = (amount) =>
     new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount);
@@ -138,6 +139,17 @@ function CampaignCard({ campaign, featured = false }) {
         <div className="bg-primary-soil text-white text-center py-1 text-sm font-bold">
           Featured Campaign
         </div>
+      )}
+      {campaign.hero_image_url?.startsWith('/') && (
+        <Link href={`/campaigns/${campaign.slug}`} className="block relative aspect-[16/10] bg-gray-100">
+          <Image
+            src={campaign.hero_image_url}
+            alt={campaign.title}
+            fill
+            sizes="(min-width: 1024px) 400px, (min-width: 768px) 50vw, 100vw"
+            className="object-cover"
+          />
+        </Link>
       )}
       <div className="p-6">
         <div className="flex items-start justify-between mb-3">

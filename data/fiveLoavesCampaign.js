@@ -41,6 +41,13 @@ export const fiveLoaves = {
   metaDescription:
     'Help Seed & Spoon bring weekend meals to 25 Newark children. $50 covers the food in one child’s weekend kit: eight prepared meals and five snacks.',
 
+  image: {
+    src: '/images/campaigns/five-loaves-meal-kit.jpg',
+    alt: 'A green Seed & Spoon insulated bag with four labeled prepared meals and a meal kit card',
+    width: 1200,
+    height: 1262,
+  },
+
   hero: {
     headline: 'Help us bring weekend meals to 25 Newark children.',
     body:

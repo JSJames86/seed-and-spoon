@@ -27,6 +27,12 @@ export const formula = {
   title: 'Formula Supplement Pilot',
   metaDescription:
     'Help Seed & Spoon provide supplemental weekend infant formula for 5 to 10 Newark babies over 15 weekends, alongside our 5 Loaves weekend meals.',
+  image: {
+    src: '/images/campaigns/formula-supplement-pilot-bottles.jpg',
+    alt: 'Four baby bottles of formula beneath the Seed & Spoon logo',
+    width: 1600,
+    height: 1066,
+  },
   hero: {
     headline: 'Weekend formula support for Newark babies',
     paragraphs: [
