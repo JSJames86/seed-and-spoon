@@ -99,7 +99,7 @@ export default function DonorPrivacyPage() {
             <li><strong>Partial anonymity:</strong> You may choose to be recognized privately (internal records only) but not publicly</li>
           </ul>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            You can update your recognition preferences at any time by contacting us at <strong>seedandspoonnj@gmail.com</strong>.
+            You can update your recognition preferences at any time by contacting us at <strong>hello@seedandspoon.org</strong>.
           </p>
         </section>
 
@@ -144,7 +144,7 @@ export default function DonorPrivacyPage() {
             <li><strong>Tax receipts:</strong> You will continue to receive donation receipts for tax purposes, even if you opt out of other communications</li>
           </ul>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            To update your preferences, email us at <strong>seedandspoonnj@gmail.com</strong>.
+            To update your preferences, email us at <strong>hello@seedandspoon.org</strong>.
           </p>
         </section>
 
@@ -197,7 +197,7 @@ export default function DonorPrivacyPage() {
             <li><strong>Cancel recurring donations:</strong> Stop automatic monthly or recurring donations at any time</li>
           </ul>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            To exercise any of these rights, contact us at <strong>seedandspoonnj@gmail.com</strong>. We will respond within 30 days.
+            To exercise any of these rights, contact us at <strong>hello@seedandspoon.org</strong>. We will respond within 30 days.
           </p>
         </section>
 
@@ -240,7 +240,7 @@ export default function DonorPrivacyPage() {
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
             <strong>Seed & Spoon</strong><br />
-            Email: <strong>seedandspoonnj@gmail.com</strong>
+            Email: <strong>hello@seedandspoon.org</strong>
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
             Your trust and support are invaluable to us. Thank you for helping Seed & Spoon fight hunger and build a more equitable food system.

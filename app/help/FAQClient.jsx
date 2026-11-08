@@ -157,7 +157,7 @@ export const FAQ_DATA = [
         id: 'contact-1',
         q: 'How can I get in touch?',
         a: 'Use the contact form on our website, or email us directly:',
-        link: { text: 'seedandspoonnj@gmail.com', href: 'mailto:seedandspoonnj@gmail.com' },
+        link: { text: 'hello@seedandspoon.org', href: 'mailto:hello@seedandspoon.org' },
       },
     ],
   },
@@ -288,7 +288,7 @@ function NoResults({ query }) {
         Try a different term, or browse the sections below. You can also ask us directly.
       </p>
       <a
-        href="mailto:seedandspoonnj@gmail.com"
+        href="mailto:hello@seedandspoon.org"
         className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-semibold px-5 py-2.5 rounded-lg transition-colors text-sm"
       >
         Ask us directly →
@@ -441,7 +441,7 @@ export default function FAQClient() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <a
-              href="mailto:seedandspoonnj@gmail.com"
+              href="mailto:hello@seedandspoon.org"
               className="bg-white text-green-800 font-bold px-7 py-3.5 rounded-xl hover:bg-green-50 transition-colors shadow-md text-sm"
             >
               Email Us

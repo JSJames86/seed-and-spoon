@@ -207,7 +207,7 @@ const CONTENT = {
     logo: 'https://seedandspoon.org/assets/logo/seed-and-spoon-logo-full.png',
     description:
       'Newark-based nonprofit building the infrastructure to end weekend and out-of-school hunger for children in Essex County, New Jersey.',
-    email: 'info@seedandspoon.org',
+    email: 'hello@seedandspoon.org',
   },
 };
 

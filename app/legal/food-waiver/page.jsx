@@ -181,7 +181,7 @@ export default function FoodWaiverPage() {
           <ul className="list-disc pl-6 text-base text-black/70 leading-relaxed mb-4 space-y-2">
             <li><strong>Seek immediate medical attention</strong> by calling 911 or going to the nearest emergency room, especially for severe allergic reactions</li>
             <li>Follow your healthcare provider's instructions and use any prescribed medications (such as an EpiPen)</li>
-            <li>After receiving medical care, please notify us at <strong>seedandspoonnj@gmail.com</strong> so we can review our procedures and take appropriate action</li>
+            <li>After receiving medical care, please notify us at <strong>hello@seedandspoon.org</strong> so we can review our procedures and take appropriate action</li>
           </ul>
         </section>
 
@@ -228,7 +228,7 @@ export default function FoodWaiverPage() {
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
             <strong>Seed & Spoon</strong><br />
-            Email: <strong>seedandspoonnj@gmail.com</strong>
+            Email: <strong>hello@seedandspoon.org</strong>
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
             We are committed to transparency and will do our best to address your concerns promptly.

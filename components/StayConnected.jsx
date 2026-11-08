@@ -88,10 +88,10 @@ export default function StayConnected() {
           <div className="text-center">
             <p className="text-gray-600 dark:text-gray-400 mb-2">Have questions? Reach out to us:</p>
             <a
-              href="mailto:seedandspoonnj@gmail.com"
+              href="mailto:hello@seedandspoon.org"
               className="text-green-800 dark:text-green-300 hover:text-green-900 dark:hover:text-green-300 font-semibold text-lg transition-colors focus-visible:underline"
             >
-              seedandspoonnj@gmail.com
+              hello@seedandspoon.org
             </a>
           </div>
         </div>

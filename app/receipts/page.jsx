@@ -207,8 +207,8 @@ export default function SendUsTheReceiptsPage() {
               appear in public reports, legislative testimony, and research --
               always as neighborhood-level statistics, never as individual
               receipts. Questions or removal requests:{' '}
-              <a href="mailto:research@seedandspoon.org" className="text-[var(--green-primary)] underline">
-                research@seedandspoon.org
+              <a href="mailto:hello@seedandspoon.org" className="text-[var(--green-primary)] underline">
+                hello@seedandspoon.org
               </a>
               .
             </p>
