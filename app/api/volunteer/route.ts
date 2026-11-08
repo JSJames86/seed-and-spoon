@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
       from: FROM.volunteer,
       react: VolunteerWelcome({
         firstName: firstName ?? undefined,
-        coordinatorEmail: "volunteer@seedandspoon.org",
+        coordinatorEmail: "volunteers@seedandspoon.org",
       }),
     });
   } catch (err) {

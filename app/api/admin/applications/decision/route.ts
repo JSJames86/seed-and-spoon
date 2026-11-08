@@ -20,7 +20,7 @@ import ApplicationDecision from "@/emails/ApplicationDecision";
  *     "decidedBy": "Janelle",               // optional, recorded on the row
  *     "notes": "internal note",             // optional, decision_notes (NOT emailed)
  *     "coordinatorName": "Janelle",         // optional, shown in the email
- *     "coordinatorEmail": "5loaves@seedandspoon.org"  // optional, shown in the email
+ *     "coordinatorEmail": "hello@seedandspoon.org"  // optional, shown in the email
  *   }
  */
 

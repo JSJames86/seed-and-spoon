@@ -20,9 +20,9 @@ import { resend } from "./resend";
 
 export const FROM = {
   hello: "Seed & Spoon <hello@seedandspoon.org>",
-  donations: "Seed & Spoon <donations@seedandspoon.org>",
-  volunteer: "Seed & Spoon <volunteer@seedandspoon.org>",
-  program: "Seed & Spoon 5 Loaves <5loaves@seedandspoon.org>",
+  donations: "Seed & Spoon <donors@seedandspoon.org>",
+  volunteer: "Seed & Spoon <volunteers@seedandspoon.org>",
+  program: "Seed & Spoon 5 Loaves <hello@seedandspoon.org>",
 } as const;
 
 interface SendArgs {
