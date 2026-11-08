@@ -140,7 +140,7 @@ export default function AccessibilityPage() {
             <li>Email or print versions of web content</li>
           </ul>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            To request an accommodation or alternative format, please contact us at <strong>seedandspoonnj@gmail.com</strong>. Please include:
+            To request an accommodation or alternative format, please contact us at <strong>hello@seedandspoon.org</strong>. Please include:
           </p>
           <ul className="list-disc pl-6 text-base text-black/70 leading-relaxed mb-4 space-y-2">
             <li>A description of the specific information or page you need</li>
@@ -169,7 +169,7 @@ export default function AccessibilityPage() {
             <li>Any error messages you received</li>
           </ul>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            Contact us at <strong>seedandspoonnj@gmail.com</strong> with the subject line "Accessibility Issue" to report a problem.
+            Contact us at <strong>hello@seedandspoon.org</strong> with the subject line "Accessibility Issue" to report a problem.
           </p>
         </section>
 
@@ -233,7 +233,7 @@ export default function AccessibilityPage() {
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
             <strong>Seed & Spoon</strong><br />
-            Email: <strong>seedandspoonnj@gmail.com</strong>
+            Email: <strong>hello@seedandspoon.org</strong>
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
             We take accessibility seriously and are committed to ensuring that everyone can access the information and resources they need. Thank you for helping us create a more inclusive digital experience.

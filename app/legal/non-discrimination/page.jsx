@@ -120,7 +120,7 @@ export default function NonDiscriminationPage() {
             <li>Flexible service delivery methods (home delivery, curbside pickup, etc.)</li>
           </ul>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            If you require an accommodation to access our services, please contact us at <strong>seedandspoonnj@gmail.com</strong>. We will work with you to find a solution that meets your needs.
+            If you require an accommodation to access our services, please contact us at <strong>hello@seedandspoon.org</strong>. We will work with you to find a solution that meets your needs.
           </p>
         </section>
 
@@ -132,7 +132,7 @@ export default function NonDiscriminationPage() {
             If you believe you have experienced discrimination in accessing Seed & Spoon's services, programs, or opportunities, we encourage you to report it. You may:
           </p>
           <ul className="list-disc pl-6 text-base text-black/70 leading-relaxed mb-4 space-y-2">
-            <li><strong>Contact us directly:</strong> Email <strong>seedandspoonnj@gmail.com</strong> or speak with a staff member or volunteer coordinator</li>
+            <li><strong>Contact us directly:</strong> Email <strong>hello@seedandspoon.org</strong> or speak with a staff member or volunteer coordinator</li>
             <li><strong>Submit a written complaint:</strong> Describe the incident, including date, location, individuals involved, and any witnesses</li>
             <li><strong>Request anonymity:</strong> If you prefer, you may submit a report anonymously, though this may limit our ability to investigate fully</li>
           </ul>
@@ -219,7 +219,7 @@ export default function NonDiscriminationPage() {
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
             <strong>Seed & Spoon</strong><br />
-            Email: <strong>seedandspoonnj@gmail.com</strong>
+            Email: <strong>hello@seedandspoon.org</strong>
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
             We are here to serve everyone in our community with dignity and respect. Thank you for helping us build a more just and equitable food system.

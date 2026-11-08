@@ -264,7 +264,7 @@ export default function CookiesPage() {
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
             <strong>Seed & Spoon</strong><br />
-            Email: <strong>seedandspoonnj@gmail.com</strong>
+            Email: <strong>hello@seedandspoon.org</strong>
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
             We're happy to answer any questions you may have about how we use cookies and tracking technologies.

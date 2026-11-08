@@ -164,7 +164,7 @@ export default function TermsPage() {
             For questions or concerns regarding these Terms & Conditions:
           </p>
           <p className="text-black font-semibold mt-2">
-            seedandspoonnj@gmail.com
+            hello@seedandspoon.org
           </p>
         </section>
       </div>

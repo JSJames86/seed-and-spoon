@@ -3,7 +3,7 @@ import { AMAZON_WISHLIST_URL, ORG_EIN } from "@/lib/org";
 export const org = {
   name: "Seed & Spoon",
   phone: "+17327071769",
-  email: "seedandspoonnj@gmail.com",
+  email: "hello@seedandspoon.org",
   ein: ORG_EIN,
 };
 

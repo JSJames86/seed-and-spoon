@@ -173,7 +173,7 @@ export default function PrivacyPage() {
             <li><strong>Data portability:</strong> Request your information in a structured, commonly used format</li>
           </ul>
           <p className="text-base text-black/70 leading-relaxed mb-4">
-            To exercise these rights, contact us at <strong>seedandspoonnj@gmail.com</strong>. We will respond within 30 days.
+            To exercise these rights, contact us at <strong>hello@seedandspoon.org</strong>. We will respond within 30 days.
           </p>
         </section>
 
@@ -239,7 +239,7 @@ export default function PrivacyPage() {
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
             <strong>Seed & Spoon</strong><br />
-            Email: <strong>seedandspoonnj@gmail.com</strong>
+            Email: <strong>hello@seedandspoon.org</strong>
           </p>
           <p className="text-base text-black/70 leading-relaxed mb-4">
             We take privacy seriously and will respond to your inquiry as promptly as possible.

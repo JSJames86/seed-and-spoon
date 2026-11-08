@@ -191,10 +191,10 @@ export default function PantryPartnersPage() {
             Contact Us to Get Started
           </a>
           <a
-            href="mailto:seedandspoonnj@gmail.com"
+            href="mailto:hello@seedandspoon.org"
             className="text-sm text-neutral-700 hover:text-neutral-900 underline underline-offset-4"
           >
-            Or email us: seedandspoonnj@gmail.com
+            Or email us: hello@seedandspoon.org
           </a>
         </div>
       </section>
