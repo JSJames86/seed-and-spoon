@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase-server";
 import { sendTransactional, FROM } from "@/lib/email";
+import { notifyStaff } from "@/lib/notify";
 import VolunteerWelcome from "@/emails/VolunteerWelcome";
 
 /**
@@ -84,6 +85,12 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error("volunteer welcome email failed:", err);
   }
+
+  await notifyStaff({
+    type: "volunteer_internal",
+    table: "volunteer_applications",
+    record: { name, email, phone: body.phone?.trim() || null, interests },
+  });
 
   return NextResponse.json({ ok: true });
 }
