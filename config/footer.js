@@ -20,12 +20,11 @@ export const columns = [
   {
     title: "Get Help",
     links: [
-      { label: "Find Food Today", href: "/get-help/locations" },
-      { label: "Eligibility & How It Works", href: "/get-help/eligibility" },
-      { label: "Hours & Pickup Info", href: "/get-help/hours" },
+      { label: "Community Pantry Directory", href: "/get-help#resources" },
+      { label: "Apply for 5 Loaves", href: "/get-help#client-form" },
+      { label: "Drop-off Days & Times", href: "/get-help/hours" },
       { label: "Recipes", href: "/recipes" },
       { label: "FAQs", href: "/help" },
-      { label: "Emergency & Crisis Resources", href: "/get-help/crisis" },
     ],
   },
   {
@@ -56,7 +55,7 @@ export const columns = [
     title: "About",
     links: [
       { label: "Our Story", href: "/about" },
-      { label: "Team & Board", href: "/about/team" },
+      { label: "Team & Board", href: "/about" },
       { label: "Careers", href: "/careers" },
       { label: "Press & Media Kit", href: "/press" },
       { label: "Capability Statement", href: "/capability-statement" },
@@ -70,8 +69,8 @@ export const columns = [
       { label: "Recipes", href: "/recipes" },
       { label: "Blog", href: "/blog" },
       { label: "Research & Reports", href: "/resources/reports" },
-      { label: "Brand Assets", href: "/brand" },
-      { label: "Newsletter Archive", href: "/resources/newsletter" },
+      { label: "Brand Assets", href: "/press" },
+      { label: "Newsletter", href: "/subscribe" },
     ],
   },
   {
