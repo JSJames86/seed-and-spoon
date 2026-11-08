@@ -55,7 +55,7 @@ export const columns = [
     title: "About",
     links: [
       { label: "Our Story", href: "/about" },
-      { label: "Team & Board", href: "/about" },
+      { label: "Team & Board", href: "/about/team" },
       { label: "Careers", href: "/careers" },
       { label: "Press & Media Kit", href: "/press" },
       { label: "Capability Statement", href: "/capability-statement" },
