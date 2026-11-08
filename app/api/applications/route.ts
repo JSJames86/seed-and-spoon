@@ -338,7 +338,7 @@ export async function POST(req: NextRequest) {
         from: FROM.program,
         react: ApplicationReceived({
           firstName,
-          coordinatorEmail: "5loaves@seedandspoon.org",
+          coordinatorEmail: "hello@seedandspoon.org",
         }),
         metadata: { application_id: id },
       });
