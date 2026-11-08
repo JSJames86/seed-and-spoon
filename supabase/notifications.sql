@@ -1,3 +1,7 @@
+-- NOTE (Nov 2026): Not needed. Staff alerts for applications and
+-- volunteer_applications are now sent directly from the API routes
+-- (lib/notify.ts notifyStaff). Running this file would email the team twice.
+--
 -- Team notification triggers.
 --
 -- Fires an internal "heads up" alert to app/api/notify whenever a new

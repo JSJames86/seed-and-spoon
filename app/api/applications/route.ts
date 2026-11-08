@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { createServiceClient } from "@/lib/supabase-server";
 import { sendTransactional, FROM } from "@/lib/email";
+import { notifyStaff } from "@/lib/notify";
 import { checkRateLimit, getClientIp } from "@/lib/api-helpers";
 import ApplicationReceived from "@/emails/ApplicationReceived";
 import {
@@ -345,6 +346,23 @@ export async function POST(req: NextRequest) {
       console.error("application received email failed:", err);
     }
   }
+
+  await notifyStaff({
+    type: "application_internal",
+    table: "applications",
+    record: {
+      first_name: firstName,
+      last_name: lastName,
+      email,
+      phone,
+      preferred_contact: preferredContact,
+      children,
+      zip,
+      essex_county: body.essexCounty,
+      referral_type: referralType,
+    },
+    metadata: { application_id: id },
+  });
 
   return NextResponse.json({ ok: true, applicationId: id });
 }
