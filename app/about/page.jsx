@@ -59,7 +59,6 @@ const CONTENT = {
         'I grew up in Elizabeth, New Jersey, and I know what it means when the food runs out before the week does. After two decades away — building companies, leading teams, learning to write software — I came home to build the thing I wish had existed for families like mine: not another drive, not another pantry, but a system a family can count on every single weekend.',
         'Seed & Spoon is built from lived experience and run like infrastructure. That’s not a contradiction. It’s the whole point.',
       ],
-      // ⚠️ Name to be confirmed by Janelle before changing (README/research paper use 'Janelle Glanville').
       signature: '— Janelle Glanville, Founder & Executive Director',
     },
   },
