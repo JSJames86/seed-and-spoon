@@ -327,6 +327,19 @@ export default function DonatePage({ showDisclosurePlaceholder = false }) {
               </svg>
               <span>Secure payment powered by Stripe</span>
             </div>
+
+            {/* DAF giving pathway */}
+            <div className="mt-6 pt-6 border-t border-gray-200 text-center">
+              <p className="text-gray-700">
+                Have a donor-advised fund?{' '}
+                <a
+                  href="/daf-giving"
+                  className="font-semibold text-green-700 underline hover:text-green-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
+                >
+                  Give through your DAF
+                </a>
+              </p>
+            </div>
           </div>
 
           {/* Impact Section */}
