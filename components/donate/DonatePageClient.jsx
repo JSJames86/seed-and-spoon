@@ -351,15 +351,15 @@ export default function DonatePage({ showDisclosurePlaceholder = false }) {
           >
             <div className="bg-white rounded-2xl p-6 text-center shadow-lg">
               <div className="text-4xl font-bold text-green-600 mb-2">$25</div>
-              <p className="text-gray-600">Provides meals for a family of 4</p>
+              <p className="text-gray-600">Provides 5 meal-equivalents for a child</p>
             </div>
             <div className="bg-white rounded-2xl p-6 text-center shadow-lg">
               <div className="text-4xl font-bold text-orange-500 mb-2">$50</div>
-              <p className="text-gray-600">Supports our weekly food distribution</p>
+              <p className="text-gray-600">Covers one child&rsquo;s full weekend of meals</p>
             </div>
             <div className="bg-white rounded-2xl p-6 text-center shadow-lg">
               <div className="text-4xl font-bold text-green-600 mb-2">$100</div>
-              <p className="text-gray-600">Feeds 10 families for a week</p>
+              <p className="text-gray-600">Feeds a child for two weekends</p>
             </div>
           </motion.div>
 

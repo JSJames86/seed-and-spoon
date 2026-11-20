@@ -28,7 +28,7 @@ export default function DonorThankYou({
       <Text style={s.p}>
         Your gift{amount ? <> of <strong>{amount}</strong></> : null} goes
         straight to the work: weekend meals for kids in Newark who&rsquo;d otherwise go
-        without. At roughly $3.56 a meal, support like yours is measured in real
+        without. At about $5 a meal, support like yours is measured in real
         plates of food, not overhead.
       </Text>
 

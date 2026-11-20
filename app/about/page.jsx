@@ -74,7 +74,7 @@ const CONTENT = {
           'Prepared in a licensed commercial kitchen under a formal HACCP food safety plan, with documented critical control points at cook, cool, and freeze',
           'Matched to each child’s allergen profile through family-level intake before the first box ships',
           'Sealed and verified — tamper-evident seals, per-bag verification against the batch sheet, cold-chain carriers to the doorstep',
-          'Costed to the penny — our pilot model runs $3.56 per meal, and we publish our unit costs',
+          'Costed up front: we budget food at $5 per meal-equivalent, and we publish our unit costs',
         ],
         status:
           'Pilot status: launching with 15–25 Newark-area families as funding is secured. Coverage is the standard: every enrolled child, every weekend, no exceptions.',
@@ -96,7 +96,7 @@ const CONTENT = {
     intro: 'Before our first delivery, we have completed:',
     items: [
       'A formal HACCP food safety plan and standard operating procedures covering meal prep, packaging, and delivery',
-      'A published cost model — $3.56 per meal, with a full 3-year budget and budget narrative',
+      'A published cost model: $5 per meal-equivalent for food, with a full 3-year budget and budget narrative',
       'Allergen-gated family intake design, so no child ever receives a meal their family didn’t verify',
       {
         text: 'Published research — our white paper, ',
@@ -140,7 +140,7 @@ const CONTENT = {
     cards: [
       {
         title: 'Sponsor a child’s weekend meals',
-        description: 'From about $25/week. Your support funds the first pilot cohort.',
+        description: 'About $50 covers one child’s full weekend of meals. Your support funds the first pilot cohort.',
         buttonText: 'Ways to Give',
         buttonUrl: '/give',
         isPrimary: true,
