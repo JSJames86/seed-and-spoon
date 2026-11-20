@@ -61,3 +61,7 @@ export const TAX_DEDUCTIBILITY_FAQ_ANSWER = `Yes. ${ORG_LEGAL_NAME} is a 501(c)(
 export const AMAZON_WISHLIST_URL = 'https://www.amazon.com/hz/wishlist/ls/1ZC494TKCOAHJ?ref_=wl_share';
 /** The one canonical capability statement. The old /documents/capability-statement.pdf redirects here. */
 export const CAPABILITY_STATEMENT_PATH = '/documents/seed-and-spoon-capability-statement.pdf';
+/** Bump when the PDF changes so browsers and the Google Docs viewer fetch the new copy. */
+export const CAPABILITY_STATEMENT_VERSION = '2026-11-20';
+/** Link to use on pages: the PDF path with its version tag. */
+export const CAPABILITY_STATEMENT_HREF = `${CAPABILITY_STATEMENT_PATH}?v=${CAPABILITY_STATEMENT_VERSION}`;
