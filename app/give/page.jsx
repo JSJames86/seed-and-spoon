@@ -14,28 +14,28 @@ const CONTENT = {
   },
   tiers: [
     {
-      label: 'Feed a kid for a week',
-      amount: 25,
-      amountCents: 2500,
+      label: 'Feed a kid for a weekend',
+      amount: 50,
+      amountCents: 5000,
       interval: 'one_time',
-      source: 'give_sponsor_week',
-      description: 'Covers roughly a week of meals at our ~$3.56-per-meal program cost.',
+      source: 'give_sponsor_weekend',
+      description: 'Covers one full weekend kit: 10 meal-equivalents at $5 each.',
     },
     {
       label: 'Feed a kid for a month',
-      amount: 100,
-      amountCents: 10000,
+      amount: 200,
+      amountCents: 20000,
       interval: 'one_time',
       source: 'give_sponsor_month',
-      description: 'Keeps a child fed for a full month of programming.',
+      description: 'Four weekends of meals for one child: 40 meal-equivalents.',
     },
     {
       label: 'Feed a kid for a year',
-      amount: 1200,
-      amountCents: 120000,
+      amount: 1500,
+      amountCents: 150000,
       interval: 'one_time',
       source: 'give_sponsor_year',
-      description: 'Sponsors a child for an entire year of meals.',
+      description: 'Two full 15-weekend cohorts of meals for one child: 300 meal-equivalents.',
       featured: true,
     },
   ],
@@ -143,8 +143,8 @@ export default function GivePage() {
                 Sponsor a Kid
               </h2>
               <p className="text-xl text-gray-700 leading-relaxed">
-                Our program costs about $3.56 per meal. Choose a tier below to sponsor a
-                child directly&mdash;every gift goes straight to rescued, nutritious meals.
+                We budget $5 per meal-equivalent, and every weekend kit holds 10. Choose a tier
+                below to sponsor a child directly&mdash;every gift goes straight to freshly prepared, nutritious meals.
               </p>
             </header>
 

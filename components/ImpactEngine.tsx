@@ -31,7 +31,7 @@ const NEWARK_ZONES = [
 const TOTAL_FOOD_DESERT_POP = NEWARK_ZONES.reduce((a, z) => a + z.pop, 0);
 const CHILD_RATE = 0.24;
 const AVG_HOUSEHOLD_SIZE = 3.6;
-const MEALS_PER_KIT = 14;
+const MEALS_PER_KIT = 10; // 5 Loaves weekend kit: 10 meal-equivalents
 const KITS_PER_FAMILY_WEEK = 1;
 const GROCERY_TRIPS_AVOIDED_PER_WEEK = 1.5;
 const LBS_PER_KIT = 12;
@@ -130,7 +130,7 @@ function PhaseBar({ phase, families, costPerKit, active, onClick }: {
 
 export default function ImpactEngine() {
   const [activePhase, setActivePhase] = useState(1);
-  const [costPerKit, setCostPerKit] = useState(65);
+  const [costPerKit, setCostPerKit] = useState(50); // $5 per meal-equivalent x 10
   const [customFamilies, setCustomFamilies] = useState<number | null>(null);
   const [tab, setTab] = useState("outputs");
 

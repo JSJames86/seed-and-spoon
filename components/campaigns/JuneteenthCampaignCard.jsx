@@ -23,7 +23,7 @@ const DEFAULT_CAMPAIGN = {
     "This Juneteenth, help us raise $25,000 to feed Newark kids all summer — through our 5 Loaves pilot and the families on our list right now.",
   goal_amount: 25000,
   raised_amount: 0,
-  cost_per_meal: 3.56,
+  cost_per_meal: 5,
   donate_url: "/donate?campaign=juneteenth-2026",
   share_url: "",
   hero_image_url: "",
@@ -41,7 +41,7 @@ export default function JuneteenthCampaignCard({ campaign = {} }) {
   const pct = Math.min(100, (raised / goal) * 100);
 
   const goalMeals = useMemo(() => {
-    const m = goal / (c.cost_per_meal || 3.56);
+    const m = goal / (c.cost_per_meal || 5);
     return Math.round(m / 100) * 100;
   }, [goal, c.cost_per_meal]);
 

@@ -1,4 +1,4 @@
-import { CAPABILITY_STATEMENT_PATH, ORG_TAX_STATUS, NJ_CHARITY_REG_NO } from '@/lib/org';
+import { CAPABILITY_STATEMENT_HREF, ORG_TAX_STATUS, NJ_CHARITY_REG_NO } from '@/lib/org';
 import PartnerInterestForm from '@/components/partners/PartnerInterestForm';
 import { campaignDonateHref } from '@/data/campaignShared';
 import { FIVE_LOAVES_SLUG, KIT_COST, TOTAL_KITS } from '@/data/fiveLoavesCampaign';
@@ -227,7 +227,7 @@ export default function CorporatePartnersPage() {
             </div>
 
             <a
-              href={CAPABILITY_STATEMENT_PATH}
+              href={CAPABILITY_STATEMENT_HREF}
               download
               className="inline-flex items-center gap-2 bg-[#2d5a27] text-white px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#1f3f1b] transition"
             >
