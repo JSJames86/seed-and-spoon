@@ -60,7 +60,7 @@ const CONTENT = {
         'Seed & Spoon is built from lived experience and run like infrastructure. That’s not a contradiction. It’s the whole point.',
       ],
       // ⚠️ Name to be confirmed by Janelle before changing (README/research paper use 'Janelle Glanville').
-      signature: '— Janelle James, Founder & Executive Director',
+      signature: '— Janelle Glanville, Founder & Executive Director',
     },
   },
 
