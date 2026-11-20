@@ -1,5 +1,6 @@
 import FAQAccordion from './FAQAccordion';
 import CapabilityStatementViewer from '@/components/CapabilityStatementViewer';
+import { rootedCommitments, ROOTED_COMMITMENTS_PDF_PATH } from '@/data/rootedCommitments';
 import {
   ORG_EIN,
   ORG_TAX_STATUS,
@@ -270,6 +271,7 @@ export default function AboutPage() {
         <HeroSection />
         <ProblemSection />
         <WhoWeAreSection />
+        <RootedCommitmentsSection />
         <BuildingSection />
         <ReadyBeforeDayOneSection />
         <AccountabilitySection />
@@ -371,6 +373,58 @@ function WhoWeAreSection() {
             <p className="text-gray-900 font-semibold not-italic mt-6">
               {whoWeAre.founderNote.signature}
             </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function RootedCommitmentsSection() {
+  const rc = rootedCommitments;
+  return (
+    <section id="rooted-commitments" className="py-20 bg-[var(--cream)] scroll-mt-24">
+      <div className="container mx-auto px-6">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-12 text-center">
+            {rc.title}
+          </h2>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {rc.commitments.map((c) => (
+              <article
+                key={c.title}
+                className="bg-white rounded-2xl shadow-md p-8 border-t-4 border-[var(--green-primary)]"
+              >
+                <h3 className="text-sm font-bold uppercase tracking-wide text-[var(--green-primary)] mb-3">
+                  {c.title}
+                </h3>
+                <p className="text-xl font-semibold text-gray-900 leading-snug mb-4">{c.lead}</p>
+                <p className="text-gray-700 leading-relaxed">{c.body}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-10 bg-white border-l-4 border-[var(--orange-primary)] rounded-2xl shadow-md p-8 md:p-10">
+            <p className="text-sm font-bold uppercase tracking-wide text-[var(--orange-primary)] mb-4">
+              {rc.founder.label}
+            </p>
+            <p className="text-lg text-gray-800 leading-relaxed italic">{rc.founder.body}</p>
+            <p className="text-gray-900 font-semibold mt-6">{rc.founder.signature}</p>
+          </div>
+
+          <p className="mt-12 text-xl md:text-2xl font-semibold text-gray-900 text-center leading-relaxed max-w-3xl mx-auto">
+            {rc.closing}
+          </p>
+
+          <div className="mt-8 text-center">
+            <a
+              href={ROOTED_COMMITMENTS_PDF_PATH}
+              download="Seed-and-Spoon-Rooted-Commitments.pdf"
+              className="inline-flex items-center gap-2 font-semibold text-green-700 underline hover:text-green-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
+            >
+              Download Rooted Commitments (PDF)
+            </a>
           </div>
         </div>
       </div>
