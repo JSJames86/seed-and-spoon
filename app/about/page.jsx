@@ -642,7 +642,7 @@ function CredentialsSection() {
     'UEI: JZQRPU1GRRM6',
     'CAGE: 207U1',
     'SAM.gov Active',
-    'Woman-Owned',
+    'Woman-Led',
     ORG_TAX_STATUS,
     `EIN: ${ORG_EIN}`,
   ];

@@ -219,7 +219,7 @@ export default function CorporatePartnersPage() {
                   Certifications
                 </h3>
                 <ul className="space-y-1">
-                  <li className="text-sm text-gray-600">✓ Woman-Owned Organization</li>
+                  <li className="text-sm text-gray-600">✓ Woman-Founded &amp; Woman-Led</li>
                   <li className="text-sm text-gray-600">✓ Nonprofit Organization — {ORG_TAX_STATUS}</li>
                   <li className="text-sm text-gray-600">✓ Registered New Jersey Charity — Reg. No. {NJ_CHARITY_REG_NO}</li>
                 </ul>

@@ -5,7 +5,7 @@ import { CAPABILITY_STATEMENT_PATH, CAPABILITY_STATEMENT_VERSION } from '@/lib/o
 
 const PDF_PATH = `${CAPABILITY_STATEMENT_PATH}?v=${CAPABILITY_STATEMENT_VERSION}`;
 const PDF_URL = `https://seedandspoon.org${PDF_PATH}`;
-const DOWNLOAD_NAME = 'Seed-and-Spoon-Capability-Statement.pdf';
+const DOWNLOAD_NAME = `Seed-and-Spoon-Capability-Statement-${CAPABILITY_STATEMENT_VERSION}.pdf`;
 const GDOCS_VIEWER = `https://docs.google.com/viewer?url=${encodeURIComponent(PDF_URL)}&embedded=true`;
 
 export default function CapabilityStatementViewer({ compact = false }) {
