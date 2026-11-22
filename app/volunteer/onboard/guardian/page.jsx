@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Alert from '@/components/get-help/Alert';
+import { authFetch } from '@/lib/auth-fetch';
 
 function GuardianConsentContent() {
   const searchParams = useSearchParams();
@@ -22,7 +23,7 @@ function GuardianConsentContent() {
 
     async function validate() {
       try {
-        const res = await fetch(`/api/volunteer/onboard/guardian?token=${token}`);
+        const res = await authFetch(`/api/volunteer/onboard/guardian?token=${token}`);
         const data = await res.json();
         if (!res.ok) {
           if (data.error === 'already_consented') {
@@ -47,7 +48,7 @@ function GuardianConsentContent() {
     setSubmitting(true);
     setError(null);
     try {
-      const res = await fetch('/api/volunteer/onboard/guardian', {
+      const res = await authFetch('/api/volunteer/onboard/guardian', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token }),

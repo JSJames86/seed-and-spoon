@@ -1,24 +1,18 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { NextResponse } from 'next/server'
+import { requireUser } from '@/lib/api-auth'
 
-function serviceClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { autoRefreshToken: false, persistSession: false } }
-  )
-}
+// Returns the CALLER's own profile. The old ?userId= parameter is ignored so
+// nobody can read another user's profile by changing the id.
+export async function GET(request: Request) {
+  const auth = await requireUser(request)
+  if (auth instanceof NextResponse) return NextResponse.json({ profile: null }, { status: auth.status })
+  const { user, supabase } = auth
 
-export async function GET(request: NextRequest) {
-  const userId = request.nextUrl.searchParams.get('userId')
-  if (!userId) return NextResponse.json({ error: 'userId required' }, { status: 400 })
-
-  const supabase = serviceClient()
   const { data, error } = await supabase
     .from('profiles')
-    .select('*')
-    .eq('id', userId)
-    .single()
+    .select('id, username, role, first_name, last_name, phone, updated_at')
+    .eq('id', user.id)
+    .maybeSingle()
 
   if (error) return NextResponse.json({ profile: null })
   return NextResponse.json({ profile: data })

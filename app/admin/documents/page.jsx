@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { authFetch } from '@/lib/auth-fetch';
 
 const ADMIN_EMAIL = 'janelle.shanise@gmail.com'
 
@@ -55,7 +56,7 @@ export default function AdminDocumentsPage() {
 
   const fetchDocs = async () => {
     try {
-      const res = await fetch('/api/documents')
+      const res = await authFetch('/api/documents')
       const data = await res.json()
       setDocs(data.documents || [])
     } catch (err) {
@@ -77,7 +78,7 @@ export default function AdminDocumentsPage() {
     fd.append('access_level', form.access_level)
     fd.append('uploaded_by', user?.id || '')
     try {
-      const res = await fetch('/api/documents/upload', { method: 'POST', body: fd })
+      const res = await authFetch('/api/documents/upload', { method: 'POST', body: fd })
       const data = await res.json()
       if (res.ok) {
         setMsg('✅ Uploaded successfully!')
@@ -96,7 +97,7 @@ export default function AdminDocumentsPage() {
   const handleDelete = async (doc) => {
     if (!confirm(`Delete "${doc.title}"?`)) return
     try {
-      await fetch('/api/documents', {
+      await authFetch('/api/documents', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: doc.id, file_path: doc.file_path }),
@@ -114,7 +115,7 @@ export default function AdminDocumentsPage() {
 
   const saveEdit = async (doc) => {
     try {
-      const res = await fetch('/api/documents', {
+      const res = await authFetch('/api/documents', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: doc.id, ...editForm }),

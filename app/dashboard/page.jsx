@@ -6,6 +6,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import BlogTab from './BlogTab';
+import { authFetch } from '@/lib/auth-fetch';
 
 const MEALS_PER_DOLLAR = 3; // $1 = ~3 meals
 const SUGGESTED_AMOUNTS = [10, 25, 50, 100];
@@ -26,7 +27,7 @@ export default function DashboardPage() {
 
   const fetchDonations = async () => {
     try {
-      const res = await fetch(`/api/donor/donations?email=${encodeURIComponent(user.email)}`);
+      const res = await authFetch(`/api/donor/donations?email=${encodeURIComponent(user.email)}`);
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || 'Failed to load');
       setDonations(json.donations || []);

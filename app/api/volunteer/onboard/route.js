@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { sendTransactional, FROM } from '@/lib/email';
 import VolunteerWelcome from '@/emails/VolunteerWelcome';
+import { requireRole, STAFF_ROLES } from '@/lib/api-auth';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -36,6 +37,12 @@ export async function GET(request) {
       .order('key');
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     return NextResponse.json({ roles: data });
+  }
+
+  // Everything below except token validation is an admin view.
+  if (action === 'review_queue' || action === 'list' || volunteerId) {
+    const auth = await requireRole(request, STAFF_ROLES);
+    if (auth instanceof NextResponse) return auth;
   }
 
   // Admin: review queue
@@ -148,6 +155,13 @@ export async function POST(request) {
   const { action } = body;
   const supabase = getSupabase();
 
+  // Only submit_onboarding is public (it validates the invite token itself).
+  // Inviting volunteers and every review/verification action is staff-only.
+  if (action !== 'submit_onboarding') {
+    const auth = await requireRole(request, STAFF_ROLES);
+    if (auth instanceof NextResponse) return auth;
+  }
+
   // ============ INVITE ============
   if (action === 'invite') {
     const { email, first_name, invited_by } = body;
@@ -196,6 +210,25 @@ export async function POST(request) {
 
     if (!volunteer_id) {
       return NextResponse.json({ error: 'volunteer_id is required' }, { status: 400 });
+    }
+    // The invite token from the emailed link must match this volunteer, and
+    // the form can only be submitted once.
+    if (!body.invite_token) {
+      return NextResponse.json({ error: 'Invalid or expired invite link.' }, { status: 403 });
+    }
+    {
+      const { data: invited } = await supabase
+        .from('volunteers')
+        .select('id, status')
+        .eq('id', volunteer_id)
+        .eq('invite_token', body.invite_token)
+        .maybeSingle();
+      if (!invited) {
+        return NextResponse.json({ error: 'Invalid or expired invite link.' }, { status: 403 });
+      }
+      if (invited.status === 'submitted' || invited.status === 'active') {
+        return NextResponse.json({ error: 'already_submitted' }, { status: 409 });
+      }
     }
     if (!personal?.first_name?.trim() || !personal?.last_name?.trim() || !personal?.email?.trim() || !personal?.phone?.trim()) {
       return NextResponse.json({ error: 'First name, last name, email, and phone are required' }, { status: 400 });

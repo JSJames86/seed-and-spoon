@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireRole, ADMIN_ROLES } from '@/lib/api-auth'
+import { logActivityServer } from '@/lib/activity-server'
 
 function serviceClient() {
   return createClient(
@@ -10,6 +12,9 @@ function serviceClient() {
 }
 
 export async function PATCH(request: NextRequest) {
+  const auth = await requireRole(request, ADMIN_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const { id, status } = await request.json()
   const supabase = serviceClient()
 
@@ -24,17 +29,13 @@ export async function PATCH(request: NextRequest) {
 
   if (status === 'approved' || status === 'active') {
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/activity`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      await logActivityServer({
           event_type: 'volunteer.approved',
           record_type: 'volunteer',
           record_label: data?.name || data?.email || 'Volunteer',
           actor_name: 'Admin',
           metadata: { status, email: data?.email }
         })
-      })
     } catch {}
   }
 

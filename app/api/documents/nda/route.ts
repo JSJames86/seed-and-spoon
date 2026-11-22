@@ -1,52 +1,43 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { NextResponse } from 'next/server'
+import { requireUser } from '@/lib/api-auth'
 
-function serviceClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { autoRefreshToken: false, persistSession: false } }
-  )
-}
+// NDA status and signing are always for the signed-in user only.
 
-export async function GET(request: NextRequest) {
-  const userId = request.nextUrl.searchParams.get('userId')
-  if (!userId) return NextResponse.json({ signed: false })
-  const supabase = serviceClient()
-  const { data } = await supabase
+export async function GET(request: Request) {
+  const auth = await requireUser(request)
+  if (auth instanceof NextResponse) return NextResponse.json({ signed: false }, { status: auth.status })
+  const { data } = await auth.supabase
     .from('nda_agreements')
     .select('id, signed_at')
-    .eq('user_id', userId)
-    .single()
+    .eq('user_id', auth.user.id)
+    .maybeSingle()
   return NextResponse.json({ signed: !!data, signed_at: data?.signed_at })
 }
 
-export async function POST(request: NextRequest) {
-  const { userId } = await request.json()
-  if (!userId) return NextResponse.json({ error: 'userId required' }, { status: 400 })
+export async function POST(request: Request) {
+  const auth = await requireUser(request)
+  if (auth instanceof NextResponse) return auth
+  const { user, supabase } = auth
   const ip = request.headers.get('x-forwarded-for') || 'unknown'
   const userAgent = request.headers.get('user-agent') || 'unknown'
-  const supabase = serviceClient()
+
   const { error } = await supabase.from('nda_agreements').upsert({
-    user_id: userId,
+    user_id: user.id,
     signed_at: new Date().toISOString(),
     ip_address: ip,
     user_agent: userAgent,
   })
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: 'Could not record signature' }, { status: 500 })
 
-  // Log to activity timeline
+  // Log to activity timeline (direct insert; /api/activity is staff-only)
   try {
-    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/activity`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        event_type: 'nda.signed',
-        record_type: 'user',
-        record_label: userId,
-        actor_name: 'User',
-        metadata: { document: 'NDA / Confidentiality Agreement', ip_address: ip }
-      })
+    await supabase.from('activity_logs').insert({
+      event_type: 'nda.signed',
+      record_type: 'user',
+      record_label: user.email ?? user.id,
+      actor_id: user.id,
+      actor_name: 'User',
+      metadata: { document: 'NDA / Confidentiality Agreement', ip_address: ip },
     })
   } catch {}
 

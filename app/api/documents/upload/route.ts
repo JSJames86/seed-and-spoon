@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireRole, ADMIN_ROLES } from '@/lib/api-auth'
+import { logActivityServer } from '@/lib/activity-server'
 
 function serviceClient() {
   return createClient(
@@ -10,6 +12,9 @@ function serviceClient() {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = await requireRole(request, ADMIN_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const formData = await request.formData()
   const file = formData.get('file') as File
   const category = formData.get('category') as string
@@ -21,7 +26,8 @@ export async function POST(request: NextRequest) {
   if (!file) return NextResponse.json({ error: 'No file provided' }, { status: 400 })
 
   const supabase = serviceClient()
-  const fileName = `${category}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`
+  const safeCategory = (category || 'general').replace(/[^a-zA-Z0-9_-]/g, '_')
+  const fileName = `${safeCategory}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`
   const buffer = Buffer.from(await file.arrayBuffer())
 
   const { error: uploadError } = await supabase.storage
@@ -46,17 +52,13 @@ export async function POST(request: NextRequest) {
 
   // Log to activity timeline
   try {
-    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/activity`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    await logActivityServer({
         event_type: 'document.uploaded',
         record_type: 'user',
         record_label: title || file.name,
         actor_name: 'Admin',
         metadata: { category, file_name: file.name, file_size: file.size, access_level }
       })
-    })
   } catch {}
 
   return NextResponse.json({ document: doc })

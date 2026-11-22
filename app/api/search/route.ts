@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireRole, STAFF_ROLES } from '@/lib/api-auth'
 
 function serviceClient() {
   return createClient(
@@ -10,6 +11,9 @@ function serviceClient() {
 }
 
 export async function GET(request: NextRequest) {
+  const auth = await requireRole(request, STAFF_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const q = request.nextUrl.searchParams.get('q')?.trim()
   if (!q || q.length < 2) return NextResponse.json({ results: [] })
 

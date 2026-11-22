@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { volunteerOnboarding } from '@/data/volunteerOnboarding';
 import Alert from '@/components/get-help/Alert';
+import { authFetch } from '@/lib/auth-fetch';
 
 const inputClass = "w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-700 text-sm";
 
@@ -62,7 +63,7 @@ function MultiToggle({ options, selected, onChange, label }) {
   );
 }
 
-export default function OnboardingForm({ volunteerId, inviteEmail, firstName, roles }) {
+export default function OnboardingForm({ volunteerId, inviteToken, inviteEmail, firstName, roles }) {
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
@@ -198,12 +199,13 @@ export default function OnboardingForm({ volunteerId, inviteEmail, firstName, ro
     setSubmitting(true);
     setError(null);
     try {
-      const res = await fetch('/api/volunteer/onboard', {
+      const res = await authFetch('/api/volunteer/onboard', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'submit_onboarding',
           volunteer_id: volunteerId,
+          invite_token: inviteToken,
           personal,
           emergency_contact: emergencyContact,
           role_preferences: selectedRoles,

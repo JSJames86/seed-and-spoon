@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import OnboardingForm from '@/components/volunteer/OnboardingForm';
 import Alert from '@/components/get-help/Alert';
+import { authFetch } from '@/lib/auth-fetch';
 
 function OnboardContent() {
   const searchParams = useSearchParams();
@@ -21,7 +22,7 @@ function OnboardContent() {
 
     async function validate() {
       try {
-        const res = await fetch(`/api/volunteer/onboard?token=${token}`);
+        const res = await authFetch(`/api/volunteer/onboard?token=${token}`);
         const data = await res.json();
 
         if (!res.ok) {
@@ -59,6 +60,7 @@ function OnboardContent() {
   return (
     <OnboardingForm
       volunteerId={volunteerData.volunteer_id}
+      inviteToken={token}
       inviteEmail={volunteerData.invite_email}
       firstName={volunteerData.first_name}
       roles={volunteerData.roles}

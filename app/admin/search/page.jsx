@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, Suspense } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { authFetch } from '@/lib/auth-fetch';
 
 const ADMIN_EMAIL = 'janelle.shanise@gmail.com'
 
@@ -40,7 +41,7 @@ function SearchContent() {
   const runSearch = async (q) => {
     if (!q || q.length < 2) { setResults([]); setSearched(false); return }
     setSearching(true)
-    const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`)
+    const res = await authFetch(`/api/search?q=${encodeURIComponent(q)}`)
     const data = await res.json()
     setResults(data.results || [])
     setSearched(true)

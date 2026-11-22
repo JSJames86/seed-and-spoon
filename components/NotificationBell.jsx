@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import { authFetch } from '@/lib/auth-fetch';
 
 const TYPE_ICONS = {
   'donation.received':   '💚',
@@ -62,13 +63,13 @@ export default function NotificationBell() {
   }, [])
 
   const fetchNotifications = async () => {
-    const res = await fetch(`/api/notifications?userId=${user.id}`)
+    const res = await authFetch(`/api/notifications?userId=${user.id}`)
     const data = await res.json()
     setNotifications(data.notifications || [])
   }
 
   const markAllRead = async () => {
-    await fetch('/api/notifications', {
+    await authFetch('/api/notifications', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId: user.id, markAllRead: true }),
@@ -77,7 +78,7 @@ export default function NotificationBell() {
   }
 
   const markRead = async (id) => {
-    await fetch('/api/notifications', {
+    await authFetch('/api/notifications', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id }),
@@ -86,7 +87,7 @@ export default function NotificationBell() {
   }
 
   const clearAll = async () => {
-    await fetch('/api/notifications', {
+    await authFetch('/api/notifications', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId: user.id }),

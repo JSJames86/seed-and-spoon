@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { authFetch } from '@/lib/auth-fetch';
 
 const ADMIN_EMAIL = 'janelle.shanise@gmail.com'
 
@@ -91,7 +92,7 @@ export default function TimelinePage() {
   }, [authLoading, user, profile, isAdmin]) // eslint-disable-line
 
   const fetchLogs = async () => {
-    const res = await fetch('/api/activity?limit=100')
+    const res = await authFetch('/api/activity?limit=100')
     const data = await res.json()
     setLogs(data.logs || [])
     setLoading(false)

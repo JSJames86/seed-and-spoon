@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
+import { authFetch } from '@/lib/auth-fetch';
 
 const ONBOARDING_KEY = 'ss_onboarded'
 
@@ -65,7 +66,7 @@ export default function OnboardingModal() {
   const saveProfile = async () => {
     if (!firstName.trim()) return
     setSaving(true)
-    await fetch('/api/profile/update', {
+    await authFetch('/api/profile/update', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
