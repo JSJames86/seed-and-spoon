@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { authFetch } from '@/lib/auth-fetch';
 
 const AuthContext = createContext({});
 
@@ -14,7 +15,7 @@ export function AuthProvider({ children }) {
 
   const fetchProfile = async (userId) => {
     try {
-      const res = await fetch(`/api/profile?userId=${userId}`);
+      const res = await authFetch(`/api/profile?userId=${userId}`);
       const data = await res.json();
       return data.profile || null;
     } catch {
@@ -72,7 +73,7 @@ export function AuthProvider({ children }) {
       }
       // Save profile
       if (data.user) {
-        await fetch('/api/profile/update', {
+        await authFetch('/api/profile/update', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

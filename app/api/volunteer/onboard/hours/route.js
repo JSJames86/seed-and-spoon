@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { requireRole, STAFF_ROLES } from '@/lib/api-auth'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -10,6 +11,9 @@ function getSupabase() {
 
 // GET — hours summary
 export async function GET(request) {
+  const auth = await requireRole(request, STAFF_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const { searchParams } = new URL(request.url);
   const volunteerId = searchParams.get('volunteer_id');
   const supabase = getSupabase();
@@ -35,6 +39,9 @@ export async function GET(request) {
 
 // POST — log hours, verify hours, record verification letter
 export async function POST(request) {
+  const auth = await requireRole(request, STAFF_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const body = await request.json();
   const { action } = body;
   const supabase = getSupabase();

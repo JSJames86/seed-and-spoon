@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { sendEmail } from '@/lib/email-service'
 import { renderDonationDeterminationEmail } from '@/emails/templates/donation-determination'
+import { requireRole, ADMIN_ROLES } from '@/lib/api-auth'
 
 function serviceClient() {
   return createClient(
@@ -14,6 +15,9 @@ function serviceClient() {
 // One-time send to every past donor once the 501(c)(3) determination letter arrives.
 // Requires an explicit confirm flag — this is a single irreversible mass-send.
 export async function POST(request: NextRequest) {
+  const auth = await requireRole(request, ADMIN_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const body = await request.json().catch(() => ({}))
   if (body.confirm !== true) {
     return NextResponse.json({ error: 'Pass { confirm: true } to send the determination-day email to all donors' }, { status: 400 })

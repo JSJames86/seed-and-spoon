@@ -15,6 +15,7 @@ import { renderDonationReceiptEmail, renderDonationInternalEmail } from '@/email
 import { sendTransactional, FROM } from '@/lib/email';
 import DonorThankYou from '@/emails/DonorThankYou';
 import PaymentFailed from '@/emails/PaymentFailed';
+import { createNotificationServer } from '@/lib/activity-server';
 
 function getServiceSupabase() {
   const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -152,11 +153,7 @@ async function sendDonationEmails({ donationRow, name, email, amountCents, isMon
 
 async function notifyAdmin(type, title, body, href) {
   try {
-    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/notifications`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user_id: '836fc70f-1fd5-4d61-9250-a806cb92593d', type, title, body, href })
-    })
+    await createNotificationServer({ user_id: '836fc70f-1fd5-4d61-9250-a806cb92593d', type, title, body, href })
   } catch {}
 }
 

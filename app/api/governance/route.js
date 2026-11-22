@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from '@supabase/supabase-js';
+import { requireRole, ADMIN_ROLES, STAFF_ROLES } from '@/lib/api-auth'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -11,6 +12,9 @@ function getSupabase() {
 
 // POST: create assessment cycle or issue invites
 export async function POST(request) {
+  const auth = await requireRole(request, ADMIN_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const supabase = getSupabase();
     if (!supabase) {
@@ -100,6 +104,9 @@ export async function POST(request) {
 
 // GET: list assessments or get results
 export async function GET(request) {
+  const auth = await requireRole(request, STAFF_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const supabase = getSupabase();
     if (!supabase) {

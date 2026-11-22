@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireRole, STAFF_ROLES } from '@/lib/api-auth'
+import { logActivityServer } from '@/lib/activity-server'
 
 function serviceClient() {
   return createClient(
@@ -10,6 +12,9 @@ function serviceClient() {
 }
 
 export async function GET(request: NextRequest) {
+  const auth = await requireRole(request, STAFF_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const { searchParams } = request.nextUrl
   const status = searchParams.get('status')
   const assigned_to = searchParams.get('assigned_to')
@@ -30,6 +35,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = await requireRole(request, STAFF_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const body = await request.json()
   const supabase = serviceClient()
   const { data, error } = await supabase
@@ -41,23 +49,22 @@ export async function POST(request: NextRequest) {
 
   // Log to activity timeline
   try {
-    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/activity`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    await logActivityServer({
         event_type: 'task.created',
         record_type: body.related_type || 'general',
         record_label: body.title,
         actor_name: body.created_by_name || 'Admin',
         metadata: { priority: body.priority, due_date: body.due_date, assigned_to: body.assigned_name }
       })
-    })
   } catch {}
 
   return NextResponse.json({ task: data })
 }
 
 export async function PATCH(request: NextRequest) {
+  const auth = await requireRole(request, STAFF_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const { id, ...updates } = await request.json()
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
 
@@ -78,17 +85,13 @@ export async function PATCH(request: NextRequest) {
 
   if (updates.status === 'done') {
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/activity`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      await logActivityServer({
           event_type: 'task.completed',
           record_type: 'general',
           record_label: data.title,
           actor_name: 'Admin',
           metadata: {}
         })
-      })
     } catch {}
   }
 
@@ -96,6 +99,9 @@ export async function PATCH(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  const auth = await requireRole(request, STAFF_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const { id } = await request.json()
   const supabase = serviceClient()
   const { error } = await supabase.from('tasks').delete().eq('id', id)

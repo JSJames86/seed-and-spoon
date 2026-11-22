@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { authFetch } from '@/lib/auth-fetch';
 
 const ADMIN_EMAIL = 'janelle.shanise@gmail.com'
 
@@ -67,7 +68,7 @@ export default function TasksPage() {
   }, [authLoading, user, profile, isAdmin]) // eslint-disable-line
 
   const fetchTasks = async () => {
-    const res = await fetch('/api/tasks?status=all')
+    const res = await authFetch('/api/tasks?status=all')
     const data = await res.json()
     setTasks(data.tasks || [])
     setLoading(false)
@@ -84,7 +85,7 @@ export default function TasksPage() {
     }
 
     if (editingTask) {
-      const res = await fetch('/api/tasks', {
+      const res = await authFetch('/api/tasks', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: editingTask.id, ...payload }),
@@ -93,7 +94,7 @@ export default function TasksPage() {
       setTasks(prev => prev.map(t => t.id === editingTask.id ? data.task : t))
       setEditingTask(null)
     } else {
-      const res = await fetch('/api/tasks', {
+      const res = await authFetch('/api/tasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -107,7 +108,7 @@ export default function TasksPage() {
   }
 
   const updateStatus = async (task, status) => {
-    const res = await fetch('/api/tasks', {
+    const res = await authFetch('/api/tasks', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: task.id, status }),
@@ -118,7 +119,7 @@ export default function TasksPage() {
 
   const deleteTask = async (id) => {
     if (!confirm('Delete this task?')) return
-    await fetch('/api/tasks', {
+    await authFetch('/api/tasks', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id }),

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Link from 'next/link';
+import { authFetch } from '@/lib/auth-fetch';
 
 export default function ProfilePage() {
   const { user, profile, changePassword, refreshProfile } = useAuth();
@@ -45,7 +46,7 @@ export default function ProfilePage() {
     setProfileMessage('');
     setProfileLoading(true);
     try {
-      const res = await fetch('/api/profile/update', {
+      const res = await authFetch('/api/profile/update', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user?.id, ...profileData }),

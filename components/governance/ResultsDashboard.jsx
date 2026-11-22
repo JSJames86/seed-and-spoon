@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { boardAssessment } from '@/data/boardAssessment';
 import Alert from '@/components/get-help/Alert';
+import { authFetch } from '@/lib/auth-fetch';
 
 function FlagBadge({ label, active, color }) {
   if (!active) return null;
@@ -89,7 +90,7 @@ export default function ResultsDashboard({ assessmentId }) {
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch(`/api/governance?assessment_id=${assessmentId}`);
+        const res = await authFetch(`/api/governance?assessment_id=${assessmentId}`);
         if (!res.ok) throw new Error('Failed to load results');
         const json = await res.json();
         setData(json);

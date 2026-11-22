@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { Resend } from 'resend'
+import { requireRole, ADMIN_ROLES } from '@/lib/api-auth'
 
 function serviceClient() {
   return createClient(
@@ -10,7 +11,10 @@ function serviceClient() {
   )
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const auth = await requireRole(request, ADMIN_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const supabase = serviceClient()
   const { data, error } = await supabase
     .from('invites')
@@ -21,6 +25,9 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = await requireRole(request, ADMIN_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const { email, role, default_channel_id } = await request.json()
   if (!email || !role) return NextResponse.json({ error: 'Email and role required' }, { status: 400 })
 
@@ -56,6 +63,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  const auth = await requireRole(request, ADMIN_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const { id } = await request.json()
   const supabase = serviceClient()
   const { error } = await supabase.from('invites').delete().eq('id', id)

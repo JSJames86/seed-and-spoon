@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import ProtectedRoute from '@/components/ProtectedRoute'
+import { authFetch } from '@/lib/auth-fetch';
 
 const CATEGORIES = {
   governance: { label: 'Governance', icon: '⚖️', color: 'bg-blue-50 text-blue-700 border-blue-200' },
@@ -32,7 +33,7 @@ export default function DocumentsPage() {
 
   useEffect(() => {
     if (!user) return
-    fetch(`/api/documents/nda?userId=${user.id}`)
+    authFetch(`/api/documents/nda?userId=${user.id}`)
       .then(r => r.json())
       .then(data => {
         setNdaSigned(data.signed)
@@ -43,7 +44,7 @@ export default function DocumentsPage() {
 
   const fetchDocuments = async () => {
     setDocsLoading(true)
-    const res = await fetch('/api/documents')
+    const res = await authFetch('/api/documents')
     const data = await res.json()
     setDocuments(data.documents || [])
     setDocsLoading(false)
@@ -51,7 +52,7 @@ export default function DocumentsPage() {
 
   const signNda = async () => {
     setSigning(true)
-    await fetch('/api/documents/nda', {
+    await authFetch('/api/documents/nda', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId: user.id }),
@@ -61,18 +62,25 @@ export default function DocumentsPage() {
     fetchDocuments()
   }
 
-  const openDocument = (doc) => {
+  const openDocument = async (doc) => {
     setDownloading(doc.id)
-    // /api/documents/url redirects to a signed Supabase URL — navigate directly
-    // rather than fetch()'ing it, since fetch would try to parse the file itself as JSON.
-    const a = document.createElement('a')
-    a.href = `/api/documents/url?path=${encodeURIComponent(doc.file_path)}`
-    a.target = '_blank'
-    a.rel = 'noopener noreferrer'
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    setDownloading(null)
+    // Open the tab synchronously (inside the click) so popup blockers allow it,
+    // then point it at the short-lived signed URL once the API returns it.
+    const win = window.open('', '_blank')
+    try {
+      const res = await authFetch(`/api/documents/url?path=${encodeURIComponent(doc.file_path)}`)
+      const data = await res.json()
+      if (data.url && win) {
+        win.opener = null
+        win.location.href = data.url
+      } else {
+        win?.close()
+      }
+    } catch {
+      win?.close()
+    } finally {
+      setDownloading(null)
+    }
   }
 
   const filtered = activeCategory === 'all'

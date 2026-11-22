@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireRole, STAFF_ROLES } from '@/lib/api-auth'
 
 function serviceClient() {
   return createClient(
@@ -10,6 +11,9 @@ function serviceClient() {
 }
 
 export async function GET(request: NextRequest) {
+  const auth = await requireRole(request, STAFF_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const { searchParams } = request.nextUrl
   const record_id = searchParams.get('record_id')
   const record_type = searchParams.get('record_type')
@@ -31,6 +35,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = await requireRole(request, STAFF_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const body = await request.json()
   const { event_type, record_type, record_id, record_label, actor_id, actor_name, metadata } = body
 

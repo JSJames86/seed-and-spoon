@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireRole, ADMIN_ROLES } from '@/lib/api-auth'
 
 function serviceClient() {
   return createClient(
@@ -9,7 +10,12 @@ function serviceClient() {
   )
 }
 
-export async function GET() {
+const ASSIGNABLE_ROLES = ['user', 'donor', 'volunteer', 'staff', 'employee', 'board', 'editor', 'admin', 'executive_director', 'suspended']
+
+export async function GET(request: Request) {
+  const auth = await requireRole(request, ADMIN_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const supabase = serviceClient()
 
   // Get all auth users
@@ -36,8 +42,15 @@ export async function GET() {
 }
 
 export async function PATCH(request: NextRequest) {
+  const auth = await requireRole(request, ADMIN_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const { userId, role } = await request.json()
   if (!userId || !role) return NextResponse.json({ error: 'userId and role required' }, { status: 400 })
+  if (!ASSIGNABLE_ROLES.includes(role)) return NextResponse.json({ error: 'Invalid role' }, { status: 400 })
+  if (userId === auth.user.id) {
+    return NextResponse.json({ error: 'You cannot change your own role' }, { status: 400 })
+  }
 
   const supabase = serviceClient()
   const { error } = await supabase

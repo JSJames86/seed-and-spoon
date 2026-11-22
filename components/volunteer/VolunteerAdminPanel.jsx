@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { volunteerOnboarding } from '@/data/volunteerOnboarding';
 import Alert from '@/components/get-help/Alert';
+import { authFetch } from '@/lib/auth-fetch';
 
 function StatusBadge({ status, map }) {
   const cfg = (map || volunteerOnboarding.statusFlow)[status] || { label: status, color: 'gray' };
@@ -34,7 +35,7 @@ function InviteForm({ onInviteSent }) {
     setSending(true);
     setResult(null);
     try {
-      const res = await fetch('/api/volunteer/onboard', {
+      const res = await authFetch('/api/volunteer/onboard', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'invite', email: email.trim(), first_name: firstName.trim() || null }),
@@ -94,7 +95,7 @@ function VolunteerDetail({ volunteerId, onBack }) {
 
   async function load() {
     try {
-      const res = await fetch(`/api/volunteer/onboard?volunteer_id=${volunteerId}`);
+      const res = await authFetch(`/api/volunteer/onboard?volunteer_id=${volunteerId}`);
       if (!res.ok) throw new Error('Failed to load');
       setData(await res.json());
     } catch (err) {
@@ -109,7 +110,7 @@ function VolunteerDetail({ volunteerId, onBack }) {
   async function postAction(body) {
     setActionLoading(true);
     try {
-      const res = await fetch('/api/volunteer/onboard', {
+      const res = await authFetch('/api/volunteer/onboard', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -126,7 +127,7 @@ function VolunteerDetail({ volunteerId, onBack }) {
   async function postHoursAction(body) {
     setActionLoading(true);
     try {
-      const res = await fetch('/api/volunteer/onboard/hours', {
+      const res = await authFetch('/api/volunteer/onboard/hours', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -502,7 +503,7 @@ export default function VolunteerAdminPanel() {
 
   async function loadVolunteers() {
     try {
-      const res = await fetch('/api/volunteer/onboard?action=list');
+      const res = await authFetch('/api/volunteer/onboard?action=list');
       if (!res.ok) throw new Error('Failed to load');
       const data = await res.json();
       setVolunteers(data.volunteers || []);

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { sendEmail } from '@/lib/email-service'
 import { renderDonationReceiptEmail } from '@/emails/templates/donation'
+import { requireRole, ADMIN_ROLES } from '@/lib/api-auth'
+import { logActivityServer } from '@/lib/activity-server'
 
 function serviceClient() {
   return createClient(
@@ -12,6 +14,9 @@ function serviceClient() {
 }
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const auth = await requireRole(request, ADMIN_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const { id } = await params
   const supabase = serviceClient()
 
@@ -60,18 +65,14 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     await supabase.from('donations').update({ receipt_email_sent_at: new Date().toISOString() }).eq('id', id)
   }
 
-  await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/activity`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
+  await logActivityServer({
       event_type: 'email.sent',
       record_type: 'donor',
       record_id: id,
       record_label: donation.donor_name || donation.donor_email,
       actor_name: 'Admin',
       metadata: { subject: 'Your Seed & Spoon donation receipt (resend)', type: 'donation_receipt_resend', email: donation.donor_email },
-    }),
-  }).catch(() => {})
+    }).catch(() => {})
 
   return NextResponse.json({ success: true })
 }

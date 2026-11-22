@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireRole, ADMIN_ROLES } from '@/lib/api-auth'
 
 function serviceClient() {
   return createClient(
@@ -29,7 +30,10 @@ async function logActivity(event_type: string, record_type: string, record_label
   } catch {}
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const auth = await requireRole(request, ADMIN_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const supabase = serviceClient()
   const { data, error } = await supabase
     .from('grants').select('*').order('created_at', { ascending: false })
@@ -38,6 +42,9 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = await requireRole(request, ADMIN_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const body = await request.json()
   const supabase = serviceClient()
   const { data, error } = await supabase.from('grants').insert(body).select().single()
@@ -48,6 +55,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+  const auth = await requireRole(request, ADMIN_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const { id, ...updates } = await request.json()
   const supabase = serviceClient()
   const { data, error } = await supabase

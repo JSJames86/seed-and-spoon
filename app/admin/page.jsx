@@ -8,6 +8,7 @@ import NotificationBell from '@/components/NotificationBell'
 import { useDemo } from '@/contexts/DemoContext'
 import { supabase } from '@/lib/supabase'
 import BlogTab from '../dashboard/BlogTab'
+import { authFetch } from '@/lib/auth-fetch';
 
 const ADMIN_EMAIL = 'janelle.shanise@gmail.com'
 
@@ -59,11 +60,11 @@ export default function AdminPage() {
   const fetchData = async () => {
     try {
       const [adminRes, grantsRes, usersRes, invitesRes, docsRes, channelsRes] = await Promise.all([
-        fetch('/api/admin/data'),
-        fetch('/api/admin/grants'),
-        fetch('/api/admin/users'),
-        fetch('/api/admin/invites'),
-        fetch('/api/documents'),
+        authFetch('/api/admin/data'),
+        authFetch('/api/admin/grants'),
+        authFetch('/api/admin/users'),
+        authFetch('/api/admin/invites'),
+        authFetch('/api/documents'),
         fetch('/api/messages/channels'),
       ])
       const adminData = await adminRes.json()
@@ -86,7 +87,7 @@ export default function AdminPage() {
   }
 
   const updateVolunteerStatus = async (id, status) => {
-    await fetch('/api/admin/volunteers', {
+    await authFetch('/api/admin/volunteers', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id, status }),
@@ -95,7 +96,7 @@ export default function AdminPage() {
   }
 
   const moveGrant = async (id, stage) => {
-    await fetch('/api/admin/grants', {
+    await authFetch('/api/admin/grants', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id, stage }),
@@ -105,7 +106,7 @@ export default function AdminPage() {
 
   const addGrant = async (e) => {
     e.preventDefault()
-    const res = await fetch('/api/admin/grants', {
+    const res = await authFetch('/api/admin/grants', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newGrant),
@@ -122,7 +123,7 @@ export default function AdminPage() {
     e.preventDefault()
     setInviting(true)
     setInviteMsg('')
-    const res = await fetch('/api/admin/invites', {
+    const res = await authFetch('/api/admin/invites', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newInvite),
@@ -139,7 +140,7 @@ export default function AdminPage() {
   }
 
   const updateUserRole = async (userId, role) => {
-    await fetch('/api/admin/users', {
+    await authFetch('/api/admin/users', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, role }),
@@ -148,7 +149,7 @@ export default function AdminPage() {
   }
 
   const revokeInvite = async (id) => {
-    await fetch('/api/admin/invites', {
+    await authFetch('/api/admin/invites', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id }),
@@ -168,7 +169,7 @@ export default function AdminPage() {
     fd.append('category', newDoc.category)
     fd.append('access_level', newDoc.access_level)
     fd.append('uploaded_by', user?.id || '')
-    const res = await fetch('/api/documents/upload', { method: 'POST', body: fd })
+    const res = await authFetch('/api/documents/upload', { method: 'POST', body: fd })
     const data = await res.json()
     if (res.ok) {
       setUploadMsg('Document uploaded successfully!')
@@ -183,7 +184,7 @@ export default function AdminPage() {
 
   const deleteDocument = async (doc) => {
     if (!confirm(`Delete "${doc.title}"?`)) return
-    await fetch('/api/documents', {
+    await authFetch('/api/documents', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: doc.id, file_path: doc.file_path }),
@@ -195,7 +196,7 @@ export default function AdminPage() {
     setResendingId(donationId)
     setResendMsg(prev => ({ ...prev, [donationId]: '' }))
     try {
-      const res = await fetch(`/api/donations/${donationId}/resend-receipt`, { method: 'POST' })
+      const res = await authFetch(`/api/donations/${donationId}/resend-receipt`, { method: 'POST' })
       const data = await res.json()
       setResendMsg(prev => ({ ...prev, [donationId]: res.ok ? 'Sent ✓' : (data.error || 'Failed') }))
     } catch (err) {
@@ -206,7 +207,7 @@ export default function AdminPage() {
   }
 
   const openDocumentAdmin = async (doc) => {
-    const res = await fetch(`/api/documents/url?path=${encodeURIComponent(doc.file_path)}`)
+    const res = await authFetch(`/api/documents/url?path=${encodeURIComponent(doc.file_path)}`)
     const data = await res.json()
     if (data.url) window.open(data.url, '_blank')
   }

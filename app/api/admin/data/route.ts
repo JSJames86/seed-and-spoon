@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireRole, ADMIN_ROLES } from '@/lib/api-auth'
 
 function serviceClient() {
   return createClient(
@@ -9,7 +10,10 @@ function serviceClient() {
   )
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const auth = await requireRole(request, ADMIN_ROLES)
+  if (auth instanceof NextResponse) return auth
+
   const supabase = serviceClient()
 
   const [d, v, e] = await Promise.all([

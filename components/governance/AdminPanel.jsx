@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Alert from '@/components/get-help/Alert';
+import { authFetch } from '@/lib/auth-fetch';
 
 export default function AdminPanel({ onSelectAssessment }) {
   const [assessments, setAssessments] = useState([]);
@@ -19,7 +20,7 @@ export default function AdminPanel({ onSelectAssessment }) {
 
   async function loadAssessments() {
     try {
-      const res = await fetch('/api/governance');
+      const res = await authFetch('/api/governance');
       if (!res.ok) throw new Error('Failed to load');
       const data = await res.json();
       setAssessments(data.assessments || []);
@@ -37,7 +38,7 @@ export default function AdminPanel({ onSelectAssessment }) {
     if (!newTitle.trim()) return;
     setCreating(true);
     try {
-      const res = await fetch('/api/governance', {
+      const res = await authFetch('/api/governance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'create_cycle', title: newTitle.trim() }),
@@ -54,7 +55,7 @@ export default function AdminPanel({ onSelectAssessment }) {
 
   async function updateStatus(assessmentId, status) {
     try {
-      await fetch('/api/governance', {
+      await authFetch('/api/governance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'update_status', assessment_id: assessmentId, status }),
@@ -71,7 +72,7 @@ export default function AdminPanel({ onSelectAssessment }) {
     setInviteResult(null);
     try {
       const memberId = crypto.randomUUID();
-      const res = await fetch('/api/governance', {
+      const res = await authFetch('/api/governance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
