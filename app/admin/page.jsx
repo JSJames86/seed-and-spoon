@@ -9,6 +9,7 @@ import { useDemo } from '@/contexts/DemoContext'
 import { supabase } from '@/lib/supabase'
 import BlogTab from '../dashboard/BlogTab'
 import { authFetch } from '@/lib/auth-fetch';
+import { INVITABLE_ROLES } from '@/data/accessRoles';
 
 const ADMIN_EMAIL = 'janelle.shanise@gmail.com'
 
@@ -529,9 +530,9 @@ export default function AdminPage() {
                   <label className="block text-xs font-medium text-gray-600 mb-1">Role</label>
                   <select className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                     value={newInvite.role} onChange={e => setNewInvite({...newInvite, role: e.target.value})}>
-                    <option value="donor">Donor</option>
-                    <option value="volunteer">Volunteer</option>
-                    <option value="staff">Staff</option>
+                    {INVITABLE_ROLES.map(r => (
+                      <option key={r.value} value={r.value}>{r.label}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
@@ -599,10 +600,12 @@ export default function AdminPage() {
                         className="px-2 py-1 border border-gray-200 rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-green-500"
                         value={u.role}
                         onChange={e => updateUserRole(u.id, e.target.value)}>
-                        <option value="donor">Donor</option>
-                        <option value="volunteer">Volunteer</option>
-                        <option value="staff">Staff</option>
-                        <option value="admin">Admin</option>
+                        {!INVITABLE_ROLES.some(r => r.value === u.role) && u.role !== 'suspended' && (
+                          <option value={u.role}>{u.role}</option>
+                        )}
+                        {INVITABLE_ROLES.map(r => (
+                          <option key={r.value} value={r.value}>{r.label}</option>
+                        ))}
                         <option value="suspended">Suspended</option>
                       </select>
                     </div>

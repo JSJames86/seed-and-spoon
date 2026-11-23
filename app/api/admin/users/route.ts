@@ -10,7 +10,7 @@ function serviceClient() {
   )
 }
 
-const ASSIGNABLE_ROLES = ['user', 'donor', 'volunteer', 'staff', 'employee', 'board', 'editor', 'admin', 'executive_director', 'suspended']
+const ASSIGNABLE_ROLES = ['user', 'client', 'donor', 'volunteer', 'staff', 'employee', 'board', 'editor', 'admin', 'executive_director', 'suspended']
 
 export async function GET(request: Request) {
   const auth = await requireRole(request, ADMIN_ROLES)
