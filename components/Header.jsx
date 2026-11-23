@@ -409,16 +409,6 @@ export default function Header() {
                   >
                     Login
                   </Link>
-                  <Link
-                    href="/signup"
-                    className={`body-sm font-bold whitespace-nowrap px-4 py-2 rounded-lg transition-all ${
-                      isScrolled
-                        ? "bg-primary-soil text-white hover:bg-primary-soil/90 shadow-md"
-                        : "bg-cream text-charcoal hover:bg-cream/90 drop-shadow-lg shadow-md"
-                    }`}
-                  >
-                    Sign Up
-                  </Link>
                 </>
               )}
             </div>
@@ -574,13 +564,6 @@ export default function Header() {
                       className="block text-center body-md font-bold text-white border-2 border-white/50 hover:bg-white/10 text-2xl py-3 px-8 rounded-full transition-all"
                     >
                       Login
-                    </Link>
-                    <Link
-                      href="/signup"
-                      onClick={closeMenu}
-                      className="block text-center body-md font-bold bg-cream text-charcoal hover:bg-cream/90 text-2xl py-3 px-8 rounded-full transition-all shadow-lg"
-                    >
-                      Sign Up
                     </Link>
                   </>
                 )}

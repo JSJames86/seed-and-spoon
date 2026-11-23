@@ -66,9 +66,9 @@ function LoginForm() {
           Sign in to your account
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
-          Or{' '}
+          Access is by invitation.{' '}
           <Link href="/signup" className="font-medium text-[var(--green-primary)] hover:text-[var(--leaf-mid)]">
-            create a new account
+            Learn more
           </Link>
         </p>
       </div>

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { Resend } from 'resend'
 import { requireRole, ADMIN_ROLES } from '@/lib/api-auth'
+import { INVITABLE_ROLE_VALUES, roleLabel } from '@/data/accessRoles'
 
 function serviceClient() {
   return createClient(
@@ -28,8 +29,13 @@ export async function POST(request: NextRequest) {
   const auth = await requireRole(request, ADMIN_ROLES)
   if (auth instanceof NextResponse) return auth
 
-  const { email, role, default_channel_id } = await request.json()
+  const body = await request.json()
+  const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : ''
+  const role = typeof body.role === 'string' ? body.role : ''
+  const default_channel_id = body.default_channel_id
   if (!email || !role) return NextResponse.json({ error: 'Email and role required' }, { status: 400 })
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return NextResponse.json({ error: 'Invalid email' }, { status: 400 })
+  if (!INVITABLE_ROLE_VALUES.includes(role)) return NextResponse.json({ error: 'Invalid role' }, { status: 400 })
 
   const supabase = serviceClient()
   const { data: invite, error } = await supabase
@@ -51,7 +57,7 @@ export async function POST(request: NextRequest) {
       subject: `You've been invited to join Seed & Spoon 🌱`,
       html: `
         <p>Hi there,</p>
-        <p>You've been invited to join the Seed & Spoon platform as a <strong>${role}</strong>.${channelName}</p>
+        <p>You've been invited to join the Seed & Spoon platform as a <strong>${roleLabel(role)}</strong>.${channelName}</p>
         <p><a href="${inviteUrl}" style="background:#2d5a27;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Accept Invitation</a></p>
         <p>This link expires in 7 days.</p>
         <p>With gratitude,<br/>Janelle<br/>Founder, Seed & Spoon</p>
