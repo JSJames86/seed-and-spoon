@@ -7,6 +7,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Alert from './Alert';
+import TurnstileWidget, { turnstileEnabled } from '@/components/forms/TurnstileWidget';
 import FormSection from './FormSection';
 import { captureEvent } from '@/analytics/posthog';
 import { EVENTS } from '@/analytics/events';
@@ -91,6 +92,8 @@ export default function FamilyIntakeForm({ onSuccess, onScrollToMap }) {
     essexCounty: '',
   });
   const [adultsInHome, setAdultsInHome] = useState('1');
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const [turnstileReset, setTurnstileReset] = useState(0);
   const [children, setChildren] = useState([newChild()]);
   const [dietary, setDietary] = useState([]);
   const [reheatAccess, setReheatAccess] = useState('');
@@ -189,6 +192,11 @@ export default function FamilyIntakeForm({ onSuccess, onScrollToMap }) {
       document.getElementById('intake-status')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
+    if (turnstileEnabled && !turnstileToken) {
+      setError('The security check is still loading. Please wait a moment and try again.');
+      document.getElementById('intake-status')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
     setError('');
     setIsSubmitting(true);
 
@@ -234,6 +242,7 @@ export default function FamilyIntakeForm({ onSuccess, onScrollToMap }) {
 
     const form = new FormData();
     form.append('payload', JSON.stringify(payload));
+    form.append('turnstileToken', turnstileToken);
     if (referralType?.how === 'upload' && referral.file) form.append('referralDoc', referral.file);
 
     try {
@@ -254,6 +263,7 @@ export default function FamilyIntakeForm({ onSuccess, onScrollToMap }) {
       document.getElementById('intake-status')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } finally {
       setIsSubmitting(false);
+      setTurnstileReset((n) => n + 1);
     }
   };
 
@@ -698,6 +708,8 @@ export default function FamilyIntakeForm({ onSuccess, onScrollToMap }) {
         {hasBaby && (
           <p className={helpClass}>Formula support is a separate pilot with limited spots. We’ll confirm availability when we contact you.</p>
         )}
+
+        <TurnstileWidget onToken={setTurnstileToken} resetKey={turnstileReset} />
 
         <button
           type="submit"
