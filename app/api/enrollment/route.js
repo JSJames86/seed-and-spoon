@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 import { createClient } from '@supabase/supabase-js';
+import { checkRateLimit, getClientIp } from '@/lib/api-helpers';
+import { verifyTurnstile } from '@/lib/turnstile';
+
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -46,8 +50,21 @@ function validatePayload(data) {
 }
 
 export async function POST(request) {
+  const ip = getClientIp(request);
+  if (!checkRateLimit(`enrollment_ip:${ip}`, 8, DAY_MS).allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests', message: 'We’ve received several forms from this network today. Please call or text us instead.' },
+      { status: 429 }
+    );
+  }
+
   try {
-    const data = await request.json();
+    const { turnstileToken, ...data } = await request.json();
+
+    const human = await verifyTurnstile(turnstileToken, ip);
+    if (!human.ok) {
+      return NextResponse.json({ error: 'Verification failed', message: human.message }, { status: human.status });
+    }
 
     const error = validatePayload(data);
     if (error) {
@@ -184,13 +201,3 @@ export async function POST(request) {
   }
 }
 
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  });
-}

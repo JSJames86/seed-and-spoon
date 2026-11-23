@@ -8,6 +8,7 @@
 
 import { useState } from 'react';
 import Alert from './Alert';
+import TurnstileWidget, { turnstileEnabled } from '@/components/forms/TurnstileWidget';
 import FormSection from './FormSection';
 import { REFERRER_ROLES, REFERRAL_UPLOAD } from '@/data/familyIntake';
 
@@ -32,6 +33,8 @@ const EMPTY = {
 export default function ReferralIntakeForm({ onSuccess }) {
   const [fields, setFields] = useState(EMPTY);
   const [letter, setLetter] = useState(null);
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const [turnstileReset, setTurnstileReset] = useState(0);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -73,11 +76,17 @@ export default function ReferralIntakeForm({ onSuccess }) {
       document.getElementById('referral-status')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
+    if (turnstileEnabled && !turnstileToken) {
+      setError('The security check is still loading. Please wait a moment and try again.');
+      document.getElementById('referral-status')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
     setError('');
     setIsSubmitting(true);
     const form = new FormData();
     form.append('payload', JSON.stringify({ ...fields, childrenCount: Number(fields.childrenCount) }));
     if (letter) form.append('letter', letter);
+    form.append('turnstileToken', turnstileToken);
     try {
       const res = await fetch('/api/referrals', { method: 'POST', body: form });
       const data = await res.json().catch(() => ({}));
@@ -88,6 +97,7 @@ export default function ReferralIntakeForm({ onSuccess }) {
       setError(err instanceof TypeError ? 'We couldn’t reach our server. Please check your connection and try again.' : err.message);
     } finally {
       setIsSubmitting(false);
+      setTurnstileReset((n) => n + 1);
       setTimeout(() => document.getElementById('referral-status')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
     }
   };
@@ -205,6 +215,7 @@ export default function ReferralIntakeForm({ onSuccess }) {
             The family knows about this referral and agreed to let me share their name and phone number with Seed &amp; Spoon. *
           </span>
         </label>
+        <TurnstileWidget onToken={setTurnstileToken} resetKey={turnstileReset} />
         <button
           type="submit"
           disabled={isSubmitting}

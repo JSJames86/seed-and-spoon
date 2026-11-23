@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { createServiceClient } from "@/lib/supabase-server";
 import { checkRateLimit, getClientIp } from "@/lib/api-helpers";
+import { verifyTurnstile } from "@/lib/turnstile";
 import { REFERRER_ROLES, REFERRAL_UPLOAD } from "@/data/familyIntake";
 
 /**
@@ -29,20 +30,26 @@ function extFor(type: string) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!checkRateLimit(`family_referral_ip:${getClientIp(req)}`, 20, DAY_MS).allowed) {
+  const ip = getClientIp(req);
+  if (!checkRateLimit(`family_referral_ip:${ip}`, 20, DAY_MS).allowed) {
     return bad("We’ve received many referrals from this network today. Please email hello@seedandspoon.org.", 429);
   }
 
   let body: Record<string, unknown>;
   let file: File | null = null;
+  let turnstileToken: unknown = null;
   try {
     const form = await req.formData();
+    turnstileToken = form.get("turnstileToken");
     body = JSON.parse(String(form.get("payload") ?? "{}"));
     const letter = form.get("letter");
     file = letter && typeof letter !== "string" ? (letter as File) : null;
   } catch {
     return bad("We couldn’t read the form. Please try again.");
   }
+
+  const human = await verifyTurnstile(turnstileToken, ip);
+  if (!human.ok) return bad(human.message, human.status);
 
   const referrerRole = str(body.referrerRole, 40);
   const referrerName = str(body.referrerName, 120);

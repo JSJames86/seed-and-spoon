@@ -4,6 +4,7 @@ import { createServiceClient } from "@/lib/supabase-server";
 import { sendTransactional, FROM } from "@/lib/email";
 import { notifyStaff } from "@/lib/notify";
 import { checkRateLimit, getClientIp } from "@/lib/api-helpers";
+import { verifyTurnstile } from "@/lib/turnstile";
 import ApplicationReceived from "@/emails/ApplicationReceived";
 import {
   ALLERGENS,
@@ -180,19 +181,25 @@ export async function POST(req: NextRequest) {
   // Accept multipart (current form) or JSON (no document; partner_sending only).
   let body: IntakePayload;
   let file: File | null = null;
+  let turnstileToken: unknown = null;
   const contentType = req.headers.get("content-type") ?? "";
   try {
     if (contentType.includes("multipart/form-data")) {
       const form = await req.formData();
+      turnstileToken = form.get("turnstileToken");
       body = JSON.parse(String(form.get("payload") ?? "{}"));
       const doc = form.get("referralDoc");
       file = doc && typeof doc !== "string" ? (doc as File) : null;
     } else {
       body = await req.json();
+      turnstileToken = (body as { turnstileToken?: unknown }).turnstileToken;
     }
   } catch {
     return bad("We couldn’t read the form. Please try again.");
   }
+
+  const human = await verifyTurnstile(turnstileToken, ip);
+  if (!human.ok) return bad(human.message, human.status);
 
   // ── Contact ───────────────────────────────────────────────────────────────
   const firstName = str(body.firstName, 80);

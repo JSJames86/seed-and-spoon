@@ -5,6 +5,7 @@ import FormField from '@/components/get-help/FormField';
 import FormSection from '@/components/get-help/FormSection';
 import Alert from '@/components/get-help/Alert';
 import AllergenMatrix from './AllergenMatrix';
+import TurnstileWidget, { turnstileEnabled } from '@/components/forms/TurnstileWidget';
 
 const INITIAL_HOUSEHOLD = {
   household_id: '',
@@ -60,6 +61,8 @@ function makeChildren(count) {
 export default function IntakeEnrollmentForm() {
   const [household, setHousehold] = useState(INITIAL_HOUSEHOLD);
   const [delivery, setDelivery] = useState(INITIAL_DELIVERY);
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const [turnstileReset, setTurnstileReset] = useState(0);
   const [dietary, setDietary] = useState(INITIAL_DIETARY);
   const [consent, setConsent] = useState(INITIAL_CONSENT);
   const [children, setChildren] = useState(makeChildren(1));
@@ -127,6 +130,10 @@ export default function IntakeEnrollmentForm() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
+    if (turnstileEnabled && !turnstileToken) {
+      setResult({ type: 'error', message: 'The security check is still loading. Please wait a moment and try again.' });
+      return;
+    }
 
     setSubmitting(true);
     setResult(null);
@@ -139,6 +146,7 @@ export default function IntakeEnrollmentForm() {
         ...consent,
         children,
         allergens,
+        turnstileToken,
       };
 
       const res = await fetch('/api/enrollment', {
@@ -161,6 +169,7 @@ export default function IntakeEnrollmentForm() {
       setResult({ type: 'error', message: 'Could not reach the server. Please try again.' });
     } finally {
       setSubmitting(false);
+      setTurnstileReset((n) => n + 1);
     }
   }
 
@@ -420,6 +429,8 @@ export default function IntakeEnrollmentForm() {
       {result && (
         <Alert type={result.type} message={result.message} onClose={() => setResult(null)} />
       )}
+
+      <TurnstileWidget onToken={setTurnstileToken} resetKey={turnstileReset} />
 
       <button
         type="submit"
