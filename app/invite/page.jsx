@@ -32,7 +32,7 @@ function InviteForm() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (form.password !== form.confirm) { setError('Passwords do not match'); return }
-    if (form.password.length < 8) { setError('Password must be at least 8 characters'); return }
+    if (form.password.length < 10) { setError('Password must be at least 10 characters'); return }
     setSubmitting(true)
     setError('')
 
