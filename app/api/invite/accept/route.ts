@@ -10,20 +10,39 @@ function serviceClient() {
 }
 
 export async function POST(request: NextRequest) {
-  const { token, email, password, firstName, lastName, role } = await request.json()
+  // Role and email come ONLY from the invite record, never from the request,
+  // so an invite can't be used to grant a different role or a different address.
+  const { token, password, firstName, lastName } = await request.json()
+  if (!token || typeof token !== 'string') return NextResponse.json({ error: 'Invalid invite' }, { status: 400 })
+  if (!password || typeof password !== 'string' || password.length < 10) {
+    return NextResponse.json({ error: 'Password must be at least 10 characters' }, { status: 400 })
+  }
   const supabase = serviceClient()
 
+  // Claim the invite atomically: only one request can flip used_at from null.
   const { data: invite, error: inviteError } = await supabase
-    .from('invites').select('*').eq('token', token).single()
+    .from('invites')
+    .update({ used_at: new Date().toISOString() })
+    .eq('token', token)
+    .is('used_at', null)
+    .gt('expires_at', new Date().toISOString())
+    .select('*')
+    .maybeSingle()
 
-  if (inviteError || !invite) return NextResponse.json({ error: 'Invalid invite' }, { status: 400 })
-  if (invite.used_at) return NextResponse.json({ error: 'Invite already used' }, { status: 400 })
-  if (new Date(invite.expires_at) < new Date()) return NextResponse.json({ error: 'Invite expired' }, { status: 400 })
+  if (inviteError || !invite) {
+    return NextResponse.json({ error: 'Invite is invalid, expired, or already used' }, { status: 400 })
+  }
+  const email: string = invite.email
+  const role: string = invite.role
 
   const { data: { user }, error: createError } = await supabase.auth.admin.createUser({
     email, password, email_confirm: true,
   })
-  if (createError) return NextResponse.json({ error: createError.message }, { status: 500 })
+  if (createError) {
+    // Release the invite so the person can try again.
+    await supabase.from('invites').update({ used_at: null }).eq('id', invite.id)
+    return NextResponse.json({ error: createError.message }, { status: 500 })
+  }
 
   await supabase.from('profiles').upsert({
     id: user!.id, first_name: firstName, last_name: lastName,
@@ -35,8 +54,6 @@ export async function POST(request: NextRequest) {
   if (invite.default_channel_id && invite.default_channel_id !== general?.id) {
     await supabase.from('channel_members').upsert({ channel_id: invite.default_channel_id, member_id: user!.id })
   }
-
-  await supabase.from('invites').update({ used_at: new Date().toISOString() }).eq('id', invite.id)
 
   // Log activity
   await supabase.from('activity_logs').insert({
