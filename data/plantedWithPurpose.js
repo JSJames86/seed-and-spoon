@@ -3,11 +3,14 @@
  * organization's theory of change.
  *
  * Approved wording (Janelle, Nov 24, 2026). Used by the About page section
- * (#planted-with-purpose). The fuller public document for donors, volunteers,
- * and partners is kept separately; keep the two consistent if either changes.
+ * (#planted-with-purpose). The fuller public version for donors, volunteers,
+ * and partners is public/documents/seed-and-spoon-planted-with-purpose.pdf;
+ * keep the two consistent if either changes. The internal foundational
+ * version is not published.
  */
 
 export const PLANTED_WITH_PURPOSE_ANCHOR = 'planted-with-purpose';
+export const PLANTED_WITH_PURPOSE_PDF_PATH = '/documents/seed-and-spoon-planted-with-purpose.pdf';
 
 export const plantedWithPurpose = {
   eyebrow: 'Our Theory of Change',
