@@ -1,6 +1,7 @@
 import FAQAccordion from './FAQAccordion';
 import CapabilityStatementViewer from '@/components/CapabilityStatementViewer';
 import { rootedCommitments, ROOTED_COMMITMENTS_PDF_PATH } from '@/data/rootedCommitments';
+import { plantedWithPurpose, PLANTED_WITH_PURPOSE_ANCHOR } from '@/data/plantedWithPurpose';
 import {
   ORG_EIN,
   ORG_TAX_STATUS,
@@ -33,7 +34,7 @@ const CONTENT = {
       'Seed & Spoon is a Newark-based nonprofit building the infrastructure to end weekend and out-of-school hunger for children in Essex County — starting with 5 Loaves, our weekend meal program launching its first pilot.',
     ctas: [
       { text: 'Sponsor a Child’s Weekend', url: '/give', isPrimary: true },
-      { text: 'See Our Theory of Change', url: '/impact', isPrimary: false },
+      { text: 'See Our Theory of Change', url: '#planted-with-purpose', isPrimary: false },
     ],
   },
 
@@ -115,7 +116,7 @@ const CONTENT = {
       'Our research, cost models, and operational playbooks are published openly, so other communities can replicate what works instead of starting from zero.',
     ],
     links: [
-      { text: 'Read Our Theory of Change', url: '/impact' },
+      { text: 'Explore the Impact Engine', url: '/impact' },
       { text: 'Read the White Paper', url: '/resources/reports' },
     ],
   },
@@ -270,6 +271,7 @@ export default function AboutPage() {
         <HeroSection />
         <ProblemSection />
         <WhoWeAreSection />
+        <PlantedWithPurposeSection />
         <RootedCommitmentsSection />
         <BuildingSection />
         <ReadyBeforeDayOneSection />
@@ -371,6 +373,57 @@ function WhoWeAreSection() {
             ))}
             <p className="text-gray-900 font-semibold not-italic mt-6">
               {whoWeAre.founderNote.signature}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PlantedWithPurposeSection() {
+  const pwp = plantedWithPurpose;
+  return (
+    <section id={PLANTED_WITH_PURPOSE_ANCHOR} className="py-20 bg-white scroll-mt-24">
+      <div className="container mx-auto px-6">
+        <div className="max-w-4xl mx-auto">
+          <header className="text-center mb-12">
+            <p className="text-sm font-bold uppercase tracking-wide text-[var(--green-primary)] mb-3">
+              {pwp.eyebrow}
+            </p>
+            <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4">{pwp.title}</h2>
+            <p className="text-xl text-gray-600 italic">{pwp.subtitle}</p>
+          </header>
+
+          <div className="max-w-3xl mx-auto text-center mb-12">
+            {pwp.intro.map((p, i) => (
+              <p key={i} className="text-xl text-gray-700 leading-relaxed mb-6">
+                {p}
+              </p>
+            ))}
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {pwp.elements.map((el) => (
+              <article
+                key={el.name}
+                className="bg-[var(--cream)] rounded-2xl shadow-md p-8 border-t-4 border-[var(--green-primary)]"
+              >
+                <h3 className="text-sm font-bold uppercase tracking-wide text-[var(--green-primary)] mb-2">
+                  {el.label}
+                </h3>
+                <p className="text-2xl font-bold text-gray-900 mb-1">{el.name}</p>
+                <p className="text-sm font-medium text-gray-500 mb-4">{el.keywords}</p>
+                <p className="text-gray-700 leading-relaxed">{el.body}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="max-w-3xl mx-auto text-center mt-12">
+            <p className="text-xl text-gray-700 leading-relaxed mb-6">{pwp.bridge}</p>
+            <p className="text-xl text-gray-800 italic leading-relaxed mb-8">{pwp.belief}</p>
+            <p className="text-2xl md:text-3xl font-bold text-gray-900 border-t-4 border-[var(--orange-primary)] pt-8">
+              {pwp.closing}
             </p>
           </div>
         </div>
