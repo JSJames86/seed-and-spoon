@@ -1,7 +1,11 @@
 import FAQAccordion from './FAQAccordion';
 import CapabilityStatementViewer from '@/components/CapabilityStatementViewer';
 import { rootedCommitments, ROOTED_COMMITMENTS_PDF_PATH } from '@/data/rootedCommitments';
-import { plantedWithPurpose, PLANTED_WITH_PURPOSE_ANCHOR } from '@/data/plantedWithPurpose';
+import {
+  plantedWithPurpose,
+  PLANTED_WITH_PURPOSE_ANCHOR,
+  PLANTED_WITH_PURPOSE_PDF_PATH,
+} from '@/data/plantedWithPurpose';
 import {
   ORG_EIN,
   ORG_TAX_STATUS,
@@ -425,6 +429,23 @@ function PlantedWithPurposeSection() {
             <p className="text-2xl md:text-3xl font-bold text-gray-900 border-t-4 border-[var(--orange-primary)] pt-8">
               {pwp.closing}
             </p>
+            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href={PLANTED_WITH_PURPOSE_PDF_PATH}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 font-semibold text-green-700 underline hover:text-green-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
+              >
+                Read the full Planted With Purpose (PDF)
+              </a>
+              <a
+                href={PLANTED_WITH_PURPOSE_PDF_PATH}
+                download="Seed-and-Spoon-Planted-With-Purpose.pdf"
+                className="inline-flex items-center justify-center gap-2 font-semibold text-green-700 underline hover:text-green-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
+              >
+                Download
+              </a>
+            </div>
           </div>
         </div>
       </div>

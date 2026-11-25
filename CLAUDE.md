@@ -149,6 +149,7 @@ Supplemental weekend infant formula for 5 to 10 babies over the same 15 weekends
 | Document | Location | Notes |
 |----------|----------|-------|
 | Capability statement | `public/documents/seed-and-spoon-capability-statement.pdf` | Org overview for funders/partners |
+| Planted With Purpose | `public/documents/seed-and-spoon-planted-with-purpose.pdf` | Public long version of the name philosophy / theory of change (donors, volunteers, partners); linked from About `#planted-with-purpose`. Short copy in `data/plantedWithPurpose.js`. Internal foundational version is not published |
 | Research paper | `public/documents/SeedAndSpoon ModernizingHungerRelief 2026.pdf` | Zenodo DOI: 10.5281/zenodo.20299779 |
 | Windfall readiness doctrine | `public/documents/windfall-readiness-doctrine.docx` | Board-facing ethos for a large unrestricted gift (official text); upload to the Admin CRM Document Library (`governance` category, `board` access) via `/admin/documents` |
 | Windfall readiness — staff version | `public/documents/windfall-readiness-if-good-news-comes-staff.docx` | Plain-language companion for team/volunteers ("If Good News Comes"); upload to Admin CRM Document Library (`governance` category, `staff`+ access) |
